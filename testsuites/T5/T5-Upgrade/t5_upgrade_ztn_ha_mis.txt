@@ -65,9 +65,9 @@ ${long}   50
 ${verylong}    90 
 ${upgradetime}    600 
 #${image}     bsn@jenkins:/var/lib/jenkins/jobs/bcf_master/builds/3545/archive/*.pkg
-${image}      bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
-${image1}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
-${image2}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
+${image}      bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
+${image1}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
+${image2}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
  
 ${qcowimage}   bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*.qcow2
 ${bigtapimage}   bsn@10.8.28.6:/home/bsn/controller-upgrade-bigtap-3.0.0-SNAPSHOT.pkg
