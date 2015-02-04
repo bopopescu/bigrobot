@@ -82,7 +82,7 @@ T2 Interface sement-interface add/remove redirect(next-hop) policy src-ip to any
 	L3 start hosts  port_name=b
 	${result}=  L3 chk gw arp
 	should be true  ${result}
-	${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+	${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
     should be true  ${result}
     
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
@@ -99,8 +99,8 @@ T2 Interface sement-interface add/remove redirect(next-hop) policy src-ip to any
 	rest remove policy on tenant				${tenantX}		${tenant2_polname}
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
-    should not be true  ${result}
+    #${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
+    #should not be true  ${result}
     
     clear stats
     start traffic  ${stream}
@@ -112,7 +112,7 @@ T2 Interface sement-interface add/remove redirect(next-hop) policy src-ip to any
 
 
 T3 Interface sement-interface add/remove redirect(next-hop) policy src-ip to tenant
-	[Tags]  feature
+	[Tags]  feature   T3
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -125,7 +125,11 @@ T3 Interface sement-interface add/remove redirect(next-hop) policy src-ip to ten
 	L3 start hosts  port_name=b
 	${result}=  L3 chk gw arp
 	should be true  ${result}
-	${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+	${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
     should be true  ${result}
     
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
@@ -142,7 +146,11 @@ T3 Interface sement-interface add/remove redirect(next-hop) policy src-ip to ten
 	rest remove policy on tenant				${tenantX}		${tenant2_polname}
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
     should not be true  ${result}
     
     clear stats
@@ -287,7 +295,7 @@ T7 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port t
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
     clear stats
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
     should be true  ${result}
     
 	sleep				   5
@@ -303,8 +311,8 @@ T7 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port t
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
     
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
-    should not be true  ${result}
+    #${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
+    #should not be true  ${result}
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -316,12 +324,12 @@ T7 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port t
 T8 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port to tenant
 	[Tags]  feature  port8
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
 	rest add policy							${tenantX}		${tenant2_polname}	
 	rest add nexthop group  ${tenantX}  ${next-hop-grp}
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
@@ -329,8 +337,13 @@ T8 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port t
 	should be true  ${result}
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    pause      FREEEZ!
     clear stats
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
     should be true  ${result}
     sleep				   5
     start traffic  ${stream}
@@ -344,9 +357,13 @@ T8 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port t
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
     should not be true  ${result}
-    
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -357,12 +374,12 @@ T8 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port t
 T9 Interface sement-interface add/fail-over controller/remove redirect(next-hop) policy src-ip-port to tenant
 	[Tags]  feature  ha
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
 	rest add policy							${tenantX}		${tenant2_polname}	
 	rest add nexthop group  ${tenantX}  ${next-hop-grp}
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
@@ -371,9 +388,13 @@ T9 Interface sement-interface add/fail-over controller/remove redirect(next-hop)
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
     clear stats
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
     should be true  ${result}
-    
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+
 	sleep				   5
     start traffic  ${stream}
     sleep                  5
@@ -388,9 +409,13 @@ T9 Interface sement-interface add/fail-over controller/remove redirect(next-hop)
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
     should not be true  ${result}
-    
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -401,12 +426,12 @@ T9 Interface sement-interface add/fail-over controller/remove redirect(next-hop)
 T10 Interface sement-interface add/reboot master controller/remove redirect(next-hop) policy src-ip-port to tenant
 	[Tags]  feature  ha
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
 	rest add policy							${tenantX}		${tenant2_polname}	
 	rest add nexthop group  ${tenantX}  ${next-hop-grp}
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
@@ -415,9 +440,14 @@ T10 Interface sement-interface add/reboot master controller/remove redirect(next
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
     clear stats
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
-    should be true  ${result}
     
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+
 	sleep				   5
     start traffic  ${stream}
     sleep                  5
@@ -432,9 +462,13 @@ T10 Interface sement-interface add/reboot master controller/remove redirect(next
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
     should not be true  ${result}
-    
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -445,12 +479,12 @@ T10 Interface sement-interface add/reboot master controller/remove redirect(next
 T11 Interface sement-interface add/reboot standby controller/remove redirect(next-hop) policy src-ip-port to tenant
 	[Tags]  feature  ha
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${dst_dict}=  Create Dictionary   tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
 	rest add policy							${tenantX}		${tenant2_polname}	
 	rest add nexthop group  ${tenantX}  ${next-hop-grp}
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
@@ -459,9 +493,13 @@ T11 Interface sement-interface add/reboot standby controller/remove redirect(nex
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
     clear stats
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
     should be true  ${result}
-    
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+
 	sleep				   5
     start traffic  ${stream}
     sleep                  5
@@ -476,9 +514,13 @@ T11 Interface sement-interface add/reboot standby controller/remove redirect(nex
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
     should not be true  ${result}
-    
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -490,12 +532,12 @@ T11 Interface sement-interface add/reboot standby controller/remove redirect(nex
 T12 Interface sement-interface add/reboot leaf switch/remove redirect(next-hop) policy src-ip-port to tenant
 	[Tags]  feature  ha
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
 	rest add policy							${tenantX}		${tenant2_polname}	
 	rest add nexthop group  ${tenantX}  ${next-hop-grp}
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
@@ -504,7 +546,11 @@ T12 Interface sement-interface add/reboot leaf switch/remove redirect(next-hop) 
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
     clear stats
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
     should be true  ${result}
     
 	sleep				   5
@@ -539,7 +585,11 @@ T12 Interface sement-interface add/reboot leaf switch/remove redirect(next-hop) 
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
-    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
     should not be true  ${result}
     
     start traffic  ${stream}

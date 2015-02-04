@@ -277,12 +277,12 @@ T7 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port t
 T8 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port to tenant
 	[Tags]  feature  port
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
 	rest add policy							${tenantX}		${tenant2_polname}	
 	rest add nexthop group  ${tenantX}  ${next-hop-grp}
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
@@ -313,12 +313,12 @@ T8 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port t
 T9 Interface sement-interface add/fail-over controller/remove redirect(next-hop) policy src-ip-port to tenant
 	[Tags]  feature  ha
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
 	rest add policy							${tenantX}		${tenant2_polname}	
 	rest add nexthop group  ${tenantX}  ${next-hop-grp}
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
@@ -351,12 +351,12 @@ T9 Interface sement-interface add/fail-over controller/remove redirect(next-hop)
 T10 Interface sement-interface add/reboot master controller/remove redirect(next-hop) policy src-ip-port to tenant
 	[Tags]  feature  ha
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
 	rest add policy							${tenantX}		${tenant2_polname}	
 	rest add nexthop group  ${tenantX}  ${next-hop-grp}
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
@@ -389,12 +389,12 @@ T10 Interface sement-interface add/reboot master controller/remove redirect(next
 T11 Interface sement-interface add/reboot standby controller/remove redirect(next-hop) policy src-ip-port to tenant
     [Tags]  feature  ha  daily-sanity
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     L3 start hosts  port_name=b
@@ -428,12 +428,12 @@ T11 Interface sement-interface add/reboot standby controller/remove redirect(nex
 T12 Interface sement-interface add/reboot leaf switch/remove redirect(next-hop) policy src-ip-port to tenant
     [Tags]  feature  ha  
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     L3 start hosts  port_name=b

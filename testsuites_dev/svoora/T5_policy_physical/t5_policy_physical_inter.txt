@@ -2823,6 +2823,9 @@ T94 policy add/remove redirect(next-hop) from src-ip to dest-ip
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
     sleep                  5
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    
     start traffic  ${stream}
     sleep                  5
     #pause  FREZZEE!!
@@ -2834,6 +2837,9 @@ T94 policy add/remove redirect(next-hop) from src-ip to dest-ip
     ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
+    
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -2862,6 +2868,8 @@ T95 policy add/remove redirect(next-hop) from src-ip to dest-vns
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
     sleep                  5
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
     start traffic  ${stream}
     sleep                  5
     #pause  FREZZEE!!
@@ -2873,6 +2881,9 @@ T95 policy add/remove redirect(next-hop) from src-ip to dest-vns
     ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -2900,6 +2911,13 @@ T96 policy add/remove redirect(next-hop) from src-ip to dest-tenant
     ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    
     sleep                  5
     start traffic  ${stream}
     sleep                  5
@@ -2912,6 +2930,13 @@ T96 policy add/remove redirect(next-hop) from src-ip to dest-tenant
     ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -2976,6 +3001,9 @@ T98 policy add/remove redirect(next-hop) from src-tenant to dest-ip
     ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    
     sleep                  5
     start traffic  ${stream}
     sleep                  5
@@ -2988,6 +3016,8 @@ T98 policy add/remove redirect(next-hop) from src-tenant to dest-ip
     ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
     start traffic  ${stream}
     sleep                  5
     #pause      FREEZZEEE!!!
@@ -3017,6 +3047,13 @@ T99 policy add/remove redirect(next-hop) from src-tenant to dest-tenant
     #pause     FREEZZEEEE!!
     clear stats
     sleep                  5
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    
     start traffic  ${stream}
     sleep                  5
     #pause  FREZZEE!!
@@ -3028,6 +3065,13 @@ T99 policy add/remove redirect(next-hop) from src-tenant to dest-tenant
     ${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    
     start traffic  ${stream}
     sleep                  5
     #pause      FREEZZEEE!!!
@@ -3140,6 +3184,9 @@ T102 policy add/remove redirect(next-hop) from src-vns to dest-ip
     ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    
     sleep                  5
     start traffic  ${stream}
     sleep                  5
@@ -3152,6 +3199,9 @@ T102 policy add/remove redirect(next-hop) from src-vns to dest-ip
     ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
+    
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -3179,6 +3229,13 @@ T103 policy add/remove redirect(next-hop) from src-vns to dest-tenant
     ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    
     sleep                  5
     start traffic  ${stream}
     sleep                  5
@@ -3191,6 +3248,13 @@ T103 policy add/remove redirect(next-hop) from src-vns to dest-tenant
     ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -3461,6 +3525,8 @@ T110 policy add/remove redirect(next-hop) from src-ip-port to dest-ip-port
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
     sleep                  5
     start traffic  ${stream}
     sleep                  5
@@ -3474,6 +3540,8 @@ T110 policy add/remove redirect(next-hop) from src-ip-port to dest-ip-port
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -3547,6 +3615,12 @@ T112 policy add/remove redirect(next-hop) from src-ip-port to dest-tenant
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
     sleep                  5
     start traffic  ${stream}
     sleep                  5
@@ -3560,6 +3634,13 @@ T112 policy add/remove redirect(next-hop) from src-ip-port to dest-tenant
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
@@ -3632,6 +3713,8 @@ T114 policy add/remove redirect(next-hop) from src-tenant to dest-ip-port
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
     sleep                  5
     start traffic  ${stream}
     sleep                  5
@@ -3645,6 +3728,8 @@ T114 policy add/remove redirect(next-hop) from src-tenant to dest-ip-port
     ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
     clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
     start traffic  ${stream}
     sleep                  5
     stop traffic   ${stream}
