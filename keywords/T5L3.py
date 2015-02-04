@@ -1826,7 +1826,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
         c.rest.get(url)
         data = c.rest.content()
         helpers.log("Printing len of data: %d and switch name:%s and zero :%s" % (len(data), switch, zero))
-        if (len(data) != 0 and zero == False):
+        if (len(data) != 0 and zero == 'False'):
             for i in range (0, len(data)):
                 helpers.log("printing ICAP table from switch:%s and given IP :%s" % (data[i]['dst-ip'], matchip))
                 if data[i]["dst-ip"] == matchip and int(data[i]["ecmp-group-id"]) > 0:
