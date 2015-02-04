@@ -25,7 +25,7 @@ c2:
    password: adminadmin
 s1:
   ip: 10.8.0.147
-  alias: leaf0a
+  alias: leaf0-a
   leaf-group: rack0
   mac: 70:72:cf:b5:e7:10
   #user: admin
@@ -38,7 +38,7 @@ s1:
   set_init_ping: false
 s2:
   ip: 10.8.0.150
-  alias: leaf0b
+  alias: leaf0-b
   leaf-group: rack0
   mac: 70:72:cf:ab:39:58
   #user: admin
@@ -50,7 +50,7 @@ s2:
   set_init_ping: false
 s3:
   ip: 10.8.0.146
-  alias: leaf1a
+  alias: leaf1-a
   leaf-group: rack1
   mac: 70:72:cf:b5:e9:60
   #user: admin
@@ -62,7 +62,7 @@ s3:
   set_init_ping: false
 s4:
   ip: 10.8.0.151
-  alias: leaf1b
+  alias: leaf1-b
   leaf-group: rack1
   mac: 70:72:cf:b5:f1:c2
   #user: admin
@@ -74,7 +74,7 @@ s4:
   set_init_ping: false
 s5:
   ip: 10.8.0.155
-  alias: leaf2a
+  alias: leaf2-a
   leaf-group: rack2
   mac: 70:72:cf:ab:37:58
   #user: admin
@@ -86,7 +86,7 @@ s5:
   set_init_ping: false
 s6:
   ip: 10.8.0.152
-  alias: leaf2b
+  alias: leaf2-b
   leaf-group: rack2
   mac: 70:72:cf:b5:e5:54
   #user: admin

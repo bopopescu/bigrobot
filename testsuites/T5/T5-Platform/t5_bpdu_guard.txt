@@ -44,11 +44,11 @@ T1.1 BPDU guard rstp untagged
  	sleep  ${short}
 	verify switch interface is BPDU down	${sw}   ${intf}
 	port recover from bpdu down state		${sw}   ${intf}		
-	[Tags] 	sanity  feature  bpdu_guard      
+	[Tags] 	sanity  feature  bpdu_guard  daily-sanity      
 
 T1.2 BPDU guard recovery: config interface shut no shut in in controller	 
  	log   covered in T1.1
-	[Tags] 	sanity  feature  bpdu_guard     
+	[Tags] 	sanity  feature  bpdu_guard  daily-sanity     
 
 T1.3 BPDU guard recovery: config interface shut no shut in switch	 
  	 
@@ -63,7 +63,7 @@ T1.3 BPDU guard recovery: config interface shut no shut in switch
 	sleep  ${short}
 	Wait Until Keyword Succeeds  	60 sec  5 sec   verify switch interface is up    ${sw}   ${intf} 
   	 
-	[Tags]  full  feature   bpdu_guard    skipped 
+	[Tags]  full  feature   bpdu_guard  daily-sanity    skipped 
 
 
 T1.4 BPDU guard recovery: deleting interface in controller	 
@@ -80,7 +80,7 @@ T1.4 BPDU guard recovery: deleting interface in controller
 	Wait Until Keyword Succeeds  	60 sec  5 sec   verify switch interface is up    ${sw}   ${intf} 
  
    	
-	[Tags] 	full  feature   bpdu_guard    
+	[Tags] 	full  feature   bpdu_guard  daily-sanity    
 	
 
 T2.1 BPDU guard rstp tagged
@@ -90,7 +90,7 @@ T2.1 BPDU guard rstp tagged
  	sleep  ${short}
 	verify switch interface is BPDU down	${sw}   ${intf}
 	port recover from bpdu down state		${sw}   ${intf}		
-	[Tags] 	sanity  feature  bpdu_guard     
+	[Tags] 	sanity  feature  bpdu_guard  daily-sanity     
 	 
 
 T2.2 BPDU guard mstp
@@ -100,7 +100,7 @@ T2.2 BPDU guard mstp
  	sleep  ${short}
 	verify switch interface is BPDU down	${sw}   ${intf}
 	port recover from bpdu down state		${sw}   ${intf}		
-	[Tags] 	sanity  feature  bpdu_guard     
+	[Tags] 	sanity  feature  bpdu_guard  daily-sanity     
 	 
 T2.3 BPDU guard rapid-pvst with not matched vlan negative
 	arista setup rapid-pvst	
@@ -110,7 +110,7 @@ T2.3 BPDU guard rapid-pvst with not matched vlan negative
 	Wait Until Keyword Succeeds  	60 sec  	5 sec   verify switch interface is up    ${sw}   ${intf} 
 
 	
-	[Tags] 	sanity  negative  bpdu_guard       
+	[Tags] 	sanity  negative  bpdu_guard  daily-sanity       
 
 T3.1 BPDU guard with interface configure in vns mismatch vlan mstp
 	rest_add_tenant  BPDU
@@ -127,7 +127,7 @@ T3.1 BPDU guard with interface configure in vns mismatch vlan mstp
 	
 	port recover from bpdu down state		${sw}   ${intf}
 	
-	[Tags]  full 	feature   bpdu_guard    
+	[Tags]  full 	feature   bpdu_guard  daily-sanity    
 	 
 T3.2 BPDU guard with interface configure in vns match vlan mstp
 	rest_add_tenant  BPDU
@@ -143,7 +143,7 @@ T3.2 BPDU guard with interface configure in vns match vlan mstp
 	verify switch interface is BPDU down	${sw}   ${intf}
 	port recover from bpdu down state		${sw}   ${intf}	
 	
-	[Tags] 	full  feature   bpdu_guard    
+	[Tags] 	full  feature   bpdu_guard  daily-sanity    
 
 T3.3 BPDU guard rapid-pvst with matched vlan
 	arista setup rapid-pvst	
@@ -157,7 +157,7 @@ T3.3 BPDU guard rapid-pvst with matched vlan
 	verify switch interface is BPDU down	${sw}   ${intf}
 	port recover from bpdu down state		${sw}   ${intf}		
 	
-	[Tags] 	full  feature   bpdu_guard     
+	[Tags] 	full  feature   bpdu_guard  daily-sanity     
 
 	 
 T3.4 BPDU guard with interface configure in vns port group
@@ -174,7 +174,7 @@ T3.4 BPDU guard with interface configure in vns port group
  	sleep  ${short}
 	verify switch interface is BPDU down	${sw}   ${intf}
 	port recover from bpdu down state		${sw}   ${intf}		
-	[Tags] 	full  feature   bpdu_guard    
+	[Tags] 	full  feature   bpdu_guard  daily-sanity    
 	 
     
 

@@ -204,7 +204,7 @@ class KVMOperations(object):
             latest_kvm_build_number = build_number
         file_name = None
         if vm_type == 'bcf':
-            file_name = "controller-%s-%s.qcow2" % (jenkins_project_name, latest_build_number)
+            file_name = "controller-%s_virtual-%s.qcow2" % (jenkins_project_name, latest_build_number)
         elif vm_type == 'mininet':
             file_name = "mininet-%s.qcow2" % latest_build_number
         helpers.log("Latest Build Number on KVM Host: %s" % latest_kvm_build_number)

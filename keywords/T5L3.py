@@ -1790,6 +1790,30 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
             helpers.log("In len.data eq ZERO and FLAG is TRUE")
             return True
 
+    def rest_verify_fwd_icap_table(self, switch, matchip):
+        ''' Function to verify given ip exist in fwding icap table
+        Input: switch name and ip
+        Output: return true if ip exist in the fwding icap table
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/icap-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log("Printing len of data: %d and switch name:%s" % (len(data), switch))
+        if (len(data) != 0):
+            for i in range (0, len(data)):
+                helpers.log("printing ICAP table from switch:%s and given IP :%s" % (data[i]['dst-ip'], matchip))
+                if data[i]["dst-ip"] == matchip:
+                    helpers.log("Match found in ICAP table")
+                    return True
+        else:
+            helpers.log("Match not found in ICAP table")
+            return False
+
+        return False
+
 
     def rest_clear_policy_stats(self, tenant, seq):
         ''' Function to clear policy counters

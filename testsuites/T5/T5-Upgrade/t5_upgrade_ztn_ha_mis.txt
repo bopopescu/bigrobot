@@ -100,14 +100,14 @@ UPGRADE HOST PING SET UP
     bash init intf  h2  bond0.10
     bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
     bash ifup intf  h2  bond0
-    
     REST add tenant  A 
     REST add vns  A  A
    	REST add portgroup to vns  A  A  p1  10 
     REST add portgroup to vns  A  A  p2  10 
    	sleep  5
    	${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
-   	Should Be True  ${loss} < 50	
+   	Should Be True  ${loss} < 50
+   	remove_no_auto_reload	
 	[Tags]    sanity   run_ping_test  daily-sanity
 IMAGE: T1.1 verify image download and various related show command in master
 	log  get image from external server 

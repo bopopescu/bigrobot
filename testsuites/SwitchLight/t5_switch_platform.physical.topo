@@ -24,11 +24,11 @@ s1:
   set_session_ssh: false
   set_init_ping: false
    
-s3:
-  alias: leaf1-a
+s2:
+  alias: leaf0-b
   mac: 70:72:cf:b7:5f:7c
   fabric-role: leaf
-  leaf-group: rack1
+  leaf-group: rack0
   console:
     ip:  10.1.8.181
     protocol: telnet

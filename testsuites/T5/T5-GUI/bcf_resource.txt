@@ -46,7 +46,8 @@ ${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
 ${LIST TYPE KNOB}				xpath=//div[@class='knob_icon']
 ${GENERIC CONFIRM POPUP}		xpath=//div[contains(@title, 'Confirm')]
 ${GENERIC SUBMIT BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
-${GENERIC YES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Yes')]
+${GENERIC YES BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Yes')]
+${GENERIC PROCEED BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
 
 ${TIMEOUT}						10 sec
 ${PERIOD}						3 sec
@@ -209,6 +210,7 @@ ${ENDPOINT MAC ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode'
 ${ENDPOINT SWITCH DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
 ${ENDPOINT SWITCH LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_4_popup']
 ${ENDPOINT SWITCH FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/input[1]
+${ENDPOINT VLAN FIELD}						xpath=//div[@data-dojo-attach-point='blockVlan']/descendant::input[@class='dijitReset dijitInputInner']
 
 ${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input
 ${ENDPOINT SWITCH INTERFACE LIST} 				xpath=//div[@id='dijit_form_FilteringSelect_5_popup']
@@ -478,6 +480,8 @@ ${COMPARISON FUNCTION DROPDOWN BUTTON SUFFIX}		${COMPARISON FUNCTION AREA SUFFIX
 ${COMPARISON FUNCTION DROPDOWN FIELD SUFFIX} 		${COMPARISON FUNCTION SUFFIX}/descendant::input[@class='dijitReset dijitInputInner']
 
 ${COMPARISON VALUE SUFFIX}					${COMPARISON FUNCTION SUFFIX}/following-sibling::div/descendant::div[@class='dijitReset dijitInputField dijitInputContainer']/input
+${COMPARISON NOT CHECKBOX SUFFIX}			/descendant::div[@data-dojo-attach-point='columnNode']/descendant::div[@class='inline_block bottom not_node']/div[1]/input
+
 ${CLOSE AND FILTER BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Close & Filter')]
 ${CLOSE AND NOT FILTER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Close') and not(contains(text(), 'Filter'))]
 
@@ -516,6 +520,11 @@ ${ADD NTP SERVER BUTTON}				xpath=//div[@class='icon_node plus']
 ${ADD NTP SERVER POPUP}					xpath=//div[@title='Create NTP Server']
 ${INPUT NTP SERVER FILED}				xpath=//input[@class='dijitReset dijitInputInner']
 ${SAVE NTP SERVER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+${SYNC TO NTP SERVER MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Sync NTP to Server')]
+${DELETE NTP SERVER MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Delete')]
+${DELETE NTP SERVER BUTTON}				xpath=//div[@class='icon_node minus']
+
+
 
 ### AAA Page
 ${ACCOUNING LINK}						xpath=//div[@id='link_accounting']
@@ -559,6 +568,7 @@ Set URLs
 	Set Suite Variable     	${AAA URL}					https://${SERVER}/bcf/aaa
 	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
+	Set Suite Variable		${LOGOUT URL}				https://${SERVER}/logout
 
 Valid Login
     [Arguments]  ${username}  ${password}
@@ -566,6 +576,8 @@ Valid Login
     Input Username    ${username}
     Input Password    ${password}
     Submit Credentials
+    Sleep  5
+    Wait Until Page Loaded
     Welcome Page Should Be Open
 
 Login With Invalid Credentials Should Fail
@@ -723,6 +735,12 @@ Go To Signout Page
     Wait Until Page Loaded 
     Title Should Contain  ${SIGNOUT TITLE}
     Sleep  1
+
+Logout
+	Go To  ${LOGOUT URL}
+    Wait Until Page Loaded
+    Title Should Contain  ${LOGIN TITLE}
+    Sleep  1
     
 Delete All Tenants
 	Go To Tenants Page
@@ -800,18 +818,22 @@ Delete All
 	
 	
 Select Checkbox
-	[Arguments]  ${selected}  ${unselected}
+	[Arguments]  ${checkbox}
+	${selected}  Set Variable  ${checkbox}/parent::div[@aria-checked='true']
+	${unselected}  Set Variable  ${checkbox}/parent::div[not(@aria-checked='true')]
 	${selected count}  Get Matching Xpath Count Tokenize   ${selected}
 	Run Keyword If  '${selected count}' == '0'
-	...  Click Element  ${unselected}  and don't wait
+	...  Click Element  ${checkbox}  and don't wait
 	Verify Checkbox Selected  ${selected}
 
 
 Unselect Checkbox
-	[Arguments]  ${selected}  ${unselected}
+	[Arguments]  ${checkbox}
+	${selected}  Set Variable  ${checkbox}/parent::div[@aria-checked='true']
+	${unselected}  Set Variable  ${checkbox}/parent::div[not(@aria-checked='true')]
 	${unselected count}  Get Matching Xpath Count Tokenize   ${unselected}
 	Run Keyword If  '${unselected count}' == '0'
-	...  Click Element  ${selected}  and don't wait
+	...  Click Element  ${checkbox}  and don't wait
 	Verify Checkbox Unselected  ${unselected}
 
 
@@ -855,7 +877,7 @@ Submit Credentials
 
 
 Welcome Page Should Be Open
-    Location Should Be  ${WELCOME URL}
+    #Location Should Be  ${WELCOME URL}
     Title Should Contain  ${DASHBOARD TITLE}
 
 
@@ -984,6 +1006,11 @@ Generate Action Menu Xpath Interface
 	[Arguments]  ${attachment_point}  ${switch}  ${interface}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content'  and (text()= '  ${interface}  ')]/parent::td/preceding-sibling::td/descendant::div[@class='content'  and (text()= '  ${switch}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
+
+Generate Action Menu Xpath NTP Server
+	[Arguments]  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='ntp_servers_node']/descendant::div[@class='content'  and (text()= '  ${text}  ')]/parent::td/preceding-sibling::td/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
     
 Generate Src Interface Checkbox Xpath
 	[Arguments]  ${attachment_point}  ${text}
@@ -1005,6 +1032,10 @@ Generate Action Menu Action Item Xpath
     ${xpath}  Catenate  SEPARATOR=  xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), '  ${action}  ')]
     [Return]  ${xpath}
 
+Generate NTP Server Checkbox Xpath
+	[Arguments]  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='ntp_servers_node']/descendant::div[@class='content'  and (text()= '  ${text}  ')]/parent::td/preceding-sibling::td/descendant::input[@type='checkbox']
+    [Return]  ${xpath}
 
 Create Tenant
 	[Arguments]  ${tenant-name}  ${description}
@@ -1200,7 +1231,7 @@ Configure Tenant Interface for System Tenant
 
 	
 Create Logical Segments
-	[Arguments]  ${tenant-name}  ${ls-name}  ${port-group}  ${switch-name}   ${interface}   ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+	[Arguments]  ${tenant-name}  ${ls-name}  ${port-group}  ${switch-name}   ${interface}   ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}  ${vlan}=None
 
 	Go To Tenants Page
 	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
@@ -1236,7 +1267,7 @@ Create Logical Segments
 
 	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
 	Run Keyword Unless  '${endpoint-name}' == '${EMPTY}'
-	...  Append Endpoint to Segment  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+	...  Append Endpoint to Segment  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}  ${vlan}
 
 
 
@@ -1298,7 +1329,7 @@ Append Switch-Port Membership Rule To Segment
 
 
 Append Endpoint to Segment
-	[Arguments]  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+	[Arguments]  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}  ${vlan}=None
 	Verify Element Visible  ${ADD ENDPOINT PLUS BUTTON}
 	Click Element   ${ADD ENDPOINT PLUS BUTTON}  and don't wait
 	
@@ -1321,6 +1352,9 @@ Append Endpoint to Segment
 	
 	Run Keyword Unless  '${endpoint-interface}' == '${EMPTY}'
 	...		Select From List And Verify   ${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  ${ENDPOINT SWITCH INTERFACE LIST}    ${ENDPOINT SWITCH INTERFACE FIELD}  ${endpoint-interface}
+
+	Run Keyword Unless  '${vlan}' == 'None'
+	...		Input Text And Verify   ${ENDPOINT VLAN FIELD}  ${vlan}
     
 	Run Keyword Unless  '${mac-addr}' == '${EMPTY}'
 	...		Input Text And Verify   ${ENDPOINT MAC ADDRESS FIELD}  ${mac-addr}
@@ -2254,11 +2288,11 @@ Check Advanced Query Builder
 	Verify Element Invisible  ${ADVANCED QUERY BUILDER POPUP}
 
 Open Advanced Query Builder
-	[Arguments]  ${page}
+	[Arguments]  ${page}  ${clear}=clear
 	Run Keyword If  '${page}' == 'Endpoints'  Go To Endpoints Page
 	Run Keyword If  '${page}' == 'Tenants'  Go To Tenants Page
 	Run Keyword If  '${page}' == 'Interfaces'  Go To Controller Interfaces Page
-	Clear Filtering Query
+	Run Keyword If  '${clear}' == 'clear'  Clear Filtering Query
 	Click Element  ${ADVANCED QUERY BUILDER BUTTON}  and don't wait
 	Verify Element Visible  ${ADVANCED QUERY BUILDER POPUP}
 
@@ -2283,16 +2317,27 @@ Add Second Filter Query or Use First Empty
 	...  Click Element  ${ADVANCED QUERY LINE}[1]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
 
 Add Filter Query
-	[Arguments]  ${column}  ${comparison}  ${value}
+	[Arguments]  ${column}  ${comparison}  ${value}  ${flag}=positive  ${position}=0
 	${configured}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
 	Log  ${configured}
-	Run Keyword If  '${configured}' == '1'
+	Run Keyword If  '${configured}' == '1' and '${position}' == '0'
 	...  Add Second Filter Query or Use First Empty
-	Run Keyword Unless  '${configured}' == '1'
+	...  ELSE IF  '${position}' == '0'
 	...  Click Element  ${ADVANCED QUERY LINE}[${configured}]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
-	${index}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
+
+	${count}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
+	${index}  Set Variable If  '${position}' == '0'
+	...  ${count}
+	...  ${position}
 	Log  ${index}
 	${column_index}=  Evaluate  int((2 * ${index}) - 1)
+
+	Run Keyword If  '${flag}' == 'negative'
+	...  Select Checkbox  ${ADVANCED QUERY LINE}[${index}]${COMPARISON NOT CHECKBOX SUFFIX}
+
+	Run Keyword If  '${flag}' == 'positive'
+	...  Unselect Checkbox  ${ADVANCED QUERY LINE}[${index}]${COMPARISON NOT CHECKBOX SUFFIX}
+
 	Select From List And Verify
 	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON COLUMN DROPDOWN BUTTON SUFFIX}
 	...  ${COMPARISON COLUMN DROPDOWN LIST}[${column_index}]
@@ -2312,6 +2357,13 @@ Add Filter Query
 	Run Keyword Unless  '${value}' == '${EMPTY}'
 	...  Input Text And Verify  ${ADVANCED QUERY LINE}[${index}]${COMPARISON VALUE SUFFIX}  ${value}
 	Click Element  ${ADVANCED QUERY BUILDER POPUP}  and don't wait
+
+
+Delete Filter Query
+	[Arguments]  ${position}
+	Click Element  ${ADVANCED QUERY LINE}[${position}]${DEL QUERY LINE BUTTON SUFFIX}  and don't wait
+
+
 
 Verify Filtering Result
 	[Arguments]  ${value}  ${flag}
@@ -2654,6 +2706,36 @@ Configure NTP Server
 	Click Element  ${SAVE NTP SERVER BUTTON}  and don't wait
 	Verify Element Invisible  ${ADD NTP SERVER POPUP}
 	Page Should Contain  ${server}
+
+Sync To NTP Server
+	[Arguments]  ${server}
+	Page Should Contain  ${server}
+	${ntp menu}  Generate Action Menu Xpath NTP Server  ${server}
+	Click Element  ${ntp menu}  and don't wait
+	Verify Element Visible  ${SYNC TO NTP SERVER MENU ITEM}
+	Click Element  ${SYNC TO NTP SERVER MENU ITEM}  and don't wait
+
+Delete NTP Server Using Action Menu
+	[Arguments]  ${server}
+	Page Should Contain  ${server}
+	${ntp menu}  Generate Action Menu Xpath NTP Server  ${server}
+	Click Element  ${ntp menu}  and don't wait
+	Verify Element Visible  ${DELETE NTP SERVER MENU ITEM}
+	Click Element  ${DELETE NTP SERVER MENU ITEM}  and don't wait
+	Verify Element Visible  ${GENERIC CONFIRM POPUP}
+	Verify Element Visible  ${GENERIC PROCEED BUTTON}
+	Click Element  ${GENERIC PROCEED BUTTON}  and don't wait
+
+Delete NTP Server Using Minus Button
+	[Arguments]  ${server}
+	Page Should Contain  ${server}
+	${server checkbox}  Generate NTP Server Checkbox Xpath  ${server}
+	Select Checkbox  ${server checkbox}
+	Verify Element Visible  ${DELETE NTP SERVER BUTTON}
+	Click Element  ${DELETE NTP SERVER BUTTON}  and don't wait
+	Verify Element Visible  ${GENERIC CONFIRM POPUP}
+	Verify Element Visible  ${GENERIC PROCEED BUTTON}
+	Click Element  ${GENERIC PROCEED BUTTON}  and don't wait
 
 
 Configure Authentication
