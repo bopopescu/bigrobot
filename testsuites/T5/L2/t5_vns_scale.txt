@@ -74,7 +74,7 @@ create 1k vns and verify the table and forwarding
     Should not be True  ${result}
     
 create 4000 vns and verify the table and forwarding
-	[Tags]  L2  scaling  IronHorse     daily-sanity 
+	[Tags]  L2  scaling  IronHorse 
   	rest add tenant  t1
 	rest add vns scale  t1  3998
 	summary log  system create a 4k vns
