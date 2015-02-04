@@ -105,6 +105,7 @@ UPGRADE HOST PING SET UP
    	REST add portgroup to vns  A  A  p1  10 
     REST add portgroup to vns  A  A  p2  10 
    	sleep  5
+   	bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
    	${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
    	Should Be True  ${loss} < 50
    	remove_no_auto_reload	
