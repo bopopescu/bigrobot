@@ -440,6 +440,7 @@ T10 Interface sement-interface add/reboot master controller/remove redirect(next
 	${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
     clear stats
+    
     ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
     should be true  ${result}
     ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
@@ -462,11 +463,11 @@ T10 Interface sement-interface add/reboot master controller/remove redirect(next
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
     ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
-    should be true  ${result}
+    should not be true  ${result}
     ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
-    should be true  ${result}
+    should not be true  ${result}
     ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
-    should be true  ${result}
+    should not be true  ${result}
 
     start traffic  ${stream}
     sleep                  5
@@ -514,11 +515,11 @@ T11 Interface sement-interface add/reboot standby controller/remove redirect(nex
     ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
     clear stats
     ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
-    should be true  ${result}
+    should not be true  ${result}
     ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
-    should be true  ${result}
+    should not be true  ${result}
     ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
-    should be true  ${result}
+    should not be true  ${result}
 
     start traffic  ${stream}
     sleep                  5
