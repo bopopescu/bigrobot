@@ -48,6 +48,8 @@ ${GENERIC CONFIRM POPUP}		xpath=//div[contains(@title, 'Confirm')]
 ${GENERIC SUBMIT BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 ${GENERIC YES BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Yes')]
 ${GENERIC PROCEED BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
+${GO TO NEXT PAGE BUTTON}		xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node right_triangle']
+${GO TO PREVIOUS PAGE BUTTON}   xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node left_triangle']
 
 ${TIMEOUT}						10 sec
 ${PERIOD}						3 sec
@@ -775,7 +777,15 @@ Logout
     Wait Until Page Loaded
     Title Should Contain  ${LOGIN TITLE}
     Sleep  1
-    
+
+Go To Next Table Page
+	Verify Element Visible  ${GO TO NEXT PAGE BUTTON}
+	Click Element  ${GO TO NEXT PAGE BUTTON}  and don't wait
+
+Go To Previous Table Page
+	Verify Element Visible  ${GO TO PREVIOUS PAGE BUTTON}
+	Click Element  ${GO TO PREVIOUS PAGE BUTTON}  and don't wait
+
 Delete All Tenants
 	Go To Tenants Page
     Delete All
