@@ -420,7 +420,9 @@ TC117 Multiple vCenters with same IP ranges
 TC++ Automatic segment configuration when manual wildcard configurations exist
     [Tags]        negative     vmware
 
-
+TC++ Handling vCenter sync discrepencies 
+    [Tags]        negative     vmware
+    
 
 ################    Longevity     ################
 
