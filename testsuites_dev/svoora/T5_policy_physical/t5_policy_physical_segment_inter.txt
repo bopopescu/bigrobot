@@ -1428,8 +1428,6 @@ T29 Interface sement-interface redirect(ecmp) policy src-ip to dest-ip policy-lo
     sleep                  5
     #pause     FREEZEE!!
     verify policy stats   c   ${tenantX}  10
-    ${policy_log_cnt}=  rest get policy log pkt cnt  ${tenantX}
-    should be true  ${policy_log_cnt}
     delete traffic  
 
 T30 Negitive testing-Remove/add tenant config (ecmp)
@@ -1501,7 +1499,7 @@ T30 Negitive testing-Remove/add tenant config (ecmp)
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
     rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
