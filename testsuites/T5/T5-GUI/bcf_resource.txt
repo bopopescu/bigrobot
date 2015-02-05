@@ -32,6 +32,7 @@ ${TACACS TITLE}				TACACS
 ${LOGGING TITLE}			Logging
 ${USERS TITLE}				Users
 ${TOPOLOGY TITLE}			Topology
+${AAA TITLE}				AAA
 ${SIGNOUT TITLE}  			Login
 
 
@@ -45,6 +46,10 @@ ${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
 ${LIST TYPE KNOB}				xpath=//div[@class='knob_icon']
 ${GENERIC CONFIRM POPUP}		xpath=//div[contains(@title, 'Confirm')]
 ${GENERIC SUBMIT BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+${GENERIC YES BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Yes')]
+${GENERIC PROCEED BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
+${GO TO NEXT PAGE BUTTON}		xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node right_triangle']
+${GO TO PREVIOUS PAGE BUTTON}   xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node left_triangle']
 
 ${TIMEOUT}						10 sec
 ${PERIOD}						3 sec
@@ -207,6 +212,7 @@ ${ENDPOINT MAC ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode'
 ${ENDPOINT SWITCH DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
 ${ENDPOINT SWITCH LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_4_popup']
 ${ENDPOINT SWITCH FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[3]/input[1]
+${ENDPOINT VLAN FIELD}						xpath=//div[@data-dojo-attach-point='blockVlan']/descendant::input[@class='dijitReset dijitInputInner']
 
 ${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[1]/input
 ${ENDPOINT SWITCH INTERFACE LIST} 				xpath=//div[@id='dijit_form_FilteringSelect_5_popup']
@@ -452,7 +458,8 @@ ${TACACS SERVER EDIT MENU ITEM}				xpath=//td[contains(@id, 'dijit_MenuItem') an
 ${EDIT TACACS SERVER POPUP}					xpath=//div[@title='Edit TACACS Server']
 ${TACACS SERVER DELETE MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
 ${DELETE CONFIRM TACACS HOST POPUP}			xpath=//div[@title='Confirm']
-
+${TACACS DEFAULT SETTINGS BUTTON}			xpath=//div[@id='tacacs_default_settings']/descendant::div[@class='icon_node configure']
+${DEFAULT TACACS SETTINGS POPUP}			xpath=//div[@title='Configure TACACS Defaults']
 
 #### Advanced Query
 ${FILTER QUERY FIELD}						xpath=//span[@class='dijitPlaceHolder dijitInputField' and contains(text(), 'Filter table rows')]/parent::div/input
@@ -475,6 +482,8 @@ ${COMPARISON FUNCTION DROPDOWN BUTTON SUFFIX}		${COMPARISON FUNCTION AREA SUFFIX
 ${COMPARISON FUNCTION DROPDOWN FIELD SUFFIX} 		${COMPARISON FUNCTION SUFFIX}/descendant::input[@class='dijitReset dijitInputInner']
 
 ${COMPARISON VALUE SUFFIX}					${COMPARISON FUNCTION SUFFIX}/following-sibling::div/descendant::div[@class='dijitReset dijitInputField dijitInputContainer']/input
+${COMPARISON NOT CHECKBOX SUFFIX}			/descendant::div[@data-dojo-attach-point='columnNode']/descendant::div[@class='inline_block bottom not_node']/div[1]/input
+
 ${CLOSE AND FILTER BUTTON}					xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Close & Filter')]
 ${CLOSE AND NOT FILTER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Close') and not(contains(text(), 'Filter'))]
 
@@ -513,6 +522,64 @@ ${ADD NTP SERVER BUTTON}				xpath=//div[@class='icon_node plus']
 ${ADD NTP SERVER POPUP}					xpath=//div[@title='Create NTP Server']
 ${INPUT NTP SERVER FILED}				xpath=//input[@class='dijitReset dijitInputInner']
 ${SAVE NTP SERVER BUTTON}				xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+${SYNC TO NTP SERVER MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Sync NTP to Server')]
+${DELETE NTP SERVER MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Delete')]
+${DELETE NTP SERVER BUTTON}				xpath=//div[@class='icon_node minus']
+
+
+
+### AAA Page
+${ACCOUNING LINK}						xpath=//div[@id='link_accounting']
+${AUTHENTICATION LINK}					xpath=//div[@id='link_authentication']
+${ACCOUNTING BLOCK}						xpath=//h2[@class='sidebar_title lead' and contains(text(), 'Accounting Statistics Destinations')]/parent::div
+${ACCOUNTING LOCAL ROW}					${ACCOUNTING BLOCK}/child::div[1]
+${ACCOUNTING REMOTE ROW}				${ACCOUNTING BLOCK}/child::div[3]
+${ACCOUNTING LOCAL KNOB}				${ACCOUNTING LOCAL ROW}/descendant::div[@class='knob_icon']
+${ACCOUNTING REMOTE KNOB}				${ACCOUNTING REMOTE ROW}/descendant::div[@class='knob_icon']
+${AUTHENTICATION BLOCK}					xpath=//h2[@class='sidebar_title lead' and contains(text(), 'Authentication Sources')]/parent::div
+${AUTHENTICATION FIRST SOURCE ROW}		${AUTHENTICATION BLOCK}/descendant::div[@class='row'][1]
+${AUTHENTICATION SECOND SOURCE ROW}		${AUTHENTICATION BLOCK}/descendant::div[@class='row'][2]
+${AUTHENTICATION FIRST SOURCE LIST}		xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][1]
+${AUTHENTICATION SECOND SOURCE LIST}	xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][2]
+${AUTHENTICATION SOURCE DROPDOWN BUTTON SUFFIX}   /descendant::div[contains(@class,'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
+${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}   /descendant::input[@class='dijitReset dijitInputInner']
+${ACCOUNTING SETTINGS POPUP}			xpath=//div[@title='Accounting Settings']
+${AUTHENTICATION SETTINGS POPUP}		xpath=//div[@title='Authentication Settings']
+${AUTHENTICATION SAVE BUTTON}			xpath=//span[@data-dojo-attach-point='containerNode' and contains(text(), 'Save')]
+
+
+### Test Path Page
+${TEST PATH SOURCE SECTION PREFIX}  									xpath=//div[@class='test_path_section'][1]
+${TEST PATH DESTINATION SECTION PREFIX}  								xpath=//div[@class='test_path_section'][2]
+${TEST PATH SELECT SOURCE ENDPOINT BUTTON}								${TEST PATH SOURCE SECTION PREFIX}/descendant::div[@data-dojo-attach-point='modelSelectNode']/descendant::div[@class='bsn_button_group bottom']/child::div[1]
+${TEST PATH CLEAR SOURCE ENDPOINT BUTTON}								${TEST PATH SOURCE SECTION PREFIX}/descendant::div[@data-dojo-attach-point='modelSelectNode']/descendant::div[@class='bsn_button_group bottom']/child::div[2]
+${TEST PATH SELECT SOURCE ENDPOINT POPUP}    							xpath=(//div[contains(@title, 'Use Endpoint')])[1]
+${TEST PATH USE SELECTED SOURCE ENDPOINT BUTTON} 						xpath=(//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Use Selected')])[1]
+
+${TEST PATH SELECT DESTINATION ENDPOINT BUTTON}							${TEST PATH DESTINATION SECTION PREFIX}/descendant::div[@data-dojo-attach-point='modelSelectNode']/descendant::div[@class='bsn_button_group bottom']/child::div[1]
+${TEST PATH CLEAR DESTINATION ENDPOINT BUTTON} 							${TEST PATH DESTINATION SECTION PREFIX}/descendant::div[@data-dojo-attach-point='modelSelectNode']/descendant::div[@class='bsn_button_group bottom']/child::div[2]
+${TEST PATH SELECT DESTINATION ENDPOINT POPUP}							xpath=(//div[contains(@title, 'Use Endpoint')])[2]
+${TEST PATH USE SELECTED DESTINATION ENDPOINT BUTTON} 					xpath=(//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Use Selected')])[2]
+${TEST PATH SELECT DESTINATION IP BUTTON}  								${TEST PATH DESTINATION SECTION PREFIX}/descendant::div[@data-dojo-attach-point='nodeManual']/div[1]
+${TEST PATH SELECT DESTINATION IP POPUP}								xpath=//div[contains(@title, 'Specify Endpoint')]
+${TEST PATH INPUT DESTINATION IP FIELD}									${TEST PATH SELECT DESTINATION IP POPUP}/following-sibling::div[@data-dojo-attach-point='containerNode']/descendant::input[@class='dijitReset dijitInputInner']
+${TEST PATH SUBMIT DESTINATION IP BUTTON}								${GENERIC SUBMIT BUTTON}
+
+${TEST PATH IP PROTO DROPDOWN BUTTON}									xpath=//div[@data-dojo-attach-point='optionsNode']/descendant::input[@class='dijitReset dijitInputField dijitArrowButtonInner']
+${TEST PATH IP PROTO LIST}												xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup']
+${TEST PATH IP PROTO VALUE FIELD}										xpath=//div[@data-dojo-attach-point='optionsNode']/desncendant::input[@class='dijitReset dijitInputInner']
+${TEST PATH SRC PORT VALUE FIELD}										${TEST PATH SOURCE SECTION PREFIX}/descendant::input[@class='dijitReset dijitInputInner']
+${TEST PATH DST PORT VALUE FIELD}										${TEST PATH DESTINATION SECTION PREFIX}/descendant::input[@class='dijitReset dijitInputInner']
+
+${TEST PATH LOAD TEST BUTTON}											xpath=//div[@data-dojo-attach-point='labelLoad']/preceding-sibling::div/descendant::div[@data-dojo-attach-point='iconNode']
+${TEST PATH TEST TRIGGER BUTTON}										xpath=//div[@data-dojo-attach-point='labelTestConfig']/preceding-sibling::div/descendant::div[@data-dojo-attach-point='iconNode']
+${TEST PATH SIMULATE TRIGGER BUTTON}									xpath=//div[@data-dojo-attach-point='labelTestFabric']/preceding-sibling::div/descendant::div[@data-dojo-attach-point='iconNode']
+${TEST PATH SWAP ENDPOINTS BUTTON}										xpath=//div[@data-dojo-attach-point='labelShuffle']/preceding-sibling::div/descendant::div[@data-dojo-attach-point='iconNode']
+${TEST PATH INITIALIZE POPUP}											xpath=//div[contains(@title, 'Initialize Fabric Test')]
+${TEST PATH TEST NAME FIELD}											${TEST PATH INITIALIZE POPUP}/following-sibling::div/descendant::div[@class='input_block'][1]/descendant::input[@class='dijitReset dijitInputInner']
+${TEST PATH TEST TIMEOUT FIELD}											${TEST PATH INITIALIZE POPUP}/following-sibling::div/descendant::div[@class='input_block'][2]/descendant::input[@class='dijitReset dijitInputInner'][1]
+${TEST PATH TEST SUBMIT BUTTON}											${TEST PATH INITIALIZE POPUP}/following-sibling::div/descendant::div[@data-dojo-attach-point='buttonsNode']/descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+
 
 *** Keywords ***
 Set URLs
@@ -534,8 +601,10 @@ Set URLs
 	Set Suite Variable     	${SNMP URL}  				https://${SERVER}/bcf/snmp
 	Set Suite Variable     	${TACACS URL}  				https://${SERVER}/bcf/tacacs
 	Set Suite Variable     	${LOGGING URL}				https://${SERVER}/bcf/logging
+	Set Suite Variable     	${AAA URL}					https://${SERVER}/bcf/aaa
 	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
+	Set Suite Variable		${LOGOUT URL}				https://${SERVER}/logout
 
 Valid Login
     [Arguments]  ${username}  ${password}
@@ -543,6 +612,8 @@ Valid Login
     Input Username    ${username}
     Input Password    ${password}
     Submit Credentials
+    Sleep  5
+    Wait Until Page Loaded
     Welcome Page Should Be Open
 
 Login With Invalid Credentials Should Fail
@@ -682,7 +753,13 @@ Go To Logging Page
     Wait Until Page Loaded 
     Title Should Contain  ${LOGGING TITLE}
     Sleep  1
-    
+
+Go To AAA Page
+	Go To  ${AAA URL}
+    Wait Until Page Loaded
+    Title Should Contain  ${AAA TITLE}
+    Sleep  1
+
 Go To Security Users Page
 	Go To  ${USERS URL}
     Wait Until Page Loaded 
@@ -694,7 +771,21 @@ Go To Signout Page
     Wait Until Page Loaded 
     Title Should Contain  ${SIGNOUT TITLE}
     Sleep  1
-    
+
+Logout
+	Go To  ${LOGOUT URL}
+    Wait Until Page Loaded
+    Title Should Contain  ${LOGIN TITLE}
+    Sleep  1
+
+Go To Next Table Page
+	Verify Element Visible  ${GO TO NEXT PAGE BUTTON}
+	Click Element  ${GO TO NEXT PAGE BUTTON}  and don't wait
+
+Go To Previous Table Page
+	Verify Element Visible  ${GO TO PREVIOUS PAGE BUTTON}
+	Click Element  ${GO TO PREVIOUS PAGE BUTTON}  and don't wait
+
 Delete All Tenants
 	Go To Tenants Page
     Delete All
@@ -771,18 +862,22 @@ Delete All
 	
 	
 Select Checkbox
-	[Arguments]  ${selected}  ${unselected}
+	[Arguments]  ${checkbox}
+	${selected}  Set Variable  ${checkbox}/parent::div[@aria-checked='true']
+	${unselected}  Set Variable  ${checkbox}/parent::div[not(@aria-checked='true')]
 	${selected count}  Get Matching Xpath Count Tokenize   ${selected}
 	Run Keyword If  '${selected count}' == '0'
-	...  Click Element  ${unselected}  and don't wait
+	...  Click Element  ${checkbox}  and don't wait
 	Verify Checkbox Selected  ${selected}
 
 
 Unselect Checkbox
-	[Arguments]  ${selected}  ${unselected}
+	[Arguments]  ${checkbox}
+	${selected}  Set Variable  ${checkbox}/parent::div[@aria-checked='true']
+	${unselected}  Set Variable  ${checkbox}/parent::div[not(@aria-checked='true')]
 	${unselected count}  Get Matching Xpath Count Tokenize   ${unselected}
 	Run Keyword If  '${unselected count}' == '0'
-	...  Click Element  ${selected}  and don't wait
+	...  Click Element  ${checkbox}  and don't wait
 	Verify Checkbox Unselected  ${unselected}
 
 
@@ -826,7 +921,7 @@ Submit Credentials
 
 
 Welcome Page Should Be Open
-    Location Should Be  ${WELCOME URL}
+    #Location Should Be  ${WELCOME URL}
     Title Should Contain  ${DASHBOARD TITLE}
 
 
@@ -955,6 +1050,11 @@ Generate Action Menu Xpath Interface
 	[Arguments]  ${attachment_point}  ${switch}  ${interface}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content'  and (text()= '  ${interface}  ')]/parent::td/preceding-sibling::td/descendant::div[@class='content'  and (text()= '  ${switch}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
+
+Generate Action Menu Xpath NTP Server
+	[Arguments]  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='ntp_servers_node']/descendant::div[@class='content'  and (text()= '  ${text}  ')]/parent::td/preceding-sibling::td/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
     
 Generate Src Interface Checkbox Xpath
 	[Arguments]  ${attachment_point}  ${text}
@@ -976,6 +1076,15 @@ Generate Action Menu Action Item Xpath
     ${xpath}  Catenate  SEPARATOR=  xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), '  ${action}  ')]
     [Return]  ${xpath}
 
+Generate NTP Server Checkbox Xpath
+	[Arguments]  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='ntp_servers_node']/descendant::div[@class='content'  and (text()= '  ${text}  ')]/parent::td/preceding-sibling::td/descendant::input[@type='checkbox']
+    [Return]  ${xpath}
+
+Generate Endpoint Checkbox Xpath
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  ${attachment_point}  /following-sibling::div/descendant::div[@class='inline_block nowrap' and contains(text(), '  ${text}  ')]/parent::div/parent::div/parent::div/parent::td/parent::tr/child::td[1]/descendant::input
+    [Return]  ${xpath}
 
 Create Tenant
 	[Arguments]  ${tenant-name}  ${description}
@@ -1171,7 +1280,7 @@ Configure Tenant Interface for System Tenant
 
 	
 Create Logical Segments
-	[Arguments]  ${tenant-name}  ${ls-name}  ${port-group}  ${switch-name}   ${interface}   ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+	[Arguments]  ${tenant-name}  ${ls-name}  ${port-group}  ${switch-name}   ${interface}   ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}  ${vlan}=None
 
 	Go To Tenants Page
 	${action_menu}  Generate Action Menu Xpath Tenants  div[@id='tenants_table']  ${tenant-name}
@@ -1207,7 +1316,7 @@ Create Logical Segments
 
 	Go To Tenant Segment Page  ${tenant-name}  ${ls-name}
 	Run Keyword Unless  '${endpoint-name}' == '${EMPTY}'
-	...  Append Endpoint to Segment  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+	...  Append Endpoint to Segment  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}  ${vlan}
 
 
 
@@ -1269,7 +1378,7 @@ Append Switch-Port Membership Rule To Segment
 
 
 Append Endpoint to Segment
-	[Arguments]  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}
+	[Arguments]  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}  ${vlan}=None
 	Verify Element Visible  ${ADD ENDPOINT PLUS BUTTON}
 	Click Element   ${ADD ENDPOINT PLUS BUTTON}  and don't wait
 	
@@ -1292,6 +1401,9 @@ Append Endpoint to Segment
 	
 	Run Keyword Unless  '${endpoint-interface}' == '${EMPTY}'
 	...		Select From List And Verify   ${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  ${ENDPOINT SWITCH INTERFACE LIST}    ${ENDPOINT SWITCH INTERFACE FIELD}  ${endpoint-interface}
+
+	Run Keyword Unless  '${vlan}' == 'None'
+	...		Input Text And Verify   ${ENDPOINT VLAN FIELD}  ${vlan}
     
 	Run Keyword Unless  '${mac-addr}' == '${EMPTY}'
 	...		Input Text And Verify   ${ENDPOINT MAC ADDRESS FIELD}  ${mac-addr}
@@ -2083,7 +2195,7 @@ Configure SNMP Traps
    
    
 Add TACACS Host
-	[Arguments]  ${server}  ${timeout}  ${secret}  ${encryption}
+	[Arguments]  ${server}  ${tac_timeout}  ${secret}  ${encryption}
 	
 	Go To Tacacs Page
 	
@@ -2094,8 +2206,8 @@ Add TACACS Host
     
     Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${server}
     
-    Run Keyword Unless  '${timeout}' == '${EMPTY}'
-    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${timeout}
+    Run Keyword Unless  '${tac_timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${tac_timeout}
        
     Run Keyword Unless  '${secret}' == '${EMPTY}'
     ...			Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
@@ -2112,7 +2224,7 @@ Add TACACS Host
     
     
 Edit TACACS Host
-	[Arguments]  ${server}  ${new-server}  ${timeout}  ${secret}  ${encryption}
+	[Arguments]  ${server}  ${new-server}  ${tac_timeout}  ${secret}  ${encryption}
 	
 	Go To Tacacs Page
 	
@@ -2127,8 +2239,8 @@ Edit TACACS Host
 	   
     Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${new-server}
     
-    Run Keyword Unless  '${timeout}' == '${EMPTY}'
-    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${timeout}
+    Run Keyword Unless  '${tac_timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${tac_timeout}
     
     
     Run Keyword Unless  '${secret}' == '${EMPTY}'
@@ -2161,6 +2273,28 @@ Delete TACACS Host
 	Highlight Element  ${PROCEED DELTE BUTTON}
 	
     Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+
+Configure TACACS Default Settings
+	[Arguments]  ${tac_timeout}  ${secret}  ${encryption}
+	Verify Element Visible  ${TACACS DEFAULT SETTINGS BUTTON}
+    Click Element  ${TACACS DEFAULT SETTINGS BUTTON}   and don't wait
+
+    Verify Element Visible  ${DEFAULT TACACS SETTINGS POPUP}
+
+    Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${tac_timeout}
+
+    Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
+
+    Click Element  ${TACACS SERVER TIMEOUT FIELD}  and don't wait
+
+    Run Keyword If  '${encryption}' == 'Yes'
+    ...			Click Element   ${TACACS SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+
+    Verify Element Visible  ${GENERIC SUBMIT BUTTON}
+    Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
+
+    Verify Element Invisible  ${DEFAULT TACACS SETTINGS POPUP}
+
 
 Add Simple Filtering Query
 	[Arguments]  ${query}
@@ -2203,11 +2337,11 @@ Check Advanced Query Builder
 	Verify Element Invisible  ${ADVANCED QUERY BUILDER POPUP}
 
 Open Advanced Query Builder
-	[Arguments]  ${page}
+	[Arguments]  ${page}  ${clear}=clear
 	Run Keyword If  '${page}' == 'Endpoints'  Go To Endpoints Page
 	Run Keyword If  '${page}' == 'Tenants'  Go To Tenants Page
 	Run Keyword If  '${page}' == 'Interfaces'  Go To Controller Interfaces Page
-	Clear Filtering Query
+	Run Keyword If  '${clear}' == 'clear'  Clear Filtering Query
 	Click Element  ${ADVANCED QUERY BUILDER BUTTON}  and don't wait
 	Verify Element Visible  ${ADVANCED QUERY BUILDER POPUP}
 
@@ -2232,16 +2366,27 @@ Add Second Filter Query or Use First Empty
 	...  Click Element  ${ADVANCED QUERY LINE}[1]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
 
 Add Filter Query
-	[Arguments]  ${column}  ${comparison}  ${value}
+	[Arguments]  ${column}  ${comparison}  ${value}  ${flag}=positive  ${position}=0
 	${configured}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
 	Log  ${configured}
-	Run Keyword If  '${configured}' == '1'
+	Run Keyword If  '${configured}' == '1' and '${position}' == '0'
 	...  Add Second Filter Query or Use First Empty
-	Run Keyword Unless  '${configured}' == '1'
+	...  ELSE IF  '${position}' == '0'
 	...  Click Element  ${ADVANCED QUERY LINE}[${configured}]${ADD QUERY LINE BUTTON SUFFIX}  and don't wait
-	${index}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
+
+	${count}  Get Matching Xpath Count Tokenize  ${ADVANCED QUERY LINE}
+	${index}  Set Variable If  '${position}' == '0'
+	...  ${count}
+	...  ${position}
 	Log  ${index}
 	${column_index}=  Evaluate  int((2 * ${index}) - 1)
+
+	Run Keyword If  '${flag}' == 'negative'
+	...  Select Checkbox  ${ADVANCED QUERY LINE}[${index}]${COMPARISON NOT CHECKBOX SUFFIX}
+
+	Run Keyword If  '${flag}' == 'positive'
+	...  Unselect Checkbox  ${ADVANCED QUERY LINE}[${index}]${COMPARISON NOT CHECKBOX SUFFIX}
+
 	Select From List And Verify
 	...  ${ADVANCED QUERY LINE}[${index}]${COMPARISON COLUMN DROPDOWN BUTTON SUFFIX}
 	...  ${COMPARISON COLUMN DROPDOWN LIST}[${column_index}]
@@ -2261,6 +2406,13 @@ Add Filter Query
 	Run Keyword Unless  '${value}' == '${EMPTY}'
 	...  Input Text And Verify  ${ADVANCED QUERY LINE}[${index}]${COMPARISON VALUE SUFFIX}  ${value}
 	Click Element  ${ADVANCED QUERY BUILDER POPUP}  and don't wait
+
+
+Delete Filter Query
+	[Arguments]  ${position}
+	Click Element  ${ADVANCED QUERY LINE}[${position}]${DEL QUERY LINE BUTTON SUFFIX}  and don't wait
+
+
 
 Verify Filtering Result
 	[Arguments]  ${value}  ${flag}
@@ -2291,6 +2443,21 @@ Failover From Fabric Page
     Set Suite Variable  ${SERVER}  ${master_ip}
     Set URLs
     Valid Login  admin  adminadmin
+
+Reload Controller From Fabric Page
+	[Arguments]  ${node}
+	${cube}=  Set Variable If
+	...  '${node}' == 'master'  ${ACTIVE CONTROLLER CUBE}
+	...  '${node}' == 'slave'  ${STANDBY CONTROLLER CUBE}
+	Go To Fabric Page
+	Verify Element Visible  ${cube}
+	Click Element  ${cube}  and don't wait
+	Verify Element Visible  ${CONTROLLER RELOAD BUTTON}
+	Click Element  ${CONTROLLER RELOAD BUTTON}  and don't wait
+	Verify Element Visible  ${GENERIC CONFIRM POPUP}
+	Verify Element Visible  ${GENERIC YES BUTTON}
+	Click Element  ${GENERIC YES BUTTON}  and don't wait
+	Sleep  150
 
 Reboot All Connected Switches From Fabric Page
 	Go To Fabric Page
@@ -2589,6 +2756,200 @@ Configure NTP Server
 	Verify Element Invisible  ${ADD NTP SERVER POPUP}
 	Page Should Contain  ${server}
 
+Sync To NTP Server
+	[Arguments]  ${server}
+	Page Should Contain  ${server}
+	${ntp menu}  Generate Action Menu Xpath NTP Server  ${server}
+	Click Element  ${ntp menu}  and don't wait
+	Verify Element Visible  ${SYNC TO NTP SERVER MENU ITEM}
+	Click Element  ${SYNC TO NTP SERVER MENU ITEM}  and don't wait
+
+Delete NTP Server Using Action Menu
+	[Arguments]  ${server}
+	Page Should Contain  ${server}
+	${ntp menu}  Generate Action Menu Xpath NTP Server  ${server}
+	Click Element  ${ntp menu}  and don't wait
+	Verify Element Visible  ${DELETE NTP SERVER MENU ITEM}
+	Click Element  ${DELETE NTP SERVER MENU ITEM}  and don't wait
+	Verify Element Visible  ${GENERIC CONFIRM POPUP}
+	Verify Element Visible  ${GENERIC PROCEED BUTTON}
+	Click Element  ${GENERIC PROCEED BUTTON}  and don't wait
+
+Delete NTP Server Using Minus Button
+	[Arguments]  ${server}
+	Page Should Contain  ${server}
+	${server checkbox}  Generate NTP Server Checkbox Xpath  ${server}
+	Select Checkbox  ${server checkbox}
+	Verify Element Visible  ${DELETE NTP SERVER BUTTON}
+	Click Element  ${DELETE NTP SERVER BUTTON}  and don't wait
+	Verify Element Visible  ${GENERIC CONFIRM POPUP}
+	Verify Element Visible  ${GENERIC PROCEED BUTTON}
+	Click Element  ${GENERIC PROCEED BUTTON}  and don't wait
+
+
+Configure Authentication
+	[Arguments]  ${first}  ${second}
+	Go To AAA Page
+	Verify Element Visible  ${AUTHENTICATION LINK}
+	Click Element  ${AUTHENTICATION LINK}  and don't wait
+	Verify Element Visible  ${AUTHENTICATION BLOCK}
+
+	Select From List And Verify
+    ...  ${AUTHENTICATION FIRST SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN BUTTON SUFFIX}
+    ...	 ${AUTHENTICATION FIRST SOURCE LIST}
+    ...  ${AUTHENTICATION FIRST SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}
+    ...  ${first}
+
+	Run Keyword Unless  '${second}' == '${EMPTY}'
+	...  Select From List And Verify
+    ...  ${AUTHENTICATION SECOND SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN BUTTON SUFFIX}
+    ...	 ${AUTHENTICATION SECOND SOURCE LIST}
+    ...  ${AUTHENTICATION SECOND SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}
+    ...  ${second}
+
+    Verify Element Visible  ${AUTHENTICATION SAVE BUTTON}
+    Click Element  ${AUTHENTICATION SAVE BUTTON}  and don't wait
+    Verify Element Visible  ${AUTHENTICATION SETTINGS POPUP}
+	Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
+	Page Should Not Contain  ${AUTHENTICATION SETTINGS POPUP}
+
+Configure Accounting
+	[Arguments]  ${local}  ${remote}
+	Go To AAA Page
+	Verify Element Visible  ${ACCOUNING LINK}
+	Click Element  ${ACCOUNING LINK}  and don't wait
+	Verify Element Visible  ${ACCOUNTING BLOCK}
+	Verify Element Visible  ${ACCOUNTING LOCAL KNOB}
+	Highlight Element  ${ACCOUNTING LOCAL KNOB}
+	Verify Element Visible  ${ACCOUNTING REMOTE KNOB}
+	Highlight Element  ${ACCOUNTING REMOTE KNOB}
+
+	Assign ID to Element   ${ACCOUNTING LOCAL ROW}/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '${local}')]  LOCAL
+    Drag And Drop   ${ACCOUNTING LOCAL KNOB}  target=LOCAL
+
+    ${popup_count}  Get Matching Xpath Count Tokenize  ${ACCOUNTING SETTINGs POPUP}
+    Run Keyword If  '${popup_count}' > '0'
+    ...  Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
+
+	Assign ID to Element   ${ACCOUNTING REMOTE ROW}/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '${remote}')]  REMOTE
+    Drag And Drop   ${ACCOUNTING REMOTE KNOB}  target=REMOTE
+
+    ${popup_count}  Get Matching Xpath Count Tokenize  ${ACCOUNTING SETTINGs POPUP}
+    Run Keyword If  '${popup_count}' > '0'
+    ...  Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
+
+
+Test Path
+	[Arguments]  ${method}  ${src_ip}  ${dst_ip}  ${dst_input}=Endpoint  ${protocol}=ICMP  ${src_port}=None  ${dst_port}=None
+	# method - Test or Simulate
+	# dst_input - Endpoint or Manual
+	Go To Test Path Page
+	Page Should Contain  Source Endpoint
+	Page Should Contain  Destination Endpoint
+	Verify Element Visible  ${TEST PATH SELECT SOURCE ENDPOINT BUTTON}
+	Click Element  ${TEST PATH SELECT SOURCE ENDPOINT BUTTON}  and don't wait
+	Verify Element Visible  ${TEST PATH SELECT SOURCE ENDPOINT POPUP}
+	${src_checkbox}  Generate Endpoint Checkbox Xpath  ${TEST PATH SELECT SOURCE ENDPOINT POPUP}  ${src_ip}
+	Select Checkbox  ${src_checkbox}
+	Verify Element Visible  ${TEST PATH USE SELECTED SOURCE ENDPOINT BUTTON}
+	Click Element  ${TEST PATH USE SELECTED SOURCE ENDPOINT BUTTON}  and don't wait
+	Verify Element Invisible  ${TEST PATH SELECT SOURCE ENDPOINT POPUP}
+
+	Run Keyword If  '${dst_input}' == 'Endpoint'
+	...  Select Test Path Destination Endpoint  ${dst_ip}
+	...  ELSE IF  '${dst_input}' == 'Manual'
+	...  Input Test Path Destination Endpoint IP  ${dst_ip}
+
+	Select Test Path Protocol  ${protocol}  ${src_port}  ${dst_port}
+
+	Go To Test Path Page
+	Page Should Contain  ${src_ip}
+	Page Should Contain  ${dst_ip}
+
+	Run Keyword If  '${method}' == 'Test'
+	...  Trigger Test Path Test  ${src_ip}  ${dst_ip}
+	...  ELSE IF  '${method}' == 'Simulate'
+	...  Trigger Test Path Simulate
+
+Select Test Path Destination Endpoint
+	[Arguments]  ${dst_ip}
+	Verify Element Visible  ${TEST PATH SELECT DESTINATION ENDPOINT BUTTON}
+	Click Element  ${TEST PATH SELECT DESTINATION ENDPOINT BUTTON}  and don't wait
+	Verify Element Visible  ${TEST PATH SELECT DESTINATION ENDPOINT POPUP}
+	${dst_checkbox}  Generate Endpoint Checkbox Xpath  ${TEST PATH SELECT DESTINATION ENDPOINT POPUP}  ${dst_ip}
+	Select Checkbox  ${dst_checkbox}
+	Verify Element Visible  ${TEST PATH USE SELECTED DESTINATION ENDPOINT BUTTON}
+	Click Element  ${TEST PATH USE SELECTED DESTINATION ENDPOINT BUTTON}  and don't wait
+	Verify Element Invisible  ${TEST PATH SELECT DESTINATION ENDPOINT POPUP}
+
+Input Test Path Destination Endpoint IP
+	[Arguments]  ${dst_ip}
+	Verify Element Visible  ${TEST PATH SELECT DESTINATION IP BUTTON}
+	Click Element  ${TEST PATH SELECT DESTINATION IP BUTTON}  and don't wait
+	Verify Element Visible  ${TEST PATH SELECT DESTINATION IP POPUP}
+	Input Text And Verify  ${TEST PATH INPUT DESTINATION IP FIELD}  ${dst_ip}
+	Click Element  ${TEST PATH SELECT DESTINATION IP POPUP}  and don't wait
+	Verify Element Visible  ${TEST PATH SUBMIT DESTINATION IP BUTTON}
+	Click Element  ${TEST PATH SUBMIT DESTINATION IP BUTTON}  and don't wait
+	Verify Element Invisible  ${TEST PATH SELECT DESTINATION IP POPUP}
+
+Select Test Path Protocol
+	[Arguments]  ${protocol}  ${src_port}  ${dst_port}
+	Select From List And Verify
+    ...  ${TEST PATH IP PROTO DROPDOWN BUTTON}
+    ...	 ${TEST PATH IP PROTO LIST}
+    ...  ${TEST PATH IP PROTO VALUE FIELD}
+    ...  ${protocol}
+
+	Run Keyword Unless  '${protocol}' == 'ICMP'
+	...  Input Text And Verify  ${TEST PATH SRC PORT VALUE FIELD}  ${src_port}
+	Run Keyword Unless  '${protocol}' == 'ICMP'
+	...  Input Text And Verify  ${TEST PATH DST PORT VALUE FIELD}  ${dst_port}
+
+Trigger Test Path Test
+	[Arguments]  ${src_ip}  ${dst_ip}  ${timeout}=30
+	Verify Element Visible  ${TEST PATH TEST TRIGGER BUTTON}
+	Click Element  ${TEST PATH TEST TRIGGER BUTTON}  and don't wait
+	Verify Element Visible  ${TEST PATH INITIALIZE POPUP}
+	Verify Element Visible  ${TEST PATH TEST NAME FIELD}
+	Input Text And Verify  ${TEST PATH TEST NAME FIELD}  test-${src_ip}-${dst_ip}
+	Verify Element Visible  ${TEST PATH TEST TIMEOUT FIELD}
+	Input Text And Verify  ${TEST PATH TEST TIMEOUT FIELD}  ${timeout}
+	Verify Element Visible  ${TEST PATH TEST SUBMIT BUTTON}
+	Click Element  ${TEST PATH TEST SUBMIT BUTTON}  and don't wait
+	Sleep  ${timeout}
+	Sleep  5
+	Verify Element Invisible  ${TEST PATH INITIALIZE POPUP}
+
+Trigger Test Path Simulate
+	Verify Element Visible  ${TEST PATH SIMULATE TRIGGER BUTTON}
+	Click Element  ${TEST PATH SIMULATE TRIGGER BUTTON}  and don't wait
+	Sleep  5
+
+Verify Test Path Simulate Result
+	[Arguments]  ${forward}  ${reverse}
+	${expected_forward_result}  Set Variable  xpath=//div[@class='summary_content']/descendant::td[@class='label' and contains(text(), 'Forward Result')]/following-sibling::td[@class='value' and contains(text(), '${forward}')]
+	${expected_reverse_result}  Set Variable  xpath=//div[@class='summary_content']/descendant::td[@class='label' and contains(text(), 'Reverse Result')]/following-sibling::td[@class='value' and contains(text(), '${reverse}')]
+	Verify Element Visible  ${expected_forward_result}
+	Verify Element Visible  ${expected_reverse_result}
+	${segments}  Get Matching Xpath Count Tokenize  xpath=//div[@class='node logical segment']
+	${endpoints}  Get Matching Xpath Count Tokenize  xpath=//div[@class='node physical endpoint']
+	Run Keyword If  '${forward}' == 'Forwarded'
+	...  Should Be True  ${segments} > 0
+	Run Keyword If  '${forward}' == 'Forwarded'
+	...  Should Be True  ${endpoints} > 0
+	...  ELSE IF  '${forward}' == 'Dropped'
+	...  Should Be True  ${endpoints} == 0
+
+Verify Test Path Test Result
+	[Arguments]  ${result}
+	${switches}  Get Matching Xpath Count Tokenize  xpath=//table[@class='routes_wrapper']
+	Run Keyword If  '${result}' == 'Pass'
+	...  Should Be True  ${switches} > 0
+	...  ELSE IF  '${result}' == 'Fail'
+	...  Should Be True  ${switches} == 0
+	Run Keyword If  '${result}' == 'Pass'
+	...  Page Should Contain  Test saved as
 
 Physical GUI Suite Setup
 	${tmp}  params  node=c1  key=ip

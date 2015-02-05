@@ -20,6 +20,7 @@ def task_execute(params, task_func):
     helpers.log("Starting task %s." % task_id)
     helpers.log("Creating log file '%s'." % log_file)
 
+    # esb=True is the equivalent of setting helpers.bigrobot_esb('True').
     t = test.Test(esb=True, params=params)
 
     content = task_func()

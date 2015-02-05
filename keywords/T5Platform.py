@@ -488,6 +488,123 @@ class T5Platform(object):
                     return False
 
 
+    def cluster_boot_partition(self, node='all', option='alternate'):
+        '''
+          boot partition  -
+          Author: Mingtao
+          input:  node  - controller
+                          master, slave, c1 c2, all
+
+          usage:
+          output:  
+                   
+        '''
+ 
+        t = test.Test()
+        master = t.controller("master")       
+        obj = utilities()
+      
+        string = 'boot partition ' + option
+        if node == 'all':     
+            slave = t.controller("slave")  
+            slave_name = slave.name()
+            slave_contr = t.controller(slave_name)     
+            helpers.log("***** USR INFO:  Node name is : %s" %  slave_name)                
+            ipAddr2 = slave_contr.ip()
+            
+            master_name = master.name()   
+            master_contr = t.controller(master_name)      
+            ipAddr1 = master_contr.ip() 
+           
+            
+            slave_contr.enable('')
+            slave_contr.send(string)
+            slave_contr.expect(r'[\r\n].+ to continue\):', timeout=180)            
+            slave_contr.send("yes")
+            try:
+                slave_contr.expect(r'The system is going down for reboot NOW!', timeout=60)
+                content = slave_contr.cli_content()
+                helpers.log("*****Output is :\n%s" % content)            
+            
+            except:
+                helpers.log('ERROR: SLave boot partition NOT successfully')
+                return False
+            else:
+                helpers.log('INFO: Slave boot partition successfully')     
+            
+            master_contr.enable('')            
+            master_contr.send(string)
+            master_contr.expect(r'[\r\n].+ to continue\):', timeout=180)            
+            master_contr.send("yes")
+            try:
+                master_contr.expect(r'The system is going down for reboot NOW!', timeout=60)
+                content = master_contr.cli_content()
+                helpers.log("*****Output is :\n%s" % content)            
+            
+            except:
+                helpers.log('ERROR: Master boot partition NOT successfully')
+                return False
+            else:
+                helpers.log('INFO: Master boot partition successfully')                       
+            
+                                         
+        else:
+            node = t.controller(node)                
+            ipAddr1 = node.ip()
+            name = node.name()
+            c = t.controller(name) 
+            string = 'boot partition ' + option
+            c.enable('')
+            c.send(string)
+            c.expect(r'[\r\n].+ to continue\):', timeout=180)            
+            c.send("yes")
+            try:
+                c.expect(r'The system is going down for reboot NOW!', timeout=180)
+                content = c.cli_content()
+                helpers.log("*****Output is :\n%s" % content)            
+            
+            except:
+                helpers.log('ERROR: boot partition NOT successfully')
+                return False
+            else:
+                helpers.log('INFO: boot partition successfully')                       
+          
+        helpers.log("Node is rebooting")
+        helpers.sleep(120)
+        count = 0
+        while (True):
+            loss = helpers.ping(ipAddr1)
+            helpers.log("loss is: %s" % loss)
+            if(loss != 0):
+                if (count > 5):
+                    helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr1)
+                    return False
+                helpers.sleep(120)
+                count += 1
+                helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr1, count))
+            else:
+                helpers.log("Controller just came alive. Waiting for it to become fully functional")
+                helpers.sleep(180)
+                break
+            
+        if node == 'all':
+            while (True):
+                loss = helpers.ping(ipAddr2)
+                helpers.log("loss is: %s" % loss)
+                if(loss != 0):
+                    if (count > 5):
+                        helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr2)
+                        return False
+                    helpers.sleep(120)
+                    count += 1
+                    helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr2, count))
+                else:
+                    helpers.log("Controller came alive. ")                      
+                    break
+        return True
+ 
+    
+        
 
     def cluster_node_reload(self, masterNode=True):
 
@@ -6034,6 +6151,7 @@ class T5Platform(object):
             line = line.split()
             helpers.log("*****line is :\n%s" % line)
             partition[line[0]] = {}
+            partition[line[0]]['image'] = line[-1]
             if (line[1] == 'Pending_Launch' or line[1] == 'Failed' or line[1] == 'completed' or
                 line[1] == 'Unformatted'):
                 partition[line[0]]['state'] = 'None'
@@ -6078,7 +6196,26 @@ class T5Platform(object):
             helpers.log("There is no partition unformated ")
             return -1
 
+    def get_boot_partition_image(self, node, flag):
+        '''
+        input:  flag type - Active,  Boot   Pending
+        in progress 
+        '''
+        helpers.test_log("Entering ==> get_boot_partition")
 
+        partition = self.cli_show_boot_partition(node)
+ 
+        if flag == 'alternate':
+            for key in partition:
+                if 'Active' not in partition[key]['state']:
+                    return partition[key]['image']
+                    break
+        if flag == 'active' or flag == 'current':
+            for key in partition:
+                if 'Active' in partition[key]['state']:
+                    return partition[key]['image']
+                    break
+ 
 
     def cli_verify_node_upgrade_partition(self, singleNode=False):
 
@@ -6503,3 +6640,22 @@ class T5Platform(object):
             helpers.log("IP's didn't get cleared properly. Returning false")
             return False
 
+    def rest_show_fabric_status(self):
+        '''Return True is overall-status is OK  
+            Return False if overall-status is NOT OK
+            
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/summary/fabric'      
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]['overall-status'] == "NOT OK":
+            helpers.log("ERROR:  fabric status is NOT OK  \n  %s"  % data  )
+            c.enable("show fabric error")
+            return False
+        else:
+            helpers.log("USR INFO:  fabric status is OK  \n  %s"  % data  ) 
+            return True
+
+ 

@@ -153,6 +153,7 @@ s6:
     password: apc
   interfaces:
     ixia1_int0: ethernet24
+    ixia1_int1: ethernet43
     spine0_int0: ethernet49
     spine1_int0: ethernet52
     h5_int0: ethernet47
@@ -221,18 +222,26 @@ h3:
   ip: 10.9.16.11
   user: root
   password: bsn
+  interfaces:
+    h3_eth1_mac: d4:ae:52:c9:c8:e9
 h4:
   ip: 10.9.16.12
   user: root
   password: bsn
+  interfaces:
+    bond0_mac: 90:e2:ba:4f:81:a0
 h5:
   ip: 10.9.16.15
   user: root
   password: bsn
+  interfaces:
+    bond0_mac: 90:e2:ba:4f:80:fc  
 h6:
   ip: 10.9.16.16
   user: root
   password: bsn
+  interfaces:
+    bond0_mac: 90:e2:ba:4f:7d:b0
 tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.6
@@ -253,3 +262,5 @@ tg1:
       name: 3/12
     f:
       name: 3/11
+    leaf2b_int1:
+      name: 5/13

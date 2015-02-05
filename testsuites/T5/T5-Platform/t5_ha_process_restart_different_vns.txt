@@ -160,7 +160,7 @@ Controller HA: Restart Process snmpd on Master Controller:
     Sleep  20
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}        
-    [Tags]  feature  ha  traffic  controller 
+    [Tags]  feature  ha  traffic  controller  daily-sanity
 
 Controller HA: Restart Process snmpd on Slave Controller:
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -307,7 +307,7 @@ Controller HA: Restart Process Floodlight on Slave Controller:
     Sleep  120
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}  
-    [Tags]  feature  ha  traffic  controller   
+    [Tags]  feature  ha  traffic  controller   daily-sanity
 
 
 Controller HA: Restart Process Floodlight on Master Controller:
@@ -326,7 +326,7 @@ Controller HA: Restart Process Floodlight on Master Controller:
     Sleep  90
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}        
-    [Tags]  feature  ha  traffic  controller
+    [Tags]  feature  ha  traffic  controller  daily-sanity
 
 Switch HA: Restart Process OFAD on switch
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=128
@@ -344,7 +344,7 @@ Switch HA: Restart Process OFAD on switch
     Sleep  400
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}   
-    [Tags]  feature  ha  traffic  switch 
+    [Tags]  feature  ha  traffic  switch  daily-sanity
  
 *Keywords
 

@@ -438,6 +438,86 @@ class SwitchLight(object):
                             return return_value
                 return False
 
+    def cli_show_version(self, node):
+        '''
+            Objective:
+            - Execute cli command "show version" on switch and return requested parameter
+
+            Input:
+            | node | Switch Reference from topo file |
+
+            Return Value:
+            - Value for requested key
+        '''
+        t = test.Test()
+        switch = t.switch(node)
+        try:
+            switch.cli("show version")
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+        else:
+            switch_output = switch.cli_content()
+            version_array = switch_output.split('\n')
+            return_dict = {}
+            for i in range(0, len(version_array)):
+                if "Manufacturer" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Manufacturer'] = temp_val1[1].strip()
+                if "Model" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Model'] = temp_val1[1].strip()
+                if "Platform" in version_array[i] and "Information" not in version_array[i] and "Name" not in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Platform'] = temp_val1[1].strip()
+                if "Description" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Description'] = temp_val1[1].strip()
+                if "Label" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Label'] = temp_val1[1].strip()
+                if "Part Number" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['PartNumber'] = temp_val1[1].strip()
+                if "Product Name" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['ProductName'] = temp_val1[1].strip()
+                if "Serial Number" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['SerialNumber'] = temp_val1[1].strip()
+                if "Physical" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['PhysicalPorts'] = temp_val1[1].strip()
+                if "LAG" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['MaxLagPorts'] = temp_val1[1].strip()
+                if "Vendor" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Vendor'] = temp_val1[1].strip()
+                if "MAC" in version_array[i] and "Range" not in version_array[i] and "Serial" not in version_array[i]:
+                    temp_val1 = version_array[i].split()
+                    return_dict['ma1Mac'] = temp_val1[1].strip()
+                if "ONIE Version" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['onie'] = temp_val1[1].strip()
+                if "Country Code" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['country'] = temp_val1[1].strip()
+                if "Diag Version" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['diag'] = temp_val1[1].strip()
+                if "CPLD Version" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['cpld'] = temp_val1[1].strip()
+                if "Service Tag" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['ServiceTag'] = temp_val1[1].strip()
+            if (len(return_dict) < 1):
+                return False
+            else:
+                return return_dict
+
+
     def ping_from_local(self, node):
         '''
             Objective:
@@ -716,19 +796,8 @@ class SwitchLight(object):
             input1 = "interface ma1 ip-address dhcp"
             if input1 in run_config:
                 pass_count = pass_count + 1
-            input2 = "dns-domain " + str(dns_domain)
-            if input2 in run_config:
-                pass_count = pass_count + 1
-            input3 = "dns-server " + str(dns_server)
-            if input3 in run_config:
-                pass_count = pass_count + 1
             s1.enable('show interface ma1 detail')
             show_command = s1.cli_content()
-            # output_1 = string.split(show_command, '\n')
-            # output_2 = string.split(output_1[3], ': ')
-            # output_3 = string.split(output_2[1], '/')
-            # switch_ip = output_3[0]
-            # switch_mask = output_3[1]
             helpers.log("Show Command O/P: \n %s" % (show_command))
             if "ma1 is up" in show_command:
                 pass_count = pass_count + 1
@@ -737,7 +806,10 @@ class SwitchLight(object):
                 pass_count = pass_count + 1
             if "MTU 1500 bytes, Speed 1000 Mbps" in show_command:
                 pass_count = pass_count + 1
-            if pass_count == 6:
+            input5 = str(s1.ip()) + "/" + str(subnet)
+            if input5 in show_command:
+                pass_count = pass_count + 1
+            if pass_count == 5:
                 return True
             else:
                 return False
@@ -965,8 +1037,9 @@ class SwitchLight(object):
             # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -1099,8 +1172,9 @@ class SwitchLight(object):
             switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -1141,8 +1215,9 @@ class SwitchLight(object):
             switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -1256,8 +1331,9 @@ class SwitchLight(object):
             # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             try:
                 helpers.log("Switch Console IP is %s \n Switch Console Port is %s :" % (console_ip, console_port))
                 tn = telnetlib.Telnet(console_ip, console_port)
@@ -1266,21 +1342,26 @@ class SwitchLight(object):
                 tn.read_until("Password: ", 3)
                 tn.write(password + "\r\n")
                 tn.read_until('')
+                helpers.log("now here 1")
+                tn.write("\r\n enable \r\n")
+                tn.write("\r\n configure \r\n")
+                tn.write("\r\n dns-domain " + str(dns_domain) + " \r\n")
+                tn.write("\r\n dns-server " + str(dns_server) + " \r\n")
+                helpers.log("now here 2")
+                tn.write("exit" + "\r\n")
+                tn.write("exit" + "\r\n")
+                helpers.log("now here 3")
+                tn.close()
             except:
                 helpers.test_log("Could not configure static IP address configuration on switch. Please check log for errors")
                 return False
             else:
-                tn.write("\r\n" + "dns-domain " + str(dns_domain) + " \r\n")
-                tn.write("\r\n" + "dns-server " + str(dns_server) + " \r\n")
-                tn.write("exit" + "\r\n")
-                tn.write("exit" + "\r\n")
-                tn.close()
                 return True
         except:
             helpers.test_log("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
 
-    def cli_delete_dns_server_domain(self, node, dns_server, dns_domain):
+    def cli_delete_dns_server_domain(self, node, dns_server='10.3.0.4', dns_domain='qa.bigswitch.com'):
         '''
         Objective:
         - Delete DNS configuration on switch.
@@ -1301,8 +1382,9 @@ class SwitchLight(object):
             # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -1411,8 +1493,9 @@ class SwitchLight(object):
             - False on configuration failure
         '''
         t = test.Test()
-        console_ip = t.params(node, "console_ip")
-        console_port = t.params(node, "console_port")
+        console = t.params(node, "console")
+        console_ip = console['ip']
+        console_port = console['port']
         tn = telnetlib.Telnet(console_ip, console_port)
         tn.set_debuglevel(10)
         tn.read_until("login:", 10)
@@ -1448,8 +1531,9 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             helpers.log("Console IP is %s \n Console Port is %s \n" % (console_ip, console_port))
             helpers.log("Username is %s \n Password is %s \n" % (user, new_password))
             tn = telnetlib.Telnet(console_ip, console_port)
@@ -1575,15 +1659,17 @@ class SwitchLight(object):
             full_path = "http://10.6.1.1/export/switchlight/" + str(image_path)
             bash_input_2 = "cd /mnt/flash2/; wget " + str(full_path) + " ./"
             switch.bash(bash_input_2)
-            bash_input_3 = "echo SWI=flash2:" + str(image_name) + " > /mnt/flash/boot-config"
+            bash_input_3 = "echo NETDEV=ma1 > /mnt/flash/boot-config"
             switch.bash(bash_input_3)
-            bash_input_4 = "echo NETDEV=ma1 >> /mnt/flash/boot-config"
+            bash_input_4 = "echo BOOTMODE=swi >> /mnt/flash/boot-config"
             switch.bash(bash_input_4)
-            bash_input_5 = "ls -lrt /mnt/flash2/; cat /mnt/flash/boot-config"
+            bash_input_5 = "echo SWI=flash2:" + str(image_name) + " >> /mnt/flash/boot-config"
             switch.bash(bash_input_5)
-            helpers.sleep(1)
-            bash_input_6 = "reboot"
+            bash_input_6 = "ls -lrt /mnt/flash2/; cat /mnt/flash/boot-config"
             switch.bash(bash_input_6)
+            helpers.sleep(2)
+            bash_input_7 = "reboot"
+            switch.bash(bash_input_7)
             return True
         except:
             helpers.test_log("Could not execute command. Please check log for errors")

@@ -1,5 +1,5 @@
 c1:
- ip: 10.9.16.46
+ ip: 10.9.16.48
  #set_init_ping: false            # default: true
  #set_session_ssh: false          # default: true
  console: 
@@ -8,7 +8,7 @@ c1:
    user: root
    password: bsn
 c2:
- ip: 10.9.16.47
+ ip: 10.9.16.49
  #set_init_ping: false            # default: true
  #set_session_ssh: false          # default: true
  console: 

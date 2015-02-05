@@ -607,3 +607,73 @@ class  T5Switch(object):
                     return False
 
 
+    def rest_config_breakout_interface(self, switch, intf):
+        ''' Function to configure force breakout interface
+           input - switch , interface 
+           output - returns true
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            url1 = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+            c.rest.put(url1, {"name": str(intf)})
+            url2 = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+            c.rest.patch(url2, {"breakout": True})
+            helpers.sleep(20)
+            return True
+       
+        except: 
+            helpers.log("Could not get the rest output.see log for errors\n")
+            return  False
+
+
+    def rest_delete_breakout_interface(self, switch, intf, timeout=30):
+        ''' Function to delete force breakout interface
+           input - switch , interface 
+           output - returns true
+        '''
+        try: 
+            t = test.Test()
+            c = t.controller('master')
+            url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+            c.rest.delete(url, {"breakout": None})
+            helpers.sleep(20)
+            return True
+        
+        except:
+            helpers.log("Could not get the rest output.see log for errors\n")
+            return  False
+
+
+    def rest_compare_interface_state(self, switch, intf, expstate):
+        ''' Function to compare interface state
+           input - switch , interface, state
+           output - returns true if state compared
+        '''
+        
+        t = test.Test()
+        c = t.controller('master')
+        url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        dpid = data1[0]["dpid"]
+        url = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        c.rest.get(url)
+        data = c.rest.content()
+            
+        if len(data) != 0:
+            rstate = str(data[0]["interface"][0]["state"])
+            expstate = str(expstate)
+            helpers.log("Got the intf state as %s" % rstate)
+            helpers.log("expected state %s" % expstate)             
+            if expstate == rstate:
+                helpers.log("Verified the intfstate- %s and exp state- %s" % (rstate, expstate))
+                return True
+            else:
+                helpers.log("Did not match the intfstate- %s and exp state- %s" % (rstate, expstate))
+                return False
+        else:
+            helpers.log("Could not get the intf state for intf %s" % intf)
+            return False 
+        
+        

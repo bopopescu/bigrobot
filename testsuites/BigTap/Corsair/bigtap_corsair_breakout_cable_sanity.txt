@@ -529,7 +529,7 @@ TC025: Verify L3 IPv6 traffic: frame size 9150 bytes
     [Tags]  sanity  feature  traffic
 
 #### L3 Vlan Tagged IPv4 Traffic : Frame Size 9150 Bytes
-TC026: Verify L3 IPv4 traffic: frame size 9150 bytes
+TC026: Verify L3 Vlan Tagged IPv4 traffic: frame size 9150 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream_l3_s4810}=  L3 add  flow=a->c  frame_rate=10000  frame_size=9150  vlan_id=2048
@@ -544,7 +544,7 @@ TC026: Verify L3 IPv4 traffic: frame size 9150 bytes
     
 #### L3 Vlan Tagged IPv6 Traffic : Frame Size 9150 Bytes
         
-TC027: Verify L3 IPv6 traffic: frame size 9150 bytes
+TC027: Verify L3 Vlan Tagged IPv6 traffic: frame size 9150 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream_l3_s4810}=  L3 add  flow=a->c  frame_rate=10000  frame_size=9150  vlan_id=2048
@@ -1164,7 +1164,7 @@ TC042: Reboot switch and verify breakout configuration is retained.
     stop traffic
     sleep  10
     verify interface stats
-    [Tags]  ha  robustness  full  traffic
+    [Tags]  ha  robustness  full  traffic  
 
 TC043: Flap breakout configuration on switch and verify 
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -1201,7 +1201,7 @@ TC043: Flap breakout configuration on switch and verify
     sleep  10
     verify results  a  c  transmitted_frame_rate  received_valid_frame_rate
     stop traffic
-    [Tags]  ha  robustness  full  traffic
+    [Tags]  ha  robustness  full  traffic  
     
 TC044: Flap breakout interface once and verify interface shows as up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -1248,7 +1248,7 @@ TC044: Flap breakout interface once and verify interface shows as up
     stop traffic
     sleep  10
     verify interface stats
-    [Tags]  ha  robustness  full  traffic
+    [Tags]  ha  robustness  full  traffic  
 
 TC045: Flap breakout interface on remote side once and verify interface shows as up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -1267,18 +1267,18 @@ TC045: Flap breakout interface on remote side once and verify interface shows as
     sleep  10
     verify interface stats
     cli disable interface  s1  ${brekout_s1s2_1}
-    cli disable interface  s1  ${brekout_s1s2_1}
-    cli disable interface  s1  ${brekout_s1s2_1}
-    cli disable interface  s1  ${brekout_s1s2_1}
+    cli disable interface  s1  ${brekout_s1s2_2}
+    cli disable interface  s1  ${brekout_s1s2_3}
+    cli disable interface  s1  ${brekout_s1s2_4}
     sleep  45
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy2}
     cli enable interface  s1  ${brekout_s1s2_1}
-    cli enable interface  s1  ${brekout_s1s2_1}
-    cli enable interface  s1  ${brekout_s1s2_1}
-    cli enable interface  s1  ${brekout_s1s2_1}
+    cli enable interface  s1  ${brekout_s1s2_2}
+    cli enable interface  s1  ${brekout_s1s2_3}
+    cli enable interface  s1  ${brekout_s1s2_4}
     sleep  20
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
@@ -1295,7 +1295,7 @@ TC045: Flap breakout interface on remote side once and verify interface shows as
     stop traffic
     sleep  10
     verify interface stats
-    [Tags]  ha  robustness  full  traffic
+    [Tags]  ha  robustness  full  traffic  runthis
 
 * Keyword
 breakout suite setup
