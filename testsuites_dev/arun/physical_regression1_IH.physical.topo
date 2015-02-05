@@ -153,6 +153,7 @@ s6:
     password: apc
   interfaces:
     ixia1_int0: ethernet24
+    ixia1_int1: ethernet43
     spine0_int0: ethernet49
     spine1_int0: ethernet52
     h5_int0: ethernet47
@@ -261,3 +262,5 @@ tg1:
       name: 3/12
     f:
       name: 3/11
+    leaf2b_int1:
+      name: 5/13
