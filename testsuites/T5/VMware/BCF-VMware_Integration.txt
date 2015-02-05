@@ -251,7 +251,10 @@ TC74 Change IP address of a vmkernel
 TC75 Reboot a host
   [Tags]        feature     vmware
 
-
+TC++ Clone a VM
+    [Tags]        feature     vmware
+    
+    
 ### vCenter related test cases
 
 TC76 Add hosts to a cluster
@@ -270,6 +273,12 @@ TC80 Enable automatic DRS on a cluster
   [Tags]        feature     vmware
 
 TC81 Delete a cluster 
+  [Tags]        feature     vmware
+  
+TC++ HA on a cluster
+  [Tags]        feature     vmware
+ 
+TC++ Fault Tolerence VMs
   [Tags]        feature     vmware
 
 
@@ -329,6 +338,19 @@ TC97 Verify the integrity of vCenter updates during and after controller failove
 
 TC++ Verify warning messages for non-IP hashed uplink port groups
   [Tags]        feature     vmware
+
+TC++ Management VLAN configuration
+  [Tags]         feature     vmware
+  
+TC++ Managemnt network inside BCF
+  [Tags]         feature     vmware
+
+TC++ Managemnt network outside BCF
+  [Tags]         feature     vmware 
+
+TC++ Create vCenter Management segment with a wildcard rule
+  [Tags]         feature     vmware 
+  
 
 ################    Stress      ################
 
@@ -393,6 +415,9 @@ TC116 Delete/Reconfigure the vCenter username and verify the behavior
     [Tags]        negative     vmware
 
 TC117 Multiple vCenters with same IP ranges
+    [Tags]        negative     vmware
+    
+TC++ Automatic segment configuration when manual wildcard configurations exist
     [Tags]        negative     vmware
 
 
