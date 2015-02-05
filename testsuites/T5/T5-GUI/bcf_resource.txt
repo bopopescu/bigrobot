@@ -48,6 +48,8 @@ ${GENERIC CONFIRM POPUP}		xpath=//div[contains(@title, 'Confirm')]
 ${GENERIC SUBMIT BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
 ${GENERIC YES BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Yes')]
 ${GENERIC PROCEED BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
+${GO TO NEXT PAGE BUTTON}		xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node right_triangle']
+${GO TO PREVIOUS PAGE BUTTON}   xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node left_triangle']
 
 ${TIMEOUT}						10 sec
 ${PERIOD}						3 sec
@@ -545,6 +547,40 @@ ${ACCOUNTING SETTINGS POPUP}			xpath=//div[@title='Accounting Settings']
 ${AUTHENTICATION SETTINGS POPUP}		xpath=//div[@title='Authentication Settings']
 ${AUTHENTICATION SAVE BUTTON}			xpath=//span[@data-dojo-attach-point='containerNode' and contains(text(), 'Save')]
 
+
+### Test Path Page
+${TEST PATH SOURCE SECTION PREFIX}  									xpath=//div[@class='test_path_section'][1]
+${TEST PATH DESTINATION SECTION PREFIX}  								xpath=//div[@class='test_path_section'][2]
+${TEST PATH SELECT SOURCE ENDPOINT BUTTON}								${TEST PATH SOURCE SECTION PREFIX}/descendant::div[@data-dojo-attach-point='modelSelectNode']/descendant::div[@class='bsn_button_group bottom']/child::div[1]
+${TEST PATH CLEAR SOURCE ENDPOINT BUTTON}								${TEST PATH SOURCE SECTION PREFIX}/descendant::div[@data-dojo-attach-point='modelSelectNode']/descendant::div[@class='bsn_button_group bottom']/child::div[2]
+${TEST PATH SELECT SOURCE ENDPOINT POPUP}    							xpath=(//div[contains(@title, 'Use Endpoint')])[1]
+${TEST PATH USE SELECTED SOURCE ENDPOINT BUTTON} 						xpath=(//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Use Selected')])[1]
+
+${TEST PATH SELECT DESTINATION ENDPOINT BUTTON}							${TEST PATH DESTINATION SECTION PREFIX}/descendant::div[@data-dojo-attach-point='modelSelectNode']/descendant::div[@class='bsn_button_group bottom']/child::div[1]
+${TEST PATH CLEAR DESTINATION ENDPOINT BUTTON} 							${TEST PATH DESTINATION SECTION PREFIX}/descendant::div[@data-dojo-attach-point='modelSelectNode']/descendant::div[@class='bsn_button_group bottom']/child::div[2]
+${TEST PATH SELECT DESTINATION ENDPOINT POPUP}							xpath=(//div[contains(@title, 'Use Endpoint')])[2]
+${TEST PATH USE SELECTED DESTINATION ENDPOINT BUTTON} 					xpath=(//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Use Selected')])[2]
+${TEST PATH SELECT DESTINATION IP BUTTON}  								${TEST PATH DESTINATION SECTION PREFIX}/descendant::div[@data-dojo-attach-point='nodeManual']/div[1]
+${TEST PATH SELECT DESTINATION IP POPUP}								xpath=//div[contains(@title, 'Specify Endpoint')]
+${TEST PATH INPUT DESTINATION IP FIELD}									${TEST PATH SELECT DESTINATION IP POPUP}/following-sibling::div[@data-dojo-attach-point='containerNode']/descendant::input[@class='dijitReset dijitInputInner']
+${TEST PATH SUBMIT DESTINATION IP BUTTON}								${GENERIC SUBMIT BUTTON}
+
+${TEST PATH IP PROTO DROPDOWN BUTTON}									xpath=//div[@data-dojo-attach-point='optionsNode']/descendant::input[@class='dijitReset dijitInputField dijitArrowButtonInner']
+${TEST PATH IP PROTO LIST}												xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup']
+${TEST PATH IP PROTO VALUE FIELD}										xpath=//div[@data-dojo-attach-point='optionsNode']/desncendant::input[@class='dijitReset dijitInputInner']
+${TEST PATH SRC PORT VALUE FIELD}										${TEST PATH SOURCE SECTION PREFIX}/descendant::input[@class='dijitReset dijitInputInner']
+${TEST PATH DST PORT VALUE FIELD}										${TEST PATH DESTINATION SECTION PREFIX}/descendant::input[@class='dijitReset dijitInputInner']
+
+${TEST PATH LOAD TEST BUTTON}											xpath=//div[@data-dojo-attach-point='labelLoad']/preceding-sibling::div/descendant::div[@data-dojo-attach-point='iconNode']
+${TEST PATH TEST TRIGGER BUTTON}										xpath=//div[@data-dojo-attach-point='labelTestConfig']/preceding-sibling::div/descendant::div[@data-dojo-attach-point='iconNode']
+${TEST PATH SIMULATE TRIGGER BUTTON}									xpath=//div[@data-dojo-attach-point='labelTestFabric']/preceding-sibling::div/descendant::div[@data-dojo-attach-point='iconNode']
+${TEST PATH SWAP ENDPOINTS BUTTON}										xpath=//div[@data-dojo-attach-point='labelShuffle']/preceding-sibling::div/descendant::div[@data-dojo-attach-point='iconNode']
+${TEST PATH INITIALIZE POPUP}											xpath=//div[contains(@title, 'Initialize Fabric Test')]
+${TEST PATH TEST NAME FIELD}											${TEST PATH INITIALIZE POPUP}/following-sibling::div/descendant::div[@class='input_block'][1]/descendant::input[@class='dijitReset dijitInputInner']
+${TEST PATH TEST TIMEOUT FIELD}											${TEST PATH INITIALIZE POPUP}/following-sibling::div/descendant::div[@class='input_block'][2]/descendant::input[@class='dijitReset dijitInputInner'][1]
+${TEST PATH TEST SUBMIT BUTTON}											${TEST PATH INITIALIZE POPUP}/following-sibling::div/descendant::div[@data-dojo-attach-point='buttonsNode']/descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+
+
 *** Keywords ***
 Set URLs
 	Set Suite Variable     	${LOGIN URL}     			https://${SERVER}/login
@@ -741,7 +777,15 @@ Logout
     Wait Until Page Loaded
     Title Should Contain  ${LOGIN TITLE}
     Sleep  1
-    
+
+Go To Next Table Page
+	Verify Element Visible  ${GO TO NEXT PAGE BUTTON}
+	Click Element  ${GO TO NEXT PAGE BUTTON}  and don't wait
+
+Go To Previous Table Page
+	Verify Element Visible  ${GO TO PREVIOUS PAGE BUTTON}
+	Click Element  ${GO TO PREVIOUS PAGE BUTTON}  and don't wait
+
 Delete All Tenants
 	Go To Tenants Page
     Delete All
@@ -1035,6 +1079,11 @@ Generate Action Menu Action Item Xpath
 Generate NTP Server Checkbox Xpath
 	[Arguments]  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='ntp_servers_node']/descendant::div[@class='content'  and (text()= '  ${text}  ')]/parent::td/preceding-sibling::td/descendant::input[@type='checkbox']
+    [Return]  ${xpath}
+
+Generate Endpoint Checkbox Xpath
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  ${attachment_point}  /following-sibling::div/descendant::div[@class='inline_block nowrap' and contains(text(), '  ${text}  ')]/parent::div/parent::div/parent::div/parent::td/parent::tr/child::td[1]/descendant::input
     [Return]  ${xpath}
 
 Create Tenant
@@ -2788,6 +2837,119 @@ Configure Accounting
     ${popup_count}  Get Matching Xpath Count Tokenize  ${ACCOUNTING SETTINGs POPUP}
     Run Keyword If  '${popup_count}' > '0'
     ...  Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
+
+
+Test Path
+	[Arguments]  ${method}  ${src_ip}  ${dst_ip}  ${dst_input}=Endpoint  ${protocol}=ICMP  ${src_port}=None  ${dst_port}=None
+	# method - Test or Simulate
+	# dst_input - Endpoint or Manual
+	Go To Test Path Page
+	Page Should Contain  Source Endpoint
+	Page Should Contain  Destination Endpoint
+	Verify Element Visible  ${TEST PATH SELECT SOURCE ENDPOINT BUTTON}
+	Click Element  ${TEST PATH SELECT SOURCE ENDPOINT BUTTON}  and don't wait
+	Verify Element Visible  ${TEST PATH SELECT SOURCE ENDPOINT POPUP}
+	${src_checkbox}  Generate Endpoint Checkbox Xpath  ${TEST PATH SELECT SOURCE ENDPOINT POPUP}  ${src_ip}
+	Select Checkbox  ${src_checkbox}
+	Verify Element Visible  ${TEST PATH USE SELECTED SOURCE ENDPOINT BUTTON}
+	Click Element  ${TEST PATH USE SELECTED SOURCE ENDPOINT BUTTON}  and don't wait
+	Verify Element Invisible  ${TEST PATH SELECT SOURCE ENDPOINT POPUP}
+
+	Run Keyword If  '${dst_input}' == 'Endpoint'
+	...  Select Test Path Destination Endpoint  ${dst_ip}
+	...  ELSE IF  '${dst_input}' == 'Manual'
+	...  Input Test Path Destination Endpoint IP  ${dst_ip}
+
+	Select Test Path Protocol  ${protocol}  ${src_port}  ${dst_port}
+
+	Go To Test Path Page
+	Page Should Contain  ${src_ip}
+	Page Should Contain  ${dst_ip}
+
+	Run Keyword If  '${method}' == 'Test'
+	...  Trigger Test Path Test  ${src_ip}  ${dst_ip}
+	...  ELSE IF  '${method}' == 'Simulate'
+	...  Trigger Test Path Simulate
+
+Select Test Path Destination Endpoint
+	[Arguments]  ${dst_ip}
+	Verify Element Visible  ${TEST PATH SELECT DESTINATION ENDPOINT BUTTON}
+	Click Element  ${TEST PATH SELECT DESTINATION ENDPOINT BUTTON}  and don't wait
+	Verify Element Visible  ${TEST PATH SELECT DESTINATION ENDPOINT POPUP}
+	${dst_checkbox}  Generate Endpoint Checkbox Xpath  ${TEST PATH SELECT DESTINATION ENDPOINT POPUP}  ${dst_ip}
+	Select Checkbox  ${dst_checkbox}
+	Verify Element Visible  ${TEST PATH USE SELECTED DESTINATION ENDPOINT BUTTON}
+	Click Element  ${TEST PATH USE SELECTED DESTINATION ENDPOINT BUTTON}  and don't wait
+	Verify Element Invisible  ${TEST PATH SELECT DESTINATION ENDPOINT POPUP}
+
+Input Test Path Destination Endpoint IP
+	[Arguments]  ${dst_ip}
+	Verify Element Visible  ${TEST PATH SELECT DESTINATION IP BUTTON}
+	Click Element  ${TEST PATH SELECT DESTINATION IP BUTTON}  and don't wait
+	Verify Element Visible  ${TEST PATH SELECT DESTINATION IP POPUP}
+	Input Text And Verify  ${TEST PATH INPUT DESTINATION IP FIELD}  ${dst_ip}
+	Click Element  ${TEST PATH SELECT DESTINATION IP POPUP}  and don't wait
+	Verify Element Visible  ${TEST PATH SUBMIT DESTINATION IP BUTTON}
+	Click Element  ${TEST PATH SUBMIT DESTINATION IP BUTTON}  and don't wait
+	Verify Element Invisible  ${TEST PATH SELECT DESTINATION IP POPUP}
+
+Select Test Path Protocol
+	[Arguments]  ${protocol}  ${src_port}  ${dst_port}
+	Select From List And Verify
+    ...  ${TEST PATH IP PROTO DROPDOWN BUTTON}
+    ...	 ${TEST PATH IP PROTO LIST}
+    ...  ${TEST PATH IP PROTO VALUE FIELD}
+    ...  ${protocol}
+
+	Run Keyword Unless  '${protocol}' == 'ICMP'
+	...  Input Text And Verify  ${TEST PATH SRC PORT VALUE FIELD}  ${src_port}
+	Run Keyword Unless  '${protocol}' == 'ICMP'
+	...  Input Text And Verify  ${TEST PATH DST PORT VALUE FIELD}  ${dst_port}
+
+Trigger Test Path Test
+	[Arguments]  ${src_ip}  ${dst_ip}  ${timeout}=30
+	Verify Element Visible  ${TEST PATH TEST TRIGGER BUTTON}
+	Click Element  ${TEST PATH TEST TRIGGER BUTTON}  and don't wait
+	Verify Element Visible  ${TEST PATH INITIALIZE POPUP}
+	Verify Element Visible  ${TEST PATH TEST NAME FIELD}
+	Input Text And Verify  ${TEST PATH TEST NAME FIELD}  test-${src_ip}-${dst_ip}
+	Verify Element Visible  ${TEST PATH TEST TIMEOUT FIELD}
+	Input Text And Verify  ${TEST PATH TEST TIMEOUT FIELD}  ${timeout}
+	Verify Element Visible  ${TEST PATH TEST SUBMIT BUTTON}
+	Click Element  ${TEST PATH TEST SUBMIT BUTTON}  and don't wait
+	Sleep  ${timeout}
+	Sleep  5
+	Verify Element Invisible  ${TEST PATH INITIALIZE POPUP}
+
+Trigger Test Path Simulate
+	Verify Element Visible  ${TEST PATH SIMULATE TRIGGER BUTTON}
+	Click Element  ${TEST PATH SIMULATE TRIGGER BUTTON}  and don't wait
+	Sleep  5
+
+Verify Test Path Simulate Result
+	[Arguments]  ${forward}  ${reverse}
+	${expected_forward_result}  Set Variable  xpath=//div[@class='summary_content']/descendant::td[@class='label' and contains(text(), 'Forward Result')]/following-sibling::td[@class='value' and contains(text(), '${forward}')]
+	${expected_reverse_result}  Set Variable  xpath=//div[@class='summary_content']/descendant::td[@class='label' and contains(text(), 'Reverse Result')]/following-sibling::td[@class='value' and contains(text(), '${reverse}')]
+	Verify Element Visible  ${expected_forward_result}
+	Verify Element Visible  ${expected_reverse_result}
+	${segments}  Get Matching Xpath Count Tokenize  xpath=//div[@class='node logical segment']
+	${endpoints}  Get Matching Xpath Count Tokenize  xpath=//div[@class='node physical endpoint']
+	Run Keyword If  '${forward}' == 'Forwarded'
+	...  Should Be True  ${segments} > 0
+	Run Keyword If  '${forward}' == 'Forwarded'
+	...  Should Be True  ${endpoints} > 0
+	...  ELSE IF  '${forward}' == 'Dropped'
+	...  Should Be True  ${endpoints} == 0
+
+Verify Test Path Test Result
+	[Arguments]  ${result}
+	${switches}  Get Matching Xpath Count Tokenize  xpath=//table[@class='routes_wrapper']
+	Run Keyword If  '${result}' == 'Pass'
+	...  Should Be True  ${switches} > 0
+	...  ELSE IF  '${result}' == 'Fail'
+	...  Should Be True  ${switches} == 0
+	Run Keyword If  '${result}' == 'Pass'
+	...  Page Should Contain  Test saved as
 
 Physical GUI Suite Setup
 	${tmp}  params  node=c1  key=ip

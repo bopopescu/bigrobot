@@ -1659,15 +1659,17 @@ class SwitchLight(object):
             full_path = "http://10.6.1.1/export/switchlight/" + str(image_path)
             bash_input_2 = "cd /mnt/flash2/; wget " + str(full_path) + " ./"
             switch.bash(bash_input_2)
-            bash_input_3 = "echo SWI=flash2:" + str(image_name) + " > /mnt/flash/boot-config"
+            bash_input_3 = "echo NETDEV=ma1 > /mnt/flash/boot-config"
             switch.bash(bash_input_3)
-            bash_input_4 = "echo NETDEV=ma1 >> /mnt/flash/boot-config"
+            bash_input_4 = "echo BOOTMODE=swi >> /mnt/flash/boot-config"
             switch.bash(bash_input_4)
-            bash_input_5 = "ls -lrt /mnt/flash2/; cat /mnt/flash/boot-config"
+            bash_input_5 = "echo SWI=flash2:" + str(image_name) + " >> /mnt/flash/boot-config"
             switch.bash(bash_input_5)
-            helpers.sleep(1)
-            bash_input_6 = "reboot"
+            bash_input_6 = "ls -lrt /mnt/flash2/; cat /mnt/flash/boot-config"
             switch.bash(bash_input_6)
+            helpers.sleep(2)
+            bash_input_7 = "reboot"
+            switch.bash(bash_input_7)
             return True
         except:
             helpers.test_log("Could not execute command. Please check log for errors")

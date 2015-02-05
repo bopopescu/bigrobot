@@ -1,5 +1,5 @@
 c1:
- ip: 10.9.16.46
+ ip: 10.9.16.48
  #set_init_ping: false            # default: true
  #set_session_ssh: false          # default: true
  console: 
@@ -8,7 +8,7 @@ c1:
    user: root
    password: bsn
 c2:
- ip: 10.9.16.47
+ ip: 10.9.16.49
  #set_init_ping: false            # default: true
  #set_session_ssh: false          # default: true
  console: 
@@ -40,6 +40,8 @@ s1:
     spine1_int0: ethernet52
     h1_int0: ethernet48
     h2_int0: ethernet47
+    h2_int1: ethernet26
+    h1_int1: ethernet25
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -64,6 +66,8 @@ s2:
     spine1_int0: ethernet52
     h1_int0: ethernet48
     h2_int0: ethernet47
+    h3_int1: ethernet25
+    h4_int1: ethernet26 
   set_session_ssh: false
   set_init_ping: false
 s3:
@@ -89,7 +93,9 @@ s3:
     leaf1b_int1: ethernet39
     spine0_int0: ethernet49
     h3_int0: ethernet1
-    h4_int0: ethernet2 
+    h4_int0: ethernet2
+    h3_int1: ethernet25
+    h4_int1: ethernet26
   set_session_ssh: false
   set_init_ping: false
 s4:
@@ -225,18 +231,26 @@ h3:
   ip: 10.9.16.21
   user: root
   password: bsn
+  interfaces:
+    h3_eth1_mac: d4:ae:52:c6:bc:cb
 h4:
   ip: 10.9.16.22
   user: root
   password: bsn
+  interfaces:
+    bond0_mac: 00:10:18:f0:e9:70
 h5:
   ip: 10.9.16.25
   user: root
   password: bsn
+  interfaces:
+    bond0_mac: 90:e2:ba:4f:80:dc
 h6:
   ip: 10.9.16.26
   user: root
   password: bsn
+  interfaces:
+    bond0_mac: 90:e2:ba:4e:bb:90
 tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.6
