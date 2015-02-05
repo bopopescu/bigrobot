@@ -40,6 +40,8 @@ s1:
     spine1_int0: ethernet52
     h1_int0: ethernet48
     h2_int0: ethernet47
+    h2_int1: ethernet26
+    h1_int1: ethernet25
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -64,6 +66,8 @@ s2:
     spine1_int0: ethernet52
     h1_int0: ethernet48
     h2_int0: ethernet47
+    h3_int1: ethernet25
+    h4_int1: ethernet26 
   set_session_ssh: false
   set_init_ping: false
 s3:
@@ -89,7 +93,9 @@ s3:
     leaf1b_int1: ethernet39
     spine0_int0: ethernet49
     h3_int0: ethernet1
-    h4_int0: ethernet2 
+    h4_int0: ethernet2
+    h3_int1: ethernet25
+    h4_int1: ethernet26
   set_session_ssh: false
   set_init_ping: false
 s4:
