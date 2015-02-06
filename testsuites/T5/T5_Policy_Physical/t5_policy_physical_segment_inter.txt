@@ -661,7 +661,7 @@ verify results   [Arguments]  ${port_1}   ${port_2}
    ${report}=  fetch port stats
    ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
    ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
-   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  30
+   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
    Should be true  ${in_range}
 
 verify policy stats   [Arguments]  ${port_1}   ${tenant}  ${seq}
@@ -689,7 +689,7 @@ verify stats true   [Arguments]  ${transmitted_frames}  ${received_frames}  ${st
     ${report}=  fetch port stats  stream=${stream}  
     ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  10
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
     Should be true  ${in_range}
     
 verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
@@ -697,7 +697,7 @@ verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${s
     ${report}=  fetch port stats  stream=${stream}  
     ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  10
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
     Should not be true  ${in_range}
 
 
