@@ -17,7 +17,7 @@ Library                 String.py
 
 * Variable
 ${switch1_alias}        app-ras5710-trident-1
-${switch2_alias}        app-ras5710-nontrident-1
+${switch2_alias}        app-ras4600-nontrident-1
 ${chain_name}           CHAIN1
 ${chain_interface_1}    ethernet1
 ${chain_interface_2}    ethernet2
@@ -86,7 +86,7 @@ TC007: Configure single chain without service and verify chain via rest command 
     Should be true  ${result3}
     sleep  5
     ${check_output_1}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=detailedstatus
-    Should Be Equal As Strings  ${check_output_1}  All policies active and installed for this chain
+    Should Be Equal As Strings  ${check_output_1}  All flows installed for this chain
     ${check_output_2}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=endpoint1
     Should Be Equal As Strings  ${check_output_2}  ${chain_interface_1}
     ${check_output_3}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=endpoint1-drop
