@@ -1770,9 +1770,8 @@ Generate Support Bundle
 	
 	
 	Click Element  ${GENERATE SUPPORT BUNDLE BUTTON}   and don't wait
-	Sleep  180
-	
-	Verify Element Invisible  ${GENERATE SUPPORT BUNDLE POPUP}
+	Sleep  100
+	Wait Until Keyword Succeeds  10 min  30 sec  Verify Element Invisible  ${GENERATE SUPPORT BUNDLE POPUP}
 	
 
 Create Logging Level
