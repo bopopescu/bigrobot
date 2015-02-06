@@ -38,6 +38,7 @@ ${SIGNOUT TITLE}  			Login
 
 ${SHOW ALL BUTTON}  			xpath=//div[contains(@class, 'item') and contains(text(), 'All')]
 ${MAIN MINUS BUTTON}			xpath=//div[@class='icon_node minus']
+${GENERIC PLUS BUTTON}			xpath=//div[@class='icon_node plus']
 ${CONFIRM DELETION POPUP}		xpath=//div[@title='Confirm Deletion']
 ${CONFIRM DELTE POPUP}			xpath=//div[@title='Confirm']
 ${PROCEED DELTE BUTTON}			xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
@@ -202,6 +203,7 @@ ${APPEND SWITCH INTERFACE MEMBERSHIP RULE}  xpath=//span[@id='dijit_form_Button_
 ${ADD ENDPOINT PLUS BUTTON}					xpath=//div[@id='segment_endpoints_section']/descendant::div[@class='icon_node plus']
 ${SEGMENT ENDPOINT POPUP}					xpath=//div[@title='Create Endpoint']			
 ${SEGMENT ENDPOINT NAME FIELD}				xpath=//div[@title='Create Endpoint']/following-sibling::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${ENDPOINT DESCRIPTION FIELD}				xpath=//div[@title='Create Endpoint']/following-sibling::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Description')]/parent::h2/parent::div/following-sibling::textarea
 ${ATTACHMENT TYPE DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Attachment Type')]/parent::h2/parent::div/following-sibling::div/div[1]/input	
 ${ATTACHMENT TYPE LIST}  					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'None')]/parent::div
 ${ATTACHMENT TYPE FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Attachment Type')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]			
@@ -226,6 +228,16 @@ ${APPEND IP ADDRESSES BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_f
 ${SAVE SEGMENT ENDPOINTS BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 ${LOGICAL SEGMENT DETAIL MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Detail')]
 ${SAVE LOGICAL SEGMENT BUTTON} 				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+
+### Endpoints Page
+# reuses many xpaths from Segment Endpoint Page
+${ENDPOINT TENANT DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='blockSegment']/descendant::span[contains(text(), 'Select Tenant')]/following-sibling::input/parent::div/preceding-sibling::div/descendant::input[@class='dijitReset dijitInputField dijitArrowButtonInner']
+${ENDPOINT TENANT LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
+${ENDPOINT TENANT FIELD}					xpath=//div[@data-dojo-attach-point='blockSegment']/descendant::span[contains(text(), 'Select Tenant')]/following-sibling::input
+${ENDPOINT SEGMENT DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='blockSegment']/descendant::span[contains(text(), 'Select Segment')]/following-sibling::input/parent::div/preceding-sibling::div/descendant::input[@class='dijitReset dijitInputField dijitArrowButtonInner']
+${ENDPOINT SEGMENT LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
+${ENDPOINT SEGMENT FIELD}					xpath=//div[@data-dojo-attach-point='blockSegment']/descendant::span[contains(text(), 'Select Segment')]/following-sibling::input
 
 ## Logical Segment Interface page
 
@@ -1381,43 +1393,39 @@ Append Endpoint to Segment
 	[Arguments]  ${endpoint-name}   ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}  ${vlan}=None
 	Verify Element Visible  ${ADD ENDPOINT PLUS BUTTON}
 	Click Element   ${ADD ENDPOINT PLUS BUTTON}  and don't wait
-	
+
 	Verify Element Visible  ${SEGMENT ENDPOINT POPUP}
-	
+
 	Input Text And Verify  ${SEGMENT ENDPOINT NAME FIELD}  ${endpoint-name}
-	
+
 	Select From List And Verify  
     ... 	${ATTACHMENT TYPE DROPDOWN BUTTON}
     ...		${ATTACHMENT TYPE LIST}  
     ... 	${ATTACHMENT TYPE FIELD}
     ... 	${attachment-type}
-    
+
     Highlight Element  ${ENDPOINT PORT GROUP DROPDOWN BUTTON}
     Run Keyword Unless  '${endp-port-group}' == '${EMPTY}'
 	...		Select From List And Verify   ${ENDPOINT PORT GROUP DROPDOWN BUTTON}  ${ENDPOINT PORT GROUP LIST}    ${ENDPOINT PORT GROUP FIELD}  ${endp-port-group}
-	
+
 	Run Keyword Unless  '${endpoint-switch}' == '${EMPTY}'
 	...		Select From List And Verify   ${ENDPOINT SWITCH DROPDOWN BUTTON}  ${ENDPOINT SWITCH LIST}    ${ENDPOINT SWITCH FIELD}  ${endpoint-switch}
-	
+
 	Run Keyword Unless  '${endpoint-interface}' == '${EMPTY}'
 	...		Select From List And Verify   ${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  ${ENDPOINT SWITCH INTERFACE LIST}    ${ENDPOINT SWITCH INTERFACE FIELD}  ${endpoint-interface}
 
 	Run Keyword Unless  '${vlan}' == 'None'
 	...		Input Text And Verify   ${ENDPOINT VLAN FIELD}  ${vlan}
-    
+
 	Run Keyword Unless  '${mac-addr}' == '${EMPTY}'
 	...		Input Text And Verify   ${ENDPOINT MAC ADDRESS FIELD}  ${mac-addr}
-	
+
 	Run Keyword Unless  '${ip-addr}' == '${EMPTY}'
 	...		Add IP Address to Endpoint  ${ip-addr}
-	
-	Verify Element Visible  ${APPEND IP ADDRESSES BUTTON}
-	Click Element  ${APPEND IP ADDRESSES BUTTON}  and don't wait
 
-    Verify Element Invisible  ${ENTER IPV4 ADDRESS POPUP}
-	
 	Click Element  ${SAVE SEGMENT ENDPOINTS BUTTON}   and don't wait
 
+	Verify Element Invisible  ${SEGMENT ENDPOINT POPUP}
 
 	
 Add IP Address to Endpoint
@@ -1428,7 +1436,10 @@ Add IP Address to Endpoint
 	Input Text And Verify   ${IP ADDRESS TEXT FIELD}  ${ip-addr}
 	#Highlight Element  ${APPEND IP ADDRESSES BUTTON} 
 	Click Element   ${ENTER IPV4 ADDRESS POPUP}  and don't wait 
-	
+	Verify Element Visible  ${APPEND IP ADDRESSES BUTTON}
+	Click Element  ${APPEND IP ADDRESSES BUTTON}  and don't wait
+
+    Verify Element Invisible  ${ENTER IPV4 ADDRESS POPUP}
     
 Create Logical Segment Interface
 	[Arguments]  ${tenant-name}  ${ls-name}  ${status}  ${ip-addr}   ${mask}   ${addr-type}   ${dhcp-relay}   ${server-ip}   
@@ -1487,7 +1498,59 @@ Create Logical Segment Interface
 	Click Element  ${SAVE SEGMENT INTERFACE BUTTON}   and don't wait
 	Verify Element Invisible  ${CREATE LOGICAL SEGMENT INTERFACE POPUP}
 	
+Create Endpoint From Endpoint Page
+	[Arguments]  ${tenant}  ${segment}  ${endpoint-name}  ${description}  ${attachment-type}   ${endp-port-group}   ${endpoint-switch}   ${endpoint-interface}   ${mac-addr}  ${ip-addr}  ${vlan}=None
+	Verify Element Visible  ${GENERIC PLUS BUTTON}
+	Click Element   ${GENERIC PLUS BUTTON}  and don't wait
 	
+	Verify Element Visible  ${SEGMENT ENDPOINT POPUP}
+
+	Select From List And Verify
+    ... 	${ENDPOINT TENANT DROPDOWN BUTTON}
+    ...		${ENDPOINT TENANT LIST}
+    ... 	${ENDPOINT TENANT FIELD}
+    ... 	${tenant}
+
+	Select From List And Verify
+    ... 	${ENDPOINT SEGMENT DROPDOWN BUTTON}
+    ...		${ENDPOINT SEGMENT LIST}
+    ... 	${ENDPOINT SEGMENT FIELD}
+    ... 	${segment}
+
+	Input Text And Verify  ${SEGMENT ENDPOINT NAME FIELD}  ${endpoint-name}
+
+	Run Keyword Unless  '${description}' == '${EMPTY}'
+	...  	Input Text And Verify  ${ENDPOINT DESCRIPTION FIELD}  ${description}
+
+	Select From List And Verify
+    ... 	${ATTACHMENT TYPE DROPDOWN BUTTON}
+    ...		${ATTACHMENT TYPE LIST}
+    ... 	${ATTACHMENT TYPE FIELD}
+    ... 	${attachment-type}
+
+    Highlight Element  ${ENDPOINT PORT GROUP DROPDOWN BUTTON}
+    Run Keyword Unless  '${endp-port-group}' == '${EMPTY}'
+	...		Select From List And Verify   ${ENDPOINT PORT GROUP DROPDOWN BUTTON}  ${ENDPOINT PORT GROUP LIST}    ${ENDPOINT PORT GROUP FIELD}  ${endp-port-group}
+
+	Run Keyword Unless  '${endpoint-switch}' == '${EMPTY}'
+	...		Select From List And Verify   ${ENDPOINT SWITCH DROPDOWN BUTTON}  ${ENDPOINT SWITCH LIST}    ${ENDPOINT SWITCH FIELD}  ${endpoint-switch}
+
+	Run Keyword Unless  '${endpoint-interface}' == '${EMPTY}'
+	...		Select From List And Verify   ${ENDPOINT SWITCH INTERFACE DROPDOWN BUTTON}  ${ENDPOINT SWITCH INTERFACE LIST}    ${ENDPOINT SWITCH INTERFACE FIELD}  ${endpoint-interface}
+
+	Run Keyword Unless  '${vlan}' == 'None'
+	...		Input Text And Verify   ${ENDPOINT VLAN FIELD}  ${vlan}
+
+	Run Keyword Unless  '${mac-addr}' == '${EMPTY}'
+	...		Input Text And Verify   ${ENDPOINT MAC ADDRESS FIELD}  ${mac-addr}
+
+	Run Keyword Unless  '${ip-addr}' == '${EMPTY}'
+	...		Add IP Address to Endpoint  ${ip-addr}
+
+	Click Element  ${SAVE SEGMENT ENDPOINTS BUTTON}   and don't wait
+
+	Verify Element Invisible  ${SEGMENT ENDPOINT POPUP}
+
 Create Next Hop Group
 	[Arguments]  ${tenant-name}  ${nhg-name}  ${ip}
 	
