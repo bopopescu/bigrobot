@@ -1,10 +1,10 @@
 *Settings
-Documentation    Fabric Lag Dual Spine Three Rack Test Suite
+Documentation    Fabric Lag Test for T6 Topology
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       T5 test setup
 Test Teardown    T5 test teardown
-Force Tags       T5 
+Force Tags       T6	 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library          keywords/T5Platform.py

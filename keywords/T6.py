@@ -32,7 +32,7 @@ class T6(object):
         helpers.log("Dummy T6 keyword...")
         return True
     
-    def rest_verify_vswitch_portgroup(self, link=12):
+    def rest_verify_vswitch_portgroup(self, pg_count):
         ''' function to verify the vswitch portgroup
         '''
         t = test.Test()
@@ -46,10 +46,22 @@ class T6(object):
                 count = count + 1
             else:
                 continue
-        if int(count) == int(link):
-            helpers.log("Expected vswitch portgroups are present No of link %s" % link)
+        if int(count) == int(pg_count):
+            helpers.log("Expected vswitch portgroups are present No of link %s" % pg_count)
             return True
         else:
-            helpers.log("Fail: Expected vswitch portgroups are not present in the controller expected = %d, Actual = %d" % (link, count))
+            helpers.log("Fail: Expected vswitch portgroups are not present in the controller expected = %d, Actual = %d" % (pg_count, count))
             return False
+        
+    def rest_verify_fabric_vswitch_all(self):
+        t = test.Test()
+        c = t.controller('master')
+        url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
+        c.rest.get(url1)
+        data = c.rest.content()
+        for i in range (0, len(data)):
+            if (data[i]["fabric-connection-state"] == "not connected") and (data[i]["fabric-role"] == "virtual"):
+                helpers.test_failure("Fabric manager status for vswitch is incorrect")
+        helpers.log("Fabric manager status is correct")
+        return True
 
