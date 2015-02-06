@@ -670,6 +670,12 @@ verify policy stats   [Arguments]  ${port_1}   ${tenant}  ${seq}
    ${in_range}=  rest verify policy stats  ${tenant}  ${seq}  ${tx_value}
    Should be true  ${in_range}
    
+verify policy stats false  [Arguments]  ${port_1}   ${tenant}  ${seq}
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${in_range}=  rest verify policy stats  ${tenant}  ${seq}  ${tx_value}  True
+   Should be true  ${in_range}
+   
    
 verify results false   [Arguments]  ${port_1}   ${port_2}  
    ${report}=  fetch port stats
