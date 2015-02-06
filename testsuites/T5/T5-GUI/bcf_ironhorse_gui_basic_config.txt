@@ -168,6 +168,7 @@ T9.9 Default TACACS Settings - timeout
 	...  show running-config tacacs
 	...  tacacs server key
 	...  flag=False
+	[Tags]  BVS-2739
 
 T9.10 Default TACACS Settings - secret
 	Go To Tacacs Page
@@ -181,6 +182,7 @@ T9.10 Default TACACS Settings - secret
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server key 7 foo-secret
+	[Tags]  BVS-2739
 
 T9.11 Default TACACS Settings - default timeout and secret
 	Go To Tacacs Page
@@ -194,6 +196,7 @@ T9.11 Default TACACS Settings - default timeout and secret
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server key 7 secret
+	[Tags]  BVS-2739
 
 T9.12 Default TACACS Settings - timeout and secret
 	Go To Tacacs Page
@@ -206,6 +209,7 @@ T9.12 Default TACACS Settings - timeout and secret
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server key 7 secret1234
+	[Tags]  BVS-2739
 
 T9.13 Default TACACS Settings - timeout and encryped secret
 	Go To Tacacs Page
@@ -217,6 +221,7 @@ T9.13 Default TACACS Settings - timeout and encryped secret
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server key 7
+	[Tags]  BVS-2739
 
 T9.14 Default TACACS Settings edit
 	Go To Tacacs Page
@@ -246,6 +251,7 @@ T9.15 Default TACACS Settings delete
 	...  show running-config tacacs
 	...  tacacs server key
 	...  flag=False
+	[Tags]  BVS-2739
 	 
 #### Configure AAA Accounting
 T10.1 Accounting Configuration local+remote
@@ -337,7 +343,7 @@ T12.3 Configure NTP Server and delete with minus button
 	Delete NTP Server Using Minus Button  3.3.3.3
 	Delete NTP Server Using Minus Button  2.2.2.2
 	Delete NTP Server Using Minus Button  1.1.1.1
-	[Tags]  NTP  BVS-2705
+	[Tags]  NTP  BVS-2750
 
 * Keyword
 config suite setup
