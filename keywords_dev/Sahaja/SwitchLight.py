@@ -2307,6 +2307,58 @@ class SwitchLight(object):
             helpers.test_log("Sample1 is {} and sample2 is {} value did not increment on switch {}".format(sample1, sample2, sw))
             return False
 
+#### Author Sahaja
+    def switch_sflow_sample_rate(self, sw, rate, intf):
+        '''
+        Check if the sample rate config. is pushed to switch
+        '''
+        sflow_bash = 'ofad-ctl modules sflowa port_attributes | grep {}'.format(rate)
+
+        try:
+            t = test.Test()
+            s1 = t.switch(sw)
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+        s1.bash(sflow_bash)
+        out1 = s1.cli_content()
+        lis_fil_intf = out1.split('\n')
+        fil_intf = map(lambda x : x.split()[0], lis_fil_intf)
+        fil_intf = map(int, fil_intf[1:-1])
+        intf = list(intf)
+        expctd_intf_not_in_list = [int(i) for i in intf if int(i) not in fil_intf]
+        helpers.test_log("Compared these two lists for interfaces param: {} type of param {} and  got:{}".format(intf, type(intf), fil_intf))
+        if len(expctd_intf_not_in_list) > 0 :
+            helpers.test_log("Sample rate is not pushed to few filter interfaces {}".format(expctd_intf_not_in_list))
+            return False
+        else:
+            helpers.test_log("Sample rate config is pushed to all the filter interfaces")
+            return True
+
+
+#### Author Sahaja
+    def switch_sflow_collector(self, sw, ip):
+        '''
+        Check if the collector ip is seen on switch
+        '''
+
+        sflow_bash = 'ofad-ctl modules sflowa collectors | grep {}'.format(ip)
+        try:
+            t = test.Test()
+            s1 = t.switch(sw)
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+        s1.bash(sflow_bash)
+        out1 = s1.cli_content()
+        if ip in out1:
+            helpers.log("IP {} is seen on switch".format(ip))
+            return True
+        else:
+            helpers.log("IP {} not observed on switch ".format(ip))
+            return False
+
+
 #####Author Sahaja
 
 
