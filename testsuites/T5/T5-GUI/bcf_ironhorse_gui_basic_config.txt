@@ -160,7 +160,7 @@ T9.8 Delete All TACACS Hosts
 T9.9 Default TACACS Settings - timeout
 	Go To Tacacs Page
 	Configure TACACS Default Settings  10  ${EMPTY}  No
-	#Page Should Contain  10
+	Page Should Contain  10
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server timeout 10
@@ -168,12 +168,13 @@ T9.9 Default TACACS Settings - timeout
 	...  show running-config tacacs
 	...  tacacs server key
 	...  flag=False
+	[Tags]  BVS-2739
 
 T9.10 Default TACACS Settings - secret
 	Go To Tacacs Page
 	Configure TACACS Default Settings  ${EMPTY}  foo-secret  No
-	#Page Should Contain  30
-	#Page Should Contain  foo-secret
+	Page Should Contain  30
+	Page Should Contain  foo-secret
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server timeout 30
@@ -181,12 +182,13 @@ T9.10 Default TACACS Settings - secret
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server key 7 foo-secret
+	[Tags]  BVS-2739
 
 T9.11 Default TACACS Settings - default timeout and secret
 	Go To Tacacs Page
 	Configure TACACS Default Settings  30  secret  No
-	#Page Should Contain  30
-	#Page Should Contain  foo-secret
+	Page Should Contain  30
+	Page Should Contain  foo-secret
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server timeout 30
@@ -194,50 +196,53 @@ T9.11 Default TACACS Settings - default timeout and secret
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server key 7 secret
+	[Tags]  BVS-2739
 
 T9.12 Default TACACS Settings - timeout and secret
 	Go To Tacacs Page
 	Configure TACACS Default Settings  5  secret1234  No
-	#Page Should Contain  5
-	#Page Should Contain  secret1234
+	Page Should Contain  5
+	Page Should Contain  secret1234
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server timeout 5
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server key 7 secret1234
+	[Tags]  BVS-2739
 
 T9.13 Default TACACS Settings - timeout and encryped secret
 	Go To Tacacs Page
 	Configure TACACS Default Settings  15  secret  Yes
-	#Page Should Contain  15
+	Page Should Contain  15
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server timeout 15
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server key 7
+	[Tags]  BVS-2739
 
 T9.14 Default TACACS Settings edit
 	Go To Tacacs Page
 	Configure TACACS Default Settings  10  secret-foo  No
-	#Page Should Contain  10
-	#Page Should Contain  secret-foo
-	#Configure TACACS Default Settings  20  ${EMPTY}  No
-	#Page Should Contain  20
-	#Page Should Not Contain  secret-foo
-	#Configure TACACS Default Settings  30  secret-foo  Yes
-	#Page Should Contain  30
-	#Page Should Not Contain  secret-foo
-	#Configure TACACS Default Settings  20  secret-foo  Yes
-	#Page Should Contain  20
-	#Page Should Not Contain  secret-foo
+	Page Should Contain  10
+	Page Should Contain  secret-foo
+	Configure TACACS Default Settings  20  ${EMPTY}  No
+	Page Should Contain  20
+	Page Should Not Contain  secret-foo
+	Configure TACACS Default Settings  30  secret-foo  Yes
+	Page Should Contain  30
+	Page Should Not Contain  secret-foo
+	Configure TACACS Default Settings  20  secret-foo  Yes
+	Page Should Contain  20
+	Page Should Not Contain  secret-foo
 	[Tags]  BVS-2739
 
 T9.15 Default TACACS Settings delete
 	Go To Tacacs Page
 	Configure TACACS Default Settings  ${EMPTY}  ${EMPTY}  Yes
-	#Page Should Contain  30
+	Page Should Contain  30
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server timeout 30
@@ -246,6 +251,7 @@ T9.15 Default TACACS Settings delete
 	...  show running-config tacacs
 	...  tacacs server key
 	...  flag=False
+	[Tags]  BVS-2739
 	 
 #### Configure AAA Accounting
 T10.1 Accounting Configuration local+remote
@@ -307,11 +313,8 @@ T12.2 Configure NTP Server and delete with action menu
 	Configure NTP Server  3.3.3.3
 	Configure NTP Server  4.4.4.4
 	Configure NTP Server  5.5.5.5
-	Configure NTP Server  6.6.6.6
-	Sync To NTP Server  6.6.6.6
+	Sync To NTP Server  5.5.5.5
 	Sleep  15
-	Delete NTP Server Using Action Menu  6.6.6.6
-	Go To Clock Page
 	Delete NTP Server Using Action Menu  5.5.5.5
 	Go To Clock Page
 	Delete NTP Server Using Action Menu  4.4.4.4
@@ -330,16 +333,17 @@ T12.3 Configure NTP Server and delete with minus button
 	Configure NTP Server  3.3.3.3
 	Configure NTP Server  4.4.4.4
 	Configure NTP Server  5.5.5.5
-	Configure NTP Server  6.6.6.6
-	Sync To NTP Server  6.6.6.6
+	Run Keyword and Expect Error  *  Delete NTP Server Using Minus Button  5.5.5.5
+	Go To Next Table Page
+	Sync To NTP Server  5.5.5.5
 	Sleep  15
-	Delete NTP Server Using Minus Button  6.6.6.6
+	Go To Next Table Page
 	Delete NTP Server Using Minus Button  5.5.5.5
 	Delete NTP Server Using Minus Button  4.4.4.4
 	Delete NTP Server Using Minus Button  3.3.3.3
 	Delete NTP Server Using Minus Button  2.2.2.2
 	Delete NTP Server Using Minus Button  1.1.1.1
-	[Tags]  NTP  BVS-2705
+	[Tags]  NTP  BVS-2750
 
 * Keyword
 config suite setup
