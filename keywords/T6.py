@@ -47,10 +47,10 @@ class T6(object):
             else:
                 continue
         if int(count) == int(pg_count):
-            helpers.log("Expected vswitch portgroups are present No of link %s" % pg_count)
+            helpers.log("Expected vswitch portgroups are present No of link %s" % int(pg_count))
             return True
         else:
-            helpers.log("Fail: Expected vswitch portgroups are not present in the controller expected = %d, Actual = %d" % (pg_count, count))
+            helpers.log("Fail: Expected vswitch portgroups are not present in the controller expected = %d, Actual = %d" % (int(pg_count), int(count)))
             return False
         
     def rest_verify_fabric_vswitch_all(self):
@@ -60,7 +60,7 @@ class T6(object):
         c.rest.get(url1)
         data = c.rest.content()
         for i in range (0, len(data)):
-            if (data[i]["fabric-connection-state"] == "not connected") and (data[i]["fabric-role"] == "virtual"):
+            if (data[i]["fabric-connection-state"] == "not_connected") and (data[i]["fabric-role"] == "virtual"):
                 helpers.test_failure("Fabric manager status for vswitch is incorrect")
         helpers.log("Fabric manager status is correct")
         return True

@@ -1,9 +1,9 @@
 *Settings
 Documentation           Corsair Tunnelling Test Suite
-#Suite Setup             corsair suite setup
-#Suite Teardown          corsair suite teardown
-#Test Setup              corsair test setup
-#Test Teardown           corsair test teardown 
+Suite Setup             corsair suite setup
+Suite Teardown          corsair suite teardown
+Test Setup              corsair test setup
+Test Teardown           corsair test teardown 
 Force Tags              BigTap  corsair-400  tunnel  Accton-AS4600
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
