@@ -223,10 +223,9 @@ TC3:AS4600:Verify transmit-only tunnel interface
     [Tags]  sanity  feature  Accton-AS4600
 
 TC4:AS5710:Verify bidirectional tunnel interface
-    pause
     ${verify_tun_sw5}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
     Should be true  ${verify_tun_sw5}
-    [Tags]  sanity  feature  Accton-AS5710  runthis
+    [Tags]  sanity  feature  Accton-AS5710
 
 TC5:AS5710:Verify receive-only tunnel interface
     ${verify_tun_sw6}=  rest verify tunnel status  s3  ${tunnel_sw3_name_ixia_filter}  tunnel_number=377  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw3_sip_ixia_filter}  dip=${tunnel_sw3_dip_ixia_filter}  mask=${tunnel_sw3_mask_ixia_filter}  gip=${tunnel_sw3_gip_ixia_filter}      
