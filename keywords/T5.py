@@ -1653,7 +1653,7 @@ class T5(object):
         data = c.rest.content()
         fabric_interface = 0
         for i in range(0, len(data)):
-            if data[i]["type"] == "leaf" or data[i]["type"] == "spine":
+            if data[i]["type"] == "leaf" or data[i]["type"] == "spine" or data[i]["type"] == "virtual":
                 fabric_interface = fabric_interface + 1
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric?select=link' % ()
         c.rest.get(url1)
