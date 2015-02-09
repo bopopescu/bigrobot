@@ -199,11 +199,12 @@ T1.3.6 Attachment State
 	Verify Filtering Result  endpoint-3  False
 T1.3.7 Description
 	Open Advanced Query Builder  Endpoints
-	Add Filter Query  Description  contains  endpoint
+	Add Filter Query  Description  contains  endpoint-description
 	Close And Filter Advanced Query Builder
 	Verify Filtering Result  endpoint-1  False
 	Verify Filtering Result  endpoint-2  False
 	Verify Filtering Result  endpoint-3  False
+	Verify Filtering Result  endpoint-4  True
 T1.3.8 IP Addresses
 	Open Advanced Query Builder  Endpoints
 	Add Filter Query  IP Addresses  contains  2
@@ -847,6 +848,8 @@ Filtering Suite Setup
 	Append Endpoint to Segment  endpoint-2  Port Group  pg1   ${EMPTY}   ${EMPTY}   22:22:22:22:22:22  222.222.222.222  200
 	Go To Tenant Segment Page  tenant-b  segment-2
 	Append Endpoint to Segment  endpoint-3  Switch Port   ${EMPTY}   leaf1-a  ethernet2   32:33:33:33:33:33  33.33.33.33  300
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page  tenant-a  segment-1  endpoint-4  endpoint-description-4  None  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
 		
 	${status}=  Wait Until All Switches Connected And Return Status
     Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches

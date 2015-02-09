@@ -77,6 +77,11 @@ class Mininet(object):
         mn.cli('%s ifconfig %s 0.0.0.0' % (intf, intf_name))
         mn.cli('%s ifconfig vlan1 %s' % (intf, ip))
 
+    def mininet_start_inband(self):
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('start_inband')
+           
     def mininet_link_untag(self, intf, intf_name, vlan, ip):
         t = test.Test()
         mn = t.mininet()

@@ -49,6 +49,7 @@ T2.6 Empty Username And Password
 
 ### Toggling through Authentication Methods
 T3.1 Local Only
+	Logout
 	Valid Login  admin  adminadmin
 	Configure Authentication  Local  None
 	Login With Invalid Credentials Should Fail  remote  remote
