@@ -56,8 +56,8 @@ add Fabric setup Dual Rack Dual Leaf
 #   add fabric switch
    rest verify fabric switch all
    rest verify fabric vswitch all
-   rest verify vswitch portgroup  8
-   rest verify fabric link  20
+   rest verify vswitch portgroup  4
+   rest verify fabric link common  20
    
 changing IP address of the VM and BM for L3 connectivity
 	[Tags]  L3  smoke  sanity
