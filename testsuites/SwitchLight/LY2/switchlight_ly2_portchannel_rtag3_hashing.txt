@@ -17,22 +17,20 @@ Library                     String.py
 * Variable
 ${switchlight_version}                  Switch Light OS SWL-BT-
 ${s1_10g_name_1}                        port-channel1  
-${s1_10g_port_range_1}                  13,15,17,19
+${s1_10g_port_range_1}                  39,41,43,45
 ${s1_10g_number_1}                      1
-${s1_lag_mem_1_1}                       13
-${s1_lag_mem_1_2}                       15
-${s1_lag_mem_1_3}                       17
-${s1_lag_mem_1_4}                       19
+${s1_lag_mem_1_1}                       39
+${s1_lag_mem_1_2}                       41
+${s1_lag_mem_1_3}                       43
+${s1_lag_mem_1_4}                       45
 
 ${s1_10g_name_2}                        port-channel2
-${s1_10g_port_range_2}                  14,16,18,20
-${s1_10g_port_range_small_2_1}          14,16
-${s1_10g_port_range_small_2_2}          18,20
+${s1_10g_port_range_2}                  40,42,44,46
 ${s1_10g_number_2}                      2
-${s1_lag_mem_2_1}                       14
-${s1_lag_mem_2_2}                       16
-${s1_lag_mem_2_3}                       18
-${s1_lag_mem_2_4}                       20
+${s1_lag_mem_2_1}                       40
+${s1_lag_mem_2_2}                       42
+${s1_lag_mem_2_3}                       44
+${s1_lag_mem_2_4}                       46
 
 ${policy_name_1}                        RTAG3_POLICY_1
 ${filter_1}                             ethernet1
@@ -348,36 +346,36 @@ send and verify traffic
     ${in_range_2}=  ixia verify traffic rate  ${rx_value}  400000  50
     Should be true  ${in_range_2}
 
-    ${member1_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet13  tx
+    ${member1_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet39  tx
     Should Not Be Equal As Integers  ${member1_s1}  0
     ${range_mem1}=  ixia verify traffic rate  ${member1_s1}  100000  50
     Should Be True  ${range_mem1}
-    ${member2_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet15  tx
+    ${member2_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet41  tx
     Should Not Be Equal As Integers  ${member2_s1}  0
     ${range_mem2}=  ixia verify traffic rate  ${member2_s1}  100000  50
     Should Be True  ${range_mem2}
-    ${member3_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet17  tx
+    ${member3_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet43  tx
     Should Not Be Equal As Integers  ${member3_s1}  0
     ${range_mem3}=  ixia verify traffic rate  ${member3_s1}  100000  50
     Should Be True  ${range_mem3}
-    ${member4_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet19  tx    
+    ${member4_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet45  tx    
     Should Not Be Equal As Integers  ${member4_s1}  0
     ${range_mem4}=  ixia verify traffic rate  ${member4_s1}  100000  50
     Should Be True  ${range_mem4}
 
-    ${member1_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet14  rx
+    ${member1_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet40  rx
     Should Not Be Equal As Integers  ${member1_s4}  0
     ${range_mem5}=  ixia verify traffic rate  ${member1_s4}  100000  50
     Should Be True  ${range_mem5}
-    ${member2_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet16  rx
+    ${member2_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet42  rx
     Should Not Be Equal As Integers  ${member2_s4}  0
     ${range_mem6}=  ixia verify traffic rate  ${member2_s4}  100000  50
     Should Be True  ${range_mem6}
-    ${member3_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet18  rx
+    ${member3_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet44  rx
     Should Not Be Equal As Integers  ${member3_s4}  0
     ${range_mem7}=  ixia verify traffic rate  ${member3_s4}  100000  50
     Should Be True  ${range_mem7}
-    ${member4_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet20  rx
+    ${member4_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet46  rx
     Should Not Be Equal As Integers  ${member4_s4}  0
     ${range_mem8}=  ixia verify traffic rate  ${member4_s4}  100000  50
     Should Be True  ${range_mem8}
@@ -406,19 +404,19 @@ send and verify traffic for disabled interfaces
     Should be true  ${in_range_1}
     ${in_range_2}=  ixia verify traffic rate  ${rx_value}  400000  50
     Should be true  ${in_range_2}
-    ${member1_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet13  tx
+    ${member1_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet39  tx
     Should Not Be Equal As Integers  ${member1_s1}  0
     ${range_mem1}=  ixia verify traffic rate  ${member1_s1}  200000  50
     Should Be True  ${range_mem1}
-    ${member2_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet15  tx
+    ${member2_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet41  tx
     Should Not Be Equal As Integers  ${member2_s1}  0
     ${range_mem2}=  ixia verify traffic rate  ${member2_s1}  200000  50
     Should Be True  ${range_mem2}
-    ${member1_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet14  rx
+    ${member1_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet40  rx
     Should Not Be Equal As Integers  ${member1_s4}  0
     ${range_mem3}=  ixia verify traffic rate  ${member1_s4}  200000  50
     Should Be True  ${range_mem3}
-    ${member2_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet16  rx
+    ${member2_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet42  rx
     Should Not Be Equal As Integers  ${member2_s4}  0
     ${range_mem4}=  ixia verify traffic rate  ${member2_s4}  200000  50
     Should Be True  ${range_mem4}
