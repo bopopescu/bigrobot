@@ -60,8 +60,8 @@ add Fabric setup Dual Rack Dual Leaf
 #   add fabric switch
    rest verify fabric switch all
    rest verify fabric vswitch all
-   rest verify vswitch portgroup  8
-   rest verify fabric link  20
+   rest verify vswitch portgroup  4
+   rest verify fabric link common  20
 
 ping bm0 to bm1 dual leaf dual rack dynamic endpoints
    [Tags]  L2  smoke  sanity  IronHorse  feature
