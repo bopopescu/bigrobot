@@ -853,7 +853,7 @@ send and verify traffic
     Should Not Be Equal As Integers  ${member3_s1}  0
     ${range_mem3}=  ixia verify traffic rate  ${member3_s1}  10000  50
     Should Be True  ${range_mem3}
-    ${member4_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet19  tx    
+    ${member4_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet21  tx    
     Should Not Be Equal As Integers  ${member4_s1}  0
     ${range_mem4}=  ixia verify traffic rate  ${member4_s1}  10000  50
     Should Be True  ${range_mem4}
@@ -870,7 +870,7 @@ send and verify traffic
     Should Not Be Equal As Integers  ${member3_s4}  0
     ${range_mem7}=  ixia verify traffic rate  ${member3_s4}  10000  50
     Should Be True  ${range_mem7}
-    ${member4_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet20  rx
+    ${member4_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet22  rx
     Should Not Be Equal As Integers  ${member4_s4}  0
     ${range_mem8}=  ixia verify traffic rate  ${member4_s4}  10000  50
     Should Be True  ${range_mem8}

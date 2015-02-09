@@ -62,7 +62,7 @@ TC002: Verify Source MAC address hashing
     ${stream4}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
     ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:01
     ...     name=a4_b_flow
-    send and verify traffic  
+    send and verify traffic
     [Tags]  full  feature  traffic
 
 TC003: Disable two links and verify source MAC address hashing 
@@ -358,7 +358,7 @@ send and verify traffic
     Should Not Be Equal As Integers  ${member3_s1}  0
     ${range_mem3}=  ixia verify traffic rate  ${member3_s1}  100000  50
     Should Be True  ${range_mem3}
-    ${member4_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet19  tx    
+    ${member4_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet21  tx    
     Should Not Be Equal As Integers  ${member4_s1}  0
     ${range_mem4}=  ixia verify traffic rate  ${member4_s1}  100000  50
     Should Be True  ${range_mem4}
@@ -375,7 +375,7 @@ send and verify traffic
     Should Not Be Equal As Integers  ${member3_s4}  0
     ${range_mem7}=  ixia verify traffic rate  ${member3_s4}  100000  50
     Should Be True  ${range_mem7}
-    ${member4_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet20  rx
+    ${member4_s4}=  cli return member interface stats  s1  ${s1_10g_number_2}  ethernet22  rx
     Should Not Be Equal As Integers  ${member4_s4}  0
     ${range_mem8}=  ixia verify traffic rate  ${member4_s4}  100000  50
     Should Be True  ${range_mem8}
