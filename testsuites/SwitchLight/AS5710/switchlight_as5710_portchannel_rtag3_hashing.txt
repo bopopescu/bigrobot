@@ -63,7 +63,7 @@ TC002: Verify Source MAC address hashing
     ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:01
     ...     name=a4_b_flow
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic
 
 TC003: Disable two links and verify source MAC address hashing 
     bash execute command  s1  ofad-ctl debug smuckers-enable
