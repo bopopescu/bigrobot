@@ -166,6 +166,7 @@ ${PORT GROUP LEAF GROUP DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='ti
 ${PORT GROUP LEAF GROUP LIST} 			xpath=//div[@id='dijit_form_FilteringSelect_1_popup'] 
 ${PORT GROUP LEAF GROUP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Leaf Group')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
 ${PROCEED DELTE PORT GROUPS BUTTON}		xpath=//span[@id='dijit_form_Button_4']
+${PORT GROUP LEAF GROUP NODE}			xpath=//div[@data-dojo-attach-point='leafGroupNode']/descendant::div[@class='bcf_switch_graphic bcf_panel']
 
 
 ### Logical Segments Page
@@ -1224,33 +1225,51 @@ Clear Switch Config
 	
 	
 Create Port Group
-	[Arguments]  ${name}  ${mode}  ${leaf-group}
-	
+	[Arguments]  ${name}  ${mode}  ${leaf-group}  ${interfaces-switch1}=${EMPTY}  ${interfaces-switch2}=${EMPTY}
+
 	Go to Port Groups Page
-	
+
 	Verify Page Contains Element  ${ADD PORT GROUP PLUS BUTTON}
 	Click Element  ${ADD PORT GROUP PLUS BUTTON}  and don't wait
 	Verify Element Visible  ${CREATE PORT GROUP POPUP}
-	
+
 	Input Text And Verify  ${PORT GROUP NAME FIELD}  ${name}
-	
+
 	Select From List And Verify  
     ... 	${PORT GROUP MODE DROPDOWN BUTTON}
     ...		${PORT GROUP MODE LIST}  
     ... 	${PORT GROUP MODE FIELD}
     ... 	${mode}
-    
+
     Select From List And Verify  
     ... 	${PORT GROUP LEAF GROUP DROPDOWN BUTTON}
     ...		${PORT GROUP LEAF GROUP LIST}  
     ... 	${PORT GROUP LEAF GROUP FIELD}
     ... 	${leaf-group}
-    
+
+    ${list1 length}=  Get Length  ${interfaces-switch1}
+    ${list2 length}=  Get Length  ${interfaces-switch2}
+    Run Keyword Unless  ${list1 length} == 0
+    ...  Select Port Group Interfaces  1  @{interfaces-switch1}
+    Run Keyword Unless  ${list2 length} == 0
+    ...  Select Port Group Interfaces  2  @{interfaces-switch2}
+
     Verify Page Contains Element  ${SAVE SWITCH CONFIG BUTTON}
 	Click Element  ${SAVE SWITCH CONFIG BUTTON}  and don't wait
-	
+
 	Verify Element Invisible  ${CREATE PORT GROUP POPUP}
-	
+
+
+Select Port Group Interfaces
+	[Arguments]  ${switch}  @{interfaces}
+	Verify Element Visible  ${PORT GROUP LEAF GROUP NODE}[${switch}]
+	:FOR  ${interface}  in  @{interfaces}
+	\    ${interface label}  Set Variable  ${PORT GROUP LEAF GROUP NODE}[${switch}]/descendant::div[@data-dojo-attach-point='labelNode' and (text() = '${interface}')]
+	\	${interface button}  Set Variable  ${interface label}/parent::div/child::div[@data-dojo-attach-point='iconNode']
+	\	Verify Element Visible  ${interface button}
+	\	Click Element  ${interface button}  and don't wait
+
+
 Enable System Tenant Interface
 	[Arguments]  ${tenant-name}
 	Go To Tenants Page
