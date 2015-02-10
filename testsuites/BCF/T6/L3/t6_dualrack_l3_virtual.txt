@@ -48,32 +48,17 @@ basic cli show commands test case
    enable  c1  show controller
    config  c1  show switch
    enable  c1  show switch
-   mininet start inband
    
 add Fabric setup Dual Rack Dual Leaf 
    [Tags]  L2  smoke  sanity  IronHorse  feature
-   sleep  5
-#   add fabric switch
    rest verify fabric switch all
    rest verify fabric vswitch all
    rest verify vswitch portgroup  4
    rest verify fabric link common  20
-   
-changing IP address of the VM and BM for L3 connectivity
-	[Tags]  L3  smoke  sanity
-	mininet host ipcfg  bm0  bm0-bond0  10.0.0.2  24
-	mininet host gw  bm0  10.0.0.1  bm0-bond0
-	mininet host ipcfg  vm0  ${vm0_intf0}  10.0.1.2  24
-	mininet host gw  vm0  10.0.1.1  ${vm0_intf0}
-	mininet host ipcfg  vm1  ${vm1_intf0}  10.0.2.2  24
-	mininet host gw  vm1  10.0.2.1  ${vm1_intf0}
-	mininet host ipcfg  vm2  ${vm2_intf0}  10.0.3.2  24
-	mininet host gw  vm2  10.0.3.1  ${vm2_intf0}
-	mininet host ipcfg  vm4  ${vm4_intf0}  10.0.4.2  24
-	mininet host gw  vm4  10.0.4.1  ${vm4_intf0}  
 
 ping bm0 to vm0 same rack
    [Tags]  L2  smoke  sanity  IronHorse  feature
+   mininet ping  bm0  ${vm0_ip}
    ${loss}=  mininet ping  bm0  ${vm0_ip}
    config  c1  show endpoint
    enable  c1  show endpoint
@@ -85,21 +70,25 @@ ping bm0 to vm0 same rack
 
 ping vm0 to vm1 single ivs dynamic endpoints
    [Tags]  L2  sanity  IronHorse  feature
+   mininet ping  vm0  ${vm1_ip}
    ${loss}=  mininet ping  vm0  ${vm1_ip}
    Should Be True  ${loss} == 0					 
 		
 ping vm0 to vm2 same rack dual ivs dynamic endpoints
-   [Tags]  L2  sanity  IronHorse  feature     
+   [Tags]  L2  sanity  IronHorse  feature
+   mininet ping  vm0  ${vm2_ip}
    ${loss}=  mininet ping  vm0  ${vm2_ip}
    Should Be True  ${loss} == 0  
    
 ping vm0 to vm4 dual rack dual ivs dynamic endpoints
    [Tags]  L2  sanity  IronHorse  feature
+   mininet ping  vm0  ${vm4_ip}
    ${loss}=  mininet ping  vm0  ${vm4_ip}
    Should Be True  ${loss} == 0 
    
 ping bm0 to vm4 dual rack 
 	[Tags]  L2  sanity
+	mininet ping  bm0  ${vm4_ip}
 	${loss}=  mininet ping  bm0  ${vm4_ip}
     Should Be True  ${loss} == 0
 
@@ -135,7 +124,18 @@ T6 base suite setup
     rest add interface to vns  A  C  hv0  ${hv0_intf1}  -1
     rest add interface to vns  A  D  hv1  ${hv1_intf0}  -1
     rest add interface to vns  A  E  hv2  ${hv2_intf0}  -1
-    sleep  5
+    mininet start inband
+    mininet host ipcfg  bm0  bm0-bond0  10.0.0.2  24
+	mininet host gw  bm0  10.0.0.1  bm0-bond0
+	mininet host ipcfg  vm0  ${vm0_intf0}  10.0.1.2  24
+	mininet host gw  vm0  10.0.1.1  ${vm0_intf0}
+	mininet host ipcfg  vm1  ${vm1_intf0}  10.0.2.2  24
+	mininet host gw  vm1  10.0.2.1  ${vm1_intf0}
+	mininet host ipcfg  vm2  ${vm2_intf0}  10.0.3.2  24
+	mininet host gw  vm2  10.0.3.1  ${vm2_intf0}
+	mininet host ipcfg  vm4  ${vm4_intf0}  10.0.4.2  24
+	mininet host gw  vm4  10.0.4.1  ${vm4_intf0}
+    sleep  10
 
 Tear down the config
    delete a tenant  A
