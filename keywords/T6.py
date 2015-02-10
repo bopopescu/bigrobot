@@ -186,17 +186,38 @@ class T6(object):
         c.rest.get(url)
         data = c.rest.content()
         for i in range(0, len(data)):
-            if data[i]["logical-router"] == tenant:
-                if data[i]["name"] == nat_profile and data[i]["state"] == "active":
-                    helpers.log("given nat-profile is applied to tenant logical router and status is active")
-                    return True
+            if data[i]["logical-router"] == tenant and data[i]["name"] == nat_profile:
+                if data[i]["state"] == "active":
+                        helpers.log("given nat-profile is applied to tenant logical router and status is active")
+                        return True
                 else:
-                    helpers.log("given nat-profile is not active")
-                    return False
+                        helpers.log("given nat-profile is not active")
+                        return False
             else:
-                helpers.log("given tenant is not present")
-                return False
+                continue
     
+    def rest_verify_nat_attachment_point(self, tenant, nat_profile, nat_switch):
+        '''Function to verify nat ivs switch attachment point for fixed nat switch
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/nat-profile' % tenant
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0, len(data)):
+            if data[i]["name"] == nat_profile and data[i]["state"] == "active":
+                attachment_point = data[i]["attachment-point"]
+                ivs_switch = attachment_point.split('|')
+                if ivs_switch[0] == nat_switch:
+                        helpers.log("tenant logical router has correct nat attachment point")
+                        return True
+                else:
+                        helpers.log("logical router nat attachment point is not correct")
+                        return False
+            else:
+                    helpers.log("Given nat-profile is not active")
+                    return False
+                
     def rest_verify_tenant_route_nat(self, tenant, nat_profile):
         '''Function to verify routes in tenant showing nat next-hop
         '''
@@ -214,12 +235,13 @@ class T6(object):
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]?select=logical-router&config=true' % tenant
         c.rest.get(url)
         data = c.rest.content()
-        if data["nat-profie"]["name"] == nat_profile:
-            public_ip = data["nat-profile"]["pat"]["ip-address"]
-            return public_ip
-        else:
-            helpers.test_failure("given nat_profile is not present in the config")
-            return False
+        helpers.log("print content %s" % data[0]["logical-router"]["nat-profile"])
+        for i in range(0, len(data[0]["logical-router"]["nat-profile"])):
+            if data[0]["logical-router"]["nat-profile"][i]["name"] == nat_profile:
+                public_ip = data[0]["logical-router"]["nat-profile"][i]["pat"]["ip-address"]
+                return public_ip
+            else:
+                continue
         url1 = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % public_ip
         c.rest.get(url1)
         data1 = c.rest.content()
