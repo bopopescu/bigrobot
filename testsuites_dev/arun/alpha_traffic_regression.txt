@@ -44,7 +44,7 @@ ${int2}     ethernet24
 T2 setup traffic make sure all traffic can be forwarded without loss after learning
      #### d to f  L3 traffic 
      Log To Console   \n******* Adding ixia traffic *******   
-     ${L3_1}=    L3 add  name=L3_1   flow=d<->f   frame_size=128    frame_rate=${rate}   
+     ${L3_1}=    L3 add  name=L3_1   flow=f<->d   frame_size=128    frame_rate=${rate}   
     ...    src_mac=00:10:10:10:00:00  src_mac_step=00:00:00:00:00:01 
     ...    dst_mac=00:44:44:44:00:00  dst_mac_step=00:00:00:00:00:01  
     ...    src_ip=10.201.16.2   src_ip_step=0.0.0.1  src_gw_prefix=20  src_cnt=${count}   src_gw=10.201.16.1  src_gw_step=0.0.0.0
