@@ -4048,7 +4048,7 @@ class BigTap(object):
                 helpers.log("Counter interval {} has been configured".format(counter_interval))
             except:
                 helpers.test_log("Could not configure counter interval {}".format(counter_interval))
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
 
 # Configure header_size
@@ -4058,7 +4058,7 @@ class BigTap(object):
                 helpers.log("Header size {} has been configured".format(header_size))
             except:
                 helpers.test_log("Could not configure header size {}".format(header_size))
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
 
 # Configure collector ip and port
@@ -4073,7 +4073,7 @@ class BigTap(object):
                     helpers.log("Configured collector ip {}".format(collector_val))
                     return True
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
 
         helpers.log("The given parameters have been configured successfully")
@@ -4124,6 +4124,28 @@ class BigTap(object):
 
         helpers.log("Match has not occured either for collector or others expected parameter: {} Value: {}".format(param, param_val))
         return False
+
+
+####Author:  Sahaja
+
+    def delete_sflow_collector_smplrt_cntr_hdr(self, sflow_param, ip):
+        '''
+        Delete sflow collector from cli instead of REST
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        try:
+            c.config("bigtap sflow")
+            out = c.config("no {} {}".format(sflow_param, ip))
+            helpers.log("Output from deletion is {}".format(out))
+            return True
+        except:
+            helpers.log("There was issue deleting the collector with ip {}".format(ip))
+            return False
+
+
+
 
 
 ####Author: Sahaja

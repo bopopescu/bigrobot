@@ -1,0 +1,37 @@
+* Settings
+Documentation   	Test suite with tests to check pages, hover over menu and check elements. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Force Tags      	BigTap  GUI
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Library         	keywords/BsnCommon.py
+#Library         	keywords_dev/tomasz/BigTap.py
+Library        		keywords/BsnSelenium.py
+Library        		SeleniumLibrary
+Library       		String
+Resource        	keywords_dev/Sahaja/bigtap_resource.txt
+
+*Test Case
+### Check Pages		
+T1.1 Configure sflow collector ip
+	Configure sflow   10.8.3.33
+	
+	
+
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}=            get node ip   master
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+	Delete All Big Tap Resources
+
+config suite teardown
+	Close Browser
+    Stop Selenium Server
+    base suite teardown

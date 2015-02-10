@@ -514,7 +514,7 @@ class BigChain(object):
                 helpers.log("FAIL: Cannot verify bigchain policy without specifying a chain name or endpoint interfaces")
                 return False
             else:
-                url = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/policy?select=info' % str(chain_name)
+                url = '/api/v1/data/controller/applications/bigchain/chain[name="{}"]/policy?select=info'.format(str(chain_name))
                 c.rest.get(url)
                 if not c.rest.status_code_ok():
                     helpers.test_log(c.rest.error())
@@ -523,13 +523,16 @@ class BigChain(object):
                 if len(content) == 0:
                     return False
                 else:
-                    policy_pass = 1
+                    policy_pass = 0
                     for policy_array in content:
+                        helpers.log("Policy Array is %s" % policy_array)
                         if policy_array['info']['chainName'] == str(chain_name):
                             policy_interface_array = policy_array['name'].split(":")
-                            helpers.log("Interface array is" % policy_interface_array)
+                            helpers.log("Policy INTF Array is %s" % policy_interface_array)
                             if (BigChain1.rest_verify_bigchain_policy(node, chain_name, policy_array['name'], policy_interface_array[1], policy_interface_array[3])):
                                 policy_pass = policy_pass + 1
+                    helpers.log("Policy Pass Count is {}".format(policy_pass))
+                    helpers.log("Length of Content is {}".format(len(content)))
                     if policy_pass == len(content):
                         return True
                     else:

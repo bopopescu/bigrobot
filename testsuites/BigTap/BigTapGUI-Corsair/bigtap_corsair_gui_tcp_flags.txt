@@ -17,13 +17,13 @@ TC Set up
 	Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-1		filter			ixia-2-9
 	Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rly2-1 		delivery		ixia-2-15	
 	Configure Big Tap Policy					 					policy-tcp			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}	${EMPTY}	  	${EMPTY}	
-    [Tags]  full  feature
+    [Tags]  full  feature  sanity
 TC1 Unset FIN														
 	 Edit Big Tap Policy for TCP Flags								policy-tcp	IPv4 - 0x800 (2048)		!FIN 		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
-    [Tags]  full  feature
+    [Tags]  full  feature  sanity
 TC2 Unset SYN	
 	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	!SYN			${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
-    [Tags]  full  feature
+    [Tags]  full  feature  sanity
 TC3 Unset RST
 	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		!RST		${EMPTY}	${EMPTY}	${EMPTY}
     [Tags]  full  feature
