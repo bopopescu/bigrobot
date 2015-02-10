@@ -206,6 +206,31 @@ class T6(object):
         c.rest.get(url)
         data = c.rest.content()
         
+    def rest_verify_nat_endpoint(self, tenant, nat_profile, remote_tenant, remote_segment):
+        '''Function to verify nat endpoint
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]?select=logical-router&config=true' % tenant
+        c.rest.get(url)
+        data = c.rest.content()
+        if data["nat-profie"]["name"] == nat_profile:
+            public_ip = data["nat-profile"]["pat"]["ip-address"]
+            return public_ip
+        else:
+            helpers.test_failure("given nat_profile is not present in the config")
+            return False
+        url1 = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % public_ip
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        if data1["ip-address"]["ip-address"] == public_ip and data1["ip-address"]["ip-state"] == "static" and data1["state"] == "Active":
+            helpers.log("nat container endpoint is present")
+            return True
+        else:
+            helpers.test_failure("nat container endpoint is not present")
+            return False
+            
+        
             
         
         
