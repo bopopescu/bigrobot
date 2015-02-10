@@ -191,7 +191,8 @@ class T5ZTN(object):
         content = c.config("show version | grep Version")['content']
         output = helpers.strip_cli_output(content)
         temp = output.split(': ')
-        return temp[1]
+        temp = temp[1].strip()
+        return temp
 
 
     def telnet_get_switch_switchlight_version(self, image, hostname,
