@@ -176,6 +176,24 @@ class T5ZTN(object):
             swi_release = swi_manifest['sha1']
             return swi_release
 
+    def controller_get_release_string(self, node='master'):
+        """
+        Get Release String of the controller bundle
+
+        Inputs:
+        | node | reference to controller as defined in .topo file |
+
+        Return Value:
+        - Controller release string, None in case of errors
+        """
+        t = test.Test()
+        c = t.controller(node)
+        content = c.config("show version | grep Version")['content']
+        output = helpers.strip_cli_output(content)
+        temp = output.split(': ')
+        return temp[1]
+
+
     def telnet_get_switch_switchlight_version(self, image, hostname,
                                               password='adminadmin'):
         """
