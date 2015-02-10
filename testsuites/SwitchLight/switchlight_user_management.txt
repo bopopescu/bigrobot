@@ -18,7 +18,7 @@ ${dns_domain}           qa.bigswitch.com
 *Test Case
 TC001: Verify username admin can have all lower-case alphabet password
     verify password change  s1  clientclient
-    [Tags]  full  feature
+    [Tags]  sanity  feature
 
 TC002: Verify username admin can have all upper-case alphabet password
     verify password change  s1  CLIENTCLIENT
@@ -34,7 +34,7 @@ TC004: Verify username admin can have a numeric password
     
 TC005: Verify username admin can have a alphanumeric (alphabet all small) password
     verify password change  s1  bsn1234
-    [Tags]  full  feature    
+    [Tags]  sanity  feature    
     
 TC006: Verify username admin can have a alphanumeric (alphabet all caps) password
     verify password change  s1  BSN1234
@@ -50,7 +50,7 @@ TC008: Verify username admin can have a alphanumeric password with a @
 
 TC009: Verify username admin can have a alphanumeric password with a #
     verify password change  s1  bSn1234#
-    [Tags]  full  feature    
+    [Tags]  sanity  feature    
 
 TC010: Verify username admin can have a alphanumeric password with a $
     verify password change  s1  bSn1234$
