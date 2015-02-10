@@ -3,7 +3,7 @@
 * Setting
 Documentation    T6 Dual Leaf Dual Rack PNAT Test Suite
 Suite Setup      T6 base suite setup
-#Suite Teardown   Tear down the config
+Suite Teardown   Tear down the config
 Test Setup       T6 base test setup
 Test Teardown    T6 base test teardown
 Force Tags       T6  feature  nat 
@@ -76,6 +76,7 @@ verify nat-profile CLI and output
 	rest add nat remote tenant  A  nat1  external  E
 	${result}=  rest verify nat profile  A  nat1
 	Should be True  ${result}
+	rest verify nat endpoint  A  nat1  external  E
 	rest delete nat profile  A  nat1
 	${result}=  rest verify nat profile  A  nat1
 	Should not be True  ${result}
@@ -89,7 +90,7 @@ Applying default router using nat next-hop cli test
 	${result}=  rest verify nat profile  A  nat1
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
-	rest delete static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+	rest delete static routes  A  0.0.0.0/0  nat1
 	rest delete nat profile  A  nat1
 	${result}=  rest verify nat profile  A  nat1
 	Should not be True  ${result}
@@ -122,6 +123,8 @@ verify connectivity vm0-vm4 different rack using fixed nat-switch
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
 	sleep  5
+    ${result}=  rest verify nat attachment point  A  nat1  hv1
+	Should be True  ${result}
     ${loss}=  mininet ping  vm0  ${vm4_ip}
     Should Be True  ${loss} == 0
     rest delete nat switch  hv1
@@ -141,8 +144,11 @@ verify connectivity vm0 - vm4 different rack using changing nat-switch
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
 	sleep  5
+    ${result}=  rest verify nat attachment point  A  nat1  hv1
+	Should be True  ${result}
     ${loss}=  mininet ping  vm0  ${vm4_ip}
     Should Be True  ${loss} == 0
+    mininet ping  vm0  ${vm2_ip}
     ${loss}=  mininet ping  vm0  ${vm2_ip}
     Should Be True  ${loss} == 0
     rest delete nat switch  hv1
@@ -150,6 +156,8 @@ verify connectivity vm0 - vm4 different rack using changing nat-switch
 	Should not be True  ${result}
 	rest add nat switch  hv3
 	${result}=  rest verify nat switch  hv3
+	Should be True  ${result}
+	${result}=  rest verify nat attachment point  A  nat1  hv3
 	Should be True  ${result}
 	${loss}=  mininet ping  vm0  ${vm4_ip}
     Should Be True  ${loss} == 0
@@ -211,6 +219,7 @@ T6 base suite setup
     rest add tenant routers intf to system  external
     rest add system intf to tenant routers  A
     rest add system intf to tenant routers  external
+    rest add static routes  external  0.0.0.0/0  {"tenant": "system"}
     mininet host ipcfg  bm0  bm0-bond0  10.0.0.2  24
 	mininet host gw  bm0  10.0.0.1  bm0-bond0
 	mininet host ipcfg  vm0  ${vm0_intf0}  10.0.1.2  24
