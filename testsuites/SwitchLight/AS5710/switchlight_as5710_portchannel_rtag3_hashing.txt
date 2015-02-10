@@ -82,9 +82,6 @@ TC003: Disable two links and verify source MAC address hashing
     ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:01
     ...     name=a4_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic
 
 TC004: Verify destination MAC address hashing 
@@ -120,9 +117,6 @@ TC005: Disable two links and verify destination MAC address hashing
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:04
     ...     name=a4_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic
 
 TC006: Verify Ethernet type hashing 
@@ -158,9 +152,6 @@ TC007: Disable two links and verify Ethernet type hashing
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0804
     ...     name=a4_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic
 
 TC008: Verify VLAN ID based hashing 
@@ -168,13 +159,13 @@ TC008: Verify VLAN ID based hashing
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=100  ethertype=8100
     ...     name=a1_b_flow
     ${stream2}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=200  ethertype=8100
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=101  ethertype=8100
     ...     name=a2_b_flow    
     ${stream3}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=300  ethertype=8100
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=102  ethertype=8100
     ...     name=a3_b_flow
     ${stream4}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=400  ethertype=8100
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=103  ethertype=8100
     ...     name=a4_b_flow
     send and verify traffic  
     [Tags]  full  feature  traffic
@@ -187,18 +178,15 @@ TC009: Disable two links and verify VLAN ID based hashing
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=100  ethertype=8100
     ...     name=a1_b_flow
     ${stream2}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=200  ethertype=8100
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=101  ethertype=8100
     ...     name=a2_b_flow    
     ${stream3}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=300  ethertype=8100
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=102  ethertype=8100
     ...     name=a3_b_flow
     ${stream4}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=400  ethertype=8100
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  vlan_id=103  ethertype=8100
     ...     name=a4_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic
 
 TC010: Verify hashing by varying all L2 fields
@@ -206,13 +194,13 @@ TC010: Verify hashing by varying all L2 fields
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:01  vlan_id=100  ethertype=8100  
     ...     name=a1_b_flow
     ${stream2}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:02  vlan_id=200  ethertype=8100  
+    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:02  vlan_id=101  ethertype=8100  
     ...     name=a2_b_flow    
     ${stream3}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:03  vlan_id=300  ethertype=8100  
+    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:03  vlan_id=102  ethertype=8100  
     ...     name=a3_b_flow
     ${stream4}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:04  dst_mac=00:02:03:04:05:04  vlan_id=400  ethertype=8100  
+    ...     src_mac=00:01:02:03:04:04  dst_mac=00:02:03:04:05:04  vlan_id=103  ethertype=8100  
     ...     name=a4_b_flow
     send and verify traffic  
     [Tags]  full  feature  traffic
@@ -225,18 +213,15 @@ TC011: Disable two links and verify hashing by varying all L2 fields
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:01  vlan_id=100  ethertype=0801
     ...     name=a1_b_flow
     ${stream2}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:02  vlan_id=200  ethertype=8100
+    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:02  vlan_id=101  ethertype=8100
     ...     name=a2_b_flow    
     ${stream3}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:03  vlan_id=300  ethertype=8100
+    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:03  vlan_id=102  ethertype=8100
     ...     name=a3_b_flow
     ${stream4}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:04  dst_mac=00:02:03:04:05:04  vlan_id=400  ethertype=8100
+    ...     src_mac=00:01:02:03:04:04  dst_mac=00:02:03:04:05:04  vlan_id=103  ethertype=8100
     ...     name=a4_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic
 
 TC012: Verify hashing by varying all fields in an L3 Packet
@@ -245,13 +230,13 @@ TC012: Verify hashing by varying all fields in an L3 Packet
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  vlan_id=1000  name=a0_b_flow
     ${stream2}=  L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:01  no_arp=True
-    ...     src_ip=101.1.1.1  dst_ip=101.1.1.2  ethertype=8100  vlan_id=2000  name=a1_b_flow
+    ...     src_ip=101.1.1.1  dst_ip=101.1.1.2  ethertype=8100  vlan_id=1001  name=a1_b_flow
     ${stream3}=  L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
     ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:02  no_arp=True
-    ...     src_ip=102.1.1.1  dst_ip=102.1.1.2  ethertype=8100  vlan_id=2500  name=a2_b_flow
+    ...     src_ip=102.1.1.1  dst_ip=102.1.1.2  ethertype=8100  vlan_id=1002  name=a2_b_flow
     ${stream4}=  L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
     ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:03  no_arp=True
-    ...     src_ip=103.1.1.1  dst_ip=103.1.1.2  ethertype=8100  vlan_id=3300  name=a3_b_flow
+    ...     src_ip=103.1.1.1  dst_ip=103.1.1.2  ethertype=8100  vlan_id=1003  name=a3_b_flow
     send and verify traffic  
     [Tags]  full  feature  traffic
 
@@ -264,32 +249,29 @@ TC013: Disable two links and verify hashing by varying all fields in an L3 Packe
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  vlan_id=1000  name=a0_b_flow
     ${stream2}=  L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:01  no_arp=True
-    ...     src_ip=101.1.1.1  dst_ip=101.1.1.2  ethertype=8100  vlan_id=2000  name=a1_b_flow
+    ...     src_ip=101.1.1.1  dst_ip=101.1.1.2  ethertype=8100  vlan_id=1001  name=a1_b_flow
     ${stream3}=  L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
     ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:02  no_arp=True
-    ...     src_ip=102.1.1.1  dst_ip=102.1.1.2  ethertype=8100  vlan_id=2500  name=a2_b_flow
+    ...     src_ip=102.1.1.1  dst_ip=102.1.1.2  ethertype=8100  vlan_id=1002  name=a2_b_flow
     ${stream4}=  L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
     ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:03  no_arp=True
-    ...     src_ip=103.1.1.1  dst_ip=103.1.1.2  ethertype=8100  vlan_id=3300  name=a3_b_flow
+    ...     src_ip=103.1.1.1  dst_ip=103.1.1.2  ethertype=8100  vlan_id=1003  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic
 
 TC014: Restart process OFAD and verify RTAG3 hashing
-    ${stream1}=  L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  vlan_id=1000  name=a0_b_flow
-    ${stream2}=  L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:01  no_arp=True
-    ...     src_ip=101.1.1.1  dst_ip=101.1.1.2  ethertype=8100  vlan_id=2000  name=a1_b_flow
-    ${stream3}=  L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:02  no_arp=True
-    ...     src_ip=102.1.1.1  dst_ip=102.1.1.2  ethertype=8100  vlan_id=2500  name=a2_b_flow
-    ${stream4}=  L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
-    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:03  no_arp=True
-    ...     src_ip=103.1.1.1  dst_ip=103.1.1.2  ethertype=8100  vlan_id=3300  name=a3_b_flow
+    ${stream1}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:01  vlan_id=100  ethertype=0801
+    ...     name=a1_b_flow
+    ${stream2}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
+    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:02  vlan_id=101  ethertype=8100
+    ...     name=a2_b_flow    
+    ${stream3}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
+    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:03  vlan_id=102  ethertype=8100
+    ...     name=a3_b_flow
+    ${stream4}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000
+    ...     src_mac=00:01:02:03:04:04  dst_mac=00:02:03:04:05:04  vlan_id=103  ethertype=8100
+    ...     name=a4_b_flow
     send and verify traffic
     bash restart process  s1  ofad
     Sleep  90
@@ -427,6 +409,9 @@ send and verify traffic for disabled interfaces
 
 rtag3 test teardown
     delete traffic
+    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
+    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
+    sleep  5
     ${result1}=  stop syslog monitor
     Should be true  ${result1}
     
