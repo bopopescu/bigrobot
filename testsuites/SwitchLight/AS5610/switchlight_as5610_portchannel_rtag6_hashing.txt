@@ -82,9 +82,6 @@ TC003: Disable two links and Verify source IP address hashing
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=103.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv4
 
 TC004: Verify destination IP address hashing
@@ -121,9 +118,6 @@ TC005: Disable two links and Verify destination IP address hashing
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=104.1.1.2  ethertype=0800  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv4
 
 TC006: Verify TCP source port hashing
@@ -168,9 +162,6 @@ TC007: Disable two links and Verify TCP source port hashing
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
     ...     protocol=TCP  src_port=8104  dst_port=8002  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv4
 
 TC008: Verify TCP destination port hashing
@@ -215,9 +206,6 @@ TC009: Disable two links and Verify TCP destination port hashing
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
     ...     protocol=TCP  src_port=8101  dst_port=8004  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv4
 
 TC010: Verify UDP source port hashing
@@ -262,9 +250,6 @@ TC011: Disable two links and Verify UDP source port hashing
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
     ...     protocol=UDP  src_port=8104  dst_port=8002  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv4
 
 TC012: Verify UDP destination port hashing
@@ -309,9 +294,6 @@ TC013: Disable two links and Verify UDP destination port hashing
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
     ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv4
 
 TC014: Verify hashing by varying all fields in an L3 Packet
@@ -356,9 +338,6 @@ TC015: Disable two links and verify hashing by varying all fields in an L3 Packe
     ...     src_ip=100.1.1.4  dst_ip=104.1.1.2  ethertype=0800  
     ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv4
 
 
@@ -395,9 +374,6 @@ TC017: Disable two links and Verify source IPv6 address hashing
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c3  dst_ip=2001:2004:0:0:0:0:0:a0  ethertype=86dd  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv6
 
 TC018: Verify destination IPv6 address hashing
@@ -434,9 +410,6 @@ TC019: Disable two links and Verify destination IPv6 address hashing
     ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a4  ethertype=86dd  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv6
 
 TC020: Verify TCPv6 source port hashing
@@ -481,9 +454,6 @@ TC021: Disable two links and Verify TCPv6 source port hashing
     ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
     ...     protocol=TCP  src_port=8104  dst_port=8002  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv6
 
 TC022: Verify TCPv6 destination port hashing
@@ -528,9 +498,6 @@ TC023: Disable two links and Verify TCPv6 destination port hashing
     ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
     ...     protocol=TCP  src_port=8101  dst_port=8004  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv6
 
 TC024: Verify UDPv6 source port hashing
@@ -574,9 +541,6 @@ TC025: Disable two links and Verify UDPv6 source port hashing
     ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
     ...     protocol=UDP  src_port=8104  dst_port=8002  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv6
 
 TC026: Verify UDPv6 destination port hashing
@@ -621,9 +585,6 @@ TC027: Disable two links and Verify UDPv6 destination port hashing
     ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
     ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv6
 
 TC028: Verify hashing by varying all fields in an IPv6 L3 Packet
@@ -667,9 +628,6 @@ TC029: Disable two links and verify hashing by varying all fields in an IPv6 L3 
     ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:a4  ethertype=86dd  
     ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
     send and verify traffic for disabled interfaces
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
-    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
-    sleep  5
     [Tags]  full  feature  traffic  ipv6
 
 TC030: Restart process OFAD and verify RTAG6 hashing
@@ -827,6 +785,9 @@ send and verify traffic for disabled interfaces
 
 rtag6 test teardown
     delete traffic
+    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
+    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
+    sleep  5
     ${result1}=  stop syslog monitor
     Should be true  ${result1}
     
