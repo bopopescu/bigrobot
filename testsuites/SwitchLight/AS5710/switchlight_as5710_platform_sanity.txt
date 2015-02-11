@@ -225,7 +225,7 @@ TC024: Verify mac address of MA1 interface in show version
 
 TC025: Verify ONIE Version
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To String  1.6.1.6
+    ${match1}=  Convert To String  1.6.1.1
     ${match2}=  Convert To String  ${switch_dict['onie']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
