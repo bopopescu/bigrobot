@@ -42,7 +42,7 @@ ${vm11_intf0}  vm11-eth0
 * Test Case 
 
 add Fabric setup Three Rack Dual Leaf 
-   [Tags]  nat  feature  
+   [Tags]  nat  feature 
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -164,7 +164,7 @@ verify bm-vm connectivity using multiple nat next-hop (single external tenant)
     Should Be True  ${loss} == 0
 
 verify bm-vm connectivity using multiple nat next-hop multiple tenants
-	[Tags]
+	[Tags]  nat  feature
 	add a tenant  external
 	add a tenant  external1
     add a vns  external  s1
@@ -245,6 +245,122 @@ verify vm connectivity applying nat on multiple tenants
 	mininet ping  vm0  ${vm11_ip}
     ${loss}=  mininet ping  vm0  ${vm11_ip}
     Should Be True  ${loss} == 100
+	  
+verify vm connectivity after changing nat profile
+	[Tags]  nat  feature
+	rest delete static routes  t2  10.0.1.0/24
+	rest add static routes  t2  0.0.0.0/0  {"tenant": "system"}
+	add a tenant  external
+	add a tenant  external1
+    add a vns  external  s1
+    add a vns  external1  s1
+    rest add router intf  external  s1
+    rest add vns ip  external  s1  10.10.0.1  24
+    rest add router intf  external1  s1
+    rest add vns ip  external1  s1  10.20.0.1  24
+    rest add tenant routers intf to system  external
+    rest add system intf to tenant routers  external
+    rest add tenant routers intf to system  external1
+    rest add system intf to tenant routers  external1
+    rest add static routes  external  0.0.0.0/0  {"tenant": "system"}
+    rest add static routes  external1  0.0.0.0/0  {"tenant": "system"}
+    rest add nat profile  t1  nat1
+	rest enable pat  t1  nat1
+	rest enable pat public ip  t1  nat1  10.10.0.254  
+	rest add nat remote tenant  t1  nat1  external  s1
+	${result}=  rest verify nat profile  t1  nat1
+	Should be True  ${result}
+	rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat1"}
+    rest verify nat endpoint  t1  nat1  external  s1
+    rest add nat profile  t1  nat2
+	rest enable pat  t1  nat2
+	rest enable pat public ip  t1  nat2  10.20.0.254  
+	rest add nat remote tenant  t1  nat2  external1  s1
+	${result}=  rest verify nat profile  t1  nat2
+	Should be True  ${result}
+    mininet ping  vm0  ${vm7_ip}
+    ${loss}=  mininet ping  vm0  ${vm7_ip}
+    Should Be True  ${loss} == 0
+	rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat2"}
+	mininet ping  vm0  ${vm7_ip}
+    ${loss}=  mininet ping  vm0  ${vm7_ip}
+    Should Be True  ${loss} == 0
+	
+verify vm connectivity changing route from system to nat
+	[Tags]  nat  feature
+	rest add static routes  t2  0.0.0.0/0  {"tenant": "system"}
+	add a tenant  external
+	add a tenant  external1
+    add a vns  external  s1
+    add a vns  external1  s1
+    rest add router intf  external  s1
+    rest add vns ip  external  s1  10.10.0.1  24
+    rest add router intf  external1  s1
+    rest add vns ip  external1  s1  10.20.0.1  24
+    rest add tenant routers intf to system  external
+    rest add system intf to tenant routers  external
+    rest add tenant routers intf to system  external1
+    rest add system intf to tenant routers  external1
+    rest add static routes  external  0.0.0.0/0  {"tenant": "system"}
+    rest add static routes  external1  0.0.0.0/0  {"tenant": "system"}
+    rest add static routes  t1  0.0.0.0/0  {"tenant": "system"}
+    mininet ping  vm0  ${vm7_ip}
+    ${loss}=  mininet ping  vm0  ${vm7_ip}
+    Should Be True  ${loss} == 0
+    rest delete static routes  t1  0.0.0.0/0
+    rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat1"}
+    mininet ping  vm0  ${vm7_ip}
+    ${loss}=  mininet ping  vm0  ${vm7_ip}
+    Should Be True  ${loss} == 100
+    rest add nat profile  t1  nat1
+	rest enable pat  t1  nat1
+	rest enable pat public ip  t1  nat1  10.10.0.254  
+	rest add nat remote tenant  t1  nat1  external  s1
+	${result}=  rest verify nat profile  t1  nat1
+	Should be True  ${result}
+    rest verify nat endpoint  t1  nat1  external  s1
+    mininet ping  vm0  ${vm7_ip}
+    ${loss}=  mininet ping  vm0  ${vm7_ip}
+    Should Be True  ${loss} == 0
+	
+verify vm connectivity with nat switch failover
+	[Tags]  nat feature
+	rest add static routes  t2  0.0.0.0/0  {"tenant": "system"}
+	add a tenant  external
+	add a tenant  external1
+    add a vns  external  s1
+    add a vns  external1  s1
+    rest add router intf  external  s1
+    rest add vns ip  external  s1  10.10.0.1  24
+    rest add router intf  external1  s1
+    rest add vns ip  external1  s1  10.20.0.1  24
+    rest add tenant routers intf to system  external
+    rest add system intf to tenant routers  external
+    rest add tenant routers intf to system  external1
+    rest add system intf to tenant routers  external1
+    rest add static routes  external  0.0.0.0/0  {"tenant": "system"}
+    rest add static routes  external1  0.0.0.0/0  {"tenant": "system"}
+    rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat1"}
+    rest add nat profile  t1  nat1
+	rest enable pat  t1  nat1
+	rest enable pat public ip  t1  nat1  10.10.0.254  
+	rest add nat remote tenant  t1  nat1  external  s1
+	${result}=  rest verify nat profile  t1  nat1
+	Should be True  ${result}
+    sleep  5
+    rest verify nat endpoint  t1  nat1  external  s1
+    mininet ping  vm0  ${vm7_ip}
+    ${loss}=  mininet ping  vm0  ${vm7_ip}
+    Should Be True  ${loss} == 0
+    ${nat_switch}=  rest return nat attachment switch  t1  nat1
+    rest disable nat switch interfaces  ${nat_switch}
+    sleep  40
+    ${result}=  rest verify nat attachment point  t1  nat1  ${nat_switch} 
+    Should not be True  ${result}
+    mininet ping  vm0  ${vm7_ip}
+    ${loss}=  mininet ping  vm0  ${vm7_ip}
+    Should Be True  ${loss} == 0 
+   
 
 * Keywords
 
@@ -309,11 +425,12 @@ T6 base test setup
    base test setup
 
 T6 base test teardown
-   rest delete static routes  t1  10.1.1.0/24  nat1
+   rest delete static routes  t1  10.1.1.0/24  
    rest delete nat profile  t1  nat1
-   rest delete static routes  t1  10.1.2.0/24  nat2
+   rest delete static routes  t1  10.1.2.0/24  
    rest delete nat profile  t1  nat2
-   rest delete static routes  t2  10.0.1.0/24  nat2
+   rest delete static routes  t2  10.0.1.0/24  
+   rest delete static routes  t2  0.0.0.0/0
    rest delete nat profile  t2  nat2
    delete a tenant  external
    delete a tenant  external1  
