@@ -1273,7 +1273,10 @@ corsair suite setup
     rest add switch alias  s2  ${switch2_alias}
     rest add switch alias  s3  ${switch3_alias}
     rest add switch alias  s4  ${switch4_alias}
-    rest add switch alias  s8  ${switch8_alias}    
+    rest add switch alias  s8  ${switch8_alias}
+    # Clear unwanted config on extreme
+    Run Keyword and Ignore Error  config  s6  delete vlan ${extreme1_sw1_tunnel_name}
+    Run Keyword and Ignore Error  config  s6  delete vlan ${extreme1_sw2_tunnel_name}
     #CRC packets to be dropped
     bash  s1  ofad-ctl crc enable
     bash  s2  ofad-ctl crc enable
