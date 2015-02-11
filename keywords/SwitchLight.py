@@ -1019,7 +1019,7 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def cli_flap_interface_ma1(self, node):
+    def cli_flap_interface_ma1(self, node, gateway="10.9.18.1"):
         '''
             Objective:
             - Flap interface ma1 on switch
@@ -1055,7 +1055,8 @@ class SwitchLight(object):
             time.sleep(10)
             tn.write("ifconfig ma1 up" + "\r\n")
             tn.write("exit" + "\r\n")
-            tn.write("ip default-gateway 10.9.18.1")
+            defaultgateway = "ip default-gateway " + str(gateway)
+            tn.write(defaultgateway)
             tn.write("exit" + "\r\n")
             tn.close()
             return True

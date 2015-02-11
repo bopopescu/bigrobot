@@ -1,0 +1,666 @@
+*Settings
+Documentation           Corsair Tunnelling Test Suite
+Suite Setup             corsair suite setup
+Suite Teardown          corsair suite teardown
+Test Setup              corsair test setup
+Test Teardown           corsair test teardown 
+Force Tags              BigTap  corsair-400  tunnel  Accton-AS5710  Accton-AS6700
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 keywords/ThirdParty.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
+
+* Variable
+${switch1_alias}                            APP-AS5710-1  #Alias for switch 1
+${switch2_alias}                            APP-AS6700-1  #Alias for switch 2
+${switch2_alias}                            APP-AS5710-2  #Alias for switch 2
+## Switch 1: APP-AS5710-1
+${switch1_filter_intf}                      ethernet1       #filter interface on switch scale-ac4600-1
+${switch1_filter_alias}                     ixia-1-5        #Alias for filter interface on switch scale-ac4600-1
+${switch1_delivery_intf}                    ethernet2       #Delivery interface on switch scale-ac4600-1
+${switch1_delivery_alias}                   ixia-1-6        #Alias for delivery interface on switch scale-ac4600-1
+
+${tunnel_sw1_name}                          tunnel1                 #Tunnel Name
+${tunnel_sw1_parent_intf}                   ethernet51              #Tunnel Parent Interface
+${tunnel_sw1_sip}                           192.168.43.1            #Tunnel Source IP
+${tunnel_sw1_dip}                           192.168.67.1            #Tunnel Destination IP
+${tunnel_sw1_gip}                           192.168.43.2            #Tunnel Gateway IP
+${tunnel_sw1_mask}                          255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw1_loopback}                      ethernet21              #Tunnel Loopback Interface
+${arista1_sw1_tunnel_name}                 tunnel1
+${arista1_sw1_tunnel_intf1}                Ethernet51/1
+${arista1_sw1_tunnel_ip}                   192.168.43.2  
+${arista1_sw1_tunnel_mask}                 255.255.255.0
+
+## Switch 2: APP-AS6700-1
+
+${tunnel_sw2_name}                          tunnel1          #Tunnel Name
+${tunnel_sw2_parent_intf}                   ethernet5        #Tunnel Parent Interface
+${tunnel_sw2_sip}                           192.168.67.1     #Tunnel Source IP
+${tunnel_sw2_dip}                           192.168.43.1     #Tunnel Destination IP
+${tunnel_sw2_gip}                           192.168.67.2     #Tunnel Gateway IP
+${tunnel_sw2_mask}                          255.255.255.0    #Tunnel Subnet Mask
+${tunnel_sw2_loopback}                      ethernet3        #Tunnel Loopback Interface
+${arista1_sw2_tunnel_name}                 tunnel1
+${arista1_sw2_tunnel_intf1}                Ethernet49/1
+${arista1_sw2_tunnel_ip}                   192.168.67.2  
+${arista1_sw2_tunnel_mask}                 255.255.255.0
+
+## Switch 3: APP-AS5710-2
+${switch2_filter_intf}                      ethernet1       #filter interface on switch scale-ac4600-1
+${switch2_filter_alias}                     ixia-5-1        #Alias for filter interface on switch scale-ac4600-1
+${switch2_delivery_intf}                    ethernet2       #Delivery interface on switch scale-ac4600-1
+${switch2_delivery_alias}                   ixia-5-2        #Alias for delivery interface on switch scale-ac4600-1
+
+${policy_name_1}                            tunnel_based_policy_as5710_6700_1
+${policy_name_2}                            tunnel_based_policy_as5710_6700_2
+
+*Test Case
+
+TC001: Verify bidirectional tunnel interface
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    [Tags]  full  feature
+
+TC002: BiDirectional Tunnel: Verify CLI "show switch-interface <switch_alias> tunnel1" on controller
+    cli  node=master  cmd=show switch-interface ${switch1_alias} ${tunnel_sw1_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    @{lines} =  Split To Lines  ${content1}
+    Remove From List  ${lines}  0
+    Remove From List  ${lines}  -1
+    ${tunnel_dict}=  Create Dictionary  tunnel  show commands
+    :FOR    ${ELEMENT}    IN    @{lines}
+    \    Log  ${ELEMENT}
+    \    @{cliOp}=  Split String  ${ELEMENT}  :
+    \    Set To Dictionary  ${tunnel_dict}  ${cliOp[0].strip()}  ${cliOp[1].strip()}
+    Should Be Equal As Strings  ${tunnel_dict['IF Name']}  ${tunnel_sw1_name}
+    Should Be Equal As Strings  ${tunnel_dict['direction']}  bidirectional
+    Should Be Equal As Strings  ${tunnel_dict['Loopback Interface']}  ${tunnel_sw1_loopback}
+    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  1024
+    Should Be Equal As Strings  ${tunnel_dict['runtime-state']}  up
+    Should Be Equal As Strings  ${tunnel_dict['source-ip']}  ${tunnel_sw1_sip}
+    Should Be Equal As Strings  ${tunnel_dict['Parent Interface']}  ${tunnel_sw1_parent_intf}
+    Should Be Equal As Strings  ${tunnel_dict['ip-mask']}  ${tunnel_sw1_mask}
+    Should Be Equal As Strings  ${tunnel_dict['State']}  up
+    Should Be Equal As Strings  ${tunnel_dict['destination-ip']}  ${tunnel_sw1_dip}
+    Should Be Equal As Strings  ${tunnel_dict['encap-type']}  gre
+    Should Be Equal As Strings  ${tunnel_dict['type']}  tunnel
+    Should Be Equal As Strings  ${tunnel_dict['gateway-ip']}  ${tunnel_sw1_gip}
+    Should Be Equal As Strings  ${tunnel_dict['OF Port']}  376
+    [Tags]  full  feature
+
+TC003: BiDirectional Tunnel: Verify CLI "show switch <switch_alias> interfaces tunnel1" on controller
+    cli  node=master  cmd=show switch ${switch1_alias} interfaces ${tunnel_sw1_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    Should Contain  ${content1}  ${tunnel_sw1_name}
+    Should Contain  ${content1}  376
+    Should Contain  ${content1}  up
+    Should Contain  ${content1}  ${switch1_alias}
+    [Tags]  full  feature
+
+TC004: BiDirectional Tunnel: Verify CLI "show switch <switch_alias> interfaces tunnel1 details" on controller
+    cli  node=master  cmd=show switch ${switch1_alias} interfaces ${tunnel_sw1_name} details
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    Should Contain  ${content1}  ${tunnel_sw1_name}
+    Should Contain  ${content1}  376
+    Should Contain  ${content1}  up
+    Should Contain  ${content1}  ${switch1_alias}
+    [Tags]  full  feature
+
+TC005: BiDirectional Tunnel: Verify CLI "show link | grep tunnel" on controller
+    cli  node=master  cmd=show link | grep tunnel
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    Should Contain  ${content1}  ${tunnel_sw1_name}
+    Should Contain  ${content1}  ${switch1_alias}
+    Should Contain  ${content1}  ${switch2_alias}
+    [Tags]  full  feature  jira-pan-1971
+
+TC006: Accton AS5710: BiDirectional Tunnel: Verify CLI "show interface" on switch shows tunnel status
+    enable  node=s1  cmd=clear interface statistics
+    sleep  2
+    enable  node=s1  cmd=show interface
+    ${content1}=  cli_content  node=s1
+    Should Contain  ${content1}  ethernet
+    verify openflow controller  s1  c1
+    verify openflow controller  s1  c2
+    ${tunnel} =  Get Line    ${content1}  -2
+    Should Contain  ${tunnel}  ${tunnel_sw1_name}
+    [Tags]  full  feature
+
+TC007: Accton AS6700: BiDirectional Tunnel: Verify CLI "show interface" on switch shows tunnel status
+    enable  node=s2  cmd=clear interface statistics
+    sleep  2
+    enable  node=s2  cmd=show interface
+    ${content1}=  cli_content  node=s2
+    Should Contain  ${content1}  ethernet
+    verify openflow controller  s2  c1
+    verify openflow controller  s2  c2
+    ${tunnel} =  Get Line    ${content1}  -2
+    Should Contain  ${tunnel}  ${tunnel_sw2_name}
+    [Tags]  full  feature
+
+TC008: Accton AS5710: BiDirectional Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel status
+    cli  node=s1  cmd=show tunnel 1
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    verify openflow controller  s1  c1
+    verify openflow controller  s1  c2
+    ${tunnel_1} =  Get Line  ${content1}  2
+    Should Contain  ${tunnel_1}  376
+    Should Contain  ${tunnel_1}  51
+    Should Contain  ${tunnel_1}  21
+    ${tunnel_2} =  Get Line  ${content1}  4
+    @{tunnel_2a}=  Split String  ${tunnel_2}
+    ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
+    Should be equal as integers  ${tunnel_2b}  1024
+    ${tunnel_3} =  Get Line  ${content1}  7
+    @{tunnel_3a}=  Split String  ${tunnel_3}
+    Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw1_sip}
+    ${tunnel_4} =  Get Line  ${content1}  8
+    @{tunnel_4a}=  Split String  ${tunnel_4}
+    Should be equal as Strings  ${tunnel_4a[1]}  ${tunnel_sw1_dip}
+    [Tags]  full  feature
+
+TC009: Accton AS6700: BiDirectional Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel status
+    cli  node=s2  cmd=show tunnel 1
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    verify openflow controller  s2  c1
+    verify openflow controller  s2  c2
+    ${tunnel_1} =  Get Line  ${content1}  2
+    Should Contain  ${tunnel_1}  376
+    Should Contain  ${tunnel_1}  5
+    Should Contain  ${tunnel_1}  3
+    ${tunnel_2} =  Get Line  ${content1}  4
+    @{tunnel_2a}=  Split String  ${tunnel_2}
+    ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
+    Should be equal as integers  ${tunnel_2b}  1024
+    ${tunnel_3} =  Get Line  ${content1}  7
+    @{tunnel_3a}=  Split String  ${tunnel_3}
+    Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw2_sip}
+    ${tunnel_4} =  Get Line  ${content1}  8
+    @{tunnel_4a}=  Split String  ${tunnel_4}
+    Should be equal as Strings  ${tunnel_4a[1]}  ${tunnel_sw2_dip}
+    [Tags]  full  feature
+
+
+#### Change tunnel direction to TX-RX and re-verify tunnel status
+TC010: Transmit-only Tunnel (Accton-AS5710): Verify tunnel state via rest
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    [Tags]  full  feature
+    
+TC011: Receive-only Tunnel (Accton-AS6700): Verify tunnel state via rest
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    [Tags]  full  feature
+
+TC012: Transmit-only Tunnel (Accton-AS5710): Verify CLI "show switch-interface <switch_alias> tunnel1" on controller
+    cli  node=master  cmd=show switch-interface ${switch1_alias} ${tunnel_sw1_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    @{lines} =  Split To Lines  ${content1}
+    Remove From List  ${lines}  0
+    Remove From List  ${lines}  -1
+    ${tunnel_dict}=  Create Dictionary  tunnel  show commands
+    :FOR    ${ELEMENT}    IN    @{lines}
+    \    Log  ${ELEMENT}
+    \    @{cliOp}=  Split String  ${ELEMENT}  :
+    \    Set To Dictionary  ${tunnel_dict}  ${cliOp[0].strip()}  ${cliOp[1].strip()}
+    Should Be Equal As Strings  ${tunnel_dict['IF Name']}  ${tunnel_sw1_name}
+    Should Be Equal As Strings  ${tunnel_dict['direction']}  transmit-only
+    Should Be Equal As Strings  ${tunnel_dict['Loopback Interface']}  ${tunnel_sw1_loopback}
+    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  1024
+    Should Be Equal As Strings  ${tunnel_dict['runtime-state']}  up
+    Should Be Equal As Strings  ${tunnel_dict['source-ip']}  ${tunnel_sw1_sip}
+    Should Be Equal As Strings  ${tunnel_dict['Parent Interface']}  ${tunnel_sw1_parent_intf}
+    Should Be Equal As Strings  ${tunnel_dict['ip-mask']}  ${tunnel_sw1_mask}
+    Should Be Equal As Strings  ${tunnel_dict['State']}  up
+    Should Be Equal As Strings  ${tunnel_dict['destination-ip']}  ${tunnel_sw1_dip}
+    Should Be Equal As Strings  ${tunnel_dict['encap-type']}  gre
+    Should Be Equal As Strings  ${tunnel_dict['type']}  tunnel
+    Should Be Equal As Strings  ${tunnel_dict['gateway-ip']}  ${tunnel_sw1_gip}
+    Should Be Equal As Strings  ${tunnel_dict['OF Port']}  376
+    [Tags]  full  feature
+
+TC013: Receive-only Tunnel (Accton-AS6700): Verify CLI "show switch-interface <switch_alias> tunnel1" on controller
+    cli  node=master  cmd=show switch-interface ${switch2_alias} ${tunnel_sw2_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    @{lines} =  Split To Lines  ${content1}
+    Remove From List  ${lines}  0
+    Remove From List  ${lines}  -1
+    ${tunnel_dict}=  Create Dictionary  tunnel  show commands
+    :FOR    ${ELEMENT}    IN    @{lines}
+    \    Log  ${ELEMENT}
+    \    @{cliOp}=  Split String  ${ELEMENT}  :
+    \    Set To Dictionary  ${tunnel_dict}  ${cliOp[0].strip()}  ${cliOp[1].strip()}
+    Should Be Equal As Strings  ${tunnel_dict['IF Name']}  ${tunnel_sw2_name}
+    Should Be Equal As Strings  ${tunnel_dict['direction']}  receive-only
+    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  1024
+    Should Be Equal As Strings  ${tunnel_dict['runtime-state']}  up
+    Should Be Equal As Strings  ${tunnel_dict['source-ip']}  ${tunnel_sw2_sip}
+    Should Be Equal As Strings  ${tunnel_dict['Parent Interface']}  ${tunnel_sw2_parent_intf}
+    Should Be Equal As Strings  ${tunnel_dict['ip-mask']}  ${tunnel_sw2_mask}
+    Should Be Equal As Strings  ${tunnel_dict['State']}  up
+    Should Be Equal As Strings  ${tunnel_dict['destination-ip']}  ${tunnel_sw2_dip}
+    Should Be Equal As Strings  ${tunnel_dict['encap-type']}  gre
+    Should Be Equal As Strings  ${tunnel_dict['type']}  tunnel
+    Should Be Equal As Strings  ${tunnel_dict['gateway-ip']}  ${tunnel_sw2_gip}
+    Should Be Equal As Strings  ${tunnel_dict['OF Port']}  376
+    [Tags]  full  feature
+
+TC014: Transmit-only Tunnel (Accton-AS5710): Verify CLI "show switch <switch_alias> interfaces tunnel1" on controller
+    cli  node=master  cmd=show switch ${switch1_alias} interfaces ${tunnel_sw1_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    Should Contain  ${content1}  ${tunnel_sw1_name}
+    Should Contain  ${content1}  376
+    Should Contain  ${content1}  up
+    Should Contain  ${content1}  ${switch1_alias}
+    [Tags]  full  feature
+    
+TC015: Receive-only Tunnel (Accton-AS6700): Verify CLI "show switch <switch_alias> interfaces tunnel1" on controller
+    cli  node=master  cmd=show switch ${switch2_alias} interfaces ${tunnel_sw2_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    Should Contain  ${content1}  ${tunnel_sw2_name}
+    Should Contain  ${content1}  376
+    Should Contain  ${content1}  up
+    Should Contain  ${content1}  ${switch2_alias}
+    [Tags]  full  feature
+
+TC016: Transmit-only Tunnel (Accton-AS5710): Verify CLI "show switch <switch_alias> interfaces tunnel1 details" on controller
+    cli  node=master  cmd=show switch ${switch1_alias} interfaces ${tunnel_sw1_name} details
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    Should Contain  ${content1}  ${tunnel_sw1_name}
+    Should Contain  ${content1}  376
+    Should Contain  ${content1}  up
+    Should Contain  ${content1}  ${switch1_alias}
+    [Tags]  full  feature
+    
+TC017: Receive-only Tunnel (Accton-AS6700): Verify CLI "show switch <switch_alias> interfaces tunnel1 details" on controller
+    cli  node=master  cmd=show switch ${switch2_alias} interfaces ${tunnel_sw2_name} details
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    Should Contain  ${content1}  ${tunnel_sw2_name}
+    Should Contain  ${content1}  376
+    Should Contain  ${content1}  up
+    Should Contain  ${content1}  ${switch2_alias}
+    [Tags]  full  feature
+
+TC018: Accton AS5710: Transmit-only Tunnel: Verify CLI "show interface" on switch shows tunnel status
+    enable  node=s1  cmd=clear interface statistics
+    sleep  2
+    enable  node=s1  cmd=show interface
+    ${content1}=  cli_content  node=s1
+    Should Contain  ${content1}  ethernet
+    verify openflow controller  s1  c1
+    verify openflow controller  s1  c2
+    ${tunnel} =  Get Line    ${content1}  -2
+    Should Contain  ${tunnel}  ${tunnel_sw1_name}
+    [Tags]  full  feature
+
+TC019: Accton AS6700: Receive-only Tunnel: Verify CLI "show interface" on switch shows tunnel status
+    enable  node=s2  cmd=clear interface statistics
+    sleep  2
+    enable  node=s2  cmd=show interface
+    ${content1}=  cli_content  node=s2
+    Should Contain  ${content1}  ethernet
+    verify openflow controller  s2  c1
+    verify openflow controller  s2  c2
+    ${tunnel} =  Get Line    ${content1}  -2
+    Should Contain  ${tunnel}  ${tunnel_sw2_name}
+    [Tags]  full  feature
+
+TC020: Accton AS5710: Transmit-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel status
+    cli  node=s1  cmd=show tunnel 1
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    verify openflow controller  s1  c1
+    verify openflow controller  s1  c2
+    ${tunnel_1} =  Get Line  ${content1}  2
+    Should Contain  ${tunnel_1}  376                #OF Port:    376
+    Should Contain  ${tunnel_1}  5                  #Parent:    5
+    Should Contain  ${tunnel_1}  51                 #Loopback:   51
+    ${tunnel_2} =  Get Line  ${content1}  4
+    @{tunnel_2a}=  Split String  ${tunnel_2}
+    ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
+    Should be equal as integers  ${tunnel_2b}  1024
+    ${tunnel_3} =  Get Line  ${content1}  7
+    @{tunnel_3a}=  Split String  ${tunnel_3}
+    Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw1_sip}
+    ${tunnel_4} =  Get Line  ${content1}  8
+    @{tunnel_4a}=  Split String  ${tunnel_4}
+    Should be equal as Strings  ${tunnel_4a[1]}  ${tunnel_sw1_dip}
+    [Tags]  full  feature
+    
+TC021: Accton AS6700: Receive-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel status
+    cli  node=s2  cmd=show tunnel 1
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    verify openflow controller  s2  c1
+    verify openflow controller  s2  c2
+    ${tunnel_1} =  Get Line  ${content1}  2
+    Should Contain  ${tunnel_1}  376                #OF Port:    376 
+    Should Contain  ${tunnel_1}  5                  # Parent:    9
+    ${tunnel_2} =  Get Line  ${content1}  4
+    @{tunnel_2a}=  Split String  ${tunnel_2}
+    ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
+    Should be equal as integers  ${tunnel_2b}  1024
+    ${tunnel_3} =  Get Line  ${content1}  7
+    @{tunnel_3a}=  Split String  ${tunnel_3}
+    Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw2_sip}
+    ${tunnel_4} =  Get Line  ${content1}  8
+    @{tunnel_4a}=  Split String  ${tunnel_4}
+    Should be equal as Strings  ${tunnel_4a[1]}  ${tunnel_sw2_dip}
+    [Tags]  full  feature
+
+TC022: Receive-only Tunnel (Accton-AS5710): Verify tunnel state via rest
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  pinterface=${tunnel_sw1_parent_intf}  tdirection=rx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    Should be true  ${verify_tun_sw1}
+    [Tags]  full  feature
+
+TC023: Transmit-only Tunnel (Accton-AS6700): Verify tunnel state via rest
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=tx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    Should be true  ${verify_tun_sw2}
+    [Tags]  full  feature
+
+TC024: Transmit-only Tunnel (Accton-AS6700): Verify CLI "show switch-interface <switch_alias> tunnel1" on controller
+    cli  node=master  cmd=show switch-interface ${switch2_alias} ${tunnel_sw2_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    @{lines} =  Split To Lines  ${content1}
+    Remove From List  ${lines}  0
+    Remove From List  ${lines}  -1
+    ${tunnel_dict}=  Create Dictionary  tunnel  show commands
+    :FOR    ${ELEMENT}    IN    @{lines}
+    \    Log  ${ELEMENT}
+    \    @{cliOp}=  Split String  ${ELEMENT}  :
+    \    Set To Dictionary  ${tunnel_dict}  ${cliOp[0].strip()}  ${cliOp[1].strip()}
+    Should Be Equal As Strings  ${tunnel_dict['IF Name']}  ${tunnel_sw2_name}
+    Should Be Equal As Strings  ${tunnel_dict['direction']}  transmit-only
+    Should Be Equal As Strings  ${tunnel_dict['Loopback Interface']}  ${tunnel_sw2_loopback}
+    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  1024
+    Should Be Equal As Strings  ${tunnel_dict['runtime-state']}  up
+    Should Be Equal As Strings  ${tunnel_dict['source-ip']}  ${tunnel_sw2_sip}
+    Should Be Equal As Strings  ${tunnel_dict['Parent Interface']}  ${tunnel_sw2_parent_intf}
+    Should Be Equal As Strings  ${tunnel_dict['ip-mask']}  ${tunnel_sw2_mask}
+    Should Be Equal As Strings  ${tunnel_dict['State']}  up
+    Should Be Equal As Strings  ${tunnel_dict['destination-ip']}  ${tunnel_sw2_dip}
+    Should Be Equal As Strings  ${tunnel_dict['encap-type']}  gre
+    Should Be Equal As Strings  ${tunnel_dict['type']}  tunnel
+    Should Be Equal As Strings  ${tunnel_dict['gateway-ip']}  ${tunnel_sw2_gip}
+    Should Be Equal As Strings  ${tunnel_dict['OF Port']}  376
+    [Tags]  full  feature
+
+TC025: Receive-only Tunnel (Accton-AS5710): Verify CLI "show switch-interface <switch_alias> tunnel1" on controller
+    cli  node=master  cmd=show switch-interface ${switch1_alias} ${tunnel_sw1_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    @{lines} =  Split To Lines  ${content1}
+    Remove From List  ${lines}  0
+    Remove From List  ${lines}  -1
+    ${tunnel_dict}=  Create Dictionary  tunnel  show commands
+    :FOR    ${ELEMENT}    IN    @{lines}
+    \    Log  ${ELEMENT}
+    \    @{cliOp}=  Split String  ${ELEMENT}  :
+    \    Set To Dictionary  ${tunnel_dict}  ${cliOp[0].strip()}  ${cliOp[1].strip()}
+    Should Be Equal As Strings  ${tunnel_dict['IF Name']}  ${tunnel_sw1_name}
+    Should Be Equal As Strings  ${tunnel_dict['direction']}  receive-only
+    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  1024
+    Should Be Equal As Strings  ${tunnel_dict['runtime-state']}  up
+    Should Be Equal As Strings  ${tunnel_dict['source-ip']}  ${tunnel_sw1_sip}
+    Should Be Equal As Strings  ${tunnel_dict['Parent Interface']}  ${tunnel_sw1_parent_intf}
+    Should Be Equal As Strings  ${tunnel_dict['ip-mask']}  ${tunnel_sw1_mask}
+    Should Be Equal As Strings  ${tunnel_dict['State']}  up
+    Should Be Equal As Strings  ${tunnel_dict['destination-ip']}  ${tunnel_sw1_dip}
+    Should Be Equal As Strings  ${tunnel_dict['encap-type']}  gre
+    Should Be Equal As Strings  ${tunnel_dict['type']}  tunnel
+    Should Be Equal As Strings  ${tunnel_dict['gateway-ip']}  ${tunnel_sw1_gip}
+    Should Be Equal As Strings  ${tunnel_dict['OF Port']}  376
+    [Tags]  full  feature
+    
+TC026: Receive-only Tunnel (Accton-AS5710): Verify CLI "show switch <switch_alias> interfaces tunnel1" on controller
+    cli  node=master  cmd=show switch ${switch1_alias} interfaces ${tunnel_sw1_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    Should Contain  ${content1}  ${tunnel_sw1_name}
+    Should Contain  ${content1}  376
+    Should Contain  ${content1}  up
+    Should Contain  ${content1}  ${switch1_alias}
+    [Tags]  full  feature
+    
+TC027: Transmit-only Tunnel (Accton-AS6700): Verify CLI "show switch <switch_alias> interfaces tunnel1" on controller
+    cli  node=master  cmd=show switch ${switch2_alias} interfaces ${tunnel_sw2_name}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    Should Contain  ${content1}  ${tunnel_sw2_name}
+    Should Contain  ${content1}  376
+    Should Contain  ${content1}  up
+    Should Contain  ${content1}  ${switch2_alias}
+    [Tags]  full  feature
+
+TC028: Receive-only Tunnel (Accton-AS5710): Verify CLI "show switch <switch_alias> interfaces tunnel1 details" on controller
+    cli  node=master  cmd=show switch ${switch1_alias} interfaces ${tunnel_sw1_name} details
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    Should Contain  ${content1}  ${tunnel_sw1_name}
+    Should Contain  ${content1}  376
+    Should Contain  ${content1}  up
+    Should Contain  ${content1}  ${switch1_alias}
+    [Tags]  full  feature
+    
+TC029: Transmit-only Tunnel (Accton-AS6700): Verify CLI "show switch <switch_alias> interfaces tunnel1 details" on controller
+    cli  node=master  cmd=show switch ${switch2_alias} interfaces ${tunnel_sw2_name} details
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    Should Contain  ${content1}  ${tunnel_sw2_name}
+    Should Contain  ${content1}  376
+    Should Contain  ${content1}  up
+    Should Contain  ${content1}  ${switch2_alias}
+    [Tags]  full  feature
+
+TC030: Accton AS5710: Receive-only Tunnel: Verify CLI "show interface" on switch shows tunnel status
+    enable  node=s1  cmd=clear interface statistics
+    sleep  2
+    enable  node=s1  cmd=show interface
+    ${content1}=  cli_content  node=s1
+    Should Contain  ${content1}  ethernet
+    verify openflow controller  s1  c1
+    verify openflow controller  s1  c2
+    ${tunnel} =  Get Line    ${content1}  -2
+    Should Contain  ${tunnel}  ${tunnel_sw1_name}
+    [Tags]  full  feature
+
+TC031: Accton AS6700: Transmit-only Tunnel: Verify CLI "show interface" on switch shows tunnel status
+    enable  node=s2  cmd=clear interface statistics
+    sleep  2
+    enable  node=s2  cmd=show interface
+    ${content1}=  cli_content  node=s2
+    Should Contain  ${content1}  ethernet
+    verify openflow controller  s2  c1
+    verify openflow controller  s2  c2
+    ${tunnel} =  Get Line    ${content1}  -2
+    Should Contain  ${tunnel}  ${tunnel_sw2_name}
+    [Tags]  full  feature
+
+TC032: Accton AS5710: Receive-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel status
+    cli  node=s1  cmd=show tunnel 1
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    verify openflow controller  s1  c1
+    verify openflow controller  s1  c2
+    ${tunnel_1} =  Get Line  ${content1}  2
+    Should Contain  ${tunnel_1}  376                #OF Port:    376
+    Should Contain  ${tunnel_1}  5                  #Parent:    5
+    ${tunnel_2} =  Get Line  ${content1}  4
+    @{tunnel_2a}=  Split String  ${tunnel_2}
+    ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
+    Should be equal as integers  ${tunnel_2b}  1024
+    ${tunnel_3} =  Get Line  ${content1}  7
+    @{tunnel_3a}=  Split String  ${tunnel_3}
+    Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw1_sip}
+    ${tunnel_4} =  Get Line  ${content1}  8
+    @{tunnel_4a}=  Split String  ${tunnel_4}
+    Should be equal as Strings  ${tunnel_4a[1]}  ${tunnel_sw1_dip}
+    [Tags]  full  feature
+
+TC033: Accton AS6700: Transmit-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel status
+    cli  node=s2  cmd=show tunnel 1
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    verify openflow controller  s2  c1
+    verify openflow controller  s2  c2
+    ${tunnel_1} =  Get Line  ${content1}  2
+    Should Contain  ${tunnel_1}  376                #OF Port:    376 
+    Should Contain  ${tunnel_1}  5                  # Parent:    9
+    Should Contain  ${tunnel_1}  3                  # Parent:    9
+    ${tunnel_2} =  Get Line  ${content1}  4
+    @{tunnel_2a}=  Split String  ${tunnel_2}
+    ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
+    Should be equal as integers  ${tunnel_2b}  1024
+    ${tunnel_3} =  Get Line  ${content1}  7
+    @{tunnel_3a}=  Split String  ${tunnel_3}
+    Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw2_sip}
+    ${tunnel_4} =  Get Line  ${content1}  8
+    @{tunnel_4a}=  Split String  ${tunnel_4}
+    Should be equal as Strings  ${tunnel_4a[1]}  ${tunnel_sw2_dip}
+    [Tags]  full  feature
+
+* Keyword
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}
+
+arista tunnel setup   [Arguments]  ${arista_tunnel_interface}  ${tunnel_address}  ${tunnel_mask}
+    config  node=s3  cmd=ip routing
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=interface ${arista_tunnel_interface}
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    config  node=s3  cmd=speed forced 40gfull
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    config  node=s3  cmd=no switchport
+    ${content3}=  cli_content  node=s3
+    Should Not Contain  ${content3}  Error
+    config  node=s3  cmd=ip address ${tunnel_address} ${tunnel_mask}
+    ${content4}=  cli_content  node=s3
+    Should Not Contain  ${content4}  Error
+    config  node=s3  cmd=exit
+
+arista tunnel teardown   [Arguments]  ${arista_tunnel_interface}  ${tunnel_address}  ${tunnel_mask}
+    config  node=s3  cmd=interface ${arista_tunnel_interface}
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    config  node=s3  cmd=no speed forced 40gfull
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    config  node=s3  cmd=no ip address ${tunnel_address} ${tunnel_mask}
+    ${content4}=  cli_content  node=s3
+    Should Not Contain  ${content4}  Error
+    config  node=s3  cmd=exit
+
+
+corsair suite setup
+    base suite setup
+    rest enable feature  tunneling
+    rest add switch alias  s1  ${switch1_alias}
+    rest add switch alias  s2  ${switch2_alias}
+    #CRC packets to be dropped
+    bash  s1  ofad-ctl crc enable
+    bash  s2  ofad-ctl crc enable
+    #Setup tunnels across  Accton AS5710 (app-ac5710-1)
+    #### CORE IS TUNNEL
+    arista tunnel setup  ${arista1_sw1_tunnel_intf1}  ${arista1_sw1_tunnel_ip}  ${arista1_sw1_tunnel_mask}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    Should be true  ${verify_add_tun_sw1}          
+    Sleep  5     
+    #Setup tunnels across  Accton AS6700 (app-ac6700-1)
+    #### CORE IS TUNNEL
+    arista tunnel setup  ${arista1_sw2_tunnel_intf1}  ${arista1_sw2_tunnel_ip}  ${arista1_sw2_tunnel_mask}
+    Sleep  5    
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    Should be true  ${verify_add_tun_sw2}          
+    Sleep  5
+    ## Configure BigTap policy 
+    rest add interface role  s1  ${switch1_filter_intf}     filter    intf_nickname=${switch1_filter_alias}
+    rest add interface role  s1  ${switch1_delivery_intf}   delivery  intf_nickname=${switch1_delivery_alias}
+    rest add interface role  s2  ${switch2_filter_intf}     filter    intf_nickname=${switch2_filter_alias}
+    rest add interface role  s2  ${switch2_delivery_intf}   delivery  intf_nickname=${switch2_delivery_alias}
+    sleep  10
+    rest add policy  admin-view  ${policy_name_1}  forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${switch1_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${switch2_delivery_alias}  delivery
+    rest add policy  admin-view  ${policy_name_2}  forward
+    rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch2_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name_2}  ${switch1_delivery_alias}  delivery    
+    sleep  40
+
+corsair test setup
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
+
+verify openflow controller  [Arguments]  ${switch}  ${controller}
+    cli  node=${switch}  cmd=show controller
+    ${content1}=  cli_content  node=${switch}
+    Should Not Contain  ${content1}  Error
+    ${ret_value_1}=  cli verify controller  ${switch}  ${controller}
+    Should Be True  ${ret_value_1}
+    
+corsair test teardown
+    ${result1}=  stop syslog monitor 
+    Should be true  ${result1}
+    
+tunnel teardown
+    ${verify_del_tun_sw1}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_sw1_name}  
+    Should be true  ${verify_del_tun_sw1}    
+    ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name}  
+    Should be true  ${verify_del_tun_sw2}  
+
+corsair suite teardown
+    Run Keyword and Ignore Error  tunnel teardown
+    Run Keyword and Ignore Error  REST delete policy  admin-view  ${policy_name_1}
+    Run Keyword and Ignore Error  REST delete policy  admin-view  ${policy_name_2}
+    Run Keyword and Ignore Error  rest delete interface role  s1  ${switch1_filter_intf}  filter 
+    Run Keyword and Ignore Error  rest delete interface role  s2  ${switch2_filter_intf}  filter 
+    Run Keyword and Ignore Error  rest delete interface role  s1  ${switch1_delivery_intf}   delivery    
+    Run Keyword and Ignore Error  rest delete interface role  s2  ${switch2_delivery_intf}   delivery    
+    Run Keyword and Ignore Error  rest delete switch alias  s1
+    Run Keyword and Ignore Error  rest delete switch alias  s2
+    Run Keyword and Ignore Error  rest delete switch  s1
+    Run Keyword and Ignore Error  rest delete switch  s2
+    Run Keyword and Ignore Error  rest disable feature  tunneling
+    arista tunnel teardown  ${arista1_sw1_tunnel_intf1}  ${arista1_sw1_tunnel_ip}  ${arista1_sw1_tunnel_mask}
+    arista tunnel teardown  ${arista1_sw2_tunnel_intf1}  ${arista1_sw2_tunnel_ip}  ${arista1_sw2_tunnel_mask}
+    Run Keyword and Ignore Error  base suite teardown
