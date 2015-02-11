@@ -18,6 +18,7 @@
 
 import autobot.helpers as helpers
 import autobot.test as test
+from keywords.T5 import T5
 
 
 class T6(object):
@@ -28,7 +29,6 @@ class T6(object):
         """
         t = test.Test()
         c = t.controller(node)
-
         helpers.log("Dummy T6 keyword...")
         return True
     
@@ -215,8 +215,8 @@ class T6(object):
                         helpers.log("logical router nat attachment point is not correct")
                         return False
             else:
-                    helpers.log("Given nat-profile is not active")
-                    return False
+                    continue
+        return False
                 
     def rest_verify_tenant_route_nat(self, tenant, nat_profile):
         '''Function to verify routes in tenant showing nat next-hop
@@ -225,7 +225,6 @@ class T6(object):
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/route' % tenant
         c.rest.get(url)
-        data = c.rest.content()
         
     def rest_verify_nat_endpoint(self, tenant, nat_profile, remote_tenant, remote_segment):
         '''Function to verify nat endpoint
@@ -235,25 +234,67 @@ class T6(object):
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]?select=logical-router&config=true' % tenant
         c.rest.get(url)
         data = c.rest.content()
-        helpers.log("print content %s" % data[0]["logical-router"]["nat-profile"])
         for i in range(0, len(data[0]["logical-router"]["nat-profile"])):
             if data[0]["logical-router"]["nat-profile"][i]["name"] == nat_profile:
                 public_ip = data[0]["logical-router"]["nat-profile"][i]["pat"]["ip-address"]
-                return public_ip
             else:
                 continue
         url1 = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % public_ip
         c.rest.get(url1)
         data1 = c.rest.content()
-        if data1["ip-address"]["ip-address"] == public_ip and data1["ip-address"]["ip-state"] == "static" and data1["state"] == "Active":
+        helpers.log("content %s" % data1)
+        if data1[0]["ip-address"][0]["ip-address"] == public_ip and data1[0]["ip-address"][0]["ip-state"] == "static" and data1[0]["state"] == "Active":
             helpers.log("nat container endpoint is present")
             return True
         else:
             helpers.test_failure("nat container endpoint is not present")
             return False
             
-        
+    def rest_return_nat_attachment_switch(self, tenant, nat_profile):
+        '''Function to verify nat ivs switch attachment point for fixed nat switch
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/nat-profile' % tenant
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0, len(data)):
+            if data[i]["name"] == nat_profile and data[i]["state"] == "active":
+                attachment_point = data[i]["attachment-point"]
+                ivs_switch = attachment_point.split('|')
+                return ivs_switch[0]
+            else:
+                continue   
             
-        
-        
+    def rest_disable_nat_switch_interfaces(self, nat_switch):
+        '''Function to disable leaf interfaces for the nat ivs switch connected
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/fabric/port-group[name="%s"]' % nat_switch
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0, len(data[0]["interface"])):
+            switch = data[0]["interface"][i]["switch-name"]
+            interface = data[0]["interface"][i]["interface-name"]
+            url0 = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
+            c.rest.put(url0, {"name": str(interface)})
+            url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
+            c.rest.patch(url, {"shutdown": True})
+            helpers.sleep(5)
+           
+    def rest_enable_nat_switch_interfaces(self, nat_switch):
+        '''Function to disable leaf interfaces for the nat ivs switch connected
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/fabric/port-group[name="%s"]' % nat_switch
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0, len(data[0]["interface"])):
+            switch = data[0]["interface"][i]["switch-name"]
+            interface = data[0]["interface"][i]["interface-name"]   
+            url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
+            c.rest.delete(url, {"shutdown": None})
+            helpers.sleep(3)
 
