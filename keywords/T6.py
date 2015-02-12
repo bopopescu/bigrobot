@@ -139,7 +139,7 @@ class T6(object):
         else:
             return True
         
-    def rest_enable_pat(self, tenant, nat_profile):
+    def rest_add_pat(self, tenant, nat_profile):
         ''' Function to enable pat for a nat-profile
         '''
         t = test.Test()
@@ -152,7 +152,7 @@ class T6(object):
         else:
             return True
     
-    def rest_enable_pat_public_ip(self, tenant, nat_profile, public_ip):
+    def rest_add_pat_public_ip(self, tenant, nat_profile, public_ip):
         ''' Function to enable pat for a nat-profile
         '''
         t = test.Test()
@@ -297,4 +297,74 @@ class T6(object):
             url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
             c.rest.delete(url, {"shutdown": None})
             helpers.sleep(3)
-
+            
+    def rest_add_floating_ip(self, tenant, nat_profile, public_ip):
+        '''Function to configure floating IP
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/floating-ip[ip-address="%s"]' % (tenant, nat_profile, public_ip) 
+        try:
+            c.rest.put(url, {"ip-address": public_ip})
+        except:
+            return False
+        else:
+            return True
+        
+    def rest_add_private_ip(self, tenant, nat_profile, public_ip, private_ip):
+        '''Function to configure Private IP association to Public floating IP
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/floating-ip[ip-address="%s"]' % (tenant, nat_profile, public_ip)
+        try:
+            c.rest.patch(url, {"private-ip-address": private_ip})
+        except:
+            return False
+        else:
+            return True
+        
+    def rest_add_public_mac(self, tenant, nat_profile, public_ip, public_mac):
+        '''Function to configure Private IP association to Public floating IP
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/floating-ip[ip-address="%s"]' % (tenant, nat_profile, public_ip)
+        try:
+            c.rest.patch(url, {"public-mac": public_mac})
+        except:
+            return False
+        else:
+            return True  
+        
+    def rest_verify_floating_ip(self, tenant, nat_profile, public_ip, private_ip):
+        '''Function to verify nat-profile status for tenant logical router
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/floating-ip' % tenant
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0, len(data)):
+            if data[i]["logical-router"] == tenant and data[i]["nat-profile"] == nat_profile:
+                if data[i]["floating-ip"] == public_ip and data[i]["private-ip"] == private_ip and data[i]["state"] == "active":
+                        helpers.log("given floating ip is applied to tenant logical router and status is active")
+                        return True
+                else:
+                        helpers.log("given floating ip is not active")
+                        return False
+            else:
+                continue
+            
+    def rest_delete_floating_ip(self, tenant, nat_profile, public_ip):
+        '''Function to delete floating IP from nat-profile
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/floating-ip[ip-address="%s"]' % (tenant, nat_profile, public_ip)
+        try:
+            c.rest.delete(url, {})
+        except:
+            return False
+        else:
+            return True
