@@ -1653,7 +1653,7 @@ class T5(object):
         data = c.rest.content()
         fabric_interface = 0
         for i in range(0, len(data)):
-            if data[i]["type"] == "leaf" or data[i]["type"] == "spine":
+            if data[i]["type"] == "leaf" or data[i]["type"] == "spine" or data[i]["type"] == "virtual":
                 fabric_interface = fabric_interface + 1
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric?select=link' % ()
         c.rest.get(url1)
@@ -3260,15 +3260,27 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
         t.setup_ztn_phase2(name)
         return True
 
-    def remove_no_auto_reload(self, name):
+    def remove_no_auto_reload(self, name=None):
         """
         Remove no-auto-reoload file through given switch console
         """
         t = test.Test()
-        con = t.dev_console(name)
-        helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
-        con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
-        con.cli("")
+        if name is None:
+            params = t.topology_params_nodes()
+            for key in params:
+                if not helpers.is_switch(key):
+                    helpers.log("Skip Remove no_auto_relaod for key: %s" % key)
+                    continue
+                con = t.dev_console(key)
+                helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
+                con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
+                con.cli("")
+                con.close()
+        else:
+            con = t.dev_console(name)
+            helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
+            con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
+            con.cli("")
         return True
 
     def rest_get_router_mac(self, ip, node='master'):
@@ -3319,16 +3331,16 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
         return True
 
     def rest_show_fabric(self):
-        '''return fabric information 
+        '''return fabric information
             REST-SIMPLE: GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/summary/fabric
             Return: content if found
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bcf/info/summary/fabric' 
+        url = '/api/v1/data/controller/applications/bcf/info/summary/fabric'
         c.rest.get(url)
         data = c.rest.content()
-        helpers.log ("result: %s" % helpers.prettify(data)) 
+        helpers.log ("result: %s" % helpers.prettify(data))
         if len(data) == 0:
             return {}
         else:

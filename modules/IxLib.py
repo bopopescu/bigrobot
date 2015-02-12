@@ -200,7 +200,7 @@ class Ixia(object):
                         helpers.debug("ixia_mac_value found : %s" % ixia_mac_value)
                         ixia_ip_devices = handle.getList(eth_device, 'ipv4')
                         helpers.debug("ixia_ip_devices: %s" % ixia_ip_devices)
-                        if ixia_mac_value == mac:
+                        if ixia_mac_value == mac and len(ixia_ip_devices) > 0:
                             return eth_device, ixia_ip_devices[0]
         return None, None
     def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_mac_step, d_mac_step,

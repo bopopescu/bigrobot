@@ -1,0 +1,55 @@
+*Variables
+
+${switch1_name}  	leaf0-a
+${switch3_name}  	leaf1-a
+${switch7_name}  	spine0
+${switch4_name}  	leaf1-b
+${switch_intf1}     ethernet24
+${switch_intf2}     ethernet25
+${vlan}             -1
+
+${leaf1b_intf}  	ethernet9
+${leaf1b_intf1}  	ethernet9/1
+${leaf1b_intf2}  	ethernet9/2
+${leaf1b_intf3}  	ethernet9/3
+${leaf1b_intf4}  	ethernet9/4
+${leaf1a_intf1}  	ethernet8
+${leaf1a_intf2}  	ethernet9
+${leaf1a_intf3}  	ethernet10
+${leaf1a_intf4}  	ethernet11
+
+## This link does not have breakout cable inserted
+${leaf1b_intf5}  	ethernet10
+${leaf1b_intf6}  	ethernet10/1
+${leaf1b_intf7}  	ethernet10/2
+${leaf1b_intf8}  	ethernet10/3
+${leaf1b_intf9}  	ethernet10/4
+
+## Multiple Link betweek leaf0-spine0
+${leaf0a_spine0_intf1}      ethernet50
+${leaf0a_spine0_intf2}      ethernet49
+${leaf0a_spine0_breakout1}  ethernet45
+${leaf0a_spine0_breakout2}  ethernet46 
+${leaf0a_spine0_breakout3}  ethernet47  
+${leaf0a_spine0_breakout4}  ethernet48   
+${spine0_leaf0a_breakout1}  ethernet16/1  
+${spine0_leaf0a_breakout2}  ethernet16/2
+${spine0_leaf0a_breakout3}  ethernet16/3
+${spine0_leaf0a_breakout4}  ethernet16/4  
+
+${tenant}                    tenantTest1
+${vns}                       segTest1
+${count}                     1 
+${ratetolerance}             10
+${tolerance}                 5
+${sleepAfter}                10
+${sleepBefore}               5     
+
+
+
+
+
+
+
+
+

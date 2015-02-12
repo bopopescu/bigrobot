@@ -30,7 +30,7 @@ Library         Dialogs
 #---------------------------------------------
 
 T1 Interface sement-interface add/remove redirect(next-hop) policy src-ip to dest-ip
-	[Tags]  feature
+	[Tags]  feature  daily-sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -103,7 +103,7 @@ T2 Interface sement-interface add/remove redirect(next-hop) policy src-ip to any
 
 
 T3 Interface sement-interface add/remove redirect(next-hop) policy src-ip to tenant
-	[Tags]  feature
+	[Tags]  feature  daily-sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -174,7 +174,7 @@ T4 Interface sement-interface add/remove permit policy src-ip to dest-ip
 
 
 T5 Interface sement-interface add/remove deny policy src-ip to dest-ip
-	[Tags]  feature
+	[Tags]  feature 
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy							${tenantX}		${tenant2_polname}	
@@ -202,7 +202,7 @@ T5 Interface sement-interface add/remove deny policy src-ip to dest-ip
     delete traffic
 
 T6 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port to dest-ip-port
-	[Tags]  feature
+	[Tags]  feature  daily-sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -277,12 +277,12 @@ T7 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port t
 T8 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port to tenant
 	[Tags]  feature  port
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
 	rest add policy							${tenantX}		${tenant2_polname}	
 	rest add nexthop group  ${tenantX}  ${next-hop-grp}
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
@@ -313,12 +313,12 @@ T8 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port t
 T9 Interface sement-interface add/fail-over controller/remove redirect(next-hop) policy src-ip-port to tenant
 	[Tags]  feature  ha
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
 	rest add policy							${tenantX}		${tenant2_polname}	
 	rest add nexthop group  ${tenantX}  ${next-hop-grp}
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
@@ -351,12 +351,12 @@ T9 Interface sement-interface add/fail-over controller/remove redirect(next-hop)
 T10 Interface sement-interface add/reboot master controller/remove redirect(next-hop) policy src-ip-port to tenant
 	[Tags]  feature  ha
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
 	rest add policy							${tenantX}		${tenant2_polname}	
 	rest add nexthop group  ${tenantX}  ${next-hop-grp}
 	rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+	rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
 	rest apply policy on tenant				${tenantX}		${tenant2_polname}
 	${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
 	L3 start hosts  port_name=b
@@ -387,14 +387,14 @@ T10 Interface sement-interface add/reboot master controller/remove redirect(next
     delete traffic
 
 T11 Interface sement-interface add/reboot standby controller/remove redirect(next-hop) policy src-ip-port to tenant
-    [Tags]  feature  ha
+    [Tags]  feature  ha  daily-sanity
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     L3 start hosts  port_name=b
@@ -426,14 +426,14 @@ T11 Interface sement-interface add/reboot standby controller/remove redirect(nex
 
 
 T12 Interface sement-interface add/reboot leaf switch/remove redirect(next-hop) policy src-ip-port to tenant
-    [Tags]  feature  ha
+    [Tags]  feature  ha  
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
-    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  tenant  ${tenantX}
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
     rest add policy                         ${tenantX}      ${tenant2_polname}  
     rest add nexthop group  ${tenantX}  ${next-hop-grp}
     rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
-    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
     rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
     ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
     L3 start hosts  port_name=b
@@ -483,7 +483,7 @@ T12 Interface sement-interface add/reboot leaf switch/remove redirect(next-hop) 
 
 
 T13 Interface sement-interface redirect(next-hop) policy src-ip to dest-ip check policy counter
-    [Tags]  feature  counter
+    [Tags]  feature  counter  daily-sanity
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -661,13 +661,19 @@ verify results   [Arguments]  ${port_1}   ${port_2}
    ${report}=  fetch port stats
    ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
    ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
-   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  30
+   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
    Should be true  ${in_range}
 
 verify policy stats   [Arguments]  ${port_1}   ${tenant}  ${seq}
    ${report}=  fetch port stats
    ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
    ${in_range}=  rest verify policy stats  ${tenant}  ${seq}  ${tx_value}
+   Should be true  ${in_range}
+   
+verify policy stats false  [Arguments]  ${port_1}   ${tenant}  ${seq}
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${in_range}=  rest verify policy stats  ${tenant}  ${seq}  ${tx_value}  True
    Should be true  ${in_range}
    
    
@@ -683,7 +689,7 @@ verify stats true   [Arguments]  ${transmitted_frames}  ${received_frames}  ${st
     ${report}=  fetch port stats  stream=${stream}  
     ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  10
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
     Should be true  ${in_range}
     
 verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
@@ -691,7 +697,7 @@ verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${s
     ${report}=  fetch port stats  stream=${stream}  
     ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  10
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
     Should not be true  ${in_range}
 
 

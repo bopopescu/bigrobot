@@ -114,10 +114,11 @@ T5.10 Delete Port groups
     
 #### Support Bundles
 
-#T6.1 Generate a Support Bundle
-#	Generate Support Bundle		
-#T6.2 Delete Support Bundle
-#	Delete All Support Bundles	
+T6.1 Generate a Support Bundle
+	Generate Support Bundle
+	[Tags]   gf		
+T6.2 Delete Support Bundle
+	Delete All Support Bundles	
 
 ### Configure User	  		Username 			Password 			Confirm Password  			Full Name				Group
 T7.1 User with password 	
@@ -370,7 +371,9 @@ config suite setup
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
     Start Selenium Server  -trustAllSSLCertificates
+    Sleep  30
     Open Browser To Login Page
+    Sleep  30
     Valid Login  admin  adminadmin
     
 	

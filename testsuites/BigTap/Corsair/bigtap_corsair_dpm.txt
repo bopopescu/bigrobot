@@ -40,7 +40,7 @@ TC1:Verify no errors are reported in CLI/Syslog while enabling offset based matc
 	sleep  10
     ${return_value}=  rest enable feature  l3-l4-offset-match
     Should be true   ${return_value}       
-    [Tags]  full  feature
+    [Tags]  sanity  feature
 
 TC2:With offset matching enabled, verify basic BigTap policy with "match any" condition is active and installed. Verify flow table in switch. 
 
@@ -62,7 +62,7 @@ TC2:With offset matching enabled, verify basic BigTap policy with "match any" co
     sleep  2
     ${ethType}=  rest return switch flow  s2  0  eth-type  flow_id=${1}
     Should be equal as integers  ${ethType}  34525    
-    [Tags]  full  feature  
+    [Tags]  sanity  feature  
 
 TC3:Verify basic BigTap policy with "1 match gtp gtp-v1-teid 100" condition is active and installed.
 	   

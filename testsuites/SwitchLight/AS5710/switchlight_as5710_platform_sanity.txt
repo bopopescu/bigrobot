@@ -86,16 +86,24 @@ TC008: Shutdown a 40G interface and verify interface state is down
     [Tags]  sanity  ha  robustness
 
 TC009: Verify ma1 ip address configuration via static config
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
     delete static ip  s1  ${netmask}  ${gateway}
     delete dns  s1  ${dns_server}  ${dns_domain}
     Sleep  5
     add static ip  s1  ${netmask}  ${gateway}
     add dns  s1  ${dns_server}  ${dns_domain}
     Sleep  60
+    add openflow controller  s1  c1
+    verify openflow controller  s1  c1
+    add openflow controller  s1  c2
+    verify openflow controller  s1  c2
     verify ip dns  s1  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
-    [Tags]  sanity  feature  runthis
+    [Tags]  sanity  feature  
 
 TC010: Verify ma1 ip address configuration via dhcp
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
     delete static ip  s1  ${netmask}  ${gateway}
     delete dns  s1  ${dns_server}  ${dns_domain}
     Sleep  5
@@ -109,6 +117,10 @@ TC010: Verify ma1 ip address configuration via dhcp
     sleep  5
     add static ip  s1  ${netmask}  ${gateway}
     add dns  s1  ${dns_server}  ${dns_domain}
+    add openflow controller  s1  c1
+    verify openflow controller  s1  c1
+    add openflow controller  s1  c2
+    verify openflow controller  s1  c2
     [Tags]  sanity  feature  
 
 TC011: Verify ntp
@@ -132,7 +144,121 @@ TC013: Verify DPID on switch is same as being reported to Controller
     ${switch_dpid}=      cli show switch dpid  s1
     Should be equal as strings  ${controller_dpid}  ${switch_dpid}   
     [Tags]  sanity  feature
-            
+
+TC014: Verify Switch Manufacturer
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  Accton
+    ${match2}=  Convert To String  ${switch_dict['Manufacturer']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC015: Verify Switch Model
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  AS5710-54X
+    ${match2}=  Convert To String  ${switch_dict['Model']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC016: Verify Switch Platform
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  powerpc-as5710-54x-r0b
+    ${match2}=  Convert To String  ${switch_dict['Platform']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC017: Verify Switch Description
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  Accton AS5710-54X (powerpc-as5710-54x-r0b)
+    ${match2}=  Convert To String  ${switch_dict['Description']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC018: Verify Switch Label Revision
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  R0B
+    ${match2}=  Convert To String  ${switch_dict['Label']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC019: Verify Switch Part Number
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  FP1ZZ5654401A
+    ${match2}=  Convert To String  ${switch_dict['PartNumber']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC020: Verify Switch Product Name
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  5710-54X-O-AC-F
+    ${match2}=  Convert To String  ${switch_dict['ProductName']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC021: Verify Switch Serial Number
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  571054X1420028
+    ${match2}=  Convert To String  ${switch_dict['SerialNumber']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC022: Verify Maximum number of component ports in a LAG on switch
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To Integer  16
+    ${match2}=  Convert To Integer  ${switch_dict['MaxLagPorts']}
+    Should be equal as integers  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC023: Verify Total Physical Ports on switch
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To Integer  54
+    ${match2}=  Convert To Integer  ${switch_dict['PhysicalPorts']}
+    Should be equal as integers  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC024: Verify mac address of MA1 interface in show version
+    ${switch_dict}=  cli show version  s1
+    ${ma1mac}=  cli show interface macaddress  s1   ma1
+    ${match1}=  Convert To String  ${ma1mac}
+    ${match2}=  Convert To String  ${switch_dict['ma1Mac']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC025: Verify ONIE Version
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  1.6.1.1
+    ${match2}=  Convert To String  ${switch_dict['onie']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC026: Verify Country Code
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  TW
+    ${match2}=  Convert To String  ${switch_dict['country']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC027: Verify Diag Version
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  1.4.0.1
+    ${match2}=  Convert To String  ${switch_dict['diag']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC028: Verify Vendor
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  Edgecore
+    ${match2}=  Convert To String  ${switch_dict['Vendor']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC028: Verify CPLD Version
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  5.5.5
+    ${match2}=  Convert To String  ${switch_dict['cpld']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+    
+    
 * Keywords 
 
 delete existing controllers  [Arguments]  ${switch}  ${controller}

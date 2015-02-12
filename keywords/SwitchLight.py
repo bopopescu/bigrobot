@@ -438,6 +438,86 @@ class SwitchLight(object):
                             return return_value
                 return False
 
+    def cli_show_version(self, node):
+        '''
+            Objective:
+            - Execute cli command "show version" on switch and return requested parameter
+
+            Input:
+            | node | Switch Reference from topo file |
+
+            Return Value:
+            - Value for requested key
+        '''
+        t = test.Test()
+        switch = t.switch(node)
+        try:
+            switch.cli("show version")
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+        else:
+            switch_output = switch.cli_content()
+            version_array = switch_output.split('\n')
+            return_dict = {}
+            for i in range(0, len(version_array)):
+                if "Manufacturer" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Manufacturer'] = temp_val1[1].strip()
+                if "Model" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Model'] = temp_val1[1].strip()
+                if "Platform" in version_array[i] and "Information" not in version_array[i] and "Name" not in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Platform'] = temp_val1[1].strip()
+                if "Description" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Description'] = temp_val1[1].strip()
+                if "Label" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Label'] = temp_val1[1].strip()
+                if "Part Number" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['PartNumber'] = temp_val1[1].strip()
+                if "Product Name" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['ProductName'] = temp_val1[1].strip()
+                if "Serial Number" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['SerialNumber'] = temp_val1[1].strip()
+                if "Physical" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['PhysicalPorts'] = temp_val1[1].strip()
+                if "LAG" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['MaxLagPorts'] = temp_val1[1].strip()
+                if "Vendor" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Vendor'] = temp_val1[1].strip()
+                if "MAC" in version_array[i] and "Range" not in version_array[i] and "Serial" not in version_array[i]:
+                    temp_val1 = version_array[i].split()
+                    return_dict['ma1Mac'] = temp_val1[1].strip()
+                if "ONIE Version" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['onie'] = temp_val1[1].strip()
+                if "Country Code" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['country'] = temp_val1[1].strip()
+                if "Diag Version" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['diag'] = temp_val1[1].strip()
+                if "CPLD Version" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['cpld'] = temp_val1[1].strip()
+                if "Service Tag" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['ServiceTag'] = temp_val1[1].strip()
+            if (len(return_dict) < 1):
+                return False
+            else:
+                return return_dict
+
+
     def ping_from_local(self, node):
         '''
             Objective:
@@ -939,7 +1019,7 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def cli_flap_interface_ma1(self, node):
+    def cli_flap_interface_ma1(self, node, gateway="10.9.18.1"):
         '''
             Objective:
             - Flap interface ma1 on switch
@@ -975,7 +1055,8 @@ class SwitchLight(object):
             time.sleep(10)
             tn.write("ifconfig ma1 up" + "\r\n")
             tn.write("exit" + "\r\n")
-            tn.write("ip default-gateway 10.9.18.1")
+            defaultgateway = "ip default-gateway " + str(gateway)
+            tn.write(defaultgateway)
             tn.write("exit" + "\r\n")
             tn.close()
             return True
@@ -1579,15 +1660,17 @@ class SwitchLight(object):
             full_path = "http://10.6.1.1/export/switchlight/" + str(image_path)
             bash_input_2 = "cd /mnt/flash2/; wget " + str(full_path) + " ./"
             switch.bash(bash_input_2)
-            bash_input_3 = "echo SWI=flash2:" + str(image_name) + " > /mnt/flash/boot-config"
+            bash_input_3 = "echo NETDEV=ma1 > /mnt/flash/boot-config"
             switch.bash(bash_input_3)
-            bash_input_4 = "echo NETDEV=ma1 >> /mnt/flash/boot-config"
+            bash_input_4 = "echo BOOTMODE=swi >> /mnt/flash/boot-config"
             switch.bash(bash_input_4)
-            bash_input_5 = "ls -lrt /mnt/flash2/; cat /mnt/flash/boot-config"
+            bash_input_5 = "echo SWI=flash2:" + str(image_name) + " >> /mnt/flash/boot-config"
             switch.bash(bash_input_5)
-            helpers.sleep(1)
-            bash_input_6 = "reboot"
+            bash_input_6 = "ls -lrt /mnt/flash2/; cat /mnt/flash/boot-config"
             switch.bash(bash_input_6)
+            helpers.sleep(2)
+            bash_input_7 = "reboot"
+            switch.bash(bash_input_7)
             return True
         except:
             helpers.test_log("Could not execute command. Please check log for errors")

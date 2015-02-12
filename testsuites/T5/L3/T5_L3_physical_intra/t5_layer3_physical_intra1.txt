@@ -156,7 +156,7 @@ TC34 Trigger controller HA failover via CLI
     [Tags]              feature  run_pass
 
 TC35 Add and delete config change
-    Add and delete config change
+    Add and delete config changes
     [Tags]              feature    
       
 * Keywords
@@ -898,9 +898,9 @@ test teardown topology
 #   Stop Floodlight Monitor 
     initialize host
     BASH ifdown intf                                    h3                          bond0
-    BASH restart networking service                 h1                          timeout=60
-    BASH restart networking service                 h3                          timeout=60
-    BASH restart networking service                 h6                          timeout=60
+    BASH restart networking service                 h1                          timeout=120
+    BASH restart networking service                 h3                          timeout=120
+    BASH restart networking service                 h6                          timeout=120
 
 
 T5 base suite setup

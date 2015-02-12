@@ -18,15 +18,15 @@ Library               String
 ### Configure Big Tap Interface from Controller Menu         ID                         Switch                Role                Name         
 T1.1 Interface with regular name-filter        
      Configure Big Tap Interface from Controller Menu        ethernet1                app-rlb9-1            filter                filter-1
-    [Tags]  blackbird  full  feature  interface
+    [Tags]  blackbird  full  feature  interface  sanity
 T1.2 Interface with regular name-delivery-1    
      Configure Big Tap Interface from Controller Menu        ethernet1                app-rly2-1            delivery            delivery_1
-    [Tags]  blackbird  full  feature  interface
+    [Tags]  blackbird  full  feature  interface  sanity
 #T1.3 Interface with regular name-delivery-2    
 #     Configure Big Tap Interface from Controller Menu        ethernet2                app-rly2-1            delivery            delivery 2
 T1.4 Interface with regular name-service-1    
      Configure Big Tap Interface from Controller Menu        ethernet3                app-rlb9-1            service                SERVICE-1
-    [Tags]  blackbird  full  feature  interface
+    [Tags]  blackbird  full  feature  interface   sanity
 T1.5 Edit regular name-filter    
      Edit Big Tap Interface from Controller Menu                ethernet1                app-rlb9-1            filter                filter-new-1
     [Tags]  blackbird  full  feature  interface
