@@ -71,8 +71,8 @@ Verify nat-pool CLI and output
 verify nat-profile CLI and output
 	[Tags]  nat  sanity  feature 
 	rest add nat profile  A  nat1
-	rest enable pat  A  nat1
-	rest enable pat public ip  A  nat1  10.0.4.254  
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
 	rest add nat remote tenant  A  nat1  external  E
 	${result}=  rest verify nat profile  A  nat1
 	Should be True  ${result}
@@ -84,8 +84,8 @@ verify nat-profile CLI and output
 Applying default router using nat next-hop cli test
 	[Tags]  nat  feature    
 	rest add nat profile  A  nat1
-	rest enable pat  A  nat1
-	rest enable pat public ip  A  nat1  10.0.4.254  
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
 	rest add nat remote tenant  A  nat1  external  E
 	${result}=  rest verify nat profile  A  nat1
 	Should be True  ${result}
@@ -98,14 +98,20 @@ Applying default router using nat next-hop cli test
 verify connectivity vm0 - vm4 different rack using nat next-hop
    [Tags]  nat  feature  run
     rest add nat profile  A  nat1
-	rest enable pat  A  nat1
-	rest enable pat public ip  A  nat1  10.0.4.254  
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
 	rest add nat remote tenant  A  nat1  external  E
 	${result}=  rest verify nat profile  A  nat1
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
     mininet ping  vm0  ${vm4_ip}
     ${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    mininet ping  vm1  ${vm4_ip}
+    ${loss}=  mininet ping  vm1  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    mininet ping  vm2  ${vm4_ip}
+    ${loss}=  mininet ping  vm2  ${vm4_ip}
     Should Be True  ${loss} == 0
     rest delete static routes  A  0.0.0.0/0  nat1
     rest delete nat profile  A  nat1
@@ -116,8 +122,8 @@ verify connectivity vm0-vm4 different rack using fixed nat-switch
 	${result}=  rest verify nat switch  hv1
 	Should be True  ${result}
 	rest add nat profile  A  nat1
-	rest enable pat  A  nat1
-	rest enable pat public ip  A  nat1  10.0.4.254  
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
 	rest add nat remote tenant  A  nat1  external  E
 	${result}=  rest verify nat profile  A  nat1
 	Should be True  ${result}
@@ -137,8 +143,8 @@ verify connectivity vm0 - vm4 different rack using changing nat-switch
 	${result}=  rest verify nat switch  hv1
 	Should be True  ${result}
 	rest add nat profile  A  nat1
-	rest enable pat  A  nat1
-	rest enable pat public ip  A  nat1  10.0.4.254  
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
 	rest add nat remote tenant  A  nat1  external  E
 	${result}=  rest verify nat profile  A  nat1
 	Should be True  ${result}
@@ -155,6 +161,7 @@ verify connectivity vm0 - vm4 different rack using changing nat-switch
 	${result}=  rest verify nat switch  hv1
 	Should not be True  ${result}
 	rest add nat switch  hv3
+	sleep  10
 	${result}=  rest verify nat switch  hv3
 	Should be True  ${result}
 	${result}=  rest verify nat attachment point  A  nat1  hv3
@@ -168,8 +175,8 @@ verify connectivity vm0 - vm4 different rack using changing nat-switch
 verify connectivity bm0 to vm4 different rack
 	[Tags]
 	rest add nat profile  A  nat1
-	rest enable pat  A  nat1
-	rest enable pat public ip  A  nat1  10.0.4.254  
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
 	rest add nat remote tenant  A  nat1  external  E
 	${result}=  rest verify nat profile  A  nat1
 	Should be True  ${result}
