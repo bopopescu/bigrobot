@@ -226,7 +226,10 @@ TC025: Verify ONIE Version
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
 
-
+TC026: Verify if 40G ports are up
+    ${intf_status}=  switch inventory if status  s1  40GBASE
+    Should be true  ${intf_status}
+    [Tags]  sanity  feature
 
 * Keywords 
 
