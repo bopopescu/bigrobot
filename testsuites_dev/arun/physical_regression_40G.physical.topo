@@ -66,6 +66,7 @@ s3:
     spine0_int0: ethernet8
     h3_int0: ethernet1
     h4_int0: ethernet9/3
+    h3_int1: ethernet9/4
   pdu:
     ip: pdu-111-b.bigswitch.com
     port: 1
@@ -115,6 +116,7 @@ s5:
     spine1_int0: ethernet20
     h5_int0: ethernet1
     h6_int0: ethernet24/2
+    h5_int1: ethernet24/3
 
 s6:
   alias: leaf2-b
