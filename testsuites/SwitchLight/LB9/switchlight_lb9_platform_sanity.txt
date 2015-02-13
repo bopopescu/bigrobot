@@ -239,6 +239,12 @@ TC026: Verify Vendor
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
     
+TC027: Verify if 1,2,47, 48 ports are up
+    ${intf_status}=  switch if LB9 s4810 status  s1 
+    Should be true  ${intf_status}
+    [Tags]  sanity  feature 
+    
+    
 * Keywords 
 
 delete existing controllers  [Arguments]  ${switch}  ${controller}
