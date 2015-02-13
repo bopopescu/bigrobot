@@ -304,6 +304,8 @@ verify vm connectivity changing route from system to nat
     rest add static routes  external  0.0.0.0/0  {"tenant": "system"}
     rest add static routes  external1  0.0.0.0/0  {"tenant": "system"}
     rest add static routes  t1  0.0.0.0/0  {"tenant": "system"}
+    ${result}=  rest verify vswitch l3 cidr nat  t1  hv0  0.0.0.0
+    Should not be True  ${result}
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
     Should Be True  ${loss} == 0
@@ -319,6 +321,8 @@ verify vm connectivity changing route from system to nat
 	${result}=  rest verify nat profile  t1  nat1
 	Should be True  ${result}
     rest verify nat endpoint  t1  nat1  external  s1
+    ${result}=  rest verify vswitch l3 cidr nat  t1  hv0  10.1.1.0
+    Should be True  ${result}
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
     Should Be True  ${loss} == 0
