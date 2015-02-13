@@ -340,7 +340,11 @@ class Host(object):
     def bash_init_intf(self, node, intf):
         t = test.Test()
         n = t.node(node)
-        n.sudo("ifconfig %s 0.0.0.0" % intf)
+        try:
+            n.sudo("ifconfig %s 0.0.0.0" % intf)
+        except:
+            helpers.test_error("Ignore Host errors",
+                               soft_error=True)
         return True
 
     def bash_check_service_status(self, node, processname):

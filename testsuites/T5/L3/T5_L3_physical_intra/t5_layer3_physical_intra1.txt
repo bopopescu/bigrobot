@@ -1299,6 +1299,7 @@ Verify vlsm forwarding
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Be True                              ${result}                       
     REST show endpoints 
+    BASH ping                       h5                      10.251.2.212
     ${loss} =                                   BASH ping                       h5                      10.251.2.212            count=10
     Should Be True                              ${loss} == 0
     BASH delete route                           h4                              10.252.0.0/25           10.251.0.1
