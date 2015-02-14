@@ -545,8 +545,16 @@ Test IXIA
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate    
     stop traffic  ${stream}
-	[Tags]  run
+	[Tags]
 
+39_Ixia_Simulate Port Status Port or Down
+	simulate port state  port_name=a  action=down
+	sleep  2
+	${result}=  chk_port_state  port_name=a  state=down
+	Should be True  ${result}
+	[Tags]  run
+	
+	
 *Keywords
 atest teardown
 	delete traffic
