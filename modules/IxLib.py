@@ -2135,7 +2135,7 @@ class Ixia(object):
                 helpers.log("Simulating Link %s in IxNetwork.. " % str(action))
                 handle.execute("linkUpDn", vport, str(action))
         return True
-    def ix_chk_port_state(self, **kwargs):
+    def ix_get_port_state(self, **kwargs):
         '''
             Use to check the Ixia port state in IxNetwork
         '''
@@ -2160,8 +2160,7 @@ class Ixia(object):
             if handle.getAttribute(vport, "-name") == port_name:
                 helpers.log("Checking the Link state of ixia port %s in IxNetwork.. " % str(port_name))
                 helpers.log("IXIA Port State in IxNetwork is: %s" % str(handle.getAttribute(vport, "-state")).lower())
-                if str(handle.getAttribute(vport, "-state")).lower() == state.lower():
-                    return True
+                return str(handle.getAttribute(vport, "-state")).lower()
         return False
     def ix_delete_traffic(self, **kwargs):
         '''
