@@ -182,7 +182,8 @@ TC14: Create 2000 users and assign each user to unique group. Verify user can lo
     \    rest delete rbac permission  ${group_view}
     \    rest delete user   ${username_name}            
     \    Sleep  1  
-    [Tags]  scaling  full
+    [Tags]  scaling  full  skipped
+    ##  The above testcase takes 3-4 hours
 
 * Keyword
 rbac suite setup
