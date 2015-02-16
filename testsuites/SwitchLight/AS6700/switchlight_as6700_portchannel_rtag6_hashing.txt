@@ -654,8 +654,8 @@ TC030: Restart process OFAD and verify RTAG6 hashing
 * Keywords 
 rtag6 suite setup
     base suite setup
-    cli add portchannel  s1  ${s1_10g_number_1}  ${s1_10g_port_range_1}  L2
-    cli add portchannel  s1  ${s1_10g_number_2}  ${s1_10g_port_range_2}  L2
+    cli add portchannel  s1  ${s1_10g_number_1}  ${s1_10g_port_range_1}  L3
+    cli add portchannel  s1  ${s1_10g_number_2}  ${s1_10g_port_range_2}  L3
     rest add interface role  s2  ${filter_1}  filter  ${filter_nick_1}
     rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
     rest add interface role  s1  ${filter_2}  filter  ${filter_nick_2}
