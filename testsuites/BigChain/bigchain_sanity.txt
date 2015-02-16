@@ -305,6 +305,7 @@ sanity test teardown
 sanity suite teardown
     config  node=master  cmd=switch ${switch_dpid_s1}
     config  node=master  cmd=deployment role bigtap
+    config  node=master  cmd=exit
     config  node=master  cmd=switch ${switch_dpid_s2}
     config  node=master  cmd=deployment role bigtap
     rest delete switch alias  s1
