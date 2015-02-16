@@ -544,7 +544,7 @@ TC030: Service Policy: Verify with traffic, action do-service
     ${content9}=  cli_content  node=master
     Should Not Contain  ${content9}  Error
     sleep  30
-    pause
+    
     ${result1}=  rest verify bigchain service policy  chain_service_name=${service_name}  sequence=1  data=ether-type 2048 sequence 1 src-ip 100.1.1.1 src-ip-mask 255.255.255.255
     Should be True  ${result1}
     ${stream_l3_as5710}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=64
