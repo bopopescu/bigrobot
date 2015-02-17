@@ -1281,3 +1281,12 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
     def test_check_version(self):
         status = BsnCommon().check_version('master', '2.1.0')
         helpers.log("version check against 2.1.0: %s" % status)
+
+    def rest_bigtap_delivery_group(self, node):
+        t = test.Test()
+        c = t.controller(node)
+        res = c.rest.put('/api/v1/data/controller/applications/bigtap/view[name="admin-view"]/policy[name="P1"]/delivery-group[name="demo-eth3"]',
+                          data={"name": "demo-eth3"}
+                         )
+        return res
+
