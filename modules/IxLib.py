@@ -200,7 +200,7 @@ class Ixia(object):
                         helpers.debug("ixia_mac_value found : %s" % ixia_mac_value)
                         ixia_ip_devices = handle.getList(eth_device, 'ipv4')
                         helpers.debug("ixia_ip_devices: %s" % ixia_ip_devices)
-                        if ixia_mac_value == mac:
+                        if ixia_mac_value == mac and len(ixia_ip_devices) > 0:
                             return eth_device, ixia_ip_devices[0]
         return None, None
     def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_mac_step, d_mac_step,
@@ -2109,6 +2109,59 @@ class Ixia(object):
             self.ix_check_vport_state(vports_not_connected, retry_count=retry_count + 1)
         return True
 
+    def ix_simulate_port_state(self, **kwargs):
+        '''
+            Use to Simulate Link Down / UP Action in IxNetowrk..
+        '''
+        handle = self._handle
+        port_name = kwargs.get("port_name", None)
+        action = kwargs.get("action", None)
+        if port_name is None or action is None:
+            helpers.log("Please Pass the Port Name and link simulate action: up/down")
+            helpers.exit_robot_immediately("Got In Complete Ixia Argumnets..")
+        vports = handle.getList(handle.getRoot(), 'vport')
+        if len(vports) == 0:
+            helpers.log("No Vports are created in IxNetwork mapping to Bigrobot Topo file tg ixia ports creating vports..")
+            self.ix_create_vports()
+            if self.ix_map_vports_pyhsical_ports():
+                helpers.log('### Successfully mapped vport to physical ixia ports..')
+            else:
+                helpers.log('Unable to connect to Ixia Chassis')
+                return False
+            helpers.log("Successfully Created vports mapping to Bigrobot topo file in IxNetwork..")
+        vports = handle.getList(handle.getRoot(), 'vport')
+        for vport in vports:
+            if handle.getAttribute(vport, "-name") == port_name:
+                helpers.log("Simulating Link %s in IxNetwork.. " % str(action))
+                handle.execute("linkUpDn", vport, str(action))
+        return True
+    def ix_get_port_state(self, **kwargs):
+        '''
+            Use to check the Ixia port state in IxNetwork
+        '''
+        handle = self._handle
+        port_name = kwargs.get("port_name", None)
+        state = kwargs.get("state", None)
+        if port_name is None or state is None:
+            helpers.log("Please Pass the Port Name and stae expected: up/down")
+            helpers.exit_robot_immediately("Got In Complete Ixia Argumnets..")
+        vports = handle.getList(handle.getRoot(), 'vport')
+        if len(vports) == 0:
+            helpers.log("No Vports are created in IxNetwork mapping to Bigrobot Topo file tg ixia ports creating vports..")
+            self.ix_create_vports()
+            if self.ix_map_vports_pyhsical_ports():
+                helpers.log('### Successfully mapped vport to physical ixia ports..')
+            else:
+                helpers.log('Unable to connect to Ixia Chassis')
+                return False
+            helpers.log("Successfully Created vports mapping to Bigrobot topo file in IxNetwork..")
+        vports = handle.getList(handle.getRoot(), 'vport')
+        for vport in vports:
+            if handle.getAttribute(vport, "-name") == port_name:
+                helpers.log("Checking the Link state of ixia port %s in IxNetwork.. " % str(port_name))
+                helpers.log("IXIA Port State in IxNetwork is: %s" % str(handle.getAttribute(vport, "-state")).lower())
+                return str(handle.getAttribute(vport, "-state")).lower()
+        return False
     def ix_delete_traffic(self, **kwargs):
         '''
             Method to delete all configured Traffic Items

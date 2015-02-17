@@ -17,9 +17,9 @@ Library                 String.py
 * Variable
 ${policy_name_1}  policy_as5710_traffic
 ${filter_1}  ethernet1  
-${filter_nick_1}  ixia-2-1
+${filter_nick_1}  ixia-1-5
 ${delivery_1}  ethernet2  
-${delivery_nick_1}  ixia-2-2
+${delivery_nick_1}  ixia-1-6
 
 *Test Case
 

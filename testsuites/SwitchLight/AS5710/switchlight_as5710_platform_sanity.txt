@@ -225,7 +225,7 @@ TC024: Verify mac address of MA1 interface in show version
 
 TC025: Verify ONIE Version
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To String  1.6.1.6
+    ${match1}=  Convert To String  1.6.1.1
     ${match2}=  Convert To String  ${switch_dict['onie']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
@@ -257,6 +257,21 @@ TC028: Verify CPLD Version
     ${match2}=  Convert To String  ${switch_dict['cpld']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
+    
+TC029: Verify if 1G ports are up
+	${intf_status}=  switch inventory if status  s1  1GBASE
+	Should be true  ${intf_status}
+    [Tags]  sanity  feature  
+    
+TC030: Verify if 10G ports are up
+	${intf_status}=  switch inventory if status  s1  10GBASE
+	Should be true  ${intf_status}
+    [Tags]  sanity  feature  	
+    
+TC031: Verify if 40G ports are up
+	${intf_status}=  switch inventory if status  s1  40GBASE
+	Should be true  ${intf_status}
+    [Tags]  sanity  feature  	  
     
     
 * Keywords 

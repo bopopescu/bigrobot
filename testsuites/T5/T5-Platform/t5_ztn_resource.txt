@@ -69,6 +69,9 @@ Suite Setup
 	${tmp}=  Rest Get Switch Ip Address  master  ${s5_alias}
 	set suite variable  ${s5_ip}  ${tmp}
 
+    ${tmp}=  Controller Get Release String
+    Set Suite Variable  ${release_string}  ${tmp}
+
 Suite Teardown
 	Sleep  30
 	Run Keyword and Ignore Error  Cli Copy  snapshot://startup-config  running-config
@@ -291,12 +294,14 @@ Verify Switch SWI Version
 	${swi_version_bundle}=  Bash Get Switchlight Version  swi
 	${swi_version_switch}=  Telnet Get Switch Switchlight Version  swi  ${switch_alias}
 	Should Contain  ${swi_version_switch}  ${swi_version_bundle}
+	Should Contain  ${swi_version_switch}  ${release_string}
 
 Verify Switch Installer Version
 	[Arguments]  ${switch_alias}
 	${installer_version_bundle}=  Bash Get Switchlight Version  installer
 	${installer_version_switch}=  Telnet Get Switch Switchlight Version  installer  ${switch_alias}
 	Should Contain  ${installer_version_switch}  ${installer_version_bundle}
+	Should Contain  ${installer_version_switch}  ${release_string}
 
 Failover
 	${status}=  Rest Verify Cluster Election Take Leader

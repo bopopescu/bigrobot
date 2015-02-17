@@ -340,7 +340,11 @@ class Host(object):
     def bash_init_intf(self, node, intf):
         t = test.Test()
         n = t.node(node)
-        n.sudo("ifconfig %s 0.0.0.0" % intf)
+        try:
+            n.sudo("ifconfig %s 0.0.0.0" % intf)
+        except:
+            helpers.test_error("Ignore Host errors",
+                               soft_error=True)
         return True
 
     def bash_check_service_status(self, node, processname):
@@ -444,8 +448,13 @@ class Host(object):
     def bash_run_command(self, node, cmd):
         t = test.Test()
         n = t.node(node)
-        content = n.bash("%s " % cmd)['content']
-        str_list = helpers.strip_cli_output(content, to_list=True)
+        try:
+            content = n.bash("%s " % cmd)['content']
+            str_list = helpers.strip_cli_output(content, to_list=True)
+        except:
+            helpers.test_error("Bash run command failed",
+                               soft_error=True)
+            str_list = "Bash Run Command Failed"
         return  str_list
 
     def bash_ifconfig_ip_address(self, node, ipaddr, intf, down=False):
@@ -497,14 +506,14 @@ class Host(object):
             h.sudo("service networking restart", timeout=timeout)
 
     def bash_kill_process(self, node, pname):
-        ''' 
-            kill process name 
+        '''
+            kill process name
         '''
         t = test.Test()
         n = t.node(node)
         n.bash("ps aux | grep -i %s | grep -v grep" % pname)
         n.bash("for x in `ps aux | grep -i %s | grep -v grep | awk '{print $2}'`; do sudo kill -9 $x; done" % pname)
-        
+
     def bash_add_static_arp(self, node, ipaddr, hwaddr):
         t = test.Test()
         n = t.node(node)

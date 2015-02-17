@@ -7,5 +7,29 @@
 BIGROBOT_BIN_PATH=$(/usr/bin/dirname $0)
 BIGROBOT_PATH=$(cd $BIGROBOT_BIN_PATH/..; /bin/pwd)
 
-wc -l `(find $BIGROBOT_PATH | perl -ne 'next if /(jquery|vendors|keywords_dev)/; print if /\.(java|scala|rb|scm|scheme|ss|rkt|lisp|haml|sass|coffee|js|pl|pm|sh|py|pp)$/') 2> /dev/null ; echo /dev/null` | sort -rgb
+echo "All source code in BigRobot"
+wc -l \
+    `(find $BIGROBOT_PATH | \
+      perl -ne 'next if /(jquery|vendors|keywords_dev|testsuites_dev)/; \
+                print if /\.(java|scala|rb|scm|scheme|ss|rkt|lisp|haml|sass|coffee|js|pl|pm|sh|py|pp)$/' \
+     ) 2> /dev/null ; echo /dev/null` | \
+  sort -rgb
+
+echo ""
+echo "All BigRobot keyword libraries"
+wc -l \
+    `(find "${BIGROBOT_PATH}/keywords" | \
+      perl -ne 'next if /(jquery|vendors|keywords_dev|testsuites_dev)/; \
+                print if /\.(java|scala|rb|scm|scheme|ss|rkt|lisp|haml|sass|coffee|js|pl|pm|sh|py|pp)$/' \
+     ) 2> /dev/null ; echo /dev/null` | \
+  sort -rgb
+
+echo ""
+echo "All BigRobot test suites (text files)"
+wc -l \
+    `(find "${BIGROBOT_PATH}/testsuites" | \
+      perl -ne 'print if /\.(txt)$/' \
+     ) 2> /dev/null ; echo /dev/null` | \
+  sort -rgb
+
 

@@ -8,6 +8,7 @@ Force Tags              BigTap  blackbird-300  Accton-AS5610
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
+Library                 keywords/BigChain.py
 Library                 keywords/SwitchLight.py
 Library                 keywords/Ixia.py
 Library                 Collections.py
@@ -518,15 +519,23 @@ TC32: Flap Delivery Interface on AS5610 and verify traffic: frame size 1518 byte
 
 bigtap suite setup
     base suite setup
+    Run Keyword and Ignore Error  rest add switch role  node=s1  mode=bigtap
     ${disable_crc_check}=  rest disable feature  crc
-    Should be true  ${disable_crc_check}           
-    rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}   
-    rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}    
-    Sleep  5
-    rest add policy  admin-view  ${policy_name_1}  forward
-    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name_1}  ${filter_nick_1}  filter
-    rest add policy interface  admin-view  ${policy_name_1}  ${delivery_nick_1}  delivery
+    Should be true  ${disable_crc_check}
+    sleep  5
+    ${config1}=  rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}   
+    Should be true  ${config1}
+    ${config2}=  rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
+    Should be true  ${config2}
+    Sleep  10
+    ${config3}=  rest add policy  admin-view  ${policy_name_1}  forward
+    Should be true  ${config3}
+    ${config4}=  rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${config4}
+    ${config5}=  rest add policy interface  admin-view  ${policy_name_1}  ${filter_nick_1}  filter
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface  admin-view  ${policy_name_1}  ${delivery_nick_1}  delivery
+    Should be true  ${config6}
     Sleep  5
 
 traffic test setup

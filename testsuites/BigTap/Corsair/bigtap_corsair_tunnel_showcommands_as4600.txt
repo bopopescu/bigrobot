@@ -162,14 +162,14 @@ TC008: Transmit-only Tunnel: Verify tunnel state via rest
     Should be true  ${verify_add_tun_sw1}
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
     
 TC009: Receive-only Tunnel: Verify tunnel state via rest
     ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
     Should be true  ${verify_add_tun_sw2}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
 
 TC010: Transmit-only Tunnel: Verify CLI "show switch-interface <switch_alias> tunnel1" on controller
     cli  node=master  cmd=show switch-interface ${switch1_alias} ${tunnel_sw1_name}
@@ -197,7 +197,7 @@ TC010: Transmit-only Tunnel: Verify CLI "show switch-interface <switch_alias> tu
     Should Be Equal As Strings  ${tunnel_dict['type']}  tunnel
     Should Be Equal As Strings  ${tunnel_dict['gateway-ip']}  ${tunnel_sw1_gip}
     Should Be Equal As Strings  ${tunnel_dict['OF Port']}  376
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
 
 TC011: Receive-only Tunnel: Verify CLI "show switch-interface <switch_alias> tunnel1" on controller
     cli  node=master  cmd=show switch-interface ${switch2_alias} ${tunnel_sw2_name}
@@ -224,7 +224,7 @@ TC011: Receive-only Tunnel: Verify CLI "show switch-interface <switch_alias> tun
     Should Be Equal As Strings  ${tunnel_dict['type']}  tunnel
     Should Be Equal As Strings  ${tunnel_dict['gateway-ip']}  ${tunnel_sw2_gip}
     Should Be Equal As Strings  ${tunnel_dict['OF Port']}  376
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
 
 TC012: Transmit-only Tunnel: Verify CLI "show switch <switch_alias> interfaces tunnel1" on controller
     cli  node=master  cmd=show switch ${switch1_alias} interfaces ${tunnel_sw1_name}
@@ -234,7 +234,7 @@ TC012: Transmit-only Tunnel: Verify CLI "show switch <switch_alias> interfaces t
     Should Contain  ${content1}  376
     Should Contain  ${content1}  up
     Should Contain  ${content1}  ${switch1_alias}
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
     
 TC013: Receive-only Tunnel: Verify CLI "show switch <switch_alias> interfaces tunnel1" on controller
     cli  node=master  cmd=show switch ${switch2_alias} interfaces ${tunnel_sw2_name}
@@ -244,7 +244,7 @@ TC013: Receive-only Tunnel: Verify CLI "show switch <switch_alias> interfaces tu
     Should Contain  ${content1}  376
     Should Contain  ${content1}  up
     Should Contain  ${content1}  ${switch2_alias}
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
 
 TC014: Transmit-only Tunnel: Verify CLI "show switch <switch_alias> interfaces tunnel1 details" on controller
     cli  node=master  cmd=show switch ${switch1_alias} interfaces ${tunnel_sw1_name} details
@@ -254,7 +254,7 @@ TC014: Transmit-only Tunnel: Verify CLI "show switch <switch_alias> interfaces t
     Should Contain  ${content1}  376
     Should Contain  ${content1}  up
     Should Contain  ${content1}  ${switch1_alias}
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
     
 TC015: Receive-only Tunnel: Verify CLI "show switch <switch_alias> interfaces tunnel1 details" on controller
     cli  node=master  cmd=show switch ${switch2_alias} interfaces ${tunnel_sw2_name} details
@@ -264,7 +264,7 @@ TC015: Receive-only Tunnel: Verify CLI "show switch <switch_alias> interfaces tu
     Should Contain  ${content1}  376
     Should Contain  ${content1}  up
     Should Contain  ${content1}  ${switch2_alias}
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
 
 TC016: Transmit-only Tunnel: Verify CLI "show interface" on switch shows tunnel status
     cli  node=s1  cmd=show interface
@@ -274,7 +274,7 @@ TC016: Transmit-only Tunnel: Verify CLI "show interface" on switch shows tunnel 
     verify openflow controller  s1  c2
     ${tunnel} =  Get Line    ${content1}  -2
     Should Contain  ${tunnel}  ${tunnel_sw1_name}
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
 
 TC017: Receive-only Tunnel: Verify CLI "show interface" on switch shows tunnel status
     cli  node=s2  cmd=show interface
@@ -284,7 +284,7 @@ TC017: Receive-only Tunnel: Verify CLI "show interface" on switch shows tunnel s
     verify openflow controller  s2  c2
     ${tunnel} =  Get Line    ${content1}  -2
     Should Contain  ${tunnel}  ${tunnel_sw2_name}
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
 
 TC018: Transmit-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel status
     cli  node=s1  cmd=show tunnel 1
@@ -306,7 +306,7 @@ TC018: Transmit-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel s
     ${tunnel_4} =  Get Line  ${content1}  8
     @{tunnel_4a}=  Split String  ${tunnel_4}
     Should be equal as Strings  ${tunnel_4a[1]}  ${tunnel_sw1_dip}
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
     
 TC019: Receive-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel status
     cli  node=s2  cmd=show tunnel 2
@@ -327,7 +327,7 @@ TC019: Receive-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel st
     ${tunnel_4} =  Get Line  ${content1}  8
     @{tunnel_4a}=  Split String  ${tunnel_4}
     Should be equal as Strings  ${tunnel_4a[1]}  ${tunnel_sw2_dip}
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature
 
 
     

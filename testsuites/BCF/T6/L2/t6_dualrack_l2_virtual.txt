@@ -60,8 +60,8 @@ add Fabric setup Dual Rack Dual Leaf
 #   add fabric switch
    rest verify fabric switch all
    rest verify fabric vswitch all
-   rest verify vswitch portgroup  8
-   rest verify fabric link  20
+   rest verify vswitch portgroup  4
+   rest verify fabric link common  20
 
 ping bm0 to bm1 dual leaf dual rack dynamic endpoints
    [Tags]  L2  smoke  sanity  IronHorse  feature
@@ -81,7 +81,7 @@ ping vm0 to vm1 single ivs dynamic endpoints
    [Tags]  L2  sanity  IronHorse  feature
    rest add interface to vns  A  A  hv0  ${hv0_intf0}  -1
    rest add interface to vns  A  A  hv0  ${hv0_intf1}  -1 
-   sleep  10 
+   sleep  5 
    ${loss}=  mininet ping  vm0  ${vm1_ip}
    Should Be True  ${loss} == 0					 
 		
@@ -129,6 +129,7 @@ T6 base suite setup
     add a portgroup  p2 
     add interface to portgroup  leaf1-a  ${bm1_intf0}  p2
     add interface to portgroup  leaf1-b  ${bm1_intf1}  p2
+    mininet start inband
     sleep  5
 
 Tear down the config

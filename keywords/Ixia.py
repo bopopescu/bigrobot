@@ -175,3 +175,22 @@ class Ixia(object):
         tg_handle = t.traffic_generator(node).handle()
         return tg_handle.ix_delete_traffic()
 
+    def simulate_port_state(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_simulate_port_state(**kwargs)
+    def get_port_state(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_get_port_state(**kwargs)
+

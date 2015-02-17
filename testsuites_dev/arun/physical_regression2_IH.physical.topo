@@ -223,33 +223,47 @@ h1:
   ip: 10.9.16.23
   user: root
   password: bsn
+  interfaces:
+    leaf0a_int0: eth2
+    leaf0b_int0: eth3
 h2:
   ip: 10.9.16.24
   user: root
   password: bsn
+  interfaces:
+    leaf0a_int0: eth2
+    leaf0b_int0: eth3
 h3:
   ip: 10.9.16.21
   user: root
   password: bsn
   interfaces:
+    leaf1a_int0: eth2
+    leaf1b_int0: eth3
     h3_eth1_mac: d4:ae:52:c6:bc:cb
 h4:
   ip: 10.9.16.22
   user: root
   password: bsn
   interfaces:
+    leaf1a_int0: eth2
+    leaf1b_int0: eth3
     bond0_mac: 00:10:18:f0:e9:70
 h5:
   ip: 10.9.16.25
   user: root
   password: bsn
   interfaces:
+    leaf2a_int0: eth2
+    leaf2b_int0: eth3
     bond0_mac: 90:e2:ba:4f:80:dc
 h6:
   ip: 10.9.16.26
   user: root
   password: bsn
   interfaces:
+    leaf2a_int0: eth2
+    leaf2b_int0: eth3
     bond0_mac: 90:e2:ba:4e:bb:90
 tg1:
   platform: 'ixia'

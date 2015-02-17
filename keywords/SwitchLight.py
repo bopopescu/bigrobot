@@ -1019,7 +1019,7 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def cli_flap_interface_ma1(self, node):
+    def cli_flap_interface_ma1(self, node, gateway="10.9.18.1"):
         '''
             Objective:
             - Flap interface ma1 on switch
@@ -1055,7 +1055,8 @@ class SwitchLight(object):
             time.sleep(10)
             tn.write("ifconfig ma1 up" + "\r\n")
             tn.write("exit" + "\r\n")
-            tn.write("ip default-gateway 10.9.18.1")
+            defaultgateway = "ip default-gateway " + str(gateway)
+            tn.write(defaultgateway)
             tn.write("exit" + "\r\n")
             tn.close()
             return True
@@ -2408,3 +2409,58 @@ class SwitchLight(object):
         else:
             helpers.test_log("There are no %s to be deleted" % (word))
             return True
+
+  # ## Author: Sahaja
+    def switch_inventory_if_status(self, node, linkspeed):
+        '''
+        Check for all links in inventory and make sure the status is up
+        linkspeed:  10GBASE or 40GBASE or 1GBASE
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            cmd = "show inventory"
+            s1.cli(cmd)
+
+        except:
+            helpers.test_log("Could not issue show command")
+            return False
+        content = string.split(s1.cli_content(), '\n')
+        exp_gig_links = filter(lambda x: re.search(r'{}'.format(linkspeed), x), content)
+        eth_if = map(lambda x: x.split()[0], exp_gig_links)
+        for intf in eth_if:
+            s1.cli("show interface {} detail".format(intf))
+            op = s1.cli_content()
+            intf_exp_line = '{} is up'.format(intf)
+            if intf_exp_line in op:
+                helpers.test_log("Interface {} is up".format(intf))
+            else:
+                helpers.test_log("Interface {} is not up".format(intf))
+                return False
+        return True
+
+
+# ##Author:: Sahaja
+    def switch_if_LB9_s4810_status(self, node):
+        '''
+        Make sure eth1, eth2, eth47 and eth48 are up
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+        except:
+            helpers.test_log("Could not get switch handle")
+            return False
+        eth_intf = ['ethernet1', 'ethernet2', 'ethernet47', 'ethernet48' ]
+        for intf in eth_intf:
+            cmd = "show interface {} detail".format(intf)
+            s1.cli(cmd)
+            op = s1.cli_content()
+            intf_exp_line = '{} is up'.format(intf)
+            if intf_exp_line in op:
+                helpers.test_log("Interface {} is up".format(intf))
+            else:
+                helpers.test_log("Interface {} is not up".format(intf))
+                return False
+        helpers.log("All the expected interfaces are up for switch {}".format(node))
+        return True

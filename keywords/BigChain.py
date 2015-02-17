@@ -192,7 +192,7 @@ class BigChain(object):
                 helpers.test_log("Requested object does not exist")
                 return False
 
-    def rest_verify_bigchain_chain(self, node, chain_name=None, interface1=None, interface2=None, switch_alias=None, sw_dpid=None, service1=None, service2=None, service3=None, service4=None):
+    def rest_verify_bigchain_chain(self, node, chain_name=None, interface1=None, interface2=None, switch_alias=None, sw_dpid=None, service1=None, service2=None, service3=None):
         '''
             Objective:
                 -- Verify cli command "show bigchain chain <chain_name>"     
@@ -275,29 +275,29 @@ class BigChain(object):
                         else:
                             temp = content[0]['status']['services']
                             temp_array = temp.split(',')
-                            if temp_array[3] == str(service1):
+                            if temp_array[2] == str(service1):
                                 helpers.log("Service %s is reported correctly" % str(service1))
                             else:
                                 helpers.log("Service %s is not reported correctly" % str(service1))
                                 return False
                             if service2 is not None :
-                                if temp_array[2] == str(service2):
+                                if temp_array[1] == str(service2):
                                     helpers.log("Service %s is reported correctly" % str(service2))
                                 else:
                                     helpers.log("Service %s is not reported correctly" % str(service2))
                                     return False
                             if service3 is not None:
-                                if temp_array[1] == str(service3):
+                                if temp_array[0] == str(service3):
                                     helpers.log("Service %s is reported correctly" % str(service3))
                                 else:
                                     helpers.log("Service %s is not reported correctly" % str(service3))
                                     return False
-                            if service4 is not None:
-                                if temp_array[0] == str(service4):
-                                    helpers.log("Service %s is reported correctly" % str(service4))
-                                else:
-                                    helpers.log("Service %s is not reported correctly" % str(service4))
-                                    return False
+                            # if service4 is not None:
+                            #    if temp_array[0] == str(service4):
+                            #        helpers.log("Service %s is reported correctly" % str(service4))
+                            #    else:
+                            #        helpers.log("Service %s is not reported correctly" % str(service4))
+                            #        return False
                 return True
 
     def rest_verify_bichain_chain_config(self, node, chain_name=None, endpoint1=None, endpoint2=None, switch_alias=None, sw_dpid=None):
@@ -514,7 +514,7 @@ class BigChain(object):
                 helpers.log("FAIL: Cannot verify bigchain policy without specifying a chain name or endpoint interfaces")
                 return False
             else:
-                url = '/api/v1/data/controller/applications/bigchain/chain[name="%s"]/policy?select=info' % str(chain_name)
+                url = '/api/v1/data/controller/applications/bigchain/chain[name="{}"]/policy?select=info'.format(str(chain_name))
                 c.rest.get(url)
                 if not c.rest.status_code_ok():
                     helpers.test_log(c.rest.error())
@@ -523,13 +523,16 @@ class BigChain(object):
                 if len(content) == 0:
                     return False
                 else:
-                    policy_pass = 1
+                    policy_pass = 0
                     for policy_array in content:
+                        helpers.log("Policy Array is %s" % policy_array)
                         if policy_array['info']['chainName'] == str(chain_name):
                             policy_interface_array = policy_array['name'].split(":")
-                            helpers.log("Interface array is" % policy_interface_array)
+                            helpers.log("Policy INTF Array is %s" % policy_interface_array)
                             if (BigChain1.rest_verify_bigchain_policy(node, chain_name, policy_array['name'], policy_interface_array[1], policy_interface_array[3])):
                                 policy_pass = policy_pass + 1
+                    helpers.log("Policy Pass Count is {}".format(policy_pass))
+                    helpers.log("Length of Content is {}".format(len(content)))
                     if policy_pass == len(content):
                         return True
                     else:
@@ -577,7 +580,7 @@ class BigChain(object):
                     helpers.log("Service incorrectly reports its type")
                     return False
 
-                if not chain_service_description:
+                if not chain_service_description and content[0].has_key('description'):
                     if content[0]['description'] == str(chain_service_type):
                         helpers.log("Service correctly reports its description")
                     else:

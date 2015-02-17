@@ -306,6 +306,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
         helpers.test_log("Input arguments: tenant = %s dstroute = %s nexthop = %s " % (tenant, dstroute, nexthop))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/static-route[dst-ip-subnet="%s"]' % (tenant, dstroute)
 
+        helpers.log("nexthop: %s" % nexthop)
         if nexthop is not None:
             try:
 
