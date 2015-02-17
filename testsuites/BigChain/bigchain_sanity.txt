@@ -303,6 +303,8 @@ sanity test teardown
     Should be true  ${result1}
 
 sanity suite teardown
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
     config  node=master  cmd=switch ${switch_dpid_s1}
     config  node=master  cmd=deployment role bigtap
     config  node=master  cmd=exit
