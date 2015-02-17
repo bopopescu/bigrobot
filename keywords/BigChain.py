@@ -580,7 +580,7 @@ class BigChain(object):
                     helpers.log("Service incorrectly reports its type")
                     return False
 
-                if not chain_service_description:
+                if not chain_service_description and content[0].has_key('description'):
                     if content[0]['description'] == str(chain_service_type):
                         helpers.log("Service correctly reports its description")
                     else:
