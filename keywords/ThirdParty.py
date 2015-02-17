@@ -202,6 +202,8 @@ class ThirdParty(object):
             if speed is not None:
                 cli_input_4 = "speed " + str(speed)
                 switch.config(cli_input_4)
+                switch.expect(r'.*this command? [y/N].*')
+                switch.send("yes")
             return True
 
     def cli_arista_delete_ip_address(self, node, ip_address, mask, interface_name, speed=None):
