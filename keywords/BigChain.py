@@ -192,7 +192,7 @@ class BigChain(object):
                 helpers.test_log("Requested object does not exist")
                 return False
 
-    def rest_verify_bigchain_chain(self, node, chain_name=None, interface1=None, interface2=None, switch_alias=None, sw_dpid=None, service1=None, service2=None, service3=None):
+    def rest_verify_bigchain_chain(self, node, chain_name=None, interface1=None, interface2=None, switch_alias=None, sw_dpid=None, service1=None, service2=None, service3=None, span_down=False):
         '''
             Objective:
                 -- Verify cli command "show bigchain chain <chain_name>"     
@@ -232,17 +232,28 @@ class BigChain(object):
                         helpers.log("Chain Name %s is not reported correctly" % str(chain_name))
                         return False
 
-                    if (content[0]['status']['runtime-status'] == "installed") :
-                        helpers.log("Run Time Status is reported correctly")
+                    if span_down is False:
+                        if (content[0]['status']['runtime-status'] == "installed") :
+                            helpers.log("Run Time Status is reported correctly")
+                        else:
+                            helpers.log("Run Time Status is not reported correctly")
+                            return False
+                        if (content[0]['status']['detailed-status'] == "All policies active and installed for this chain") or (content[0]['status']['detailed-status'] == "All flows installed for this chain") :
+                            helpers.log("Detailed Status is reported correctly")
+                        else:
+                            helpers.log("Detailed Status is not reported correctly")
+                            return False
                     else:
-                        helpers.log("Run Time Status is not reported correctly")
-                        return False
-
-                    if (content[0]['status']['detailed-status'] == "All policies active and installed for this chain") or (content[0]['status']['detailed-status'] == "All flows installed for this chain") :
-                        helpers.log("Detailed Status is reported correctly")
-                    else:
-                        helpers.log("Detailed Status is not reported correctly")
-                        return False
+                        if (content[0]['status']['runtime-status'] == "partial") :
+                            helpers.log("Run Time Status is reported correctly")
+                        else:
+                            helpers.log("Run Time Status is not reported correctly")
+                            return False
+                        if ("failed installing span services" in content[0]['status']['detailed-status']) :
+                            helpers.log("Detailed Status is reported correctly")
+                        else:
+                            helpers.log("Detailed Status is not reported correctly")
+                            return False
 
                     if (content[0]['status']['endpoint1'] == str(interface1)) :
                         helpers.log("Interface %s is reported correctly" % str(interface1))
@@ -292,12 +303,6 @@ class BigChain(object):
                                 else:
                                     helpers.log("Service %s is not reported correctly" % str(service3))
                                     return False
-                            # if service4 is not None:
-                            #    if temp_array[0] == str(service4):
-                            #        helpers.log("Service %s is reported correctly" % str(service4))
-                            #    else:
-                            #        helpers.log("Service %s is not reported correctly" % str(service4))
-                            #        return False
                 return True
 
     def rest_verify_bichain_chain_config(self, node, chain_name=None, endpoint1=None, endpoint2=None, switch_alias=None, sw_dpid=None):

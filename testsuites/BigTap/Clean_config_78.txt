@@ -24,6 +24,7 @@ TC1: Delete Configuration
     rest enable feature  inport-mask    
     ${result1}=  write version to file
     Should be true  ${result1}
+    sleep  10
     clean switch configuration  s1  port-channel
 	clean switch configuration  s1  snmp-server
     clean switch configuration  s2  port-channel
