@@ -51,7 +51,7 @@ basic cli show commands test case
    enable  c1  show switch
    
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]  nat  sanity  feature  run 
+   [Tags]  nat  sanity  feature   
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -120,7 +120,7 @@ verify connectivity tenant VM - external different rack using nat next-hop
     Should Be True  ${loss} == 0
 
 verify connectivity vm0-vm4 different rack using fixed nat-switch
-	[Tags]  nat  feature  run
+	[Tags]  nat  feature  
 	rest add nat switch  hv1
 	${result}=  rest verify nat switch  hv1
 	Should be True  ${result}
@@ -141,7 +141,7 @@ verify connectivity vm0-vm4 different rack using fixed nat-switch
     rest delete nat profile  A  nat1
     
 verify connectivity vm0 - vm4 different rack using changing nat-switch 
-   [Tags]  nat  feature
+   [Tags]  nat  feature  
     rest add nat switch  hv1
 	${result}=  rest verify nat switch  hv1
 	Should be True  ${result}
@@ -152,7 +152,7 @@ verify connectivity vm0 - vm4 different rack using changing nat-switch
 	${result}=  rest verify nat profile  A  nat1
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
-	sleep  5
+	sleep  10
     ${result}=  rest verify nat attachment point  A  nat1  hv1
 	Should be True  ${result}
     ${loss}=  mininet ping  vm0  ${vm4_ip}
@@ -161,6 +161,7 @@ verify connectivity vm0 - vm4 different rack using changing nat-switch
     ${loss}=  mininet ping  vm0  ${vm2_ip}
     Should Be True  ${loss} == 0
     rest delete nat switch  hv1
+    sleep  5
 	${result}=  rest verify nat switch  hv1
 	Should not be True  ${result}
 	rest add nat switch  hv3
@@ -258,6 +259,8 @@ T6 base test setup
 T6 base test teardown
 	rest delete static routes  A  0.0.0.0/0
     rest delete nat profile  A  nat1
+    rest delete nat switch  hv1
+    rest delete nat switch  hv3
    	base test teardown
   
          
