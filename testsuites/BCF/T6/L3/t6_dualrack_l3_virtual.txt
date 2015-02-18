@@ -38,7 +38,7 @@ ${vm4_intf0}  vm4-eth0
 
 * Test Case 
 basic cli show commands test case
-   [Tags]  L2  smoke  sanity  IronHorse  feature
+   [Tags]  L3  smoke  sanity   feature
    cli  c1  show version
    cli  c1  show version detail
    cli  c1  show running-config
@@ -50,14 +50,14 @@ basic cli show commands test case
    enable  c1  show switch
    
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]  L2  smoke  sanity  IronHorse  feature
+   [Tags]  L3  smoke  sanity   feature
    rest verify fabric switch all
    rest verify fabric vswitch all
    rest verify vswitch portgroup  4
    rest verify fabric link common  20
 
 ping bm0 to vm0 same rack
-   [Tags]  L2  smoke  sanity  IronHorse  feature
+   [Tags]  L3  smoke  sanity   feature
    mininet ping  bm0  ${vm0_ip}
    ${loss}=  mininet ping  bm0  ${vm0_ip}
    config  c1  show endpoint
@@ -69,25 +69,25 @@ ping bm0 to vm0 same rack
    Should Be True  ${loss} == 0						 
 
 ping vm0 to vm1 single ivs dynamic endpoints
-   [Tags]  L2  sanity  IronHorse  feature
+   [Tags]  L3  sanity   feature
    mininet ping  vm0  ${vm1_ip}
    ${loss}=  mininet ping  vm0  ${vm1_ip}
    Should Be True  ${loss} == 0					 
 		
 ping vm0 to vm2 same rack dual ivs dynamic endpoints
-   [Tags]  L2  sanity  IronHorse  feature
+   [Tags]  L3  sanity   feature
    mininet ping  vm0  ${vm2_ip}
    ${loss}=  mininet ping  vm0  ${vm2_ip}
    Should Be True  ${loss} == 0  
    
 ping vm0 to vm4 dual rack dual ivs dynamic endpoints
-   [Tags]  L2  sanity  IronHorse  feature
+   [Tags]  L3  sanity   feature
    mininet ping  vm0  ${vm4_ip}
    ${loss}=  mininet ping  vm0  ${vm4_ip}
    Should Be True  ${loss} == 0 
    
 ping bm0 to vm4 dual rack 
-	[Tags]  L2  sanity
+	[Tags]  L3  sanity  feature
 	mininet ping  bm0  ${vm4_ip}
 	${loss}=  mininet ping  bm0  ${vm4_ip}
     Should Be True  ${loss} == 0
