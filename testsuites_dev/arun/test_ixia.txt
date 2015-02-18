@@ -552,8 +552,20 @@ Test IXIA
 	sleep  2
 	${result}=  get_port_state  port_name=a  state=down
 	Should contain  ${result}  down
-	[Tags]  run
+	[Tags]  simulate
 	
+40_IXIA_RAW_add with MPLS Label
+	${stream}=  raw_stream_add  name=L3_2  flow=a->b  frame_rate=100   frame_size=128  mpls_label=99
+    ...	src_ip=100.0.0.2  src_mac=00:00:12:12:12:01
+    ...	dst_ip=100.1.0.3  dst_mac=5c:16:c7:01:00:14
+    #pause
+    clear stats
+    start traffic  ${stream}
+    sleep  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
+    stop traffic  ${stream}
+    [Tags]  traffic  run
 	
 *Keywords
 atest teardown

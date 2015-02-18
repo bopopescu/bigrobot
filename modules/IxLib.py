@@ -401,6 +401,7 @@ class Ixia(object):
         return trafficStream1
 
     def ix_setup_traffic_streams_raw(self, frameType, frameSize, frameRate, frameMode, frameCount, flow, name,
+                                     mpls_label=None,
                                      lacp_src_mac=None, lld_tlv_chassis_id=None, src_mac=None, dst_mac=None, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
                                       burst_cnt=None, burst_gap=None, dst_cnt=None, src_cnt=None, src_mac_step=None, dst_mac_step=None,
                                       line_rate=None, crc=None, src_ip=None, dst_ip=None, src_ip_step=None, dst_ip_step=None, src_ip_cnt=None, dst_ip_cnt=None,
@@ -412,6 +413,7 @@ class Ixia(object):
            Return Traffic stream with quick flow creation similar to IxNetwork
         '''
         helpers.log("Adding Raw Type Stream with given Raw stream Parameters..")
+        current_header_id = 0  # used to add the layer id in Ixia
         tcp_layer_id = 3
         ip_layer_id = str(tcp_layer_id - 1)
         if self._raw_stream is None:
@@ -446,24 +448,25 @@ class Ixia(object):
 
         if src_mac is not None and dst_mac is not None:
             helpers.log("Adding HEX Src and Dst MAC's for Raw Stream ..")
+            current_header_id += 1
             if dst_cnt is not None:
                 helpers.log("Adding DST_MAC COUNT VALUES..")
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-%s"/field:"ethernet.header.destinationAddress-1"' % str(current_header_id),
                                           '-stepValue', dst_mac_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', dst_cnt,
                                           '-startValue', dst_mac)
             else:
                 helpers.log("Adding Single DST_MAC ..")
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-%s"/field:"ethernet.header.destinationAddress-1"' % str(current_header_id),
                                           '-auto', False, '-fieldValue', dst_mac, '-singleValue', dst_mac,
                                           '-optionalEnabled', True, '-countValue', '1')
             if src_cnt is not None:
                 helpers.log("Adding SRC_CNT COUNT VALUES..")
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-%s"/field:"ethernet.header.sourceAddress-2"' % str(current_header_id),
                                           '-stepValue', src_mac_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', src_cnt,
                                           '-startValue', src_mac)
             else:
                 helpers.log("Adding Single SRC_MAC..")
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-%s"/field:"ethernet.header.sourceAddress-2"' % str(current_header_id),
                                           '-auto', False, '-fieldValue', src_mac, '-singleValue', src_mac,
                                           '-optionalEnabled', True, '-countValue', '1')
 
@@ -490,184 +493,207 @@ class Ixia(object):
         if crc is not None:
             self._handle.setAttribute(trafficStream1 + stream_name_id, '-crc', 'badCrc')
         if ethertype is not None:
+            if current_header_id == 0:
+                current_header_id += 1
             helpers.log('Adding Ethertype %s !!!' % ethertype)
-            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-%s"/field:"ethernet.header.etherType-3"' % str(current_header_id),
                                       '-auto', False)
-            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-%s"/field:"ethernet.header.etherType-3"' % str(current_header_id),
                                       '-fieldValue', ethertype)
-            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-%s"/field:"ethernet.header.etherType-3"' % str(current_header_id),
                                       '-singleValue', ethertype)
-            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-%s"/field:"ethernet.header.etherType-3"' % str(current_header_id),
                                       '-countValue', 1)
-            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-%s"/field:"ethernet.header.etherType-3"' % str(current_header_id),
                                       '-fixedBits', ethertype)
-            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+            self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"ethernet-%s"/field:"ethernet.header.etherType-3"' % str(current_header_id),
                                       '-optionalEnabled ', True)
         if lacp_src_mac is not None:
+            if current_header_id == 0:
+                current_header_id += 1
             helpers.log("Adding LACP DST MAC for Raw Stream ..")
-            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.dstAddress-1"',
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-%s"/field:"lacp.header.header.dstAddress-1"' % str(current_header_id),
                                       '-auto', False, '-fieldValue', '01:80:c2:00:00:02', '-singleValue', '01:80:c2:00:00:02',
                                       '-optionalEnabled', True, '-countValue', '1')
             if src_cnt is not None:
                 helpers.log("Adding LACP SRC MAC COUNT with LACP SRC MAC...src_cnt: %s" % src_cnt)
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.srcAddress-2"',
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-%s"/field:"lacp.header.header.srcAddress-2"' % str(current_header_id),
                                           '-stepValue', src_mac_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', src_cnt,
                                           '-startValue', lacp_src_mac)
             else:
                 helpers.log("Adding LACP SRC MAC..")
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-1"/field:"lacp.header.header.srcAddress-2"',
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lacp-%s"/field:"lacp.header.header.srcAddress-2"' % str(current_header_id),
                                           '-auto', False, '-fieldValue', lacp_src_mac, '-singleValue', lacp_src_mac,
                                           '-optionalEnabled', True, '-countValue', '1')
         if lld_tlv_chassis_id is not None:
+            current_header_id += 1
             helpers.log("Adding LLDP ttlv chassis id in RAW STREAM..")
-            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lldp-2"/field:"lldp.header.mandatoryTlv.chassisIdTlv.type-1"',
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"lldp-%s"/field:"lldp.header.mandatoryTlv.chassisIdTlv.type-1"' % str(current_header_id),
                                       '-auto', False, '-fieldValue', lld_tlv_chassis_id, '-singleValue', lld_tlv_chassis_id,
                                       '-optionalEnabled', True, '-countValue', '1')
+        if mpls_label is not None:
+            helpers.log("Adding MPLS Label : %s" % mpls_label)
+            current_header_id += 1
+            helpers.log("Current Header ID: %s" % str(current_header_id))
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"mpls-%s"/field:"mpls.label.value-1"' % str(current_header_id),
+                                      '-auto', False, '-fieldValue', mpls_label, '-singleValue', mpls_label,
+                                      '-optionalEnabled', True, '-countValue', '1')
         if vlan_id is not None:
+            current_header_id += 1
+            helpers.log('Current Header ID: %s' % str(current_header_id))
             if vlan_priority is None:
                 helpers.log('Adding Vlan ID: %s !!!' % vlan_id)
                 helpers.log("Changing layer4 id ..")
-                tcp_layer_id = 4
+                tcp_layer_id = tcp_layer_id + 1
                 ip_layer_id = str(tcp_layer_id - 1)
                 helpers.log("layer4 id : %s" % str(tcp_layer_id))
                 if vlan_cnt == 1:
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-%s"/field:"vlan.header.vlanTag.vlanID-3"' % str(current_header_id),
                                               '-countValue', vlan_cnt, '-fieldValue', vlan_id, '-optionalEnabled', True)
                 else:
-                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-%s"/field:"vlan.header.vlanTag.vlanID-3"' % str(current_header_id),
                                               '-countValue', vlan_cnt)
-                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-%s"/field:"vlan.header.vlanTag.vlanID-3"' % str(current_header_id),
                                               '-startValue', vlan_id)
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-%s"/field:"vlan.header.vlanTag.vlanID-3"' % str(current_header_id),
                                               '-stepValue', vlan_step, '-valueType', 'increment', '-optionalEnabled', True)
             else:
                 helpers.log('Adding Vlan ID:%s With Priority: %s !!!' % (vlan_id, vlan_priority))
-                helpers.log("Changing layer4 id ..")
-                tcp_layer_id = 4
-                ip_layer_id = str(tcp_layer_id - 1)
-                helpers.log("layer4 id : %s" % str(tcp_layer_id))
+#                 helpers.log("Changing layer4 id ..")
+#                 tcp_layer_id = 4
+#                 ip_layer_id = str(tcp_layer_id - 1)
+#                 helpers.log("layer4 id : %s" % str(tcp_layer_id))
                 if vlan_cnt == 1:
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanUserPriority-1"',
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-%s"/field:"vlan.header.vlanTag.vlanUserPriority-1"' % str(current_header_id),
                                               '-countValue', vlan_cnt, '-fieldValue', vlan_priority, '-optionalEnabled', True)
 
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-%s"/field:"vlan.header.vlanTag.vlanID-3"' % str(current_header_id),
                                               '-countValue', vlan_cnt, '-fieldValue', vlan_id, '-optionalEnabled', True)
                 else:
-                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-%s"/field:"vlan.header.vlanTag.vlanID-3"' % str(current_header_id),
                                               '-countValue', vlan_cnt)
-                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                    self._handle.setAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-%s"/field:"vlan.header.vlanTag.vlanID-3"' % str(current_header_id),
                                               '-startValue', vlan_id)
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"vlan-%s"/field:"vlan.header.vlanTag.vlanID-3"' % str(current_header_id),
                                               '-stepValue', vlan_step, '-valueType', 'increment', '-optionalEnabled', True)
 
         helpers.log("Commiting vlan config in IXIA...")
         helpers.log("ip_type : %s, src_ip: %s" % (ip_type, src_ip))
         self._handle.commit()
         if ip_type == "ipv4":
+            current_header_id += 1
+            helpers.log('Current Header ID: %s' % str(current_header_id))
             helpers.log("Adding IPV4 Address...")
             if src_ip is not None:
                 helpers.log('Adding src_ip..')
                 if src_ip_cnt <= 1:
                     helpers.log("Ipv4 id : ipv4-%s" % ip_layer_id)
                     helpers.log("Adding src_ip to raw_stream with single Value")
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % ip_layer_id,
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
                                              '-optionalEnabled', 'true', '-auto', 'false')
                 else:
                     helpers.log("Adding src_ip to raw_stream with multiple Values..")
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % ip_layer_id,
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.srcIp-27"' % str(current_header_id),
                                               '-stepValue', src_ip_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', src_ip_cnt,
                                       '-startValue', src_ip)
             if dst_ip is not None:
                 helpers.log("Adding Dst ip Got Dst_Cnt: %s..." % dst_ip_cnt)
                 if dst_ip_cnt <= 1:
                     helpers.log("Adding dst_ip to raw_stream with single value ...")
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % ip_layer_id,
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
                                              '-optionalEnabled', 'true', '-auto', 'false')
                 else:
                     helpers.log("Adding dst_ip to raw_stream with multiple Values...")
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % ip_layer_id,
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.dstIp-28"' % str(current_header_id),
                                               '-stepValue', dst_ip_step, '-valueType', 'increment', '-optionalEnabled', True, '-countValue', dst_ip_cnt,
                                       '-startValue', dst_ip)
 
         elif ip_type == "ipv6":
             helpers.log('Adding src_ip and dst_ip ..')
-            helpers.log("Ipv4 id : ipv6-%s" % ip_layer_id)
-            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv6-%s"/field:"ipv6.header.srcIP-7"' % ip_layer_id,
+            helpers.log("Ipv6id : ipv6-%s" % ip_layer_id)
+            current_header_id += 1
+            helpers.log('Current Header ID: %s' % str(current_header_id))
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv6-%s"/field:"ipv6.header.srcIP-7"' % str(current_header_id),
                                       '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
                                      '-optionalEnabled', 'true', '-auto', 'false')
-            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv6-%s"/field:"ipv6.header.dstIP-8"' % ip_layer_id,
+            self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv6-%s"/field:"ipv6.header.dstIP-8"' % str(current_header_id),
                                       '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
                                      '-optionalEnabled', 'true', '-auto', 'false')
+        if protocol == 'ICMP':
+                helpers.log('Current Header ID: %s' % str(current_header_id))
+                helpers.log('Adding Message Type: %s and Code Value: %s for Protocl UDP..!!!' % (icmp_type, icmp_code))
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"icmpv2-%s"/field:"icmpv2.message.messageType-1"' % str(current_header_id),
+                                              '-countValue', 1, '-singleValue', icmp_type,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"icmpv2-%s"/field:"icmpv2.message.codeValue-2"' % str(current_header_id),
+                                              '-countValue', 1, '-singleValue', icmp_code,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
         helpers.log("Committing IP Config in IXIA...")
         self._handle.commit()
         if protocol is not None:
             helpers.log('Adding Protocol Field in IP Header ..')
             if ethertype == '0800':
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.protocol-25"' % ip_layer_id,
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv4-%s"/field:"ipv4.header.protocol-25"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', protocol,
                                              '-optionalEnabled', 'true', '-auto', 'false')
             elif ethertype == '86dd':
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv6-%s"/field:"ipv6.header.nextHeader-5"' % ip_layer_id,
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"ipv6-%s"/field:"ipv6.header.nextHeader-5"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', protocol,
                                              '-optionalEnabled', 'true', '-auto', 'false')
             if protocol == 'TCP':
+                current_header_id += 1
+                helpers.log('Current Header ID: %s' % str(current_header_id))
                 helpers.log('Adding Src_port: %s and Dst_Port: %s for Protocl TCP..!!!' % (src_port, dst_port))
-                helpers.log("Adding tcp id : tcp-%s" % str(tcp_layer_id))
+#                 helpers.log("Adding tcp id : tcp-%s" % str(tcp_layer_id))
                 helpers.log('SynBit : %s' % str(synBit))
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.srcPort-1"' % str(tcp_layer_id),
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.srcPort-1"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', src_port, '-singleValue', src_port,
                                              '-optionalEnabled', 'true', '-auto', 'false')
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.dstPort-2"' % str(tcp_layer_id),
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.dstPort-2"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', dst_port, '-singleValue', dst_port,
                                              '-optionalEnabled', 'true', '-auto', 'false')
                 if synBit:
                     helpers.log("Adding Sync Bit with TCP header...")
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.synBit-14"' % str(tcp_layer_id),
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.synBit-14"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', synBit, '-singleValue', synBit,
                                              '-optionalEnabled', 'true', '-auto', 'false')
                 if urgBit:
                     helpers.log("Adding Urgent Bit with TCP header...")
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.urgBit-10"' % str(tcp_layer_id),
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.urgBit-10"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', urgBit, '-singleValue', urgBit,
                                              '-optionalEnabled', 'true', '-auto', 'false')
                 if ackBit:
                     helpers.log("Adding ACK Bit with TCP header...")
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.ackBit-11"' % str(tcp_layer_id),
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.ackBit-11"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', ackBit, '-singleValue', ackBit,
                                              '-optionalEnabled', 'true', '-auto', 'false')
                 if pshBit:
                     helpers.log("Adding PSH Bit with TCP header...")
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.pshBit-12"' % str(tcp_layer_id),
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.pshBit-12"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', pshBit, '-singleValue', pshBit,
                                              '-optionalEnabled', 'true', '-auto', 'false')
                 if rstBit:
                     helpers.log("Adding RST Bit with TCP header...")
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.rstBit-13"' % str(tcp_layer_id),
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.rstBit-13"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', rstBit, '-singleValue', rstBit,
                                              '-optionalEnabled', 'true', '-auto', 'false')
                 if finBit:
                     helpers.log("Adding FIN Bit with TCP header...")
-                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.finBit-15"' % str(tcp_layer_id) ,
+                    self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"tcp-%s"/field:"tcp.header.controlBits.finBit-15"' % str(current_header_id) ,
                                               '-countValue', 1, '-fieldValue', finBit, '-singleValue', finBit,
                                              '-optionalEnabled', 'true', '-auto', 'false')
 
             if protocol == 'UDP':
+                current_header_id += 1
+                helpers.log('Current Header ID: %s' % str(current_header_id))
                 helpers.log('Adding Src_port: %s and Dst_Port: %s for Protocl UDP..!!!' % (src_port, dst_port))
-                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"udp-%s"/field:"udp.header.srcPort-1"' % str(tcp_layer_id),
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"udp-%s"/field:"udp.header.srcPort-1"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', src_port, '-singleValue', src_port,
                                              '-optionalEnabled', 'true', '-auto', 'false')
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"udp-%s"/field:"udp.header.dstPort-2"' % str(tcp_layer_id),
+                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"udp-%s"/field:"udp.header.dstPort-2"' % str(current_header_id),
                                               '-countValue', 1, '-fieldValue', dst_port, '-singleValue', dst_port,
-                                             '-optionalEnabled', 'true', '-auto', 'false')
-            if protocol == 'ICMP':
-                helpers.log('Adding Message Type: %s and Code Value: %s for Protocl UDP..!!!' % (icmp_type, icmp_code))
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"icmpv2-3"/field:"icmpv2.message.messageType-1"',
-                                              '-countValue', 1, '-singleValue', icmp_type,
-                                             '-optionalEnabled', 'true', '-auto', 'false')
-                self._handle.setMultiAttribute(trafficStream1 + stream_name_id + '/stack:"icmpv2-3"/field:"icmpv2.message.codeValue-2"',
-                                              '-countValue', 1, '-singleValue', icmp_code,
                                              '-optionalEnabled', 'true', '-auto', 'false')
             if payload:
                 helpers.log('Setting Payload information provided to Raw Traffic Stream...')
@@ -1405,6 +1431,7 @@ class Ixia(object):
         dst_port = kwargs.get('dst_port', '7001')
         icmp_type = kwargs.get('icmp_type', '0')
         icmp_code = kwargs.get('icmp_code', '0')
+        mpls_label = kwargs.get("mpls_label", None)
 
         ip_type = 'ipv4'
         if str(ethertype).lower() == '86dd':
@@ -1491,6 +1518,7 @@ class Ixia(object):
         dst_vport = self._handle.getFilteredList(self._handle.getRoot(), 'vport', '-name', dst_ix_port)[0]
         if vlan_priority is None:
             traffic_item = self.ix_setup_traffic_streams_raw(frame_type, self._frame_size, frame_rate, frame_mode, frame_cnt, stream_flow, name,
+                                                             mpls_label=mpls_label,
                                                         lacp_src_mac=lacp_src_mac, src_mac=src_mac, lld_tlv_chassis_id=lld_tlv_chassis_id, burst_cnt=burst_cnt, burst_gap=burst_gap, crc=crc,
                                                         dst_mac=dst_mac, dst_cnt=d_cnt, src_cnt=s_cnt, src_mac_step=src_mac_step, dst_mac_step=dst_mac_step,
                                                         src_vport=src_vport, dst_vport=dst_vport, protocol=protocol, src_ip=src_ip, dst_ip=dst_ip, src_ip_cnt=src_ip_cnt, dst_ip_cnt=dst_ip_cnt,
@@ -1501,6 +1529,7 @@ class Ixia(object):
                                                         synBit=synBit, urgBit=urgBit, ackBit=ackBit, pshBit=pshBit, rstBit=rstBit, finBit=finBit)
         else:
             traffic_item = self.ix_setup_traffic_streams_raw(frame_type, self._frame_size, frame_rate, frame_mode, frame_cnt, stream_flow, name,
+                                                             mpls_label=mpls_label,
                                                         lacp_src_mac=lacp_src_mac, src_mac=src_mac, lld_tlv_chassis_id=lld_tlv_chassis_id, burst_cnt=burst_cnt, burst_gap=burst_gap, crc=crc,
                                                         dst_mac=dst_mac, dst_cnt=d_cnt, src_cnt=s_cnt, src_mac_step=src_mac_step, dst_mac_step=dst_mac_step,
                                                         src_vport=src_vport, dst_vport=dst_vport, protocol=protocol, src_ip=src_ip, dst_ip=dst_ip, src_ip_cnt=src_ip_cnt, dst_ip_cnt=dst_ip_cnt,
