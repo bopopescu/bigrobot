@@ -248,7 +248,7 @@ verify vm connectivity applying nat on multiple tenants
 	rest verify nat endpoint  t2  nat2  external1  s1
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} == 100
 	mininet ping  vm0  ${vm11_ip}
     ${loss}=  mininet ping  vm0  ${vm11_ip}
     Should Be True  ${loss} == 100

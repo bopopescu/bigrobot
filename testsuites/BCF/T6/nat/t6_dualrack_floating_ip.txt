@@ -60,7 +60,7 @@ Verify floating-ip CLI and output
 	Should not be True  ${result}
 	  
 verify floating IP cli with changing private IP
-	[Tags]
+	[Tags]  sanity
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -104,7 +104,7 @@ verify vm connectivity single floating IP
     Should Be True  ${loss} == 100 
 	
 verify vm connectivity multiple floating IP
-	[Tags]    sanity    
+	[Tags]     
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -128,7 +128,7 @@ verify vm connectivity multiple floating IP
     Should Be True  ${loss} == 0
 	
 verify vm connectivity after changing floating ip assignment
-   [Tags]  sanity
+   [Tags] 
     rest add nat profile  A  nat1
     rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -151,7 +151,7 @@ verify vm connectivity after changing floating ip assignment
     Should Be True  ${loss} == 100
 
 verify baremetal connectivity with floating ip
-	[Tags]
+	[Tags]  sanity
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200

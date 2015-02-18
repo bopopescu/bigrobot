@@ -1,7 +1,7 @@
 == T6 PNAT/Floating IP Test Suite ==
 
 * Setting
-Documentation    T6 Dual Leaf Dual Rack PNAT Test Suite
+Documentation    T6 PNAT/Floating IP Test Suite
 Suite Setup      T6 base suite setup
 Suite Teardown   Tear down the config
 Test Setup       T6 base test setup
@@ -81,6 +81,14 @@ Test Vswitch NAT container load balence scenario (multiple NAT profile , multipl
 Test connectivity using fixed nat-pool switch
 	[Tags]
 Verify multiple NAT profiles applied to same tenant
+	[Tags]
+Verify Test path to check the forwarding Path using Nat-profile
+	[Tags]
+Verify debug logs assiociation with NAT profile
+	[Tags]
+Verify debug logs associatation with Floating IP profile
+	[Tags]
+Verify forwarding entries in pswitch/vswitch for NAT and floating IP table
 	[Tags]
 
 Failover Cases
