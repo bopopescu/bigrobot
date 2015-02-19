@@ -171,7 +171,7 @@ Verify snmptrap is generated on dataport linkflap
     sleep  10
     clear snmpttlog  10.9.18.3
     sleep  10    
-    cli enable interface  s1  ethernet49
+    cli enable interface  s1  ${tenGly2_name}
     sleep  60
     ${output}=  return snmptrap output  10.9.18.3  "Link up on interface ${snmp_int_id}"
     Should contain  ${output}  Operational state: 1     
