@@ -39,7 +39,7 @@ ${vm4_intf0}  vm4-eth0
 * Test Case 
 
 basic cli show commands test case
-   [Tags]  nat  sanity  feature 
+   [Tags]  nat    feature 
    cli  c1  show version
    cli  c1  show version detail
    cli  c1  show running-config
@@ -51,7 +51,7 @@ basic cli show commands test case
    enable  c1  show switch
    
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]  nat  sanity  feature   
+   [Tags]  nat  smoke  feature   
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -59,7 +59,7 @@ add Fabric setup Dual Rack Dual Leaf
    rest verify fabric link common  20
    
 Verify nat-pool CLI and output
-	[Tags]  nat  sanity  feature
+	[Tags]  nat   feature
 	rest add nat switch  hv1
 	${result}=  rest verify nat switch  hv1
 	Should be True  ${result}
@@ -68,7 +68,7 @@ Verify nat-pool CLI and output
 	Should not be True  ${result}
 
 verify nat-profile CLI and output
-	[Tags]  nat  sanity  feature 
+	[Tags]  nat  smoke  feature 
 	rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  
@@ -82,7 +82,7 @@ verify nat-profile CLI and output
 	Should not be True  ${result}
 	
 Applying default router using nat next-hop cli test
-	[Tags]  nat  feature    
+	[Tags]  nat  smoke      
 	rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  
@@ -97,7 +97,7 @@ Applying default router using nat next-hop cli test
 	Should not be True  ${result}
 
 verify connectivity tenant VM - external different rack using nat next-hop
-   [Tags]  nat  feature   
+   [Tags]  nat  feature  smoke   
     rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  
@@ -120,7 +120,7 @@ verify connectivity tenant VM - external different rack using nat next-hop
     Should Be True  ${loss} == 0
 
 verify connectivity vm0-vm4 different rack using fixed nat-switch
-	[Tags]  nat  feature  
+	[Tags]  nat  feature    
 	rest add nat switch  hv1
 	${result}=  rest verify nat switch  hv1
 	Should be True  ${result}
@@ -141,7 +141,7 @@ verify connectivity vm0-vm4 different rack using fixed nat-switch
     rest delete nat profile  A  nat1
     
 verify connectivity vm0 - vm4 different rack using changing nat-switch 
-   [Tags]  nat  feature  
+   [Tags]  nat  feature    
     rest add nat switch  hv1
 	${result}=  rest verify nat switch  hv1
 	Should be True  ${result}
@@ -165,6 +165,7 @@ verify connectivity vm0 - vm4 different rack using changing nat-switch
 	${result}=  rest verify nat switch  hv1
 	Should not be True  ${result}
 	rest add nat switch  hv3
+	pause
 	sleep  10
 	${result}=  rest verify nat switch  hv3
 	Should be True  ${result}
@@ -177,7 +178,7 @@ verify connectivity vm0 - vm4 different rack using changing nat-switch
    	rest delete nat switch  hv3
 
 verify connectivity bm0 to vm4 different rack
-	[Tags]
+	[Tags]  smoke
 	rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  

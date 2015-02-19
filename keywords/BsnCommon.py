@@ -2240,6 +2240,23 @@ class BsnCommon(object):
             t.setup_ztn_phase2(node)
         return True
 
+    def get_snmp_id(self, interface=None):
+        '''
+            This function is use to convert given interface to snmp id to check on data traps
+            To FIX:   support Breakout cables
+            -Arun mallina
+        '''
+        if interface is None:
+            helpers.log("Please interface name like: ethernet45, ethernet47")
+            helpers.exit_robot_immediately("Exiting to fix passing interface ..")
+        match = re.match(r"ethernet(.*)", interface)
+        if match:
+            id_string = match.group(1)
+        if len(id_string) == 1:
+            return "100" + id_string
+        else:
+            return "10" + id_string
+
     def pretty_log(self, *args, **kwargs):
         """
         To print out a Python data structure, consider using this keyword.

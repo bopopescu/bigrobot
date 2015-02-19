@@ -476,7 +476,7 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		log  there are ${result} ping packet loss, 1 ping per sec for 10G hosts
 		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec for 10G hosts
 		Log To Console   there are ${result['packets_loss']} ping packet loss, 1 ping per sec for 10G Hosts
-		Should be True  ${result['packets_loss']} < 5
+		Should be True  ${result['packets_loss']} < 10
 		# 1G hosts
 	   	Verify Ping is successful    h5     ${h6_ip}	
 		${result}=  bash ping background stop    h5   label=upgrade_ping_1G   return_stats=${true}		 
@@ -484,7 +484,7 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		log  there are ${result} ping packet loss, 1 ping per sec for 1G Hosts
 		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec for 1G Hosts
 		Log To Console   there are ${result['packets_loss']} ping packet loss, 1 ping per sec for 1G Hosts	
-		Should be True  ${result['packets_loss']} < 5	
+		Should be True  ${result['packets_loss']} < 10	
  		fabric_integrity_checker    after      						
 		${result}=  Verify active partition changed after upgrade		c1  ${c1activepartition}
 		Should Be True     ${result}		
