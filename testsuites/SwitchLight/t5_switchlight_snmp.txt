@@ -45,7 +45,7 @@ Verify SNMP OID ifType of ma1
     
 Verify SNMP OID ifAdminStatus of ma1  
     verify snmp attribute  s1  ifAdminStatus.2  up
-    [Tags]  feature  run   daily-sanity
+    [Tags]  feature     daily-sanity
     
 Verify SNMP OID ifOperStatus of ma1  
     verify snmp attribute  s1  ifOperStatus.2  up
@@ -163,18 +163,19 @@ Verify snmpbulkwalk works as expected
 Verify snmptrap is generated on dataport linkflap
     clear snmpttlog  10.9.18.3
     sleep  10
-    cli disable interface  s1  ethernet39
+    cli disable interface  s1  ${tenGly2_name}
     sleep  60
-    ${output}=  return snmptrap output  10.9.18.3  "Link down on interface 1039"
+    ${snmp_int_id}=   get_snmp_id  ${tenGly2_name}
+    ${output}=  return snmptrap output  10.9.18.3  "Link down on interface ${snmp_int_id}"
     Should contain  ${output}  Operational state: 2  
     sleep  10
     clear snmpttlog  10.9.18.3
     sleep  10    
-    cli enable interface  s1  ethernet39
+    cli enable interface  s1  ethernet49
     sleep  60
-    ${output}=  return snmptrap output  10.9.18.3  "Link up on interface 1039"
+    ${output}=  return snmptrap output  10.9.18.3  "Link up on interface ${snmp_int_id}"
     Should contain  ${output}  Operational state: 1     
-    [Tags]  feature  jira-pan-741  daily-sanity
+    [Tags]  feature  jira-pan-741  daily-sanity  run
          
 
 Modify SNMP Community and Verify SNMP OID sysContact 
