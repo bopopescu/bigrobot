@@ -158,11 +158,11 @@ print("\n============== BigRobot smoke: Start test  ==============")
 # status = run_cmd(get_env('BIGROBOT_BIN') +
 #                  "/gobot test --include=smoke %s" % ' '.join(ARGS))
 if TEST_TYPE is not None:
-    status = run_cmd_spaces(get_env('BIGROBOT_BIN') +
-                 "/gobot", "test", "--include=%s" % TEST_TYPE)
+    status = run_cmd(get_env('BIGROBOT_BIN') +
+                 "/gobot test --include %s" % TEST_TYPE)
 else:
-    status = run_cmd_spaces(get_env('BIGROBOT_BIN') +
-                     "/gobot", "test")
+    status = run_cmd(get_env('BIGROBOT_BIN') +
+                     "/gobot test")
 
 print "Status: %s" % status
 

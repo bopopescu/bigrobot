@@ -131,7 +131,7 @@ class T6(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s]/logical-router/nat-profile[name="%s"]' % (tenant, nat_profile)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]' % (tenant, nat_profile)
         try:
             c.rest.delete(url, {})
         except:
@@ -368,3 +368,37 @@ class T6(object):
             return False
         else:
             return True
+        
+    def rest_verify_vswitch_l3_cidr_nat(self, tenant, ivs_switch, route):
+        '''
+        Function to verify route pointing to nat next-hop
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l3-cidr-route-table' % ivs_switch
+        c.rest.get(url)
+        data = c.rest.content()
+        vrf_id = self.rest_get_vrf_id(tenant)
+        for i in range(0, len(data)):
+            if data[i]["vrf"] == vrf_id and data[i]["ip"] == route and data[i]["new-vlan-id"] == 4090:
+                    helpers.log("cidr route next-hop point to nat container")
+                    return True
+            else:
+                continue
+        helpers.log("given route does not point to nat net-hop")
+        return False
+    
+    def rest_get_vrf_id(self, tenant):
+        '''Function to get VRF ID for a tenant
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/internal/tenant-to-vrf-mapping'
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0, len(data)):
+            if data[i]["name"] == tenant:
+                vrf_id = data[i]["id"]
+                return vrf_id
+            else:
+                continue        

@@ -140,6 +140,11 @@ class RestClient(object):
         Generic HTTP request for POST, GET, PUT, DELETE, etc.
         data is a Python dictionary.
         """
+        
+        #helpers.log("url: '%s'" % url)
+        #helpers.log("verb: '%s'" % verb)
+        #helpers.log("data: '%s'" % data)
+        
         if url is None:
             url = self.base_url
             if url is None:
@@ -170,8 +175,8 @@ class RestClient(object):
             if len(data_str) > 50:
                 # If data is more than 50 chars long, then prettify JSON
                 data_str = ' %s' % helpers.to_json(data)
-        helpers.bigrobot_devcmd_write("%-9s: %s%s\n"
-                                      % (prefix_str, url, data_str))
+        #helpers.bigrobot_devcmd_write("%-9s: %s%s\n"
+        #                              % (prefix_str, url, data_str))
         if helpers.is_dict(data) or helpers.is_list(data):
             formatted_data = helpers.to_json(data)
         else:

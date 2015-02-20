@@ -237,6 +237,16 @@ TC026: Verify Vendor
     ${match2}=  Convert To String  ${switch_dict['Vendor']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
+    
+TC027: Verify if 10G ports are up
+	${intf_status}=  switch inventory if status  s1  10GBASE
+	Should be true  ${intf_status}
+    [Tags]  sanity  feature  	
+    
+TC028: Verify if 40G ports are up
+	${intf_status}=  switch inventory if status  s1  40GBASE
+	Should be true  ${intf_status}
+    [Tags]  sanity  feature  
 
 * Keywords 
 

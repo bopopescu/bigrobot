@@ -299,19 +299,19 @@ TC013: Disable two links and Verify UDP destination port hashing
 
 TC014: Verify hashing by varying all fields in an L3 Packet
     ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800  
     ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
     ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:02  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=100.1.1.2  dst_ip=102.1.1.2  ethertype=0800  
     ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
     ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:03  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=100.1.1.3  dst_ip=103.1.1.2  ethertype=0800  
     ...     protocol=UDP  src_port=8103  dst_port=8003  name=a2_b_flow
     ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:04  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=100.1.1.4  dst_ip=104.1.1.2  ethertype=0800  
     ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
     send and verify traffic
@@ -322,19 +322,19 @@ TC015: Disable two links and verify hashing by varying all fields in an L3 Packe
     bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
     bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
     ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800  
     ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
     ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:02  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=100.1.1.2  dst_ip=102.1.1.2  ethertype=0800  
     ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
     ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:03  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=100.1.1.3  dst_ip=103.1.1.2  ethertype=0800  
     ...     protocol=UDP  src_port=8103  dst_port=8003  name=a2_b_flow
     ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:04  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=100.1.1.4  dst_ip=104.1.1.2  ethertype=0800  
     ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
     send and verify traffic for disabled interfaces
@@ -587,19 +587,19 @@ TC027: Disable two links and Verify UDPv6 destination port hashing
 
 TC028: Verify hashing by varying all fields in an IPv6 L3 Packet
     ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c1  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd  
     ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
     ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:02  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c2  dst_ip=2001:2004:0:0:0:0:0:a2  ethertype=86dd  
     ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
     ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:03  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c3  dst_ip=2001:2004:0:0:0:0:0:a3  ethertype=86dd  
     ...     protocol=UDP  src_port=8103  dst_port=8003  name=a2_b_flow
     ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:04  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:a4  ethertype=86dd  
     ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
     send and verify traffic
@@ -610,19 +610,19 @@ TC029: Disable two links and verify hashing by varying all fields in an IPv6 L3 
     bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
     bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
     ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c1  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd  
     ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
     ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:02  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c2  dst_ip=2001:2004:0:0:0:0:0:a2  ethertype=86dd  
     ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
     ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:03  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c3  dst_ip=2001:2004:0:0:0:0:0:a3  ethertype=86dd  
     ...     protocol=UDP  src_port=8103  dst_port=8003  name=a2_b_flow
     ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:04  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:a4  ethertype=86dd  
     ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
     send and verify traffic for disabled interfaces
@@ -630,19 +630,19 @@ TC029: Disable two links and verify hashing by varying all fields in an IPv6 L3 
 
 TC030: Restart process OFAD and verify RTAG6 hashing
     ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c1  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd  
     ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
     ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:02  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c2  dst_ip=2001:2004:0:0:0:0:0:a2  ethertype=86dd  
     ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
     ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:03  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c3  dst_ip=2001:2004:0:0:0:0:0:a3  ethertype=86dd  
     ...     protocol=UDP  src_port=8103  dst_port=8003  name=a2_b_flow
     ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
-    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:04  no_arp=True
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
     ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:a4  ethertype=86dd  
     ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
     send and verify traffic
@@ -654,8 +654,8 @@ TC030: Restart process OFAD and verify RTAG6 hashing
 * Keywords 
 rtag6 suite setup
     base suite setup
-    cli add portchannel  s1  ${s1_10g_number_1}  ${s1_10g_port_range_1}  L2
-    cli add portchannel  s1  ${s1_10g_number_2}  ${s1_10g_port_range_2}  L2
+    cli add portchannel  s1  ${s1_10g_number_1}  ${s1_10g_port_range_1}  L3
+    cli add portchannel  s1  ${s1_10g_number_2}  ${s1_10g_port_range_2}  L3
     rest add interface role  s2  ${filter_1}  filter  ${filter_nick_1}
     rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
     rest add interface role  s1  ${filter_2}  filter  ${filter_nick_2}

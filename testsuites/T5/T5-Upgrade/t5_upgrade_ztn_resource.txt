@@ -416,11 +416,13 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		${config_before_c1}=   cli_take_snapshot   c1  run_config=yes
 		${config_before_c2}=   cli_take_snapshot   c2  run_config=yes
 					 
-		Verify Ping is successful   h1     ${h2ip} 		
+		Verify Ping is successful   h1     ${h2_tag_ip} 
+		Verify Ping is successful   h5     ${h6_ip} 		
 	
  		fabric_integrity_checker    before    
-		bash ping background start    h1   label=upgrade_ping   dest_ip=${h2ip}
-	     	
+		bash ping background start    h1   label=upgrade_ping   dest_ip=${h2_tag_ip}
+	    bash ping background start    h5   label=upgrade_ping_1G   dest_ip=${h6_ip} 
+	    	
 	log  step 1 - copy the image and check image present and not same as current
 		Log time    ${File}   before copy image
 		
@@ -467,14 +469,22 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		Compare runningconfig 	c2    ${config_before_c2}
 			
  		# stop the ping and see how much traffic lost
- 		
-	   	Verify Ping is successful    h1     ${h2ip} 	
+ 		# 10G Hosts
+	   	Verify Ping is successful    h1     ${h2_tag_ip}	
 		${result}=  bash ping background stop    h1   label=upgrade_ping   return_stats=${true}		 
-		log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
-		
-		log  there are ${result} ping packet loss, 1 ping per sec
-		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
-		Log To Console   there are ${result['packets_loss']} ping packet loss, 1 ping per sec
+		log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec for 10G Hosts
+		log  there are ${result} ping packet loss, 1 ping per sec for 10G hosts
+		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec for 10G hosts
+		Log To Console   there are ${result['packets_loss']} ping packet loss, 1 ping per sec for 10G Hosts
+		Should be True  ${result['packets_loss']} < 10
+		# 1G hosts
+	   	Verify Ping is successful    h5     ${h6_ip}	
+		${result}=  bash ping background stop    h5   label=upgrade_ping_1G   return_stats=${true}		 
+		log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec for 1G Hosts
+		log  there are ${result} ping packet loss, 1 ping per sec for 1G Hosts
+		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec for 1G Hosts
+		Log To Console   there are ${result['packets_loss']} ping packet loss, 1 ping per sec for 1G Hosts	
+		Should be True  ${result['packets_loss']} < 10	
  		fabric_integrity_checker    after      						
 		${result}=  Verify active partition changed after upgrade		c1  ${c1activepartition}
 		Should Be True     ${result}		

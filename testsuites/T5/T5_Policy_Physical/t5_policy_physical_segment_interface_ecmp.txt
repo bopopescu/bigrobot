@@ -1,0 +1,919 @@
+* Setting
+Documentation   T5 Policy with two spine three leaf rack with dual-tor Test Suite
+Suite Setup     test setup topology
+Suite Teardown  test teardown topology
+Test Setup      base test setup
+Test Teardown   test teardown
+Force Tags      IronHorse  T5  Policy
+Library         keywords/BsnCommon.py
+Library         keywords/Host.py
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords/T5Platform.py
+Library			keywords/SwitchLight.py
+Library 		keywords/T5Utilities.py
+Library         keywords/BsnCommon.py
+Library	        Collections.py
+Library         keywords/Ixia.py
+Resource		testsuites/T5/T5_Policy_Physical/t5_policy_physical_seg_inter_variables_regression.txt
+Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Resource        testsuites/T5/t5_physical_variables.txt
+Library         OperatingSystem
+Library         Collections
+Library         Dialogs
+
+
+
+* Test Cases
+
+##### ECMP Cases####
+
+T17 Interface sement-interface add/remove redirect(ecmp) policy src-ip to dest-ip
+    [Tags]  feature  T17  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}  zero=True
+    should be true  ${result}
+    #pause    FREEEEZEE!!!
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+T18 Interface sement-interface add/remove redirect(ecmp) policy src-ip to any
+    [Tags]  feature  T18  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    #${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}
+    #pause      FREEEZZ!!
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    #${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
+    #should not be true  ${result}
+    
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+T19 Interface sement-interface add/remove redirect(ecmp) policy src-ip to tenant
+    [Tags]  feature   T19  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}  zero=True
+    should be true  ${result}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+T20 Interface sement-interface add/remove redirect(ecmp) policy src-ip-port to dest-ip-port
+    [Tags]  feature  T20  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}  zero=True
+    should be true  ${result}
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+T21 Interface sement-interface add/remove redirect(ecmp) policy src-ip-port to any
+    [Tags]  feature  T21  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+    #${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}
+    should be true  ${result}
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    
+    #${result}=  REST verify fwd icap table  ${leaf0-a}  ${zero_ip}
+    #should not be true  ${result}
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+T22 Interface sement-interface add/remove redirect(ecmp) policy src-ip-port to tenant
+    [Tags]  feature  T22  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    #pause      FREEEZ!
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+     ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}  zero=True
+    should be true  ${result}
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+T23 Interface sement-interface add/fail-over controller/remove redirect(ecmp) policy src-ip-port to tenant
+    [Tags]  feature  T23  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause     FREZZEE!!
+    cli cluster take leader
+    #pause     FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}  zero=True
+    should be true  ${result}
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+T24 Interface sement-interface add/reboot master controller/remove redirect(ecmp) policy src-ip-port to tenant
+    [Tags]  feature  T24  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    ${returnVal}=  cli verify cluster master reboot
+    Should Be True  ${returnVal}
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}  zero=True
+    should be true  ${result}
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+T25 Interface sement-interface add/reboot standby controller/remove redirect(ecmp) policy src-ip-port to tenant
+    [Tags]  feature  T25  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+    ${dst_dict}=  Create Dictionary   tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    ${returnVal}=  cli verify cluster slave reboot
+    Should Be True  ${returnVal}
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}  zero=True
+    should be true  ${result}
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+T26 Interface sement-interface add/reboot leaf switch/remove redirect(ecmp) policy src-ip-port to tenant
+    [Tags]  feature  T26  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}   srcdata=${src_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  proto=6
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}  
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    #Rebooting leaf0-a
+    cli reboot switch name  node=master  switch=leaf0-a
+    sleep  150
+    #repeating above traffic again
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    #Removing policy    
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}  zero=True
+    should be true  ${result}     
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+T27 Interface sement-interface redirect(ecmp) policy src-ip to dest-ip check policy counter
+    [Tags]  feature  T27  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}       
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    sleep                  5
+    #pause     FREEZEE!!
+    verify policy stats   c   ${tenantX}  10
+    delete traffic
+
+T28 Interface sement-interface redirect(ecmp) policy src-ip to dest-ip clear policy counter
+    [Tags]  feature  T28  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}    
+    rest clear policy stats  ${tenantX}  10
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    sleep                  5
+    #pause     FREEZEE!!
+    verify policy stats   c   ${tenantX}  10
+    rest clear policy stats  ${tenantX}  10
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep                  5
+    verify policy stats   c   ${tenantX}  10
+    delete traffic  
+
+T29 Interface sement-interface redirect(ecmp) policy src-ip to dest-ip policy-log counters
+    [Tags]  feature  T29  ecmp
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  log=true
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}    
+    rest clear policy stats  ${tenantX}  10
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    sleep                  5
+    #pause     FREEZEE!!
+    verify policy stats   c   ${tenantX}  10
+    delete traffic  
+
+T30 Negitive testing-Remove/add tenant config (ecmp)
+    #Interface sement-interface add/remove redirect(next-hop) policy src-ip to dest-ip
+    [Tags]  feature  T30  ecmp
+    
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}  log=true
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause    FREEZZEE!!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}    
+    rest clear policy stats  ${tenantX}  10
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    sleep                  5
+    verify results   c   b
+    verify policy stats   c   ${tenantX}  10
+    ${policy_log_cnt}=  rest get policy log pkt cnt  ${tenantX}
+    should be true  ${policy_log_cnt}
+    delete traffic
+    cli delete tenant  tenant=${tenantX}
+    verify policy stats false  c   ${tenantX}  10
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${zero_ip}  zero=True
+    should be true  ${result}    
+    #${policy_log_cnt}=  rest get policy log pkt cnt  ${tenantX}
+    #should not be true  ${policy_log_cnt}
+    
+    REST add tenant                                 X
+    REST add vns                                    X                           X1
+    REST add vns                                    X                           X2
+    REST add vns                                    X                           X3
+    REST add router intf                            X                           X1
+    REST add router intf                            X                           X2
+    REST add router intf                            X                           X3
+    REST add vns ip                                 X                           X1              10.251.1.1              24  
+    REST add vns ip                                 X                           X2              10.251.2.1              24  
+    REST add vns ip                                 X                           X3              10.251.3.1              24  
+    REST add interface to vns                       X                           X1              leaf0-a                 ${ixia1}    -1
+    REST add interface to vns                       X                           X2              leaf0-a                 ${ixia3}    -1
+    REST add interface to vns                       X                           X3              leaf0-b                 ${ixia2}    -1
+    REST add tenant routers intf to system          X
+    REST add system intf to tenant routers          X
+    REST add static routes                          X                           0.0.0.0/0            {"tenant": "system"}
+    
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${ecmp_fake}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}  segment-interface=${vnsX2}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    ${result}=  REST verify fwd ecmp grp icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}    
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    sleep                  5
+    verify results   c   b
+    verify policy stats   c   ${tenantX}  10
+    ${policy_log_cnt}=  rest get policy log pkt cnt  ${tenantX}
+    should be true  ${policy_log_cnt}
+    delete traffic
+    
+
+
+* Keywords
+verify results   [Arguments]  ${port_1}   ${port_2}  
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
+   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
+   Should be true  ${in_range}
+
+verify policy stats   [Arguments]  ${port_1}   ${tenant}  ${seq}
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${in_range}=  rest verify policy stats  ${tenant}  ${seq}  ${tx_value}
+   Should be true  ${in_range}
+   
+verify policy stats false  [Arguments]  ${port_1}   ${tenant}  ${seq}
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${in_range}=  rest verify policy stats  ${tenant}  ${seq}  ${tx_value}  True
+   Should be true  ${in_range}
+   
+   
+verify results false   [Arguments]  ${port_1}   ${port_2}  
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
+   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+   Should not be true  ${in_range}
+   
+verify stats true   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  1
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
+    Should be true  ${in_range}
+    
+verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  1
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
+    Should not be true  ${in_range}
+
+
+Policy vns interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
+	#add inter tenant routing
+	#mininet host config
+	REST add policy								X		${tenant1_polname}		
+	REST add policy item						X		${tenant1_polname}		${seq}		${action}		${src}		${dst}
+	REST apply policy on vns					X		${vnsX1}				${tenant1_polname}
+
+Policy vns interface any  [Arguments]  ${seq}  ${action}  ${src} 
+	#add inter tenant routing
+	#mininet host config
+	REST add policy								X		${tenant1_polname}		
+	REST add policy item						X		${tenant1_polname}		${seq}		${action}		${src}		
+	REST apply policy on vns					X		${vnsX1}				${tenant1_polname}
+
+
+test setup topology
+	fabric infra suite setup
+    rest verify fabric switch all
+    Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
+    Set swith int variables
+    Set switch dpid variables	
+	T5 base suite setup
+	REST add tenant 								X
+	REST add tenant									Y
+	REST add tenant									Z
+	REST add tenant									system
+	REST add vns									X							X1
+	REST add vns									X							X2
+	REST add vns									X							X3
+	REST add vns									Y							Y1
+	REST add vns									Z							Z1
+	REST add router intf							X							X1
+	REST add router intf							X							X2
+	REST add router intf							X							X3
+	REST add router intf							Y							Y1
+	REST add router intf							Z							Z1
+	REST add vns ip  								X							X1				10.251.1.1				24	
+	REST add vns ip  								X							X2				10.251.2.1				24	
+	REST add vns ip  								X							X3				10.251.3.1				24	
+	REST add vns ip  								Y							Y1				10.252.1.1				24	
+	REST add vns ip  								Z							Z1				10.253.1.1				24	
+	REST add interface to vns						X							X1				leaf0-a					${leaf0a_ixia_intf}	-1
+	REST add interface to vns						X							X3				leaf0-b					${leaf0b_ixia_intf}	-1
+	REST add interface to vns						X							X2				leaf1-a					${leaf1a_ixia_intf}	-1
+	REST add interface to vns						Y							Y1				leaf1-b					${leaf1b_ixia_intf}	-1
+	REST add interface to vns						Z							Z1				leaf2-a					${leaf2a_ixia_intf}	-1
+	
+	REST add tenant routers intf to system			X
+	REST add tenant routers intf to system			Y
+	REST add tenant routers intf to system			Z
+	REST add system intf to tenant routers 			X
+	REST add system intf to tenant routers 			Y
+	REST add system intf to tenant routers 			Z
+
+	REST add static routes							X							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Y							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Z							0.0.0.0/0			 {"tenant": "system"}	
+	
+
+test teardown topology
+	#delete fabric switch
+	REST delete vns ip  							X							X1				10.251.1.1				24	
+	REST delete vns ip  							X							X2				10.251.2.1				24	
+	REST delete vns ip  							X							X3				10.251.3.1				24	
+	REST delete vns ip  							Y							Y1				10.252.1.1				24	
+	REST delete vns ip  							Z							Z1				10.253.1.1				24	
+	REST delete vns									X							X1
+	REST delete vns									X							X2
+	REST delete vns									X							X3
+	REST delete vns									Y							Y1
+	REST delete vns									Z							Z1
+	REST delete tenant								X
+	REST delete tenant								Y
+	REST delete tenant								Z
+	REST delete tenant routers intf to system		X
+	REST delete tenant routers intf to system		Y
+	REST delete tenant routers intf to system		Z
+	T5 base suite teardown
+	
+
+T5 base suite setup
+	base suite setup
+	#add fabric switch
+
+  
+T5 base suite teardown
+	#delete fabric switch
+	base suite teardown  
+
+
+#verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+#    Sleep  5
+#    ${report}=  fetch port stats  stream=${stream}  
+#    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+#    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+#    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+#    Should be true  ${in_range}	
+  
+delete fabric switch  
+  rest delete fabric switch  spine0 
+  rest delete fabric switch  spine1 
+  rest delete fabric switch  leaf2-a 
+  rest delete fabric switch  leaf2-b 
+  rest delete fabric switch  leaf0-a 
+  rest delete fabric switch  leaf0-b 
+  rest delete fabric switch  leaf1-a 
+  rest delete fabric switch  leaf1-b 
+
+
+test teardown
+  base test teardown
+  delete traffic

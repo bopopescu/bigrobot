@@ -1325,4 +1325,3 @@ class AppController(object):
                     if local is True:
                         t.node_reconnect(node='master', user=str(user), password=password)
                     return output_string[3]
-

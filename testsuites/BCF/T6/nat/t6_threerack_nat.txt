@@ -42,7 +42,7 @@ ${vm11_intf0}  vm11-eth0
 * Test Case 
 
 add Fabric setup Three Rack Dual Leaf 
-   [Tags]  nat  feature 
+   [Tags]  nat  feature     
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -68,8 +68,8 @@ verify vm connectivity using multiple nat next-hop(single external tenant)
 	${result}=  rest verify nat profile  t1  nat1
 	Should be True  ${result}
 	rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat1"}
+	sleep  10
     rest verify nat endpoint  t1  nat1  external  s1
-    sleep  5
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
     Should Be True  ${loss} == 0
@@ -83,8 +83,8 @@ verify vm connectivity using multiple nat next-hop(single external tenant)
 	${result}=  rest verify nat profile  t1  nat2
 	Should be True  ${result}
 	rest add static routes  t1  10.1.2.0/24  {"nat-profile": "nat2"}
+	sleep  10
 	rest verify nat endpoint  t1  nat2  external  s2
-    sleep  5
     mininet ping  vm0  ${vm11_ip}
     ${loss}=  mininet ping  vm0  ${vm11_ip}
     Should Be True  ${loss} == 0
@@ -112,6 +112,7 @@ verify vm connectivity using multiple nat next-hop multiple tenants
 	${result}=  rest verify nat profile  t1  nat1
 	Should be True  ${result}
 	rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat1"}
+	sleep  10
     rest verify nat endpoint  t1  nat1  external  s1
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
@@ -123,6 +124,7 @@ verify vm connectivity using multiple nat next-hop multiple tenants
 	${result}=  rest verify nat profile  t1  nat2
 	Should be True  ${result}
 	rest add static routes  t1  10.1.2.0/24  {"nat-profile": "nat2"}
+	sleep  10
 	rest verify nat endpoint  t1  nat2  external1  s1
     mininet ping  vm0  ${vm11_ip}
     ${loss}=  mininet ping  vm0  ${vm11_ip}
@@ -147,6 +149,7 @@ verify bm-vm connectivity using multiple nat next-hop (single external tenant)
 	${result}=  rest verify nat profile  t1  nat1
 	Should be True  ${result}
 	rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat1"}
+	sleep  10
     rest verify nat endpoint  t1  nat1  external  s1
     mininet ping  bm0  ${vm7_ip}
     ${loss}=  mininet ping  bm0  ${vm7_ip}
@@ -158,6 +161,7 @@ verify bm-vm connectivity using multiple nat next-hop (single external tenant)
 	${result}=  rest verify nat profile  t1  nat2
 	Should be True  ${result}
 	rest add static routes  t1  10.1.2.0/24  {"nat-profile": "nat2"}
+	sleep  10
 	rest verify nat endpoint  t1  nat2  external  s2
     mininet ping  bm0  ${vm11_ip}
     ${loss}=  mininet ping  bm0  ${vm11_ip}
@@ -186,6 +190,7 @@ verify bm-vm connectivity using multiple nat next-hop multiple tenants
 	${result}=  rest verify nat profile  t1  nat1
 	Should be True  ${result}
 	rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat1"}
+	sleep  10
     rest verify nat endpoint  t1  nat1  external  s1
     mininet ping  bm0  ${vm7_ip}
     ${loss}=  mininet ping  bm0  ${vm7_ip}
@@ -197,13 +202,14 @@ verify bm-vm connectivity using multiple nat next-hop multiple tenants
 	${result}=  rest verify nat profile  t1  nat2
 	Should be True  ${result}
 	rest add static routes  t1  10.1.2.0/24  {"nat-profile": "nat2"}
+	sleep  10
 	rest verify nat endpoint  t1  nat2  external1  s1
     mininet ping  bm0  ${vm11_ip}
     ${loss}=  mininet ping  bm0  ${vm11_ip}
     Should Be True  ${loss} == 0
 
 verify vm connectivity applying nat on multiple tenants
-	[Tags]  nat  feature
+	[Tags]  nat  feature  
 	add a tenant  external
 	add a tenant  external1
     add a vns  external  s1
@@ -225,6 +231,7 @@ verify vm connectivity applying nat on multiple tenants
 	${result}=  rest verify nat profile  t1  nat1
 	Should be True  ${result}
 	rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat1"}
+	sleep  10
     rest verify nat endpoint  t1  nat1  external  s1
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
@@ -237,19 +244,17 @@ verify vm connectivity applying nat on multiple tenants
 	${result}=  rest verify nat profile  t2  nat2
 	Should be True  ${result}
 	rest add static routes  t2  10.0.1.0/24  {"nat-profile": "nat2"}
+	sleep  10
 	rest verify nat endpoint  t2  nat2  external1  s1
-    sleep  5
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} == 100
 	mininet ping  vm0  ${vm11_ip}
     ${loss}=  mininet ping  vm0  ${vm11_ip}
     Should Be True  ${loss} == 100
 	  
 verify vm connectivity after changing nat profile
 	[Tags]  nat  feature
-	rest delete static routes  t2  10.0.1.0/24
-	rest add static routes  t2  0.0.0.0/0  {"tenant": "system"}
 	add a tenant  external
 	add a tenant  external1
     add a vns  external  s1
@@ -271,17 +276,19 @@ verify vm connectivity after changing nat profile
 	${result}=  rest verify nat profile  t1  nat1
 	Should be True  ${result}
 	rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat1"}
+	sleep  10
     rest verify nat endpoint  t1  nat1  external  s1
     rest add nat profile  t1  nat2
 	rest add pat  t1  nat2
 	rest add pat public ip  t1  nat2  10.20.0.254  
 	rest add nat remote tenant  t1  nat2  external1  s1
 	${result}=  rest verify nat profile  t1  nat2
-	Should be True  ${result}
+	Should be True  ${result}	
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
     Should Be True  ${loss} == 0
 	rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat2"}
+	sleep  10
 	mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
     Should Be True  ${loss} == 0
@@ -304,11 +311,14 @@ verify vm connectivity changing route from system to nat
     rest add static routes  external  0.0.0.0/0  {"tenant": "system"}
     rest add static routes  external1  0.0.0.0/0  {"tenant": "system"}
     rest add static routes  t1  0.0.0.0/0  {"tenant": "system"}
+    ${result}=  rest verify vswitch l3 cidr nat  t1  hv0  0.0.0.0
+    Should not be True  ${result}
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
     Should Be True  ${loss} == 0
     rest delete static routes  t1  0.0.0.0/0
     rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat1"}
+    sleep  10
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
     Should Be True  ${loss} == 100
@@ -318,14 +328,16 @@ verify vm connectivity changing route from system to nat
 	rest add nat remote tenant  t1  nat1  external  s1
 	${result}=  rest verify nat profile  t1  nat1
 	Should be True  ${result}
+	sleep  10
     rest verify nat endpoint  t1  nat1  external  s1
+    ${result}=  rest verify vswitch l3 cidr nat  t1  hv0  10.1.1.0
+    Should be True  ${result}
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
     Should Be True  ${loss} == 0
 	
 verify vm connectivity with nat switch failover
-	[Tags]  nat feature
-	rest add static routes  t2  0.0.0.0/0  {"tenant": "system"}
+	[Tags]  nat feature 
 	add a tenant  external
 	add a tenant  external1
     add a vns  external  s1
@@ -347,7 +359,7 @@ verify vm connectivity with nat switch failover
 	rest add nat remote tenant  t1  nat1  external  s1
 	${result}=  rest verify nat profile  t1  nat1
 	Should be True  ${result}
-    sleep  5
+    sleep  10
     rest verify nat endpoint  t1  nat1  external  s1
     mininet ping  vm0  ${vm7_ip}
     ${loss}=  mininet ping  vm0  ${vm7_ip}
@@ -423,6 +435,7 @@ Tear down the config
 
 T6 base test setup
    base test setup
+   rest add static routes  t2  0.0.0.0/0  {"tenant": "system"}
 
 T6 base test teardown
    rest delete static routes  t1  10.1.1.0/24  

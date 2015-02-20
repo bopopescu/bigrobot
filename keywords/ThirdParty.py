@@ -202,6 +202,8 @@ class ThirdParty(object):
             if speed is not None:
                 cli_input_4 = "speed " + str(speed)
                 switch.config(cli_input_4)
+                switch.expect(r'.*this command? [y/N].*')
+                switch.send("yes")
             return True
 
     def cli_arista_delete_ip_address(self, node, ip_address, mask, interface_name, speed=None):
@@ -218,6 +220,8 @@ class ThirdParty(object):
             if speed is not None:
                 cli_input_3 = "no speed " + str(speed)
                 switch.config(cli_input_3)
+                switch.expect(r'.*this command? [y/N].*')
+                switch.send("yes")
             return True
 
     def cli_arista_enable_disable_interface(self, node, interface_name, disable=True):
@@ -265,7 +269,7 @@ class ThirdParty(object):
         else:
             switch.config("ip route %s %s" % (route, nexthop))
             return True
-        
+
     def cli_arista_delete_route(self, node, route, nexthop):
         try:
             t = test.Test()
@@ -274,7 +278,7 @@ class ThirdParty(object):
             return False
         else:
             switch.config("no ip route %s %s" % (route, nexthop))
-            return True        
+            return True
 
     def cli_arista_add_vlan_ip_address(self, node, ip_address, mask, vlan_intf):
         try:
@@ -302,7 +306,7 @@ class ThirdParty(object):
             cli_input_3 = "no ip address " + str(ip_address) + "/" + str(mask)
             switch.config(cli_input_3)
             return True
-        
+
     def cli_arista_add_vrrp(self, node, interface, gp, vip):
         try:
             t = test.Test()
@@ -312,7 +316,7 @@ class ThirdParty(object):
         else:
             switch.config("interface %s" % interface)
             switch.config("vrrp %s ip %s" % (gp, vip))
-            return True      
+            return True
 
     def cli_arista_delete_vrrp(self, node, interface, gp, vip):
         try:
@@ -323,8 +327,8 @@ class ThirdParty(object):
         else:
             switch.config("interface %s" % interface)
             switch.config("no vrrp %s ip %s " % (gp, vip))
-            return True             
-         
+            return True
+
     def cli_arista_change_vrrp_priority(self, node, interface, gp, priority):
         try:
             t = test.Test()
@@ -334,8 +338,8 @@ class ThirdParty(object):
         else:
             switch.config("interface %s" % interface)
             switch.config("vrrp %s priority %s" % (gp, priority))
-            return True      
-         
+            return True
+
     def cli_arista_enable_ip_routing(self, node):
         try:
             t = test.Test()
@@ -344,7 +348,7 @@ class ThirdParty(object):
             return False
         else:
             switch.config("ip routing")
-            return True      
+            return True
 
     def cli_arista_disable_ip_routing(self, node):
         try:
@@ -354,5 +358,4 @@ class ThirdParty(object):
             return False
         else:
             switch.config("no ip routing")
-            return True      
-                  
+            return True

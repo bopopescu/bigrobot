@@ -4,8 +4,84 @@
 #  - Send find stderr to /dev/null (e.g., "Permission denied").
 #  - Added /dev/null to prevent wc stalling on stdout when no files are found.
 #
+# IMPORTANT WARNING:
+#  It's a good idea to clone from the master repo before running the script
+#  to avoid miscounting. Your local repo may contain work in progress, log
+#  files which resemble test suites (because they have .txt extension), etc.
+#
 BIGROBOT_BIN_PATH=$(/usr/bin/dirname $0)
 BIGROBOT_PATH=$(cd $BIGROBOT_BIN_PATH/..; /bin/pwd)
 
-wc -l `(find $BIGROBOT_PATH | perl -ne 'next if /(jquery|vendors|keywords_dev)/; print if /\.(java|scala|rb|scm|scheme|ss|rkt|lisp|haml|sass|coffee|js|pl|pm|sh|py|pp)$/') 2> /dev/null ; echo /dev/null` | sort -rgb
+basename=`/usr/bin/basename $0`
+output="/tmp/${basename}_$$"
+output_bigrobot_source="${output}_bigrobot_source.txt"
+output_keyword_source="${output}_keyword_source.txt"
+output_testsuite_source="${output}_testsuite_source.txt"
+
+
+loc() {
+    head -1 $1 | awk '{print $1}'
+}
+
+
+file_count() {
+    total=$(wc -l $1 | awk '{print $1}')
+    echo $(expr $total - 2)
+}
+
+
+echo "BigRobot source code"
+wc -l \
+    `(find $BIGROBOT_PATH | \
+      perl -ne 'next if /(jquery|vendors|keywords_dev|testsuites_dev|keywords|testsuites)/; \
+                print if /\.(java|scala|rb|scm|scheme|ss|rkt|lisp|haml|sass|coffee|js|pl|pm|sh|py|pp)$/' \
+     ) 2> /dev/null ; echo /dev/null` | \
+  sort -rgb | tee $output_bigrobot_source
+
+
+echo ""
+echo "All BigRobot keyword libraries"
+wc -l \
+    `(find "${BIGROBOT_PATH}/keywords" | \
+      perl -ne 'next if /(jquery|vendors|keywords_dev|testsuites_dev)/; \
+                print if /\.(java|scala|rb|scm|scheme|ss|rkt|lisp|haml|sass|coffee|js|pl|pm|sh|py|pp)$/' \
+     ) 2> /dev/null ; echo /dev/null` | \
+  sort -rgb | tee $output_keyword_source
+
+
+echo ""
+echo "All BigRobot test suites (text files)"
+wc -l \
+    `(find "${BIGROBOT_PATH}/testsuites" | \
+      perl -ne 'print if /\.(txt)$/' \
+     ) 2> /dev/null ; echo /dev/null` | \
+  sort -rgb | tee $output_testsuite_source
+
+
+echo ""
+echo ""
+
+total_loc=0
+total_files=0
+
+loc=`loc $output_bigrobot_source`
+files=`file_count $output_bigrobot_source`
+total_loc=$(expr $total_loc + $loc)
+total_files=$(expr $total_files + $files)
+echo "BigRobot   : $loc LOC, $files files"
+
+loc=`loc $output_keyword_source`
+files=`file_count $output_keyword_source`
+total_loc=$(expr $total_loc + $loc)
+total_files=$(expr $total_files + $files)
+echo "Keywords   : $loc LOC, $files files"
+
+loc=`loc $output_testsuite_source`
+files=`file_count $output_testsuite_source`
+total_loc=$(expr $total_loc + $loc)
+total_files=$(expr $total_files + $files)
+echo "Testsuites : $loc LOC, $files files"
+
+echo ""
+echo "Total      : $total_loc LOC, $total_files files"
 

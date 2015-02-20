@@ -303,11 +303,13 @@ sanity test teardown
     Should be true  ${result1}
 
 sanity suite teardown
-    ${result1}=  rest delete switch role  node=s1  mode=bigchain
-    Should be true  ${result1}
-    sleep  5
-    ${result2}=  rest verify switch mode show  node=s1  mode=bigtap-full-match
-    Should be true  ${result2}
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+    config  node=master  cmd=switch ${switch_dpid_s1}
+    config  node=master  cmd=deployment role bigtap
+    config  node=master  cmd=exit
+    config  node=master  cmd=switch ${switch_dpid_s2}
+    config  node=master  cmd=deployment role bigtap
     rest delete switch alias  s1
     rest delete switch alias  s2
     rest delete switch  s1
