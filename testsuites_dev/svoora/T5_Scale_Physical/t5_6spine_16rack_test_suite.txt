@@ -96,6 +96,14 @@ verify config sync between controllers
 	${return}=  rest verify debug coordinator
 	Should Be True  ${return}
 		
+
+verify disk usage in controllers
+    [Tags]  T4
+    #manual passed   
+    #Log To Console  Verifying configuration between controllers
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+        
 	
 ping bms to check L2 fwding
 	[Tags]  scaling  manual 
