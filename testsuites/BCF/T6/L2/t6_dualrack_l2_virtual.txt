@@ -42,7 +42,7 @@ ${hv3_intf1}  hv3-eth4
 
 * Test Case 
 basic cli show commands test case
-   [Tags]  L2  smoke  sanity   feature
+   [Tags]  L2  smoke     feature
    cli  c1  show version
    cli  c1  show version detail
    cli  c1  show running-config
@@ -55,7 +55,7 @@ basic cli show commands test case
    mininet start inband
    
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]  L2  smoke  sanity  feature
+   [Tags]  L2  smoke    feature
    sleep  5
 #   add fabric switch
    rest verify fabric switch all
@@ -64,7 +64,7 @@ add Fabric setup Dual Rack Dual Leaf
    rest verify fabric link common  20
 
 ping bm0 to bm1 dual leaf dual rack dynamic endpoints
-   [Tags]  L2  smoke  sanity  feature
+   [Tags]  L2  smoke    feature
    add portgroup to vns  A  A  p1  -1 
    add portgroup to vns  A  A  p2  -1
    sleep  10 
@@ -78,7 +78,7 @@ ping bm0 to bm1 dual leaf dual rack dynamic endpoints
    Should Be True  ${loss} == 0						 
 
 ping vm0 to vm1 single ivs dynamic endpoints
-   [Tags]  L2  sanity   feature
+   [Tags]  L2  smoke   feature
    rest add interface to vns  A  A  hv0  ${hv0_intf0}  -1
    rest add interface to vns  A  A  hv0  ${hv0_intf1}  -1 
    sleep  5 
@@ -86,7 +86,7 @@ ping vm0 to vm1 single ivs dynamic endpoints
    Should Be True  ${loss} == 0					 
 		
 ping vm0 to vm2 same rack dual ivs dynamic endpoints
-   [Tags]  L2  sanity   feature     
+   [Tags]  L2     feature     
    rest add interface to vns  A  A  hv0  ${hv0_intf0}  -1
    rest add interface to vns  A  A  hv1  ${hv1_intf0}  -1
    sleep  5
@@ -94,7 +94,7 @@ ping vm0 to vm2 same rack dual ivs dynamic endpoints
    Should Be True  ${loss} == 0  
    
 ping vm0 to vm4 dual rack dual ivs dynamic endpoints
-   [Tags]  L2  sanity   feature
+   [Tags]  L2  smoke   feature
    rest add interface to vns  A  A  hv0  ${hv0_intf0}  -1
    rest add interface to vns  A  A  hv2  ${hv2_intf0}  -1
    sleep  5

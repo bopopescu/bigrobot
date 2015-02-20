@@ -39,7 +39,7 @@ ${vm4_intf0}  vm4-eth0
 * Test Case 
  
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]  sanity   
+   [Tags]  smoke   
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -47,7 +47,7 @@ add Fabric setup Dual Rack Dual Leaf
    rest verify fabric link common  20
    
 Verify floating-ip CLI and output
-	[Tags]  sanity
+	[Tags]  smoke
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -60,7 +60,7 @@ Verify floating-ip CLI and output
 	Should not be True  ${result}
 	  
 verify floating IP cli with changing private IP
-	[Tags]  sanity
+	[Tags]  
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -74,7 +74,7 @@ verify floating IP cli with changing private IP
 	Should be True  ${result}
 	
 Verify floating-ip CLI for public segment which is not present
-	[Tags]  sanity
+	[Tags]  
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  external
 	rest add floating ip  A  nat1  10.0.5.200
@@ -87,7 +87,7 @@ Verify floating-ip CLI for public segment which is not present
 	Should not be True  ${result}
 	
 verify vm connectivity single floating IP
-	[Tags]    sanity   
+	[Tags]    smoke   
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -151,7 +151,7 @@ verify vm connectivity after changing floating ip assignment
     Should Be True  ${loss} == 100
 
 verify baremetal connectivity with floating ip
-	[Tags]  sanity
+	[Tags]  smoke
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
