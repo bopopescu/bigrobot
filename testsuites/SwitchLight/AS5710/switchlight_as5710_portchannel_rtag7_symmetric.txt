@@ -250,9 +250,9 @@ TC016: Verify destination mac address, ethertype, source mac address, vlan-id sy
     send and verify traffic
     [Tags]  full  feature  traffic
 
-#### IPv4 Hashing
+#### IPv4 symmetric hashing
 
-TC017: Verify destination IPv4 address hashing
+TC017: Verify destination IPv4 address symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -265,7 +265,7 @@ TC017: Verify destination IPv4 address hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC018: Verify L4 destination port address hashing
+TC018: Verify L4 destination port address symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -278,7 +278,7 @@ TC018: Verify L4 destination port address hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC019: Verify L4 source port address hashing
+TC019: Verify L4 source port address symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-src-port
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -291,7 +291,7 @@ TC019: Verify L4 source port address hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC020: Verify protocol hashing
+TC020: Verify protocol symmetric hashing
     config  node=s1  cmd=hash ipv4 protocol
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -304,7 +304,7 @@ TC020: Verify protocol hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC021: Verify source IPv4 address hashing
+TC021: Verify source IPv4 address symmetric hashing
     config  node=s1  cmd=hash ipv4 src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -317,7 +317,7 @@ TC021: Verify source IPv4 address hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC022: Verify vlan-id hashing
+TC022: Verify vlan-id symmetric hashing
     config  node=s1  cmd=hash ipv4 vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -328,8 +328,8 @@ TC022: Verify vlan-id hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-#### L3 IPv4 Two Tuple hashing
-TC023: Verify destination IPv4 address and L4 destination port hashing
+#### L3 IPv4 Two Tuple symmetric hashing
+TC023: Verify destination IPv4 address and L4 destination port symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -342,7 +342,7 @@ TC023: Verify destination IPv4 address and L4 destination port hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC024: Verify destination IPv4 address and L4 source port hashing
+TC024: Verify destination IPv4 address and L4 source port symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -355,7 +355,7 @@ TC024: Verify destination IPv4 address and L4 source port hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC025: Verify destination IPv4 address and protocol hashing
+TC025: Verify destination IPv4 address and protocol symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip protocol
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -368,7 +368,7 @@ TC025: Verify destination IPv4 address and protocol hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC026: Verify destination IPv4 address and source IPv4 address hashing
+TC026: Verify destination IPv4 address and source IPv4 address symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -381,7 +381,7 @@ TC026: Verify destination IPv4 address and source IPv4 address hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC027: Verify destination IPv4 address and vlan-id hashing
+TC027: Verify destination IPv4 address and vlan-id symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -394,7 +394,7 @@ TC027: Verify destination IPv4 address and vlan-id hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC028: Verify L4 source and destination port hashing
+TC028: Verify L4 source and destination port symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -407,7 +407,7 @@ TC028: Verify L4 source and destination port hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC029: Verify L4 destination port and protocol hashing
+TC029: Verify L4 destination port and protocol symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port protocol
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -421,7 +421,7 @@ TC029: Verify L4 destination port and protocol hashing
     [Tags]  full  feature  traffic  ipv4
 
  
-TC030: Verify L4 destination port and source IPv4 address hashing
+TC030: Verify L4 destination port and source IPv4 address symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -434,7 +434,7 @@ TC030: Verify L4 destination port and source IPv4 address hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
  
-TC031: Verify L4 destination port and vlan-id hashing
+TC031: Verify L4 destination port and vlan-id symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -447,7 +447,7 @@ TC031: Verify L4 destination port and vlan-id hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC032: Verify L4 source port and protocol hashing
+TC032: Verify L4 source port and protocol symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-src-port protocol
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -460,7 +460,7 @@ TC032: Verify L4 source port and protocol hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC033: Verify L4 source port and source IPv4 address hashing
+TC033: Verify L4 source port and source IPv4 address symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-src-port src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -473,7 +473,7 @@ TC033: Verify L4 source port and source IPv4 address hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC034: Verify L4 source port and vlan-id hashing
+TC034: Verify L4 source port and vlan-id symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-src-port vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -486,7 +486,7 @@ TC034: Verify L4 source port and vlan-id hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC035: Verify protocol and source IPv4 address hashing
+TC035: Verify protocol and source IPv4 address symmetric hashing
     config  node=s1  cmd=hash ipv4 protocol src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -499,7 +499,7 @@ TC035: Verify protocol and source IPv4 address hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC036: Verify protocol and vlan-id hashing
+TC036: Verify protocol and vlan-id symmetric hashing
     config  node=s1  cmd=hash ipv4 protocol vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -512,7 +512,7 @@ TC036: Verify protocol and vlan-id hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC037: Verify source IPv4 address and vlan-id hashing
+TC037: Verify source IPv4 address and vlan-id symmetric hashing
     config  node=s1  cmd=hash ipv4 src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -525,9 +525,9 @@ TC037: Verify source IPv4 address and vlan-id hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-#### L3 IPv4 Three Tuple hashing
+#### L3 IPv4 Three Tuple symmetric hashing
 
-TC038: Verify destination IP, L4 source and destination port based hashing
+TC038: Verify destination IP, L4 source and destination port based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -540,7 +540,7 @@ TC038: Verify destination IP, L4 source and destination port based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC039: Verify destination IP, L4 destination port and protocol based hashing
+TC039: Verify destination IP, L4 destination port and protocol based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -553,7 +553,7 @@ TC039: Verify destination IP, L4 destination port and protocol based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC040: Verify source and destination IPv4 address and L4 destination port based hashing
+TC040: Verify source and destination IPv4 address and L4 destination port based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -566,7 +566,7 @@ TC040: Verify source and destination IPv4 address and L4 destination port based 
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC041: Verify destination IPv4 address, L4 destination port and vlan-id based hashing
+TC041: Verify destination IPv4 address, L4 destination port and vlan-id based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -579,7 +579,7 @@ TC041: Verify destination IPv4 address, L4 destination port and vlan-id based ha
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC042: Verify destination IP, L4 source port and protocol based hashing
+TC042: Verify destination IP, L4 source port and protocol based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -592,7 +592,7 @@ TC042: Verify destination IP, L4 source port and protocol based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
- TC043: Verify source and destination IPv4 address and L4 source port based hashing
+ TC043: Verify source and destination IPv4 address and L4 source port based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -605,7 +605,7 @@ TC042: Verify destination IP, L4 source port and protocol based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC044: Verify destination IPv4 address, L4 source port and vlan based hashing
+TC044: Verify destination IPv4 address, L4 source port and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -618,7 +618,7 @@ TC044: Verify destination IPv4 address, L4 source port and vlan based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC045: Verify source and destination IPv4 address and protocol based hashing
+TC045: Verify source and destination IPv4 address and protocol based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip protocol src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -631,7 +631,7 @@ TC045: Verify source and destination IPv4 address and protocol based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC046: Verify destination IPv4 address, protocol and vlan based hashing
+TC046: Verify destination IPv4 address, protocol and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip protocol vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -644,7 +644,7 @@ TC046: Verify destination IPv4 address, protocol and vlan based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC047: Verify source and destination IPv4 address, and vlan based hashing
+TC047: Verify source and destination IPv4 address, and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -657,7 +657,7 @@ TC047: Verify source and destination IPv4 address, and vlan based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC048:Verify L4 source and destination port and protocol based hashing
+TC048:Verify L4 source and destination port and protocol based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -670,7 +670,7 @@ TC048:Verify L4 source and destination port and protocol based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC049: Verify L4 source and destination port and source IP address based hashing
+TC049: Verify L4 source and destination port and source IP address based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -683,7 +683,7 @@ TC049: Verify L4 source and destination port and source IP address based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC050: Verify L4 source and destination port and vlan based hashing
+TC050: Verify L4 source and destination port and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -696,7 +696,7 @@ TC050: Verify L4 source and destination port and vlan based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC051: Verify L4 destination port, protocol and source IP Address based hashing
+TC051: Verify L4 destination port, protocol and source IP Address based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port protocol src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -709,7 +709,7 @@ TC051: Verify L4 destination port, protocol and source IP Address based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC052: Verify L4 destination port, protocol and vlan based hashing
+TC052: Verify L4 destination port, protocol and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port protocol vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -722,7 +722,7 @@ TC052: Verify L4 destination port, protocol and vlan based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC053: Verify L4 destination port, source IPv4 address and vlan based hashing
+TC053: Verify L4 destination port, source IPv4 address and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -735,7 +735,7 @@ TC053: Verify L4 destination port, source IPv4 address and vlan based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC054: Verify L4 source port, source IPv4 address and protocol based hashing
+TC054: Verify L4 source port, source IPv4 address and protocol based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-src-port protocol src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -748,7 +748,7 @@ TC054: Verify L4 source port, source IPv4 address and protocol based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC055: Verify L4 source port, source IPv4 address and vlan based hashing
+TC055: Verify L4 source port, source IPv4 address and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-src-port src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -761,7 +761,7 @@ TC055: Verify L4 source port, source IPv4 address and vlan based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC056: Verify protocol, source IPv4 address and vlan based hashing
+TC056: Verify protocol, source IPv4 address and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 protocol src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -774,9 +774,9 @@ TC056: Verify protocol, source IPv4 address and vlan based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-#### L3 IPv4 Four Tuple hashing
+#### L3 IPv4 Four Tuple symmetric hashing
 
-TC057: Verify destination IPv4 address, source and destination L4 ports and protocol based hashing
+TC057: Verify destination IPv4 address, source and destination L4 ports and protocol based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -789,7 +789,7 @@ TC057: Verify destination IPv4 address, source and destination L4 ports and prot
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC058: Verify source and destination IPv4 address and source and destination L4 port based hashing
+TC058: Verify source and destination IPv4 address and source and destination L4 port based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -802,7 +802,7 @@ TC058: Verify source and destination IPv4 address and source and destination L4 
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC059: Verify destination IPv4 address, source and destination L4 port and vlan based hashing
+TC059: Verify destination IPv4 address, source and destination L4 port and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -815,7 +815,7 @@ TC059: Verify destination IPv4 address, source and destination L4 port and vlan 
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC060: Verify source and destination IPv4 address, destination L4 port and protocol based hashing
+TC060: Verify source and destination IPv4 address, destination L4 port and protocol based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -828,7 +828,7 @@ TC060: Verify source and destination IPv4 address, destination L4 port and proto
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC061: Verify destination IPv4 address, destination L4 port, protocol and vlan based hashing
+TC061: Verify destination IPv4 address, destination L4 port, protocol and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -841,7 +841,7 @@ TC061: Verify destination IPv4 address, destination L4 port, protocol and vlan b
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC062: Verify source and destination IPv4 address, destination L4 port and vlan based hashing
+TC062: Verify source and destination IPv4 address, destination L4 port and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -854,7 +854,7 @@ TC062: Verify source and destination IPv4 address, destination L4 port and vlan 
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC063: Verify source and destination IPv4 address, source L4 port and protocol based hashing
+TC063: Verify source and destination IPv4 address, source L4 port and protocol based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -867,7 +867,7 @@ TC063: Verify source and destination IPv4 address, source L4 port and protocol b
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC064: Verify destination IPv4 address, source L4 port, protocol and vlan based hashing
+TC064: Verify destination IPv4 address, source L4 port, protocol and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -880,7 +880,7 @@ TC064: Verify destination IPv4 address, source L4 port, protocol and vlan based 
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC065: Verify source and destination IPv4 address, source L4 port and vlan based hashing
+TC065: Verify source and destination IPv4 address, source L4 port and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -893,7 +893,7 @@ TC065: Verify source and destination IPv4 address, source L4 port and vlan based
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC066: Verify source and destination IPv4 address, protocol and vlan based hashing
+TC066: Verify source and destination IPv4 address, protocol and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip protocol src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -906,7 +906,7 @@ TC066: Verify source and destination IPv4 address, protocol and vlan based hashi
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC067: Verify destination IPv4 address, L4 source port, protocol and vlan based hashing
+TC067: Verify destination IPv4 address, L4 source port, protocol and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -919,7 +919,7 @@ TC067: Verify destination IPv4 address, L4 source port, protocol and vlan based 
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
  
-TC068: Verify source and destination IPv4 address, L4 source port and protocol based hashing
+TC068: Verify source and destination IPv4 address, L4 source port and protocol based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -932,7 +932,7 @@ TC068: Verify source and destination IPv4 address, L4 source port and protocol b
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC069: Verify source and destination L4 port, source IPv4 address and and vlan based hashing
+TC069: Verify source and destination L4 port, source IPv4 address and and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -945,7 +945,7 @@ TC069: Verify source and destination L4 port, source IPv4 address and and vlan b
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC070: Verify destination L4 port, protocol, source IPv4 address and and vlan based hashing
+TC070: Verify destination L4 port, protocol, source IPv4 address and and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port protocol src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -958,7 +958,7 @@ TC070: Verify destination L4 port, protocol, source IPv4 address and and vlan ba
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC071: Verify source L4 port, protocol, source IPv4 address and and vlan based hashing
+TC071: Verify source L4 port, protocol, source IPv4 address and and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-src-port protocol src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -971,8 +971,8 @@ TC071: Verify source L4 port, protocol, source IPv4 address and and vlan based h
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-#### L3 IPv4 Five Tuple hashing
-TC072: Verify source and destination IP, source and desitnation L4 port and protocol based hashing
+#### L3 IPv4 Five Tuple symmetric hashing
+TC072: Verify source and destination IP, source and desitnation L4 port and protocol based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -985,7 +985,7 @@ TC072: Verify source and destination IP, source and desitnation L4 port and prot
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC073: Verify destination IP, source and desitnation L4 port, protocol and vlan based hashing
+TC073: Verify destination IP, source and desitnation L4 port, protocol and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -998,7 +998,7 @@ TC073: Verify destination IP, source and desitnation L4 port, protocol and vlan 
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC074: Verify source and destination IP, source and desitnation L4 port, and vlan based hashing
+TC074: Verify source and destination IP, source and desitnation L4 port, and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -1011,7 +1011,7 @@ TC074: Verify source and destination IP, source and desitnation L4 port, and vla
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC075: Verify source and destination IP, desitnation L4 port, protocol and vlan based hashing
+TC075: Verify source and destination IP, desitnation L4 port, protocol and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -1024,7 +1024,7 @@ TC075: Verify source and destination IP, desitnation L4 port, protocol and vlan 
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC076: Verify source and destination IP, source L4 port, protocol and vlan based hashing
+TC076: Verify source and destination IP, source L4 port, protocol and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -1037,7 +1037,7 @@ TC076: Verify source and destination IP, source L4 port, protocol and vlan based
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
 
-TC077: Verify source and destination IP, source and destination L4 port, protocol and vlan based hashing
+TC077: Verify source and destination IP, source and destination L4 port, protocol and vlan based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
