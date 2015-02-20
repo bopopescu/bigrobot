@@ -35,10 +35,10 @@ ${z3_subnet}		24
 ${spine0_dpid}		00:00:70:72:CF:AE:B4:AE 
 ${spine1_dpid}		00:00:70:72:CF:AE:B5:30
 ${leaf0a_dpid}		00:00:70:72:CF:AB:37:58
-${leaf0b_dpid}		00:00:70:72:CF:AB:39:58
+${leaf0b_dpid}		00:00:70:72:cf:c7:cd:33
 ${leaf1a_dpid}		00:00:70:72:CF:B5:E5:54
 ${leaf1b_dpid}		00:00:70:72:CF:B5:E7:10
-${leaf2a_dpid}		00:00:70:72:CF:B5:F1:C2
+${leaf2a_dpid}		00:00:70:72:cf:c7:ca:e3
 ${leaf2b_dpid}		00:00:70:72:CF:B5:E9:60
 
 
