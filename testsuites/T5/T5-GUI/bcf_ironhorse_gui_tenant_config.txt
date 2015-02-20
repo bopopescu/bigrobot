@@ -97,7 +97,7 @@ T5.6 Create Endpoint From Endpoint Page with no attachment point and MAC
 	Create Endpoint From Endpoint Page		tenant1		log-seg3	new-endpoint6		new-description6		None				${EMPTY}		${EMPTY}		${EMPTY}	32:02:03:32:08:0f	${EMPTY}
 T5.7 Create Endpoint From Endpoint Page with no attachment point and IP
 	Go To Endpoints Page
-	Create Endpoint From Endpoint Page		tenant1		log-seg3	new-endpoint7		new-description7		None				${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}			10.2.3.4
+	Create Endpoint From Endpoint Page		tenant1		log-seg3	new-endpoint7		new-description7		None				${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}			10.22.23.4
 T5.8 Create Endpoint From Endpoint Page with no attachment point
 	Go To Endpoints Page
 	Create Endpoint From Endpoint Page		tenant1		log-seg3	new-endpoint8		new-description8		None				${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}			${EMPTY}

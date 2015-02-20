@@ -1586,11 +1586,6 @@ Create Next Hop Group
 	Input Text And Verify   ${NEXT HOP GROUP NAME FIELD}  ${nhg-name}
 	
 	Add IP Address to Endpoint  ${ip}
-
-	Verify Element Visible  ${NEXT HOP GROUP APPEND IP ADDRESSES BUTTON}
-	Click Element  ${NEXT HOP GROUP APPEND IP ADDRESSES BUTTON}  and don't wait
-
-    Verify Element Invisible  ${ENTER IPV4 ADDRESS POPUP}
 	
 	Click Element  ${SAVE NEXT HOP GROUP BUTTON}   and don't wait
 	Verify Element Invisible  ${CREATE NEXT HOP GROUP POPUP}
