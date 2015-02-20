@@ -1,0 +1,1194 @@
+* Setting
+Documentation   T5 Policy with two spine three leaf rack with dual-tor Test Suite
+Suite Setup     test setup topology
+Suite Teardown  test teardown topology
+Test Setup      base test setup
+Test Teardown   test teardown
+Force Tags      IronHorse  T5  Policy
+Library         keywords/BsnCommon.py
+Library         keywords/Host.py
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords/T5Platform.py
+Library			keywords/SwitchLight.py
+Library 		keywords/T5Utilities.py
+Library         keywords/BsnCommon.py
+Library	        Collections.py
+Library         keywords/Ixia.py
+Resource		testsuites/T5/T5_Policy_Physical/t5_policy_physical_inter_variables_regression.txt
+Resource        testsuites/T5/t5_physical_variables.txt
+Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Library         OperatingSystem
+Library         Collections
+Library         Dialogs
+
+
+
+* Test Cases
+
+
+
+###### Policy with next-hop group ############
+#---------------------------------------------
+
+T94 policy add/remove redirect(next-hop) from src-ip to dest-ip
+    [Tags]  feature  nhg
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    sleep                  5
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
+    
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+
+T95 policy add/remove redirect(next-hop) from src-ip to dest-vns
+    [Tags]  feature  T95   nhg
+    ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    sleep                  5
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+    
+
+    
+T96 policy add/remove redirect(next-hop) from src-ip to dest-tenant
+    [Tags]  feature  T96    nhg
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+######  **  ANY **  ########    
+T97 policy add/remove redirect(next-hop) from src-ip to any
+    [Tags]  feature  T97   nhg
+    #${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+    
+T98 policy add/remove redirect(next-hop) from src-tenant to dest-ip
+    [Tags]  feature  T98    nhg
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+    ${src_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
+    start traffic  ${stream}
+    sleep                  5
+    #pause      FREEZZEEE!!!
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+    
+T99 policy add/remove redirect(next-hop) from src-tenant to dest-tenant
+    [Tags]  feature  T99    nhg
+    ${src_dict}=  Create Dictionary  tenant  ${tenantY}
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    #pause     FREEZZEEEE!!
+    clear stats
+    sleep                  5
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   d   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    
+    start traffic  ${stream}
+    sleep                  5
+    #pause      FREEZZEEE!!!
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   d   a
+    delete traffic
+    
+
+T100 policy add/remove redirect(next-hop) from src-tenant to dest-vns
+    [Tags]  feature   T100   nhg
+    ${src_dict}=  Create Dictionary  tenant  ${tenantY}
+    ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    #pause     FREEZZEEEE!!
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   d   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    #pause      FREEZZEEE!!!
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   d   a
+    delete traffic
+
+    
+######  **  ANY need more investigation  **  ########   
+T101 policy add/remove redirect(next-hop) from src-tenant to any
+    [Tags]  feature    T101   nhg
+    ${src_dict}=  Create Dictionary  tenant  ${tenantY}
+    #${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    #pause     FREEZZEEEE!!
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   d   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    #pause      FREEZZEEE!!!
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   d   a
+    delete traffic
+
+
+######  **  ANY need more investigation  **  ########   
+
+
+
+T102 policy add/remove redirect(next-hop) from src-vns to dest-ip
+    [Tags]  feature  T102    nhg
+    ${src_dict}=  Create Dictionary  segment  ${vnsX2}  tenant  ${tenantX}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
+    
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+T103 policy add/remove redirect(next-hop) from src-vns to dest-tenant
+    [Tags]  smoke  feature    T103   nhg
+    
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  segment  ${vnsX2}  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+T104 policy add/remove redirect(next-hop) from src-vns to dest-vns
+    [Tags]  smoke  feature    T104    nhg
+    ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  segment  ${vnsX2}  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+
+
+######  **  ANY need more investigation  **  ########   
+T105 policy add/remove redirect(next-hop) from src-vns to any
+    [Tags]  feature    T105    nhg
+    #${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  segment  ${vnsX2}  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+######  **  ANY need more investigation  **  ########   
+T106 policy add/remove redirect(next-hop) from any to dest-ip
+    [Tags]  feature    T106   nhg
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+    #${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+######  **  ANY need more investigation  **  ########   
+T107 policy add/remove redirect(next-hop) from any to dest-tenant
+    [Tags]  feature    nhg    T107
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    #${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop   dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+    
+
+    
+######  **  ANY need more investigation  **  ########   
+T108 policy add/remove redirect(next-hop) from any to dest-vns
+    [Tags]  feature    T108    nhg
+    ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+    #${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
+    
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+    
+    
+
+    
+######  **  ANY need more investigation  **  ########   
+T109 policy add/remove redirect(next-hop) from any to any
+    [Tags]  feature    nhg    T109
+    #${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+    #${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
+    
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop   next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}  src_port=${tcp_port}  dst_port=${tcp_port}  protocol=TCP
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+    
+##Below are for ip and port combination specified at tenant interface
+##-------------------------------------##
+
+T110 policy add/remove redirect(next-hop) from src-ip-port to dest-ip-port
+    [Tags]  feature  nhg   T110
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+    
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+
+    
+
+T111 policy add/remove redirect(next-hop) from src-ip-port to dest-vns
+    [Tags]  smoke  feature  T111  nhg
+    ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+    
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+    
+    
+    
+
+T112 policy add/remove redirect(next-hop) from src-ip-port to dest-tenant
+    [Tags]  smoke  feature  T112  nhg
+    ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+    
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should be true  ${result}
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia2_ipsubnet}
+    should not be true  ${result}
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia3_ipsubnet}
+    should not be true  ${result}
+    
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+    
+    
+    
+######  **  ANY need more investigation  **  ########   
+T113 policy add/remove redirect(next-hop) from src-ip-port to any
+    [Tags]  feature  T113  nhg
+    #${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
+    
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+    
+######  **  ANY need more investigation  **  ########   
+
+T114 policy add/remove redirect(next-hop) from src-tenant to dest-ip-port
+    [Tags]  smoke  feature  T114  nhg
+    ${src_dict}=  Create Dictionary  tenant  ${tenantX}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+    
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should be true  ${result}
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    ${result}=  REST verify fwd icap table  ${leaf0-a}  ${ixia1_ip}
+    should not be true  ${result}
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+    
+    
+
+
+T115 policy add/remove redirect(next-hop) from src-vns to dest-ip-port
+    [Tags]  smoke  feature  nhg  T115
+    ${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop  srcdata=${src_dict}  dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+
+######  **  ANY need more investigation  **  ########   
+T116 policy add/remove redirect(next-hop) from any to dest-ip-port
+    [Tags]  feature  nhg  T116
+    ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+    ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
+    rest add policy                         ${tenantX}      ${tenant2_polname}  
+    rest add nexthop group  ${tenantX}  ${next-hop-grp}
+    rest add nexthopGroup ip  ${tenantX}  ${next-hop-grp}  ${next-hop-ip}
+    rest add policy item example  tenant=${tenantX}  polname=${tenant2_polname}  seqnum=10  action=next-hop   dstdata=${dst_dict}  next-hop=${next_hop}
+    rest apply policy on tenant             ${tenantX}      ${tenant2_polname}
+    ${redirect-host}=  L3 add host  src_ip=${next-hop-ip}  gw_ip=${next-hop-gw}  port_name=b
+    #pause      FREEZZEEEE!
+    L3 start hosts  port_name=b
+    ${result}=  L3 chk gw arp
+    should be true  ${result}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    sleep                  5
+    start traffic  ${stream}
+    sleep                  5
+    #pause  FREZZEE!!
+    stop traffic   ${stream}
+    verify results   c   b
+    delete traffic
+    sleep  2
+    rest remove policy on tenant                ${tenantX}      ${tenant2_polname}
+    ${stream}=             L3 add  name=ix4-to-ix1  flow=c->a  src_ip=10.251.2.2  src_gw=10.251.2.1
+    ...                     dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia1_mac}  dst_mac=${ixia3_mac}
+    ...                     protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    sleep  2                  
+    verify results   c   a
+    delete traffic
+    
+
+* Keywords
+verify stats true   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  1
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  10
+    Should be true  ${in_range}
+    
+verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  1
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  10
+    Should not be true  ${in_range}
+
+
+Policy vns interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
+	#add inter tenant routing
+	#mininet host config
+	REST add policy								X		${tenant1_polname}		
+	REST add policy item						X		${tenant1_polname}		${seq}		${action}		${src}		${dst}
+	REST apply policy on vns					X		${vnsX1}				${tenant1_polname}
+
+Policy vns interface any  [Arguments]  ${seq}  ${action}  ${src} 
+	#add inter tenant routing
+	#mininet host config
+	REST add policy								X		${tenant1_polname}		
+	REST add policy item						X		${tenant1_polname}		${seq}		${action}		${src}		
+	REST apply policy on vns					X		${vnsX1}				${tenant1_polname}
+
+
+test setup topology
+	add fabric switch
+    BuiltIn.Sleep  125
+    rest verify fabric switch all
+    BuiltIn.Sleep  25
+    Set swith int variables
+    Set switch dpid variables	
+	T5 base suite setup
+	REST add tenant 								X
+	REST add tenant									Y
+	REST add tenant									Z
+	REST add tenant									system
+	REST add vns									X							X1
+	REST add vns									X							X2
+	REST add vns									X							X3
+	REST add vns									Y							Y1
+	REST add vns									Z							Z1
+	REST add router intf							X							X1
+	REST add router intf							X							X2
+	REST add router intf							X							X3
+	REST add router intf							Y							Y1
+	REST add router intf							Z							Z1
+	REST add vns ip  								X							X1				10.251.1.1				24	
+	REST add vns ip  								X							X2				10.251.2.1				24	
+	REST add vns ip  								X							X3				10.251.3.1				24	
+	REST add vns ip  								Y							Y1				10.252.1.1				24	
+	REST add vns ip  								Z							Z1				10.253.1.1				24	
+	REST add interface to vns						X							X1				leaf0-a					${leaf0a_ixia_intf}	-1
+	REST add interface to vns						X							X2				leaf0-b					${leaf0b_ixia_intf}	-1
+	REST add interface to vns						X							X3				leaf1-a					${leaf1a_ixia_intf}	-1
+	REST add interface to vns						Y							Y1				leaf1-b					${leaf1b_ixia_intf}	-1
+	REST add interface to vns						Z							Z1				leaf2-a					${leaf2a_ixia_intf}	-1
+	
+	REST add tenant routers intf to system			X
+	REST add tenant routers intf to system			Y
+	REST add tenant routers intf to system			Z
+	REST add system intf to tenant routers 			X
+	REST add system intf to tenant routers 			Y
+	REST add system intf to tenant routers 			Z
+
+	REST add static routes							X							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Y							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Z							0.0.0.0/0			 {"tenant": "system"}	
+	
+
+test teardown topology
+	delete fabric switch
+	REST delete vns ip  							X							X1				10.251.1.1				24	
+	REST delete vns ip  							X							X2				10.251.2.1				24	
+	REST delete vns ip  							X							X3				10.251.3.1				24	
+	REST delete vns ip  							Y							Y1				10.252.1.1				24	
+	REST delete vns ip  							Z							Z1				10.253.1.1				24	
+	REST delete vns									X							X1
+	REST delete vns									X							X2
+	REST delete vns									X							X3
+	REST delete vns									Y							Y1
+	REST delete vns									Z							Z1
+	REST delete tenant								X
+	REST delete tenant								Y
+	REST delete tenant								Z
+	REST delete tenant routers intf to system		X
+	REST delete tenant routers intf to system		Y
+	REST delete tenant routers intf to system		Z
+	T5 base suite teardown
+	
+
+T5 base suite setup
+	base suite setup
+	reconnect_switch_ips
+	sleep 											5
+	${result} = 									CLI verify controller		s1							c1		
+	Should Be True									${result}
+	${result} = 									CLI verify controller   	s1							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s2							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s2							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s3							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s3							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s4							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s4							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s5							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s5							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s6							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s6							c2
+	Should Be True									${result}		
+
+
+  
+T5 base suite teardown
+	delete fabric switch
+	base suite teardown
+	
+verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}	
+
+
+test teardown
+  base test teardown
+  delete traffic
