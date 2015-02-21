@@ -1558,8 +1558,6 @@ class Ixia(object):
         ix_ports = [port for port in self._port_map_list.values()]
         src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
         dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
-        src_mac_new = kwargs.get('src_mac_new', None)
-        dst_mac_new = kwargs.get('dst_mac_new', None)
         d_cnt = kwargs.get('dst_cnt', 1)
         s_cnt = kwargs.get('src_cnt', 1)
         dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
@@ -1724,7 +1722,7 @@ class Ixia(object):
                 (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
                                                                               dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                               dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type=ip_type,
-                                                                              vlan_id=vlan_id, src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, p_priority=vlan_priority)
+                                                                              vlan_id=vlan_id, src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, vlan_p=vlan_priority)
                 helpers.log('Created Mac Devices : %s ' % mac_devices)
                 if vlan_priority is None:
                     traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
@@ -1758,7 +1756,7 @@ class Ixia(object):
                 (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
                                                                               dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                               dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type, vlan_id=vlan_id,
-                                                                              src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, p_priority=vlan_priority)
+                                                                              src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, vlan_p=vlan_priority)
                 self.ix_start_hosts(ip_type=ip_type)
                 self._started_hosts = True
                 helpers.log("IP Devices: %s" % ip_devices)
