@@ -1514,6 +1514,32 @@ class T5(object):
         else:
             helpers.test_failure("Expected links are not present, expected:%d,Actual:%d" % (int(count), int(link)))
             return False
+    def rest_verify_port_group_state(self, expected_state="up", pg_name=None):
+        '''
+            Fucntion to verify the given port group state in controller using REST APIs
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = ''
+        if pg_name is None:
+            # Verify portgroup state of all configured portgroups
+            url = '/api/v1/data/controller/applications/bcf/info/fabric/port-group'
+        else:
+            url = url + '[name=%s]' % pg_name
+
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log("Total no of portgroups: %s " % str(len(data)))
+        for pg in data:
+            helpers.log("Verifiy state of port group: %s , Mode: %s" % (str(pg["name"]), str(pg["mode"])))
+            for interface in pg["interface"]:
+                if interface["state"] == expected_state:
+                    helpers.log("Port group state as Expected : %s " % expected_state)
+                else:
+                    helpers.log("Port group state is not as Expected Please check the port group state Exiting script to avoind unecessarly failures..")
+                    helpers.exit_robot_immediately("Please fix Portgroup state: %s" % str(pg["name"]))
+        return True
+
 
     def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()

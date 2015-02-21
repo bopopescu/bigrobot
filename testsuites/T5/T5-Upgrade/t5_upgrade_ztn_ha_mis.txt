@@ -93,6 +93,14 @@ UPGRADE 10G HOST PING SET UP
 	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
 	Set host int variables
 	add host port groups
+	BASH restart networking service                 h1                          timeout=60
+	BASH restart networking service                 h2                          timeout=60
+	BASH restart networking service                 h3                          timeout=60
+	BASH restart networking service                 h4                          timeout=60
+	BASH restart networking service                 h5                          timeout=60
+	BASH restart networking service                 h6                          timeout=60
+	sleep  10    #sleep for port groups to come up
+	rest verify port group state
 	#Currently Regression Host H1 & H2 Bond interfaces are configured on Vlan 10
 	bash init intf  h1  bond0.10
     bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
