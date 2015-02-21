@@ -1435,7 +1435,7 @@ class Test(object):
             #            % name)
             return
 
-        if helpers.is_switchlight(n.platform()):
+        if helpers.is_switch(name):
             helpers.log("Setting up switches (SwitchLight) - before clean-config")
             self.teardown_switch(name)
 
@@ -1451,7 +1451,7 @@ class Test(object):
                         % name)
             return
 
-        if helpers.is_switchlight(n.platform()):
+        if helpers.is_switch(name):
             helpers.log("Setting up switches (SwitchLight) - after clean-config")
             for controller in ('c1', 'c2'):
                 c = self.topology(controller, ignore_error=True)
@@ -1731,7 +1731,7 @@ class Test(object):
                         % name)
             return
 
-        if helpers.is_switchlight(n.platform()):
+        if helpers.is_switch(name):
             helpers.log("Tearing down config for SwitchLight")
             content = n.config("show running-config")['content']
             lines = content.splitlines()
