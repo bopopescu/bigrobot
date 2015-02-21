@@ -195,25 +195,32 @@ s8:
   set_session_ssh: false
   set_init_ping: false
   
-  
 h1:
    ip: 10.9.16.15
    user: root
    password: bsn
-   
       
 h2:
   ip: 10.9.16.16
   user: root
   password: bsn
-  
+
+h3:
+   ip: 10.9.16.15
+   user: root
+   password: bsn
+         
+h4:
+  ip: 10.9.16.16
+  user: root
+  password: bsn
+
 h5:
 #1G Hosts
    ip: 10.9.16.15
    user: root
    password: bsn
-   
-      
+         
 h6:
 #1G Hosts
   ip: 10.9.16.16
