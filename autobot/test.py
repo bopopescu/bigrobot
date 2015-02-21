@@ -1731,7 +1731,7 @@ class Test(object):
                         % name)
             return
 
-        if helpers.is_switchlight(n.platform()):
+        if helpers.is_switch(name):
             helpers.log("Tearing down config for SwitchLight")
             content = n.config("show running-config")['content']
             lines = content.splitlines()
