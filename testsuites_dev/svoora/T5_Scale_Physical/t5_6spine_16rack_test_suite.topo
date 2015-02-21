@@ -555,7 +555,7 @@ s38:
 tg1:
   platform: 'ixia'
   chassis_ip: 10.8.0.6
-  tcl_server_ip: 10.9.19.245
+  tcl_server_ip: 10.9.19.231
   ports:
     a:
       name: 11/1

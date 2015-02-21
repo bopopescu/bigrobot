@@ -19,6 +19,7 @@ import keywords.AppController as AppController
 import json
 import re
 import time
+from BsnCommon import BsnCommon as bsnCommon
 from datetime import datetime
 from time import mktime
 
@@ -4015,3 +4016,38 @@ class BigTap(object):
                 return False
             else:
                 return True
+
+    def bt_cli_run(self, node, command, cmd_timeout=45, user='admin', password='adminadmin', soft_error=False):
+        """
+        Run given CLI command
+
+        Inputs:
+        | node | Reference to switch/controller as defined in .topo file |
+        | command | CLI command to run |
+        | cmd_timeout | Timeout for given command to be executed and controller prompt to be returned |
+        | user | Username to use when logging into the node |
+        | password | Password for the user |
+        | soft_error | Soft Error flag |
+
+        Return Value:
+        - True if command executed with no errors, False otherwise
+        """
+
+        helpers.test_log("Running command: %s on node %s" % (command, node))
+        t = test.Test()
+        bsn_common = bsnCommon()
+        ip_addr = bsn_common.get_node_ip(node)
+        c = t.node_spawn(ip=ip_addr, user=user, password=password)
+        try:
+            c.cli(command, timeout=cmd_timeout)
+            if "Error" in c.cli_content():
+                c.close()
+                helpers.test_failure(c.cli_content(), soft_error)
+                return False
+        except:
+            c.close()
+            helpers.test_failure(c.cli_content(), soft_error)
+            return False
+        else:
+            c.close()
+            return True
