@@ -239,7 +239,7 @@ TC20: Verify CLI show bigtap policy-flow policy-name completion
     [Tags]  full  feature
     
 TC21: Verify CLI show bigtap rbac-permission completion
-    ${result}=  cli walk command  show bigtap rbac-permission   3  cmd_argument=admin-view  
+    ${result}=  cli walk command  show bigtap rbac-permission   4  cmd_argument=admin-view  
     Should be true  ${result} 
     [Tags]  full  feature
     
@@ -259,7 +259,7 @@ TC24: Verify CLI show bigtap services service-name completion
     [Tags]  full  feature
     
 TC25: Verify CLI show bigtap topology completion
-    ${result}=  cli walk command  show bigtap topology   6  
+    ${result}=  cli walk command  show bigtap topology   7  
     Should be true  ${result}   
     [Tags]  full  feature
     
@@ -289,12 +289,12 @@ TC30: Verify CLI show bigtap services topology statistics completion
     [Tags]  full  feature
     
 TC31: Verify CLI show bigtap services tracked-hosts completion
-    ${result}=  cli walk command  show bigtap tracked-hosts  1  
+    ${result}=  cli walk command  show bigtap tracked-hosts  5  
     Should be true  ${result}
     [Tags]  full  feature
     
 TC32: Verify CLI show bigtap services connected-devices completion
-    ${result}=  cli walk command  show bigtap connected-devices  1  
+    ${result}=  cli walk command  show bigtap connected-devices  2  
     Should be true  ${result}
     [Tags]  full  feature
     

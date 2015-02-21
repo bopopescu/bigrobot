@@ -135,7 +135,7 @@ TC24: Verify SNMP OID ifPhysAddress of 10Gig Data Port
 TC25: Verify SNMP OID ifDescr of PortChannel across 10G Interface
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifDescr.1105  ${pc_name}
+    verify snmp attribute  s1  ifDescr.1129  ${pc_name}
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  10GLink  portchannel
@@ -143,7 +143,7 @@ TC25: Verify SNMP OID ifDescr of PortChannel across 10G Interface
 TC26: Verify SNMP OID ifType of PortChannel across 10G Interface
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifType.1105  ethernetCsmacd
+    verify snmp attribute  s1  ifType.1129  ethernetCsmacd
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  10GLink  portchannel
@@ -151,7 +151,7 @@ TC26: Verify SNMP OID ifType of PortChannel across 10G Interface
 TC27: Verify SNMP OID ifAdminStatus of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifAdminStatus.1105  up
+    verify snmp attribute  s1  ifAdminStatus.1129  up
     cli delete portchannel  s1  1            
     sleep  5    
 
@@ -160,7 +160,7 @@ TC27: Verify SNMP OID ifAdminStatus of PortChannel across 10G Interface
 TC28: Verify SNMP OID ifOperStatus of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifOperStatus.1105  up
+    verify snmp attribute  s1  ifOperStatus.1129  up
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  10GLink  portchannel
@@ -168,7 +168,7 @@ TC28: Verify SNMP OID ifOperStatus of PortChannel across 10G Interface
 TC29: Verify SNMP OID ifSpeed of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifSpeed.1105  4294967295
+    verify snmp attribute  s1  ifSpeed.1129  4294967295
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  10GLink  portchannel
@@ -176,7 +176,7 @@ TC29: Verify SNMP OID ifSpeed of PortChannel across 10G Interface
 TC30: Verify SNMP OID ifHighSpeed of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifHighSpeed.1105  20000
+    verify snmp attribute  s1  ifHighSpeed.1129  20000
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  10GLink  portchannel
@@ -185,7 +185,7 @@ TC31: Verify SNMP OID ifPhysAddress of PortChannel across 10G Interface
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
     ${mac_address1}=  cli show interface macaddress  s1  ${pc_name} 
-    verify snmp attribute  s1  ifPhysAddress.1105  ${mac_address1}
+    verify snmp attribute  s1  ifPhysAddress.1129  ${mac_address1}
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  10GLink  portchannel
@@ -193,7 +193,7 @@ TC31: Verify SNMP OID ifPhysAddress of PortChannel across 10G Interface
 TC32: Verify SNMP OID ifDescr of PortChannel across 1G Interface
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifDescr.1105  ${pc_name}
+    verify snmp attribute  s1  ifDescr.1129  ${pc_name}
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  1GLink  portchannel
@@ -201,7 +201,7 @@ TC32: Verify SNMP OID ifDescr of PortChannel across 1G Interface
 TC33: Verify SNMP OID ifType of PortChannel across 1G Interface
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifType.1105  ethernetCsmacd
+    verify snmp attribute  s1  ifType.1129  ethernetCsmacd
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  1GLink  portchannel
@@ -209,7 +209,7 @@ TC33: Verify SNMP OID ifType of PortChannel across 1G Interface
 TC34: Verify SNMP OID ifAdminStatus of PortChannel across 1G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifAdminStatus.1105  up
+    verify snmp attribute  s1  ifAdminStatus.1129  up
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  1GLink  portchannel
@@ -217,7 +217,7 @@ TC34: Verify SNMP OID ifAdminStatus of PortChannel across 1G Interface
 TC35: Verify SNMP OID ifOperStatus of PortChannel across 1G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifOperStatus.1105  up
+    verify snmp attribute  s1  ifOperStatus.1129  up
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  1GLink  portchannel
@@ -225,7 +225,7 @@ TC35: Verify SNMP OID ifOperStatus of PortChannel across 1G Interface
 TC36: Verify SNMP OID ifSpeed of PortChannel across 1G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifSpeed.1105  2000000000
+    verify snmp attribute  s1  ifSpeed.1129  2000000000
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  1GLink  portchannel
@@ -233,7 +233,7 @@ TC36: Verify SNMP OID ifSpeed of PortChannel across 1G Interface
 TC37: Verify SNMP OID ifHighSpeed of PortChannel across 1G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifHighSpeed.1105  2000
+    verify snmp attribute  s1  ifHighSpeed.1129  2000
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  1GLink  portchannel 
@@ -242,7 +242,7 @@ TC38: Verify SNMP OID ifPhysAddress of PortChannel across 1G Interface
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
     ${mac_address1}=  cli show interface macaddress  s1  ${pc_name} 
-    verify snmp attribute  s1  ifPhysAddress.1105  ${mac_address1}
+    verify snmp attribute  s1  ifPhysAddress.1129  ${mac_address1}
     cli delete portchannel  s1  1            
     sleep  5    
     [Tags]  full  feature  1GLink  portchannel

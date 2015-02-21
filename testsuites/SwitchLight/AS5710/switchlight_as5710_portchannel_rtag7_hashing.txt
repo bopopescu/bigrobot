@@ -1030,7 +1030,7 @@ TC072: Keeping L4 source port and vlan-id constant, increment all other fields a
     send and verify traffic for incorrect hash
     [Tags]  full  feature  traffic
 
-TC073:Verify protocol and source IPv4 address hashing
+TC073: Verify protocol and source IPv4 address hashing
     config  node=s1  cmd=hash ipv4 protocol src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -1062,7 +1062,7 @@ TC074:Keeping protocol and source IPv4 address constant, increment all other fie
     send and verify traffic for incorrect hash
     [Tags]  full  feature  traffic  runthis
 
-TC075:Verify protocol and vlan-id hashing
+TC075: Verify protocol and vlan-id hashing
     config  node=s1  cmd=hash ipv4 protocol vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -1158,7 +1158,7 @@ TC080: Keeping destination IP, L4 source and destination port constant, incremen
     send and verify traffic for incorrect hash
     [Tags]  full  feature  traffic  
 
-TC081:Verify destination IP, L4 destination port and protocol based hashing
+TC081: Verify destination IP, L4 destination port and protocol based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -1174,7 +1174,7 @@ TC081:Verify destination IP, L4 destination port and protocol based hashing
     send and verify traffic
     [Tags]  full  feature  traffic  runthis
     
-TC082:Keeping destination IP, L4 destination port and protocol constant, increment all other fields and verify traffic goes on one link
+TC082: Keeping destination IP, L4 destination port and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -2422,7 +2422,7 @@ TC156: Keeping source and destination IP, source L4 port, protocol and vlan cons
     [Tags]  full  feature  traffic  runthis
     
 #### L3 IPv4 Six Tuple hashing (Change all fields)
-TC155: Verify source and destination IP, source and destination L4 port, protocol and vlan based hashing
+TC157: Verify source and destination IP, source and destination L4 port, protocol and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol src-ip vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -2480,6 +2480,18 @@ rtag7 suite setup
 
 
 rtag7 test setup
+    config  node=s1  cmd=no hash ipv4
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    config  node=s1  cmd=no hash ipv6
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    config  node=s1  cmd=no hash mpls
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    config  node=s1  cmd=hash l2 dst-mac eth-type src-mac vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
     ${result1}=  write version to file
     Should be true  ${result1}
     ${result2}=  start syslog monitor
