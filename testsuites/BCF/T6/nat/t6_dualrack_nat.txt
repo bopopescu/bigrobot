@@ -82,6 +82,7 @@ verify nat-profile CLI and output
 	${result}=  rest verify nat profile  A  nat1
 	Should be True  ${result}
 	sleep  5
+    rest verify pat profile  A  nat1
 	rest verify nat endpoint  A  nat1  external  E
 	rest delete nat profile  A  nat1
 	${result}=  rest verify nat profile  A  nat1
