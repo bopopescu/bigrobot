@@ -594,9 +594,9 @@ class T5(object):
     def rest_add_ip_endpoint(self, tenant, vns, endpoint, ip):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]' % (tenant, vns, endpoint)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/ip-address[ip-address="%s"]' % (tenant, vns, endpoint, ip)
         try:
-            c.rest.patch(url, {"ip-address": ip})
+            c.rest.put(url, {"ip-address": ip})
         except:
             return False
         else:
