@@ -19,7 +19,7 @@ Resource		 testsuites/BCF/T6/t6_virtual_resource.txt
 
 * Test Case 
 
-Add/Delete CLI test for PNAT and Floating IP 
+Add/Delete/show command CLI test for PNAT and Floating IP 
 ++++++++++++++++++++++++++++++++++++++++++++
 Test PNAT CLI command 
     [Tags]   
@@ -42,6 +42,20 @@ Config upload/reload with NAT/Floating IP CLI
 CLI test for NAT_pool switch configuration
 	[Tags]	
 CLI test to check only vswitch available for adding to nat pool
+	[Tags]
+Verify Public IP in NAT same as some static endpoint in external segment
+	[Tags]
+Verify Public mac in NAT same as some static MAC or learned MAC in external segment
+	[Tags]
+Verify Public IP in NAT which is outside the subnet of exteral segment
+	[Tags]
+Verify Public IP in one NAT porfile same as other NAT profiles public IP
+	[Tags]
+Verify floating IP IP in NAT same as some static endpoint in external segment
+	[Tags]
+Verify floating IP in NAT which is outside the subnet of exteral segment
+	[Tags]
+Verify floating IP in one NAT porfile same as other NAT profiles public IP
 	[Tags]
 	
 Functionality Test (NAT/Floating IP)
@@ -99,21 +113,11 @@ Test floating IP case with Controller Failover
 	[Tags]
 Test VM floating IP with controller failover 
 	[Tags]
-Test conneciovity with bringing down Interface for Vswitch NAT container 
-	[Tags]
-Test connectivity using vswitch NAT container restart scenario (Host reboot)
-	[Tags]
-Test connecitivity using vswitch NAT container down scenatio (Host replacement)
+Test connectivity with bringing down Interface for Vswitch NAT container 
 	[Tags]
 	
-Upgrade Test Cases
-+++++++++++++++++++
-Test PNAT with upgrade IVS switch which also server NAT
-	[Tags]
-Test floating IP with upgrade IVS switch serving floating IP table and VM
-	[Tags]
-Test NAT connecivity with headless mode
-	[Tags]
+
+	
 
 
 

@@ -18,7 +18,12 @@
 
 import autobot.helpers as helpers
 import autobot.test as test
+from keywords.BsnCommon import BsnCommon
 from keywords.T5 import T5
+import re
+import sys
+import json
+from netaddr import *
 
 
 class T6(object):
@@ -266,6 +271,23 @@ class T6(object):
             else:
                 continue   
             
+    def rest_vswitch_portgroup(self, nat_switch):
+        '''Function to extract the port group and its members which VM instance belongs
+        Input: openstack network name and Instance name
+        Output: list of port group members in dictionary format
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        portgroup_members = {}
+        url1 = '/api/v1/data/controller/applications/bcf/info/fabric/port-group[name="%s"]' % (nat_switch)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        helpers.log("length=%d" % len(data1[0]["interface"]))
+        for i in range(0, len(data1[0]["interface"])):
+            k, v = data1[0]["interface"][i]["switch-name"], data1[0]["interface"][i]["interface-name"]
+            portgroup_members[k] = v 
+        return portgroup_members
+    
     def rest_disable_nat_switch_interfaces(self, nat_switch):
         '''Function to disable leaf interfaces for the nat ivs switch connected
         '''
