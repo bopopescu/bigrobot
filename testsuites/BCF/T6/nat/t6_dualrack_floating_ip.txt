@@ -81,7 +81,7 @@ Verify floating-ip CLI for public segment which is not present
 	rest add private ip  A  nat1  10.0.5.200  ${vm0_ip}
 	rest add public mac  A  nat1  10.0.5.200  00:00:11:11:11:11
 	${result}=  rest verify floating ip  A  nat1  10.0.5.200  ${vm0_ip}
-	Should be True  ${result}
+	Should Not be True  ${result}
 	rest delete floating ip  A  nat1  10.0.5.200
 	${result}=  rest verify floating ip  A  nat1  10.0.5.200  ${vm0_ip}
 	Should not be True  ${result}
