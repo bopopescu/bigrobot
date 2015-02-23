@@ -35,6 +35,12 @@ ${vm0_intf0}  vm0-eth0
 ${vm1_intf0}  vm1-eth0
 ${vm2_intf0}  vm2-eth0
 ${vm4_intf0}  vm4-eth0
+${hv0_switch}  hv0
+${hv1_switch}  hv1
+${hv2_switch}  hv2
+${hv3_switch}  hv3
+${hv4_switch}  hv4
+${hv5_switch}  hv5
 
 * Test Case 
 
@@ -51,7 +57,7 @@ basic cli show commands test case
    enable  c1  show switch
    
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]  nat  smoke  feature   
+   [Tags]  nat   feature   
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -60,15 +66,15 @@ add Fabric setup Dual Rack Dual Leaf
    
 Verify nat-pool CLI and output
 	[Tags]  nat   feature
-	rest add nat switch  hv1
-	${result}=  rest verify nat switch  hv1
+	rest add nat switch  ${hv1_switch}
+	${result}=  rest verify nat switch  ${hv1_switch}
 	Should be True  ${result}
-	rest delete nat switch  hv1
-	${result}=  rest verify nat switch  hv1
+	rest delete nat switch  ${hv1_switch}
+	${result}=  rest verify nat switch  ${hv1_switch}
 	Should not be True  ${result}
 
 verify nat-profile CLI and output
-	[Tags]  nat  smoke  feature 
+	[Tags]  nat    feature 
 	rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  
@@ -81,8 +87,51 @@ verify nat-profile CLI and output
 	${result}=  rest verify nat profile  A  nat1
 	Should not be True  ${result}
 	
+validation error test public ip for nat same as public ip for another nat
+	[Tags]
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
+	rest add nat remote tenant  A  nat1  external  E
+	add a tenant  t1
+	rest add nat profile  t1  nat2
+	rest add pat  t1  nat2
+	rest add nat remote tenant  t1  nat2  external  E
+	${result}=  rest add pat public ip  t1  nat2  10.0.4.254
+	Should not be True  ${result}
+	
+validation error test public ip for nat outiside the exteral segment subnet
+	[Tags]
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest add pat public ip  A  nat1  10.0.5.254
+	Should not be True  ${result}
+	  
+validation error test public ip same as static endpoint in external segment
+	[Tags]  
+	rest add endpoint  external  E  e1
+	rest add ip endpoint  external  E  e1  10.0.4.200
+	rest add mac endpoint  external  E  e1  00:22:22:22:22:22
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest add pat public ip  A  nat1  10.0.4.200
+	Should not be True  ${result}
+
+validation error test static endpoint same as NAT public IP
+	[Tags]
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	rest add pat public ip  A  nat1  10.0.4.200
+	rest add endpoint  external  E  e1
+	rest add mac endpoint  external  E  e1  00:22:22:22:22:22
+	${result}=  rest add ip endpoint  external  E  e1  10.0.4.200
+	Should not be True  ${result}
+	
 Applying default router using nat next-hop cli test
-	[Tags]  nat  smoke      
+	[Tags]  nat        
 	rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  
@@ -97,7 +146,7 @@ Applying default router using nat next-hop cli test
 	Should not be True  ${result}
 
 verify connectivity tenant VM - external different rack using nat next-hop
-   [Tags]  nat  feature  smoke   
+   [Tags]  nat  feature     
     rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  
@@ -105,9 +154,9 @@ verify connectivity tenant VM - external different rack using nat next-hop
 	${result}=  rest verify nat profile  A  nat1
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
-    ${result}=  rest verify vswitch l3 cidr nat  A  hv0  0.0.0.0
+    ${result}=  rest verify vswitch l3 cidr nat  A  ${hv0_switch}  0.0.0.0
     Should be True  ${result}
-    ${result}=  rest verify vswitch l3 cidr nat  external  hv0  0.0.0.0
+    ${result}=  rest verify vswitch l3 cidr nat  external  ${hv0_switch}  0.0.0.0
     Should Not be True  ${result}
     mininet ping  vm0  ${vm4_ip}
     ${loss}=  mininet ping  vm0  ${vm4_ip}
@@ -121,8 +170,8 @@ verify connectivity tenant VM - external different rack using nat next-hop
 
 verify connectivity vm0-vm4 different rack using fixed nat-switch
 	[Tags]  nat  feature    
-	rest add nat switch  hv1
-	${result}=  rest verify nat switch  hv1
+	rest add nat switch  ${hv1_switch}
+	${result}=  rest verify nat switch  ${hv1_switch}
 	Should be True  ${result}
 	rest add nat profile  A  nat1
 	rest add pat  A  nat1
@@ -132,18 +181,18 @@ verify connectivity vm0-vm4 different rack using fixed nat-switch
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
 	sleep  10
-    ${result}=  rest verify nat attachment point  A  nat1  hv1
+    ${result}=  rest verify nat attachment point  A  nat1  ${hv1_switch}
 	Should be True  ${result}
     ${loss}=  mininet ping  vm0  ${vm4_ip}
     Should Be True  ${loss} == 0
-    rest delete nat switch  hv1
+    rest delete nat switch  ${hv1_switch}
 	rest delete static routes  A  0.0.0.0/0  nat1
     rest delete nat profile  A  nat1
     
 verify connectivity vm0 - vm4 different rack using changing nat-switch 
    [Tags]  nat  feature    
-    rest add nat switch  hv1
-	${result}=  rest verify nat switch  hv1
+    rest add nat switch  ${hv1_switch}
+	${result}=  rest verify nat switch  ${hv1_switch}
 	Should be True  ${result}
 	rest add nat profile  A  nat1
 	rest add pat  A  nat1
@@ -153,32 +202,31 @@ verify connectivity vm0 - vm4 different rack using changing nat-switch
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
 	sleep  10
-    ${result}=  rest verify nat attachment point  A  nat1  hv1
+    ${result}=  rest verify nat attachment point  A  nat1  ${hv1_switch}
 	Should be True  ${result}
     ${loss}=  mininet ping  vm0  ${vm4_ip}
     Should Be True  ${loss} == 0
     mininet ping  vm0  ${vm2_ip}
     ${loss}=  mininet ping  vm0  ${vm2_ip}
     Should Be True  ${loss} == 0
-    rest delete nat switch  hv1
+    rest delete nat switch  ${hv1_switch}
     sleep  5
-	${result}=  rest verify nat switch  hv1
+	${result}=  rest verify nat switch  ${hv1_switch}
 	Should not be True  ${result}
-	rest add nat switch  hv3
-	pause
+	rest add nat switch  ${hv3_switch}
 	sleep  10
-	${result}=  rest verify nat switch  hv3
+	${result}=  rest verify nat switch  ${hv3_switch}
 	Should be True  ${result}
-	${result}=  rest verify nat attachment point  A  nat1  hv3
+	${result}=  rest verify nat attachment point  A  nat1  ${hv3_switch}
 	Should be True  ${result}
 	${loss}=  mininet ping  vm0  ${vm4_ip}
     Should Be True  ${loss} == 0
     rest delete static routes  A  0.0.0.0/0  nat1
     rest delete nat profile  A  nat1
-   	rest delete nat switch  hv3
+   	rest delete nat switch  ${hv3_switch}
 
 verify connectivity bm0 to vm4 different rack
-	[Tags]  smoke
+	[Tags]  
 	rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  
@@ -224,10 +272,10 @@ T6 base suite setup
     rest add router intf  external  E
     rest add vns ip  external  E  10.0.4.1  24
     rest add portgroup to vns  A  A  p1  -1
-    rest add interface to vns  A  B  hv0  ${hv0_intf0}  -1
-    rest add interface to vns  A  C  hv0  ${hv0_intf1}  -1
-    rest add interface to vns  A  D  hv1  ${hv1_intf0}  -1
-    rest add interface to vns  external  E  hv2  ${hv2_intf0}  -1
+    rest add interface to vns  A  B  ${hv0_switch}  ${hv0_intf0}  -1
+    rest add interface to vns  A  C  ${hv0_switch}  ${hv0_intf1}  -1
+    rest add interface to vns  A  D  ${hv1_switch}  ${hv1_intf0}  -1
+    rest add interface to vns  external  E  ${hv2_switch}  ${hv2_intf0}  -1
     rest add tenant routers intf to system  A
     rest add tenant routers intf to system  external
     rest add system intf to tenant routers  A
@@ -260,8 +308,10 @@ T6 base test setup
 T6 base test teardown
 	rest delete static routes  A  0.0.0.0/0
     rest delete nat profile  A  nat1
-    rest delete nat switch  hv1
-    rest delete nat switch  hv3
+    rest delete nat switch  ${hv1_switch}
+    rest delete nat switch  ${hv3_switch}
+    rest delete endpoint  external  E  e1
+    delete a tenant  t1
    	base test teardown
   
          

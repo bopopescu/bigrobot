@@ -206,7 +206,7 @@ class Ixia(object):
     def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_mac_step, d_mac_step,
                                      src_ip, dst_ip, src_gw_ip, dst_gw_ip, s_ip_step, d_ip_step,
                                      s_gw_step, d_gw_step, src_gw_mac=None,
-                                     dst_gw_mac=None, ip_type='ipv4', vlan_id=None, src_gw_prefix=None, dst_gw_prefix=None, p_priority=None):
+                                     dst_gw_mac=None, ip_type='ipv4', vlan_id=None, vlan_step=0, src_gw_prefix=None, dst_gw_prefix=None, vlan_p=None, vlan_p_step=0):
         '''
             RETURN IXIA MAC DEVICES with Ips mapped with Topologies created with vports and added increment values accordingly
             Ex Usage:
@@ -269,9 +269,9 @@ class Ixia(object):
                 continue
             helpers.log("Adding NEW ETHERNET DEVICE for MAC: %s" % mac)
             eth_devices.append(self._handle.add(topo_device, 'ethernet', '-name', topo_name))
-        if p_priority is not None:
+        if vlan_id is not None:
             for eth_device in eth_devices:
-                helpers.log("Setting Vlan True in Ixia Ethernet Device")
+                helpers.log("Setting VLAN TRUE in Ixia Ethernet Device")
                 self._handle.setMultiAttribute(eth_device, '-useVlans', True)
                 self._handle.setMultiAttribute(eth_device + '/vlan:1', '-name')  # Vlan name removed
                 self._handle.commit()
@@ -279,16 +279,21 @@ class Ixia(object):
                 self._handle.setMultiAttribute(tpid, 'clearOverlays', False, '-pattern', 'singleValue')  #
                 eth_type = self._handle.add(tpid, 'singleValue')  #
                 self._handle.setMultiAttribute(eth_type, '-value', 'ethertype8100')  #
-                prio = self._handle.getAttribute(eth_device + '/vlan:1', '-priority')  #
-                self._handle.setMultiAttribute(prio, 'clearOverlays', False, '-pattern', 'singleValue')  #
-                vlan_1p = self._handle.add(prio, 'singleValue')  #
-                self._handle.setMultiAttribute(vlan_1p, '-value', p_priority)  # need to add 1p_priority as an argument
-                self._handle.commit()
                 ixia_vlan_id_refs = self._handle.getAttribute(eth_device + '/vlan:1', '-vlanId')
                 self._handle.setMultiAttribute(ixia_vlan_id_refs, 'clearOverlays', False, '-pattern', 'counter')
                 self._handle.commit()
                 ixia_vlan_counter_refs = self._handle.add(ixia_vlan_id_refs, "counter")
-                self._handle.setMultiAttribute(ixia_vlan_counter_refs, '-direction', 'increment', '-start', vlan_id, '-step', 0)
+                self._handle.setMultiAttribute(ixia_vlan_counter_refs, '-direction', 'increment', '-start', vlan_id, '-step', vlan_step)
+                self._handle.commit()
+                if vlan_p is not None:
+                    helpers.log("Adding VLAN PRIORITY...")
+                    prio = self._handle.getAttribute(eth_device + '/vlan:1', '-priority')  #
+                    self._handle.setMultiAttribute(prio, 'clearOverlays', False, '-pattern', 'counter')  #
+                    self._handle.commit()
+                    vlan_1p = self._handle.add(prio, 'counter')  #
+                    self._handle.setMultiAttribute(vlan_1p, '-direction', 'increment', '-start', vlan_p, '-step', vlan_p_step)  # need to add 1p_priority as an argument
+                    self._handle.commit()
+
 
         self._handle.commit()
 
@@ -311,6 +316,7 @@ class Ixia(object):
             else:
                 helpers.log("ADDING NEW IP_DEVICE  for MAC: %s" % mac)
                 ip_device = self._handle.add(mac_device, ip_type, '-name', ip_name)
+
             ip_device_ixia = handle.remapIds(ip_device)[0]
             handle.commit()
             ip_devices.append(ip_device_ixia)
@@ -1338,7 +1344,10 @@ class Ixia(object):
         dst_gw_ip = kwargs.get('dst_gw', '20.0.0.1')
         dst_gw_step = kwargs.get('src_gw_step', '0.0.1.0')
         dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
-
+        vlan_id = kwargs.get("vlan_id", None)
+        vlan_step = kwargs.get("vlan_step", None)
+        vlan_p = kwargs.get("vlan_priority", 0)
+        vlan_p_step = kwargs.get("vlan_priority_step", 0)
 
         port_name = kwargs.get('port_name', None)
         ix_tcl_server = self._tcl_server_ip
@@ -1379,7 +1388,8 @@ class Ixia(object):
 
             (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
                                                                       dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
-                                                                      dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type)
+                                                                      dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type,
+                                                                      vlan_p=vlan_p, vlan_p_step=vlan_p_step, vlan_id=vlan_id, vlan_step=vlan_step)
             helpers.log('Created Mac Devices with corrsponding Topos ...')
             helpers.log ("Success Creating Ip Devices !!!")
             return ip_devices
@@ -1548,8 +1558,6 @@ class Ixia(object):
         ix_ports = [port for port in self._port_map_list.values()]
         src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
         dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
-        src_mac_new = kwargs.get('src_mac_new', None)
-        dst_mac_new = kwargs.get('dst_mac_new', None)
         d_cnt = kwargs.get('dst_cnt', 1)
         s_cnt = kwargs.get('src_cnt', 1)
         dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
@@ -1714,7 +1722,7 @@ class Ixia(object):
                 (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
                                                                               dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                               dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type=ip_type,
-                                                                              vlan_id=vlan_id, src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, p_priority=vlan_priority)
+                                                                              vlan_id=vlan_id, src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, vlan_p=vlan_priority)
                 helpers.log('Created Mac Devices : %s ' % mac_devices)
                 if vlan_priority is None:
                     traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
@@ -1748,7 +1756,7 @@ class Ixia(object):
                 (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
                                                                               dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                               dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type, vlan_id=vlan_id,
-                                                                              src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, p_priority=vlan_priority)
+                                                                              src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, vlan_p=vlan_priority)
                 self.ix_start_hosts(ip_type=ip_type)
                 self._started_hosts = True
                 helpers.log("IP Devices: %s" % ip_devices)

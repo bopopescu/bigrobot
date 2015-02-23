@@ -39,7 +39,7 @@ ${vm4_intf0}  vm4-eth0
 * Test Case 
  
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]  smoke   
+   [Tags]     
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -47,7 +47,7 @@ add Fabric setup Dual Rack Dual Leaf
    rest verify fabric link common  20
    
 Verify floating-ip CLI and output
-	[Tags]  smoke
+	[Tags]  
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -84,6 +84,78 @@ Verify floating-ip CLI for public segment which is not present
 	Should be True  ${result}
 	rest delete floating ip  A  nat1  10.0.5.200
 	${result}=  rest verify floating ip  A  nat1  10.0.5.200  ${vm0_ip}
+	Should not be True  ${result}
+
+validation error floating IP overlap with other tenants floating IP
+	[Tags]
+	add a tenant  t1
+	rest add nat profile  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	rest add floating ip  A  nat1  10.0.4.200
+	rest add nat profile  t1  nat1
+	rest add nat remote tenant  t1  nat1  external  E
+	${result}=  rest add floating ip  t1  nat1  10.0.4.200
+	Should not be True  ${result}
+
+validation error floating IP overlap with static endpoint external tenant
+	[Tags]
+	rest add endpoint  external  E  e1
+	rest add ip endpoint  external  E  e1  10.0.4.200
+	rest add mac endpoint  external  E  e1  00:00:11:11:11:12
+	rest add nat profile  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest add floating ip  A  nat1  10.0.4.200
+	Should not be True  ${result}
+	
+validation error floating IP mac overlap with static mac in external tenant
+	rest add endpoint  external  E  e1
+	rest add mac endpoint  external  E  e1  00:00:11:11:11:11
+	rest add ip endpoint  external  E  e1  10.0.4.201
+	rest add nat profile  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	rest add floating ip  A  nat1  10.0.4.200
+	${result}=  rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	Should not be True  ${result}
+	
+validation error static endpoint overlap with Floating IP 
+	[Tags]
+	rest add nat profile  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	rest add floating ip  A  nat1  10.0.4.200
+	rest add endpoint  external  E  e1
+	rest add mac endpoint  external  E  e1  00:00:11:11:11:12
+	${result}=  rest add ip endpoint  external  E  e1  10.0.4.200
+	Should not be True  ${result}
+	
+validation error static mac overlap with floating IP public mac
+	rest add nat profile  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	rest add floating ip  A  nat1  10.0.4.200
+	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	rest add endpoint  external  E  e1
+	rest add ip endpoint  external  E  e1  10.0.4.201
+	${result}=  rest add mac endpoint  external  E  e1  00:00:11:11:11:11
+	Should not be True  ${result}
+
+validation error floating IP mac in multicast range
+	[Tags]
+	rest add nat profile  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	rest add floating ip  A  nat1  10.0.4.200
+	${result}=  rest add public mac  A  nat1  10.0.4.200  01:00:11:11:11:11
+	Should not be True  ${result}
+	${result}=  rest add public mac  A  nat1  10.0.4.200  03:00:11:11:11:11
+	Should not be True  ${result}
+	${result}=  rest add public mac  A  nat1  10.0.4.200  05:00:11:11:11:11
+	Should not be True  ${result}
+	${result}=  rest add public mac  A  nat1  10.0.4.200  09:00:11:11:11:11
+	Should not be True  ${result}
+	
+validation error floating IP outside the external segment subnet
+	[Tags]
+	rest add nat profile  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest add floating ip  A  nat1  10.0.5.200
 	Should not be True  ${result}
 	
 verify vm connectivity single floating IP
@@ -151,7 +223,7 @@ verify vm connectivity after changing floating ip assignment
     Should Be True  ${loss} == 100
 
 verify baremetal connectivity with floating ip
-	[Tags]  smoke
+	[Tags]  
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -296,6 +368,8 @@ T6 base test teardown
    rest delete nat profile  A  nat2
    rest delete static routes  A  0.0.0.0/0
    rest delete static routes  A  10.0.4.0/24
+   delete a tenant  t1
+   rest delete endpoint  external  E  e1
    base test teardown
   
          

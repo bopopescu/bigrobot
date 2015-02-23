@@ -107,7 +107,7 @@ TC17: Verify SNMP OID ifPhysAddress of 40Gig Data Port
 TC18: Verify SNMP OID ifDescr of PortChannel across 40G Interface
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifDescr.1105  ${pc_name}
+    verify snmp attribute  s1  ifDescr.1129  ${pc_name}
     cli delete portchannel  s1  1     
     sleep  5    
     [Tags]  full  feature  40Glink  portchannel
@@ -115,7 +115,7 @@ TC18: Verify SNMP OID ifDescr of PortChannel across 40G Interface
 TC19: Verify SNMP OID ifType of PortChannel across 40G Interface
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifType.1105  ethernetCsmacd
+    verify snmp attribute  s1  ifType.1129  ethernetCsmacd
     cli delete portchannel  s1  1     
     sleep  5    
     [Tags]  full  feature  40Glink  portchannel
@@ -123,7 +123,7 @@ TC19: Verify SNMP OID ifType of PortChannel across 40G Interface
 TC20: Verify SNMP OID ifAdminStatus of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifAdminStatus.1105  up
+    verify snmp attribute  s1  ifAdminStatus.1129  up
     cli delete portchannel  s1  1     
     sleep  5    
 
@@ -132,7 +132,7 @@ TC20: Verify SNMP OID ifAdminStatus of PortChannel across 40G Interface
 TC21: Verify SNMP OID ifOperStatus of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifOperStatus.1105  up
+    verify snmp attribute  s1  ifOperStatus.1129  up
     cli delete portchannel  s1  1     
     sleep  5    
     [Tags]  full  feature  40Glink  portchannel
@@ -140,7 +140,7 @@ TC21: Verify SNMP OID ifOperStatus of PortChannel across 40G Interface
 TC22: Verify SNMP OID ifSpeed of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifSpeed.1105  4294967295
+    verify snmp attribute  s1  ifSpeed.1129  4294967295
     cli delete portchannel  s1  1     
     sleep  5    
     [Tags]  full  feature  40Glink  portchannel
@@ -148,7 +148,7 @@ TC22: Verify SNMP OID ifSpeed of PortChannel across 40G Interface
 TC23: Verify SNMP OID ifHighSpeed of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifHighSpeed.1105  80000
+    verify snmp attribute  s1  ifHighSpeed.1129  80000
     cli delete portchannel  s1  1     
     sleep  5    
     [Tags]  full  feature  40Glink  portchannel
@@ -158,7 +158,7 @@ TC24: Verify SNMP OID ifPhysAddress of PortChannel across 40G Interface
     sleep  5
     ${mac_address1}=  cli show interface macaddress  s1  ${pc_name}
     ${my_mac_address}=  strip character from string  ${mac_address1}  ${0}  blank     
-    verify snmp attribute  s1  ifPhysAddress.1105  ${my_mac_address}
+    verify snmp attribute  s1  ifPhysAddress.1129  ${my_mac_address}
     cli delete portchannel  s1  1     
     sleep  5    
     [Tags]  full  feature  40Glink  portchannel

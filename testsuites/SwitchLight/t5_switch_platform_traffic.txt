@@ -350,7 +350,33 @@ TC19 spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c tra
     stop traffic   ${stream}          
     [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity
 
-
+TC20 Bi-Directional L2 Traffic IPv6 mac address starting with 33: flow=a<->c traffic linerate 50% pktsize 9150
+    ${stream}=     L2 add  flow=a<->c  dst_mac=33:33:33:33:33:33  src_mac=00:11:01:00:01:0b  line_rate=50  frame_size=9150  ethertype=0802  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  jumbo  feature
+    
+TC21 Bi-Directional L2 Traffic IPv6 mac address starting with 33: flow=a<->c traffic linerate 50% pktsize 1024
+    ${stream}=     L2 add  flow=a<->c  dst_mac=33:33:33:33:33:33  src_mac=00:11:01:00:01:0b  line_rate=50  frame_size=1024  ethertype=0802  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  jumbo  feature
 * Keywords
       
 T5 switch platform test setup
