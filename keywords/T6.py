@@ -201,6 +201,25 @@ class T6(object):
             else:
                 continue
     
+    def rest_verify_pat_profile(self, tenant, nat_profile):
+        '''Function to verify nat-profile status for tenant logical router
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/pat-profile' % tenant
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0, len(data)):
+            if data[i]["logical-router"] == tenant and data[i]["nat-profile"] == nat_profile:
+                if data[i]["state"] == "active" and data[i]["attachment-point"] != "":
+                        helpers.log("given nat-profile is applied to tenant logical router and status is active")
+                        return True
+                else:
+                        helpers.log("given nat-profile is not active")
+                        return False
+            else:
+                continue
+    
     def rest_verify_nat_attachment_point(self, tenant, nat_profile, nat_switch):
         '''Function to verify nat ivs switch attachment point for fixed nat switch
         '''
