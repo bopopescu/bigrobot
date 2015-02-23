@@ -6,10 +6,15 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.8.29.10
-mn:
-  ip: 10.8.4.52
+  ip: 10.9.18.5
 
-  type: 't6'
+c2:
+  ip: 10.9.18.6
 
-  topology: --num-spine 2 --num-rack 3 -P 2 -S 1 --num-bare-metal 1 --num-hypervisor 2 --dual-tor --use-inband-vswitch
+s1:
+    ip: 10.9.19.24
+  
+h1:
+    ip: 10.9.18.52
+    user:  root
+    password:  bsn
