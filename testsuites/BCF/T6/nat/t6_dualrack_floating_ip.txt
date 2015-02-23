@@ -35,6 +35,12 @@ ${vm0_intf0}  vm0-eth0
 ${vm1_intf0}  vm1-eth0
 ${vm2_intf0}  vm2-eth0
 ${vm4_intf0}  vm4-eth0
+${hv0_switch}  hv0
+${hv1_switch}  hv1
+${hv2_switch}  hv2
+${hv3_switch}  hv3
+${hv4_switch}  hv4
+${hv5_switch}  hv5
 
 * Test Case 
  
@@ -257,9 +263,9 @@ verify floating IP and PNAT together in a tenant and single nat profile
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
 	sleep  10
-    ${result}=  rest verify vswitch l3 cidr nat  A  hv0  0.0.0.0
+    ${result}=  rest verify vswitch l3 cidr nat  A  ${hv0_switch}  0.0.0.0
     Should be True  ${result}
-    ${result}=  rest verify vswitch l3 cidr nat  external  hv0  0.0.0.0
+    ${result}=  rest verify vswitch l3 cidr nat  external  ${hv0_switch}  0.0.0.0
     Should Not be True  ${result}
 	mininet ping  bm0  ${vm4_ip}
 	${loss}=  mininet ping  bm0  ${vm4_ip}
@@ -287,9 +293,9 @@ verify floating IP and PNAT together in a tenant and different nat profile
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat2"}
 	sleep  10
-    ${result}=  rest verify vswitch l3 cidr nat  A  hv0  0.0.0.0
+    ${result}=  rest verify vswitch l3 cidr nat  A  ${hv0_switch}  0.0.0.0
     Should be True  ${result}
-    ${result}=  rest verify vswitch l3 cidr nat  external  hv0  0.0.0.0
+    ${result}=  rest verify vswitch l3 cidr nat  external  ${hv0_switch}  0.0.0.0
     Should Not be True  ${result}
 	mininet ping  bm0  ${vm4_ip}
 	${loss}=  mininet ping  bm0  ${vm4_ip}
@@ -330,10 +336,10 @@ T6 base suite setup
     rest add router intf  external  E
     rest add vns ip  external  E  10.0.4.1  24
     rest add portgroup to vns  A  A  p1  -1
-    rest add interface to vns  A  B  hv0  ${hv0_intf0}  -1
-    rest add interface to vns  A  C  hv0  ${hv0_intf1}  -1
-    rest add interface to vns  A  D  hv1  ${hv1_intf0}  -1
-    rest add interface to vns  external  E  hv2  ${hv2_intf0}  -1
+    rest add interface to vns  A  B  ${hv0_switch}  ${hv0_intf0}  -1
+    rest add interface to vns  A  C  ${hv0_switch}  ${hv0_intf1}  -1
+    rest add interface to vns  A  D  ${hv1_switch}  ${hv1_intf0}  -1
+    rest add interface to vns  external  E  ${hv2_switch}  ${hv2_intf0}  -1
     rest add tenant routers intf to system  A
     rest add tenant routers intf to system  external
     rest add system intf to tenant routers  A
