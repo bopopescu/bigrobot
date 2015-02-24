@@ -18,7 +18,7 @@ import keywords.Host as Host
 import keywords.Ixia as Ixia
 
 
-class support(object):
+class T5Support(object):
     def __init__(self):
         pass
 
