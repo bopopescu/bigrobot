@@ -66,7 +66,7 @@ ${range}                                16
 TC001: Verify Configuration
     verify portchannel interface is up   s1  ${s1_1g_name_1}
     verify portchannel interface is up   s1  ${s1_1g_name_2}
-    [Tags]  full  feature  runthis
+    [Tags]  full  feature  
 
 #### L2 Single Tuple hashing
 
@@ -737,7 +737,7 @@ TC053:Verify destination IPv4 address and protocol hashing
     \   ...     protocol=${port}  src_port=1234  dst_port=8080  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC054:Keeping destination IPv4 address and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip protocol
@@ -753,7 +753,7 @@ TC054:Keeping destination IPv4 address and protocol constant, increment all othe
     \   ...     protocol=TCP  src_port=${src_ip_port}  dst_port=${port}  name=atob_l4_src_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC055: Verify destination IPv4 address and source IPv4 address hashing
     config  node=s1  cmd=hash ipv4 dst-ip src-ip
@@ -860,7 +860,7 @@ TC061:Verify L4 destination port and protocol hashing
     \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC062:Keeping L4 destination port and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-dst-port protocol
@@ -877,7 +877,7 @@ TC062:Keeping L4 destination port and protocol constant, increment all other fie
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_src_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
  
 TC063: Verify L4 destination port and source IPv4 address hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port src-ip
@@ -952,7 +952,7 @@ TC067:Verify L4 source port and protocol hashing
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC068:Keeping L4 source port and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-src-port protocol
@@ -968,7 +968,7 @@ TC068:Keeping L4 source port and protocol constant, increment all other fields a
     \   ...     protocol=UDP  src_port=1234  dst_port=${port}  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC069: Verify L4 source port and source IPv4 address hashing
     config  node=s1  cmd=hash ipv4 l4-src-port src-ip
@@ -1043,7 +1043,7 @@ TC073: Verify protocol and source IPv4 address hashing
     \   ...     protocol=${port}  src_port=1234  dst_port=8080  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC074:Keeping protocol and source IPv4 address constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 protocol src-ip
@@ -1060,7 +1060,7 @@ TC074:Keeping protocol and source IPv4 address constant, increment all other fie
     \   ...     protocol=UDP  src_port=${src_port}  dst_port=${port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC075: Verify protocol and vlan-id hashing
     config  node=s1  cmd=hash ipv4 protocol vlan-id
@@ -1075,7 +1075,7 @@ TC075: Verify protocol and vlan-id hashing
     \   ...     protocol=${port}  src_port=1234  dst_port=8080  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC076:Keeping protocol and vlan-id constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 protocol vlan-id
@@ -1092,7 +1092,7 @@ TC076:Keeping protocol and vlan-id constant, increment all other fields and veri
     \   ...     protocol=UDP  src_port=${src_port}  dst_port=${port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC077: Verify source IPv4 address and vlan-id hashing
     config  node=s1  cmd=hash ipv4 src-ip vlan-id
@@ -1172,7 +1172,7 @@ TC081: Verify destination IP, L4 destination port and protocol based hashing
     \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC082: Keeping destination IP, L4 destination port and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol
@@ -1188,7 +1188,7 @@ TC082: Keeping destination IP, L4 destination port and protocol constant, increm
     \   ...     protocol=UDP  src_port=${src_port}  dst_port=2980  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC083: Verify source and destination IPv4 address and L4 destination port based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port src-ip
@@ -1266,7 +1266,7 @@ TC087:Verify destination IP, L4 source port and protocol based hashing
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC088:Keeping destination IP, L4 source port and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol
@@ -1282,7 +1282,7 @@ TC088:Keeping destination IP, L4 source port and protocol constant, increment al
     \   ...     protocol=UDP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC089: Verify source and destination IPv4 address and L4 source port based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port src-ip
@@ -1298,7 +1298,7 @@ TC089: Verify source and destination IPv4 address and L4 source port based hashi
     \   ...     protocol=UDP  src_port=${port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC090: Keeping source and destination IPv4 address and L4 source port constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port src-ip
@@ -1313,7 +1313,7 @@ TC090: Keeping source and destination IPv4 address and L4 source port constant, 
     \   ...     protocol=${port}  src_port=1234  dst_port=${port}  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC091: Verify destination IPv4 address, L4 source port and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port vlan-id
@@ -1329,7 +1329,7 @@ TC091: Verify destination IPv4 address, L4 source port and vlan based hashing
     \   ...     protocol=TCP  src_port=${port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC092: Keeping destination IPv4 address, L4 source port and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port vlan-id
@@ -1345,7 +1345,7 @@ TC092: Keeping destination IPv4 address, L4 source port and vlan constant, incre
     \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC093: Verify source and destination IPv4 address and protocol based hashing
     config  node=s1  cmd=hash ipv4 dst-ip protocol src-ip
@@ -1361,7 +1361,7 @@ TC093: Verify source and destination IPv4 address and protocol based hashing
     \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC094: Keeping source and destination IPv4 address and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip protocol src-ip
@@ -1378,7 +1378,7 @@ TC094: Keeping source and destination IPv4 address and protocol constant, increm
     \   ...     protocol=TCP  src_port=${port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id= ${vlan}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC095: Verify destination IPv4 address, protocol and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip protocol vlan-id
@@ -1394,7 +1394,7 @@ TC095: Verify destination IPv4 address, protocol and vlan based hashing
     \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC096: Keeping destination IPv4 address, protocol and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip protocol vlan-id
@@ -1411,7 +1411,7 @@ TC096: Keeping destination IPv4 address, protocol and vlan constant, increment a
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id= 100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC097: Verify source and destination IPv4 address, and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip src-ip vlan-id
@@ -1428,7 +1428,7 @@ TC097: Verify source and destination IPv4 address, and vlan based hashing
     \   ...     protocol=TCP  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC098: Keeping source and destination IPv4 address, and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip src-ip vlan-id
@@ -1445,7 +1445,7 @@ TC098: Keeping source and destination IPv4 address, and vlan constant, increment
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC099: Verify L4 source and destination port and protocol based hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol
@@ -1461,7 +1461,7 @@ TC099: Verify L4 source and destination port and protocol based hashing
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC100: Keeping L4 source and destination port and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol
@@ -1478,7 +1478,7 @@ TC100: Keeping L4 source and destination port and protocol constant, increment a
     \   ...     protocol=TCP  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC101: Verify L4 source and destination port and source IP address based hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port src-ip
@@ -1495,7 +1495,7 @@ TC101: Verify L4 source and destination port and source IP address based hashing
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC102: Keeping L4 source and destination port and source IP address constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port src-ip
@@ -1511,7 +1511,7 @@ TC102: Keeping L4 source and destination port and source IP address constant, in
     \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC103: Verify L4 source and destination port and vlan based hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port vlan-id
@@ -1527,7 +1527,7 @@ TC103: Verify L4 source and destination port and vlan based hashing
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC104: Keeping L4 source and destination port and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port vlan-id
@@ -1543,7 +1543,7 @@ TC104: Keeping L4 source and destination port and vlan constant, increment all o
     \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC105: Verify L4 destination port, protocol and source IP Address based hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port protocol src-ip
@@ -1559,7 +1559,7 @@ TC105: Verify L4 destination port, protocol and source IP Address based hashing
     \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC106: Keeping L4 destination port, protocol and source IP Address constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-dst-port protocol src-ip
@@ -1576,7 +1576,7 @@ TC106: Keeping L4 destination port, protocol and source IP Address constant, inc
     \   ...     protocol=UDP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC107: Verify L4 destination port, protocol and vlan based hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port protocol vlan-id
@@ -1592,7 +1592,7 @@ TC107: Verify L4 destination port, protocol and vlan based hashing
     \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC108: Keeping L4 destination port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-dst-port protocol vlan-id
@@ -1609,7 +1609,7 @@ TC108: Keeping L4 destination port, protocol and vlan constant, increment all ot
     \   ...     protocol=UDP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC109: Verify L4 destination port, source IPv4 address and vlan based hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port src-ip vlan-id
@@ -1625,7 +1625,7 @@ TC109: Verify L4 destination port, source IPv4 address and vlan based hashing
     \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC110: Keeping L4 destination port, source IPv4 address and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-dst-port src-ip vlan-id
@@ -1642,7 +1642,7 @@ TC110: Keeping L4 destination port, source IPv4 address and protocol constant, i
     \   ...     protocol=UDP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC111: Verify L4 source port, source IPv4 address and protocol based hashing
     config  node=s1  cmd=hash ipv4 l4-src-port protocol src-ip
@@ -1658,7 +1658,7 @@ TC111: Verify L4 source port, source IPv4 address and protocol based hashing
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC112: Keeping L4 source port, source IPv4 address and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-src-port protocol src-ip
@@ -1674,7 +1674,7 @@ TC112: Keeping L4 source port, source IPv4 address and protocol constant, increm
     \   ...     protocol=UDP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC113: Verify L4 source port, source IPv4 address and vlan based hashing
     config  node=s1  cmd=hash ipv4 l4-src-port src-ip vlan-id
@@ -1690,7 +1690,7 @@ TC113: Verify L4 source port, source IPv4 address and vlan based hashing
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC114: Keeping L4 source port, source IPv4 address and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-src-port src-ip vlan-id
@@ -1706,7 +1706,7 @@ TC114: Keeping L4 source port, source IPv4 address and vlan constant, increment 
     \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC115: Verify protocol, source IPv4 address and vlan based hashing
     config  node=s1  cmd=hash ipv4 protocol src-ip vlan-id
@@ -1722,7 +1722,7 @@ TC115: Verify protocol, source IPv4 address and vlan based hashing
     \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC116: Keeping protocol, source IPv4 address and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 protocol src-ip vlan-id
@@ -1738,7 +1738,7 @@ TC116: Keeping protocol, source IPv4 address and vlan constant, increment all ot
     \   ...     protocol=UDP  src_port=${port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 #### L3 IPv4 Four Tuple hashing
 
@@ -1757,7 +1757,7 @@ TC117: Verify destination IPv4 address, source and destination L4 ports and prot
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC118: Keeping destination IPv4 address, source and destination L4 ports and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol
@@ -1774,7 +1774,7 @@ TC118: Keeping destination IPv4 address, source and destination L4 ports and pro
     \   ...     protocol=TCP  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC119: Verify source and destination IPv4 address and source and destination L4 port based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port src-ip
@@ -1792,7 +1792,7 @@ TC119: Verify source and destination IPv4 address and source and destination L4 
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC120: Keeping source and destination IPv4 address and source and destination L4 ports constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port src-ip
@@ -1807,7 +1807,7 @@ TC120: Keeping source and destination IPv4 address and source and destination L4
     \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC121: Verify destination IPv4 address, source and destination L4 port and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port vlan-id
@@ -1825,7 +1825,7 @@ TC121: Verify destination IPv4 address, source and destination L4 port and vlan 
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC122: Keeping destination IPv4 address, source and destination L4 port and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port vlan-id
@@ -1841,7 +1841,7 @@ TC122: Keeping destination IPv4 address, source and destination L4 port and vlan
     \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC123: Verify source and destination IPv4 address, destination L4 port and protocol based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol src-ip
@@ -1858,7 +1858,7 @@ TC123: Verify source and destination IPv4 address, destination L4 port and proto
     \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC124: Keeping source and destination IPv4 address, destination L4 port and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol src-ip
@@ -1874,7 +1874,7 @@ TC124: Keeping source and destination IPv4 address, destination L4 port and prot
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC125: Verify destination IPv4 address, destination L4 port, protocol and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol vlan-id
@@ -1891,7 +1891,7 @@ TC125: Verify destination IPv4 address, destination L4 port, protocol and vlan b
     \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC126: Keeping destination IPv4 address, destination L4 port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol vlan-id
@@ -1908,7 +1908,7 @@ TC126: Keeping destination IPv4 address, destination L4 port, protocol and vlan 
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC127: Verify source and destination IPv4 address, destination L4 port and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port src-ip vlan-id
@@ -1926,7 +1926,7 @@ TC127: Verify source and destination IPv4 address, destination L4 port and vlan 
     \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC128: Keeping source and destination IPv4 address, destination L4 port and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port src-ip vlan-id
@@ -1943,7 +1943,7 @@ TC128: Keeping source and destination IPv4 address, destination L4 port and vlan
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC129: Verify source and destination IPv4 address, source L4 port and protocol based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol src-ip
@@ -1961,7 +1961,7 @@ TC129: Verify source and destination IPv4 address, source L4 port and protocol b
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC130: Keeping source and destination IPv4 address, source L4 port and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol src-ip
@@ -1978,7 +1978,7 @@ TC130: Keeping source and destination IPv4 address, source L4 port and protocol 
     \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${port}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC131: Verify destination IPv4 address, source L4 port, protocol and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol vlan-id
@@ -1995,7 +1995,7 @@ TC131: Verify destination IPv4 address, source L4 port, protocol and vlan based 
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC132: Keeping destination IPv4 address, source L4 port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol vlan-id
@@ -2012,7 +2012,7 @@ TC132: Keeping destination IPv4 address, source L4 port, protocol and vlan const
     \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC133: Verify source and destination IPv4 address, source L4 port and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port src-ip vlan-id
@@ -2030,7 +2030,7 @@ TC133: Verify source and destination IPv4 address, source L4 port and vlan based
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC134: Keeping source and destination IPv4 address, source L4 port and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port src-ip vlan-id
@@ -2047,7 +2047,7 @@ TC134: Keeping source and destination IPv4 address, source L4 port and vlan cons
     \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC135: Verify source and destination IPv4 address, protocol and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip protocol src-ip vlan-id
@@ -2064,7 +2064,7 @@ TC135: Verify source and destination IPv4 address, protocol and vlan based hashi
     \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC136: Keeping source and destination IPv4 address, protocol and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip protocol src-ip vlan-id
@@ -2080,7 +2080,7 @@ TC136: Keeping source and destination IPv4 address, protocol and vlan constant, 
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC137: Verify destination IPv4 address, L4 source port, protocol and vlan based hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol vlan-id
@@ -2097,7 +2097,7 @@ TC137: Verify destination IPv4 address, L4 source port, protocol and vlan based 
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC138: Keeping destination IPv4 address, L4 source port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol vlan-id
@@ -2114,7 +2114,7 @@ TC138: Keeping destination IPv4 address, L4 source port, protocol and vlan const
     \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC139: Verify source and destination IPv4 address, L4 source port and protocol based hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol src-ip
@@ -2132,7 +2132,7 @@ TC139: Verify source and destination IPv4 address, L4 source port and protocol b
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC140: Keeping source and destination IPv4 address, L4 source port and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol src-ip
@@ -2149,7 +2149,7 @@ TC140: Keeping source and destination IPv4 address, L4 source port and protocol 
     \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC141: Verify source and destination L4 port, source IPv4 address and and vlan based hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port src-ip vlan-id
@@ -2167,7 +2167,7 @@ TC141: Verify source and destination L4 port, source IPv4 address and and vlan b
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC142: Keeping source and destination L4 port, source IPv4 address and and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port src-ip vlan-id
@@ -2184,7 +2184,7 @@ TC142: Keeping source and destination L4 port, source IPv4 address and and vlan 
     \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC143: Verify destination L4 port, protocol, source IPv4 address and and vlan based hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port protocol src-ip vlan-id
@@ -2202,7 +2202,7 @@ TC143: Verify destination L4 port, protocol, source IPv4 address and and vlan ba
     \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC144: Keeping destination L4 port, protocol, source IPv4 address and and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-dst-port protocol src-ip vlan-id
@@ -2219,7 +2219,7 @@ TC144: Keeping destination L4 port, protocol, source IPv4 address and and vlan c
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC145: Verify source L4 port, protocol, source IPv4 address and and vlan based hashing
     config  node=s1  cmd=hash ipv4 l4-src-port protocol src-ip vlan-id
@@ -2236,7 +2236,7 @@ TC145: Verify source L4 port, protocol, source IPv4 address and and vlan based h
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC146: Keeping source L4 port, protocol, source IPv4 address and and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 l4-src-port protocol src-ip vlan-id
@@ -2253,7 +2253,7 @@ TC146: Keeping source L4 port, protocol, source IPv4 address and and vlan consta
     \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 #### L3 IPv4 Five Tuple hashing
 TC147: Verify source and destination IP, source and desitnation L4 port and protocol based hashing
@@ -2272,7 +2272,7 @@ TC147: Verify source and destination IP, source and desitnation L4 port and prot
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC148: Keeping source and destination IP, source and desitnation L4 port and protocol constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol src-ip
@@ -2287,7 +2287,7 @@ TC148: Keeping source and destination IP, source and desitnation L4 port and pro
     \   ...     protocol=TCP  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC149: Verify destination IP, source and desitnation L4 port, protocol and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol vlan-id
@@ -2305,7 +2305,7 @@ TC149: Verify destination IP, source and desitnation L4 port, protocol and vlan 
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC150: Keeping destination IP, source and desitnation L4 port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol vlan-id
@@ -2320,7 +2320,7 @@ TC150: Keeping destination IP, source and desitnation L4 port, protocol and vlan
     \   ...     protocol=TCP  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
 
 TC151: Verify source and destination IP, source and desitnation L4 port, and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port src-ip vlan-id
@@ -2339,7 +2339,7 @@ TC151: Verify source and destination IP, source and desitnation L4 port, and vla
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC152: Keeping source and destination IP, source and desitnation L4 port, and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port src-ip vlan-id
@@ -2353,7 +2353,7 @@ TC152: Keeping source and destination IP, source and desitnation L4 port, and vl
     \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC153: Verify source and destination IP, desitnation L4 port, protocol and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol src-ip vlan-id
@@ -2371,7 +2371,7 @@ TC153: Verify source and destination IP, desitnation L4 port, protocol and vlan 
     \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC154: Keeping source and destination IP, desitnation L4 port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol src-ip vlan-id
@@ -2386,7 +2386,7 @@ TC154: Keeping source and destination IP, desitnation L4 port, protocol and vlan
     \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC155: Verify source and destination IP, source L4 port, protocol and vlan based hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol src-ip vlan-id
@@ -2404,7 +2404,7 @@ TC155: Verify source and destination IP, source L4 port, protocol and vlan based
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 TC156: Keeping source and destination IP, source L4 port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol src-ip vlan-id
@@ -2419,7 +2419,7 @@ TC156: Keeping source and destination IP, source L4 port, protocol and vlan cons
     \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=100  ethertype=8100
     send and verify traffic for incorrect hash
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic  
     
 #### L3 IPv4 Six Tuple hashing (Change all fields)
 TC157: Verify source and destination IP, source and destination L4 port, protocol and vlan based hashing
@@ -2439,7 +2439,7 @@ TC157: Verify source and destination IP, source and destination L4 port, protoco
     \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
     \   ...     vlan_id=${vlan}  ethertype=8100
     send and verify traffic
-    [Tags]  full  feature  traffic  runthis
+    [Tags]  full  feature  traffic
 
 * Keywords 
 rtag7 suite setup

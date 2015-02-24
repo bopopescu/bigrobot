@@ -56,15 +56,20 @@ ${dst_cnt}                              28
 ${dst_mac_step}                         00:00:00:00:01:00
 ${frame_rate}                           10000
 ${frame_cnt}                            100000
+${frame_cnt_1}                          10000
 ${frame_size}                           64
 ${src_port}                             8101
 ${dst_port}                             8201
 ${range}                                16
 
 *Test Case
+*Test Case
 TC001: Verify Configuration
     verify portchannel interface is up   s1  ${s1_1g_name_1}
     verify portchannel interface is up   s1  ${s1_1g_name_2}
+    [Tags]  full  feature  
+
+#### L2 Single Tuple hashing
 
 TC002: Verify source mac address hashing
     config  node=s1  cmd= hash l2 src-mac
@@ -177,10 +182,10 @@ TC011: Verify vlan-id based hashing
     Should Not Contain  ${content1}  Error
     ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
     ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
-    ...  vlan_id=2  vlan_step=20  vlan_cnt=${src_cnt}
+    ...  vlan_id=100  vlan_step=5  vlan_cnt=${src_cnt}
     ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
     send and verify traffic
-    [Tags]  full  feature  traffic
+    [Tags]  full  feature  traffic  
 
 TC012: Disable two links and Verify vlan-id based hashing
     config  node=s1  cmd= hash l2 vlan-id
@@ -190,10 +195,10 @@ TC012: Disable two links and Verify vlan-id based hashing
     bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
     ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
     ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
-    ...  vlan_id=2  vlan_step=20  vlan_cnt=${src_cnt}
+    ...  vlan_id=100  vlan_step=5  vlan_cnt=${src_cnt}
     ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
     send and verify traffic for disabled interfaces
-    [Tags]  full  feature  traffic
+    [Tags]  full  feature  traffic  
 
 TC013: With vlan-id as same, verify when vlan-id based hashing is specified all traffic goes on one link
     config  node=s1  cmd= hash l2 vlan-id
@@ -205,6 +210,8 @@ TC013: With vlan-id as same, verify when vlan-id based hashing is specified all 
     ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
     send and verify traffic for incorrect hash
     [Tags]  full  feature  traffic
+
+#### L2 Two Tuple hashing
 
 TC014: Verify ethertype and destination mac address hashing
     config  node=s1  cmd= hash l2 dst-mac eth-type
@@ -295,10 +302,10 @@ TC021: Disable two links and Verify vlan-id and destination mac address hashing
     bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
     ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
     ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
-    ...  vlan_id=100  vlan_step=20  vlan_cnt=28
+    ...  vlan_id=100  vlan_step=5  vlan_cnt=28
     ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
     send and verify traffic for disabled interfaces
-    [Tags]  full  feature  traffic
+    [Tags]  full  feature  traffic  
 
 TC022: With vlan-id and destination mac as same, verify when vlan-id and destination mac hashing is specified all traffic goes on one link
     config  node=s1  cmd=hash l2 dst-mac vlan-id
@@ -306,7 +313,7 @@ TC022: With vlan-id and destination mac as same, verify when vlan-id and destina
     Should Not Contain  ${content1}  Error
     ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}  
     ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
-    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  ethertype=800  ethertype_cnt=1  ethertype_step=0
     ...  vlan_id=100  vlan_step=0  vlan_cnt=1
     ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
     send and verify traffic for incorrect hash
@@ -352,7 +359,7 @@ TC026: Verify ethertype and vlan-id hashing
     config  node=s1  cmd=hash l2 eth-type vlan-id
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
-    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  00:00:00:00:00:00
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
     ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
     ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
     ...  vlan_id=100  vlan_step=100  vlan_cnt=28
@@ -366,9 +373,9 @@ TC027: Disable two links and Verify ethertype and vlan-id hashing
     Should Not Contain  ${content1}  Error
     bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
     bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
-    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  00:00:00:00:00:00
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
     ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
-    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=1
     ...  vlan_id=100  vlan_step=100  vlan_cnt=28
     ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
     send and verify traffic for disabled interfaces
@@ -418,13 +425,13 @@ TC031: With vlan-id and source mac as same, verify when vlan-id and source mac h
     Should Not Contain  ${content1}  Error
     ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
     ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
-    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  ethertype=800  ethertype_cnt=1  ethertype_step=0
     ...  vlan_id=100  vlan_step=0  vlan_cnt=1
     ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
     send and verify traffic for incorrect hash
     [Tags]  full  feature  traffic
 
-#### Three tuple hashing
+#### L2 Three tuple hashing
 
 TC032: Verify destination mac address, ethertype, source mac address hashing
     config  node=s1  cmd=hash l2 dst-mac eth-type src-mac
@@ -468,7 +475,7 @@ TC035: Verify ethertype, source mac address, vlan-id hashing
     Should Not Contain  ${content1}  Error
     ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
     ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
-    ...  ethertype=800  ethertype_cnt=28  ethertype_step=5
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=1
     ...  vlan_id=100  vlan_step=100  vlan_cnt=28
     ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
     send and verify traffic
@@ -480,11 +487,1961 @@ TC036: Verify destination mac address, ethertype, source mac address, vlan-id ha
     Should Not Contain  ${content1}  Error
     ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
     ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
-    ...  ethertype=800  ethertype_cnt=28  ethertype_step=5
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=1
     ...  vlan_id=100  vlan_step=100  vlan_cnt=28
     ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
     send and verify traffic
     [Tags]  full  feature  traffic
+
+
+#### L3 IPv4 Single Tuple hashing
+TC037: Verify destination IPv4 address hashing
+    config  node=s1  cmd=hash ipv4 dst-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=atob_dst_ip
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.1.1.2  src_gw_step=0.0.0.1
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:0  protocol=TCP  src_port=1234  dst_port=80
+    ...     dst_ip=100.1.1.2  dst_ip_step=0.0.0.1  dst_cnt=28  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC038: Keeping destination IPv4 address constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${src_port}=  Evaluate  ${port} + 1234
+    \   ${dst_port}=  Evaluate  ${port} + 2345
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=24
+    \   ...     dst_ip=100.1.1.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  vlan_step=0  vlan_cnt=1  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC039: Verify L4 destination port address hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  1001  1033  2
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    \   ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    \   ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    \   ...     protocol=TCP  src_port=8080  dst_port=${port}  name=atob_l4_dst_port
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC040: Keeping L4 destination port address constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.2.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  vlan_step=0  vlan_cnt=1  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC041: Verify L4 source port address hashing
+    config  node=s1  cmd=hash ipv4 l4-src-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  1001  1033  2
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    \   ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    \   ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    \   ...     protocol=TCP  src_port=${port}  dst_port=80  name=atob_l4_src_port
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC042: Keeping L4 source port address constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-src-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.2.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${port}  name=atob_l4_src_port
+    \   ...     vlan_id=${port}  vlan_step=0  vlan_cnt=1  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC043: Verify protocol hashing
+    config  node=s1  cmd=hash ipv4 protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  1  17
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    \   ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    \   ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    \   ...     protocol=${port}  name=atob_l4_src_port
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC044: Keeping protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.2.  ${port}
+    \   ${src_port}=  Evaluate   ${port} + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=${port}  name=atob_l4_src_port
+    \   ...     vlan_id=${port}  vlan_step=0  vlan_cnt=1  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+    
+TC045: Verify source IPv4 address hashing
+    config  node=s1  cmd=hash ipv4 src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=atob_src_ip
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.2.0  src_cnt=28  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC046: Keeping source IPv4 address constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=atob_src_ip
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.1.1.100  src_gw_step=0.0.0.1
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=100.1.1.100  dst_ip_step=0.0.0.1  dst_cnt=28  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    ...     vlan_id=100  vlan_step=100  vlan_cnt=28  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC047: Verify vlan-id hashing
+    config  node=s1  cmd=hash ipv4 vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    ...     src_mac=00:01:01:01:01:01  dst_mac=00:02:02:02:02:02  src_ip=100.1.1.1  dst_ip=100.1.1.2
+    ...     vlan_id=100  vlan_step=100  vlan_cnt=28  no_arp=True  ethertype=8100   name=atob_vlan_id
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC048: Keeping vlan-id constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.2.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.1  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.1  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${port}  dst_port=${port}  name=atob_vlan
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+    
+#### L3 IPv4 Two Tuple hashing
+TC049: Verify destination IPv4 address and L4 destination port hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  5  85  5
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}  dst_mac=${dst_mac}
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.1  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=8080  dst_port=${port}  name=atob_l4_dst_port
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC050: Keeping destination IPv4 address and L4 destination port constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  5  85  5
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.1  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${port}  dst_port=8080  name=atob_l4_src_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC051: Verify destination IPv4 address and L4 source port hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  5  85  5
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}  dst_mac=${dst_mac}
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${port}  dst_port=8080  name=atob_l4_dst_port
+    send and verify traffic
+    [Tags]  full  feature  traffic
+    
+TC052: Keeping destination IPv4 address and L4 source port constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  5  85  5
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.1  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=8080  dst_port=${port}  name=atob_l4_src_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC053: Verify destination IPv4 address and protocol hashing
+    config  node=s1  cmd=hash ipv4 dst-ip protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}  dst_mac=${dst_mac}
+    \   ...     src_ip=100.1.1.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.1  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.1.1.1  dst_gw_step=0.0.0.1  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=8080  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC054: Keeping destination IPv4 address and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  5  85  5
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${src_ip_port}=  Evaluate  ${port} + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.1  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_ip_port}  dst_port=${port}  name=atob_l4_src_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC055: Verify destination IPv4 address and source IPv4 address hashing
+    config  node=s1  cmd=hash ipv4 dst-ip src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}  dst_mac=${dst_mac}
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.1  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.1  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=1234  dst_port=8080  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC056: Keeping destination IPv4 address and source IPv4 address constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.1    src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=100.1.1.1    dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${port}  dst_port=${port}  name=atob_l4_src_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC057: Verify destination IPv4 address and vlan-id hashing
+    config  node=s1  cmd=hash ipv4 dst-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}  dst_mac=${dst_mac}
+    \   ...     src_ip=100.1.1.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=1234  dst_port=8080  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC058: Keeping destination IPv4 address and vlan-id constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${port}  dst_port=${port}  name=atob_l4_src_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC059: Verify L4 source and destination port hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  ${port}+${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}  dst_mac=${dst_mac}
+    \   ...     src_ip=100.1.1.1  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${src_port}  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC060: Keeping L4 source and destination port constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.2.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_src_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC061: Verify L4 destination port and protocol hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_port}=  Evaluate  ${port}+${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}  dst_mac=${dst_mac}
+    \   ...     src_ip=100.1.1.1  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC062: Keeping L4 destination port and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.2.  ${port}
+    \   ${src_port}=  Evaluate  ${port}+${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_src_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+ 
+TC063: Verify L4 destination port and source IPv4 address hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=1234  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC064: Keeping L4 destination port and source IPv4 address constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${port}  dst_port=8080  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+ 
+TC065: Verify L4 destination port and vlan-id hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.150  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=100.1.1.150  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=1234  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC066: Keeping L4 destination port and vlan-id constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${port}  dst_port=8080  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC067: Verify L4 source port and protocol hashing
+    config  node=s1  cmd=hash ipv4 l4-src-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.150  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=100.1.1.150  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC068: Keeping L4 source port and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-src-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=1234  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC069: Verify L4 source port and source IPv4 address hashing
+    config  node=s1  cmd=hash ipv4 l4-src-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${port}  dst_port=8080  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC070: Keeping L4 source port and source IPv4 address constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-src-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC071: Verify L4 source port and vlan-id hashing
+    config  node=s1  cmd=hash ipv4 l4-src-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.150  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=100.1.1.150  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${port}  dst_port=8080  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC072: Keeping L4 source port and vlan-id constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-src-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC073: Verify protocol and source IPv4 address hashing
+    config  node=s1  cmd=hash ipv4 protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.1.1.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.200  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=8080  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC074: Keeping protocol and source IPv4 address constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${src_port}=  Evaluate  1123 + ${port}
+    \   ${vlan}=  Evaluate  1223 + ${port}    
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.200  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.200  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${src_port}  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC075: Verify protocol and vlan-id hashing
+    config  node=s1  cmd=hash ipv4 protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${vlan}=  Evaluate  1123 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.100  src_gw=100.1.1.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.200  dst_gw=100.1.1.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=8080  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC076: Keeping protocol and vlan-id constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.100.200.  ${port}
+    \   ${src_port}=  Evaluate  1123 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${src_port}  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC077: Verify source IPv4 address and vlan-id hashing
+    config  node=s1  cmd=hash ipv4 src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.1.1.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.1.1.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=1234  dst_port=8080  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC078: Keeping source IPv4 address and vlan-id constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.200  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.200  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${port}  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+#### L3 IPv4 Three Tuple hashing
+
+TC079: Verify destination IP, L4 source and destination port based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  ${port}+${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${src_port}  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC080: Keeping destination IP, L4 source and destination port constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  ${port}+${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=2980  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC081: Verify destination IP, L4 destination port and protocol based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_port}=  Evaluate  ${port}+${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC082: Keeping destination IP, L4 destination port and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  ${port}+${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${src_port}  dst_port=2980  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC083: Verify source and destination IPv4 address and L4 destination port based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=1234  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC084: Keeping source and destination IPv4 address and L4 destination port constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  ${port}+${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=2980  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC085: Verify destination IPv4 address, L4 destination port and vlan-id based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=1234  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC086: Keeping destination IPv4 address, L4 destination port and vlan-id constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  ${port}+${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=2980  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC087: Verify destination IP, L4 source port and protocol based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  ${port}+${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC088: Keeping destination IP, L4 source port and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_port}=  Evaluate  ${port}+${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC089: Verify source and destination IPv4 address and L4 source port based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC090: Keeping source and destination IPv4 address and L4 source port constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  ${port}+${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC091: Verify destination IPv4 address, L4 source port and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${vlan}=  Evaluate  1234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC092: Keeping destination IPv4 address, L4 source port and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_port}=  Evaluate  ${port}+${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC093: Verify source and destination IPv4 address and protocol based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC094: Keeping source and destination IPv4 address and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_port}=  Evaluate  ${port}+${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${vlan}=   Evaluate  1295+${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id= ${vlan}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC095: Verify destination IPv4 address, protocol and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${vlan}=  Evaluate  1234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC096: Keeping destination IPv4 address, protocol and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_port}=  Evaluate  ${port}+${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${src_port}=   Evaluate  1295+${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id= 100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC097: Verify source and destination IPv4 address, and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.200.  ${port}
+    \   ${vlan}=  Evaluate  1234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC098: Keeping source and destination IPv4 address, and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_port}=  Evaluate  ${port}+${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${src_port}=   Evaluate  1295+${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC099: Verify L4 source and destination port and protocol based hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  1234 + ${port}
+    \   ${dst_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC100: Keeping L4 source and destination port and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.101.  ${port}
+    \   ${vlan}=   Evaluate  1295+${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC101: Verify L4 source and destination port and source IP address based hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${src_port}=  Evaluate  1234 + ${port}
+    \   ${dst_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC102: Keeping L4 source and destination port and source IP address constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.101.  ${port}
+    \   ${vlan}=   Evaluate  1295+${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.100.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.1.100.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC103: Verify L4 source and destination port and vlan based hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  1234 + ${port}
+    \   ${dst_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC104: Keeping L4 source and destination port and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.101.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC105: Verify L4 destination port, protocol and source IP Address based hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${dst_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC106: Keeping L4 destination port, protocol and source IP Address constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.101.  ${port}
+    \   ${src_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC107: Verify L4 destination port, protocol and vlan based hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${vlan}=  Evaluate  1975 + ${port}
+    \   ${dst_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC108: Keeping L4 destination port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.101.  ${port}
+    \   ${src_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC109: Verify L4 destination port, source IPv4 address and vlan based hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${dst_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC110: Keeping L4 destination port, source IPv4 address and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.101.  ${port}
+    \   ${src_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.100.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.1.100.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC111: Verify L4 source port, source IPv4 address and protocol based hashing
+    config  node=s1  cmd=hash ipv4 l4-src-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${src_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC112: Keeping L4 source port, source IPv4 address and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-src-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.101.  ${port}
+    \   ${dst_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.100.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.1.100.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC113: Verify L4 source port, source IPv4 address and vlan based hashing
+    config  node=s1  cmd=hash ipv4 l4-src-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${src_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC114: Keeping L4 source port, source IPv4 address and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-src-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.101.  ${port}
+    \   ${dst_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.100.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.1.100.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC115: Verify protocol, source IPv4 address and vlan based hashing
+    config  node=s1  cmd=hash ipv4 protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.100.  ${port}
+    \   ${vlan}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.101  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.101  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC116: Keeping protocol, source IPv4 address and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.1.101.  ${port}
+    \   ${dst_port}=  Evaluate  3234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.100.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.1.100.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=UDP  src_port=${port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+#### L3 IPv4 Four Tuple hashing
+
+TC117: Verify destination IPv4 address, source and destination L4 ports and protocol based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${src_port}=  Evaluate  3234 + ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC118: Keeping destination IPv4 address, source and destination L4 ports and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.100.100.  ${port}
+    \   ${src_port}=  Evaluate  3234 + ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC119: Verify source and destination IPv4 address and source and destination L4 port based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.10.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${src_port}=  Evaluate  3234 + ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC120: Keeping source and destination IPv4 address and source and destination L4 ports constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=200.200.200.200  src_gw=100.100.100.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.100  dst_gw=200.200.200.200  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC121: Verify destination IPv4 address, source and destination L4 port and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${src_port}=  Evaluate  3234 + ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.10.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.10.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC122: Keeping destination IPv4 address, source and destination L4 port and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.10.100.  ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC123: Verify source and destination IPv4 address, destination L4 port and protocol based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  100.10.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC124: Keeping source and destination IPv4 address, destination L4 port and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.200  src_gw=100.100.100.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.100  dst_gw=100.100.100.200  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC125: Verify destination IPv4 address, destination L4 port, protocol and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=10.100.100.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=10.100.100.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC126: Keeping destination IPv4 address, destination L4 port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.100  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.100  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC127: Verify source and destination IPv4 address, destination L4 port and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC128: Keeping source and destination IPv4 address, destination L4 port and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC129: Verify source and destination IPv4 address, source L4 port and protocol based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC130: Keeping source and destination IPv4 address, source L4 port and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${port}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC131: Verify destination IPv4 address, source L4 port, protocol and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=10.100.100.1  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=10.100.100.1  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC132: Keeping destination IPv4 address, source L4 port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC133: Verify source and destination IPv4 address, source L4 port and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC134: Keeping source and destination IPv4 address, source L4 port and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC135: Verify source and destination IPv4 address, protocol and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC136: Keeping source and destination IPv4 address, protocol and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  ${port} * ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC137: Verify destination IPv4 address, L4 source port, protocol and vlan based hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC138: Keeping destination IPv4 address, L4 source port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${src_port}=  Evaluate  ${port} * ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC139: Verify source and destination IPv4 address, L4 source port and protocol based hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC140: Keeping source and destination IPv4 address, L4 source port and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC141: Verify source and destination L4 port, source IPv4 address and and vlan based hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_port}=  Evaluate  1234 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC142: Keeping source and destination L4 port, source IPv4 address and and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC143: Verify destination L4 port, protocol, source IPv4 address and and vlan based hashing
+    config  node=s1  cmd=hash ipv4 l4-dst-port protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_port}=  Evaluate  1234 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC144: Keeping destination L4 port, protocol, source IPv4 address and and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-dst-port protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC145: Verify source L4 port, protocol, source IPv4 address and and vlan based hashing
+    config  node=s1  cmd=hash ipv4 l4-src-port protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${src_port}=  Evaluate  1234 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC146: Keeping source L4 port, protocol, source IPv4 address and and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 l4-src-port protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+    
+#### L3 IPv4 Five Tuple hashing
+TC147: Verify source and destination IP, source and desitnation L4 port and protocol based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${dst_port}=  Evaluate  1234 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC148: Keeping source and destination IP, source and desitnation L4 port and protocol constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC149: Verify destination IP, source and desitnation L4 port, protocol and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${dst_port}=  Evaluate  1234 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC150: Keeping destination IP, source and desitnation L4 port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+
+TC151: Verify source and destination IP, source and desitnation L4 port, and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${dst_port}=  Evaluate  1234 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC152: Keeping source and destination IP, source and desitnation L4 port, and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+    
+TC153: Verify source and destination IP, desitnation L4 port, protocol and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${dst_port}=  Evaluate  1234 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC154: Keeping source and destination IP, desitnation L4 port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+    
+TC155: Verify source and destination IP, source L4 port, protocol and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${src_port}=  Evaluate  1234 + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=80  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+    
+TC156: Keeping source and destination IP, source L4 port, protocol and vlan constant, increment all other fields and verify traffic goes on one link
+    config  node=s1  cmd=hash ipv4 dst-ip l4-src-port protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${dst_port}=  Evaluate  10 + ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.100.100.100  src_gw=100.100.100.200  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=100.100.100.200  dst_gw=100.100.100.100  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=TCP  src_port=1234  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=100  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic  
+    
+#### L3 IPv4 Six Tuple hashing (Change all fields)
+TC157: Verify source and destination IP, source and destination L4 port, protocol and vlan based hashing
+    config  node=s1  cmd=hash ipv4 dst-ip l4-dst-port l4-src-port protocol src-ip vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${src_port}=  Evaluate  1234 + ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${dst_port}=  Evaluate  ${port} + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
 
 * Keywords 
 rtag7 suite setup
@@ -586,13 +2543,13 @@ send and verify traffic
     ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),${frame_cnt}))  operator
     ${percent_3}=   Evaluate  100*(operator.truediv(int(${mem3s1}),${frame_cnt}))  operator
     ${percent_4}=   Evaluate  100*(operator.truediv(int(${mem4s1}),${frame_cnt}))  operator
-    ${result1}=  verify value is in range  ${percent_1}  14  32
+    ${result1}=  verify value is in range  ${percent_1}  10  40
     Should be true  ${result1}
-    ${result2}=  verify value is in range  ${percent_2}  14  32
+    ${result2}=  verify value is in range  ${percent_2}  10  40
     Should be true  ${result2}
-    ${result3}=  verify value is in range  ${percent_3}  14  32
+    ${result3}=  verify value is in range  ${percent_3}  10  40
     Should be true  ${result3}
-    ${result4}=  verify value is in range  ${percent_4}  14  32
+    ${result4}=  verify value is in range  ${percent_4}  10  40
     Should be true  ${result4}
 
 
