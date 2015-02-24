@@ -70,8 +70,11 @@ class DevConf(object):
         self.conn.set_timeout(self._timeout)
 
         driver = self.conn.get_driver()
-        helpers.log("Using devconf driver '%s' (name: '%s')"
-                    % (driver, driver.name))
+        if driver.name == 'generic':
+            driver = self._patch_driver(driver)
+
+        helpers.log("Node '%s' using devconf driver '%s' (name: '%s')"
+                    % (name, driver, driver.name))
 
         # Devconf autoinit which will invoke driver's init_terminal()
         self.conn.autoinit()
@@ -79,6 +82,54 @@ class DevConf(object):
         # Aliases
         self.set_prompt = self.conn.set_prompt
         self.get_prompt = self.conn.get_prompt
+
+    def _patch_driver(self, d):
+        """
+        A convention commonly seen in device output is an "Authen banner"
+        which appears when connected to the device (but before authentication),
+        followed by a "Login banner" after successfully authenticated. E.g.,
+
+          $ ssh admin@10.8.1.225
+          Warning: Permanently added '10.8.1.225' (RSA) to the list of known hosts.
+          Big Cloud Fabric Appliance 2.0.0-master01-SNAPSHOT (bcf_master #3338)      <=== Authen banner
+          Log in as 'admin' to configure
+
+          admin@10.8.1.225's password: *****
+          Last login: Tue Feb  3 17:42:28 2015 from 10.1.13.188
+          Big Cloud Fabric Appliance 2.0.0-master01-SNAPSHOT (bcf_master #3338)      <=== Login banner
+          Logged in as admin, 2015-02-24 19:13:13.431000 UTC, auth from 10.1.10.25
+          standby controller>
+
+        Exscript and BigRobot relies the Login banner to guess the platform/OS
+        in order to select the appropriate driver.
+
+        2015-02-24 For Switch Light OS, the Login banner has been removed which
+        causes the OS detection to fail and to return a 'generic' device. We
+        attempt to correct the driver issue by guessing the platform/OS from
+        the 'show version' output.
+        """
+
+        helpers.log("Not able to find proper driver for '%s'. Possibly missing Login banner."
+                    " Attempting to detect platform using 'show version'."
+                    % self._name)
+        result = self.cmd("show version")
+
+        if not re.match(r'^s\d+', self._name):
+            helpers.log("Devconf driver patch for '%s' failed - currently only"
+                        " support switches (s1, s2, etc.), using Generic driver"
+                        % self._name)
+            return d
+
+        if re.search(r'Software Image Version: Switch Light', result['content']):
+            helpers.log("Devconf driver patch for '%s' detected Switch Light OS"
+                        % self._name)
+            self.conn.set_driver('bsn_switch')
+            self._platform = "switchlight"
+            return self.conn.get_driver()
+        else:
+            helpers.log("Devconf driver patch for '%s' failed - using Generic driver"
+                        % self._name)
+            return d
 
     def mode(self, new_mode=None):
         if new_mode:
