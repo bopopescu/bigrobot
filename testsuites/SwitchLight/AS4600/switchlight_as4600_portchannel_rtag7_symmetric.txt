@@ -153,7 +153,7 @@ TC008: Verify vlan-id and destination mac address symmetric hashing
     send and verify traffic
     [Tags]  full  feature  traffic
 
-TC009 Verify ethertype and source mac address symmetric hashing
+TC009: Verify ethertype and source mac address symmetric hashing
     config  node=s1  cmd=hash l2 eth-type src-mac
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -592,7 +592,7 @@ TC042: Verify destination IP, L4 source port and protocol based symmetric hashin
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
- TC043: Verify source and destination IPv4 address and L4 source port based symmetric hashing
+TC043: Verify source and destination IPv4 address and L4 source port based symmetric hashing
     config  node=s1  cmd=hash ipv4 dst-ip l4-src-port src-ip
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -657,7 +657,7 @@ TC047: Verify source and destination IPv4 address, and vlan based symmetric hash
     send and verify traffic
     [Tags]  full  feature  traffic  ipv4
     
-TC048:Verify L4 source and destination port and protocol based symmetric hashing
+TC048: Verify L4 source and destination port and protocol based symmetric hashing
     config  node=s1  cmd=hash ipv4 l4-dst-port l4-src-port protocol
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
