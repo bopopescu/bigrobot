@@ -254,6 +254,67 @@ class T5_Scale(object):
             helpers.log("config digest do not match between controllers")
             return False
 
+    def rest_verify_disk_usage(self):
+        ''' Function to verify disk usage assert if it reaches 100%
+        Input:
+        Output: True/False
+        '''
+        t = test.Test()
+        c_master = t.controller('master')
+        c_slave = t.controller('slave')
+        helpers.log("INFO: connecting to bash mode in both controllers")
+        helpers.log("INFO: Checking the df -h in both controllers")
+
+        master_df = c_master.sudo('df -h | awk \'{print $5}\'')
+        split = re.split('\n', master_df['content'])
+        master_df_list = split[1:-1]
+        slave_df = c_slave.sudo('df -h | awk \'{print $5}\'')
+        split = re.split('\n', slave_df['content'])
+        slave_df_list = split[1:-1]
+
+        for df in master_df_list:
+            helpers.log(" df value in master: %s" % (df))
+            if df == "100%":
+                helpers.log("Partition exhausted in Master Controller")
+                return False
+        for df in slave_df_list:
+            helpers.log(" df value in slave: %s" % (df))
+            if df == "100%":
+                helpers.log("Partition exhausted in Slave Controller")
+                return False
+        return True
+
+
+    def rest_get_active_end_point_count(self):
+        ''' Function to get active end point count
+        Input:
+        Output: return end point count
+        '''
+        t = test.Test()
+        c_master = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/summary/fabric'
+        c_master.rest.get(url)
+        data_master = c_master.rest.content()
+        ep_count = data_master[0]["active-endpoint-count"]
+        helpers.log("Total number of end points are %s" % (ep_count))
+        return ep_count
+
+
+
+
+
+        helpers.log(" monitor file under C1: %s" % (result['content']))
+
+
+
+
+        helpers.log("Printing digest from master and standby controllers %s and %s" % (master_digest, slave_digest))
+        if (master_digest == slave_digest):
+            helpers.log("Config is in sync between controlelrs and digest match")
+            return True
+        else:
+            helpers.log("config digest do not match between controllers")
+            return False
 
 
 

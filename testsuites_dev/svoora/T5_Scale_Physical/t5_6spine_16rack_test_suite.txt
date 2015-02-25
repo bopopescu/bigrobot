@@ -96,7 +96,195 @@ verify config sync between controllers
 	${return}=  rest verify debug coordinator
 	Should Be True  ${return}
 		
+
+verify disk usage in controllers
+    [Tags]  T4
+    #manual passed   
+    #Log To Console  Verifying configuration between controllers
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+        
 	
+Create L3 devices in ixia
+    [Tags]   T5L3
+    ${redirect-host_a}=  L3 add host  src_ip=30.0.0.2  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=a  
+    ...                      src_mac=00:70:03:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_b}=  L3 add host  src_ip=30.0.0.3  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=b  
+    ...                      src_mac=00:70:04:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_c}=  L3 add host  src_ip=30.0.0.4  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=c  
+    ...                      src_mac=00:70:05:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_d}=  L3 add host  src_ip=30.0.0.5  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=d  
+    ...                      src_mac=00:70:06:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_e}=  L3 add host  src_ip=30.0.0.6  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=e  
+    ...                      src_mac=00:70:07:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_f}=  L3 add host  src_ip=30.0.0.7  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=f  
+    ...                      src_mac=00:70:08:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_g}=  L3 add host  src_ip=30.0.0.8  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=g  
+    ...                      src_mac=00:70:09:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_h}=  L3 add host  src_ip=30.0.0.9  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=h  
+    ...                      src_mac=00:70:10:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_i}=  L3 add host  src_ip=30.0.0.10  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=i  
+    ...                      src_mac=00:70:11:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_j}=  L3 add host  src_ip=30.0.0.11  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=j  
+    ...                      src_mac=00:70:12:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_k}=  L3 add host  src_ip=30.0.0.12  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=k  
+    ...                      src_mac=00:70:13:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_l}=  L3 add host  src_ip=30.0.0.13  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=l  
+    ...                      src_mac=00:70:14:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_m}=  L3 add host  src_ip=30.0.0.14  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=m  
+    ...                      src_mac=00:70:15:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_n}=  L3 add host  src_ip=30.0.0.15  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=n  
+    ...                      src_mac=00:70:16:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_o}=  L3 add host  src_ip=30.0.0.16  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=o  
+    ...                      src_mac=00:70:17:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    ${redirect-host_p}=  L3 add host  src_ip=30.0.0.17  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=p  
+    ...                      src_mac=00:70:18:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+    
+    pause    FREEZZEE!!!
+    
+
+Create L2 devices in ixia
+    [Tags]   T5L2
+    ${flow_a_to_c}=  L2 add  name=port_a_to_c  flow=a<->c  src_mac=00:70:03:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:05:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    
+    ${flow_b_to_d}=  L2 add  name=port_b_to_d  flow=b<->d  src_mac=00:70:04:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:06:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    
+    ${flow_e_to_g}=  L2 add  name=port_e_to_g  flow=e<->g  src_mac=00:70:07:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:09:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    
+    ${flow_f_to_h}=  L2 add  name=port_f_to_h  flow=f<->h  src_mac=00:70:08:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:10:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    
+    ${flow_i_to_k}=  L2 add  name=port_i_to_k  flow=i<->k  src_mac=00:70:11:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:13:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    
+    ${flow_j_to_l}=  L2 add  name=port_j_to_l  flow=j<->l  src_mac=00:70:12:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:14:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    
+    ${flow_m_to_o}=  L2 add  name=port_m_to_o  flow=m<->o  src_mac=00:70:15:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:17:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    
+    ${flow_n_to_p}=  L2 add  name=port_n_to_p  flow=n<->p  src_mac=00:70:16:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:18:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    pause      
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    ${results}=  fetch port stats  
+    ${rx_value_c}=  verify dict key  ${results}  c  received_frame_rate
+    ${tx_value_a}=  verify dict key  ${results}  a  transmitted_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_c}  ${tx_value_a}
+    Should be true  ${in_range}
+    
+    
+    ${rx_value_b}=  verify dict key  ${results}  b  received_frame_rate
+    ${tx_value_d}=  verify dict key  ${results}  d  transmitted_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_b}  ${tx_value_d}
+    Should be true  ${in_range}
+    
+    
+    ${rx_value_e}=  verify dict key  ${results}  e  received_frame_rate
+    ${tx_value_g}=  verify dict key  ${results}  g  transmitted_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_e}  ${tx_value_g}
+    Should be true  ${in_range}
+    
+    
+    ${rx_value_f}=  verify dict key  ${results}  f  received_frame_rate
+    ${tx_value_h}=  verify dict key  ${results}  h  transmitted_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_f}  ${tx_value_h}
+    Should be true  ${in_range}
+    
+    
+    ${rx_value_i}=  verify dict key  ${results}  i  received_frame_rate
+    ${tx_value_k}=  verify dict key  ${results}  k  transmitted_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_i}  ${tx_value_k}
+    Should be true  ${in_range}
+    
+    
+    ${rx_value_j}=  verify dict key  ${results}  j  received_frame_rate
+    ${tx_value_l}=  verify dict key  ${results}  l  transmitted_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_j}  ${tx_value_l}
+    Should be true  ${in_range}
+    
+    
+    ${rx_value_m}=  verify dict key  ${results}  m  received_frame_rate
+    ${tx_value_o}=  verify dict key  ${results}  o  transmitted_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_m}  ${tx_value_o}
+    Should be true  ${in_range}
+    
+    
+    ${rx_value_n}=  verify dict key  ${results}  n  received_frame_rate
+    ${tx_value_p}=  verify dict key  ${results}  p  transmitted_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${rx_value_n}  ${tx_value_p}
+    Should be true  ${in_range}
+    
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    
+    #pause   FREEZZEEE!!!!
+    stop traffic
+    
+    ${ATOC}=  fetch port stats  stream=${flow_a_to_c}
+    ${rx_value_c}=  verify dict key  ${ATOC}  port_a_to_c  packet_loss_duration_ms
+    should be true   ${rx_value_c} == 0
+    
+    ${BTOD}=  fetch port stats  stream=${flow_b_to_d}
+    ${rx_value_b}=  verify dict key  ${BTOD}  port_b_to_d  packet_loss_duration_ms
+    
+    Should be true  ${rx_value_b} == 0
+    
+    ${ETOG}=  fetch port stats  stream=${flow_e_to_g}
+    ${rx_value_e}=  verify dict key  ${ETOG}  port_e_to_g  packet_loss_duration_ms
+    
+    Should be true  ${rx_value_e} == 0
+    
+    ${FTOH}=  fetch port stats  stream=${flow_g_to_h}
+    ${rx_value_f}=  verify dict key  ${FTOH}  port_f_to_h  packet_loss_duration_ms
+    
+    Should be true  ${rx_value_f} == 0
+    
+    ${ITOK}=  fetch port stats  stream=${flow_i_to_k}
+    ${rx_value_i}=  verify dict key  ${ITOK}  port_i_to_k  packet_loss_duration_ms
+    
+    Should be true  ${rx_value_i} == 0
+    
+    ${JTOL}=  fetch port stats  stream=${flow_j_to_l}
+    ${rx_value_j}=  verify dict key  ${JTOL}  port_j_to_l  packet_loss_duration_ms
+    
+    Should be true  ${rx_value_j} == 0
+    
+    ${MTOO}=  fetch port stats  stream=${flow_m_to_o}
+    ${rx_value_m}=  verify dict key  ${MTOO}  port_m_to_o  packet_loss_duration_ms
+    
+    Should be true  ${rx_value_m} == 0
+    
+    ${NTOP}=  fetch port stats  stream=${flow_n_to_p}
+    ${rx_value_n}=  verify dict key  ${ATOC}  port_n_to_p  packet_loss_duration_ms
+    
+    Should be true  ${rx_value_n} == 0
+    
+    
+
+
 ping bms to check L2 fwding
 	[Tags]  scaling  manual 
 	manual passed 
