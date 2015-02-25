@@ -193,6 +193,7 @@ class T5Support(object):
         node_mac = re.sub(':', '', node_mac)
         result = False
         support_bundle_folder = re.sub('\.tar\.gz', '', support_bundle_folder)
+        helpers.log("Support_bundle_folder: %s" % support_bundle_folder)
         for root, dirs, files in os.walk(support_bundle_folder):
             helpers.log("Dir Name: %s  File Name: %s" % (dirs, files))
             for directory in dirs:
