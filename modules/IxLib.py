@@ -1835,7 +1835,7 @@ class Ixia(object):
         if self._traffi_apply:
             helpers.log("#### No Need to Apply Ixia config already applied")
         else:
-            self._handle.execute('apply', self._handle.getRoot() + 'traffic')
+            self.ix_apply_traffic()
             helpers.log('###Applied traffic Config ..')
             self._traffi_apply = True
         time.sleep(2)
