@@ -394,7 +394,7 @@ verify vm connectivity with nat switch interface failover
 	\   ${loss}=  mininet ping  vm0  ${vm7_ip}
     \	Should Be True  ${loss} == 0
 
-verify vm connectivity with nat switch failover
+verify vm connectivity with dynamic nat switch failover
 	[Tags]  nat feature 
 	add a tenant  external
 	add a tenant  external1
@@ -432,6 +432,52 @@ verify vm connectivity with nat switch failover
     ${loss}=  mininet ping  vm0  ${vm7_ip}
     Should Be True  ${loss} == 0 
    
+verify vm connectivity with fixed nat switch failover
+	[Tags]  nat feature  
+	rest add nat switch  ${hv1_switch}
+	${result}=  rest verify nat switch  ${hv1_switch}
+	Should be True  ${result}
+	rest add nat switch  ${hv4_switch}
+	${result}=  rest verify nat switch  ${hv4_switch}
+	Should be True  ${result}
+	add a tenant  external
+	add a tenant  external1
+    add a vns  external  s1
+    add a vns  external1  s1
+    rest add router intf  external  s1
+    rest add vns ip  external  s1  10.10.0.1  24
+    rest add router intf  external1  s1
+    rest add vns ip  external1  s1  10.20.0.1  24
+    rest add tenant routers intf to system  external
+    rest add system intf to tenant routers  external
+    rest add tenant routers intf to system  external1
+    rest add system intf to tenant routers  external1
+    rest add static routes  external  0.0.0.0/0  {"tenant": "system"}
+    rest add static routes  external1  0.0.0.0/0  {"tenant": "system"}
+    rest add static routes  t1  10.1.1.0/24  {"nat-profile": "nat1"}
+    rest add nat profile  t1  nat1
+	rest add pat  t1  nat1
+	rest add pat public ip  t1  nat1  10.10.0.254  
+	rest add nat remote tenant  t1  nat1  external  s1
+	${result}=  rest verify nat profile  t1  nat1
+	Should be True  ${result}
+    sleep  15
+    rest verify pat profile  t1  nat1
+    rest verify nat endpoint  t1  nat1  external  s1
+    mininet ping  vm0  ${vm7_ip}
+    ${loss}=  mininet ping  vm0  ${vm7_ip}
+    Should Be True  ${loss} == 0
+    ${nat_switch}=  rest return nat attachment switch  t1  nat1
+    rest disable nat switch interfaces  ${nat_switch}
+    sleep  40
+    ${result}=  rest verify nat attachment point  t1  nat1  ${nat_switch} 
+    Should not be True  ${result}
+    mininet ping  vm0  ${vm7_ip}
+    ${loss}=  mininet ping  vm0  ${vm7_ip}
+    Should Be True  ${loss} == 0 	
+	rest delete nat switch  ${hv1_switch}
+	rest delete nat switch  ${hv4_switch}
+
 
 * Keywords
 
