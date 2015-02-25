@@ -976,7 +976,8 @@ TC018: Trident2: Restart process OFAD on switch and verify buffering behavior
     Should Be Equal As Integers  ${drop_count}  0
     Should Be Equal As Integers  ${total_rpackets}  ${tpackets}
     bash restart process  s1  ofad  timeout=90
-    Sleep  60
+    Sleep  100
+#    pause
     clear stats
     ${clear}=  cli clear interface statistics  s1
     Should be true  ${clear}
@@ -1000,7 +1001,7 @@ TC018: Trident2: Restart process OFAD on switch and verify buffering behavior
     ${drop_count}=  rest return switch interface stats  ${switch_dpid}  ${s1s2_corelink}  transmit-dropped
     Should Be Equal As Integers  ${drop_count}  0
     Should Be Equal As Integers  ${total_rpackets}  ${tpackets}
-    [Tags]  full  feature  trident2  runthis
+    [Tags]  full  feature  trident2 
 
 TC019: Trident Plus: Verify if filter traffic is more than 1G then drop is seen only on 1G interface
     rest delete policy  admin-view  ${policy_name_1}
