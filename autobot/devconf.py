@@ -70,7 +70,9 @@ class DevConf(object):
         self.conn.set_timeout(self._timeout)
 
         driver = self.conn.get_driver()
-        if driver.name == 'generic':
+        if driver.name == 'generic' and console_info == None:
+            # Patch the device driver, possibly due to missing Login banner.
+            # Don't do this if the devconf session is a console.
             driver = self._patch_driver(driver)
 
         helpers.log("Node '%s' using devconf driver '%s' (name: '%s')"
