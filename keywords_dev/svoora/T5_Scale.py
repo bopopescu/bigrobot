@@ -285,6 +285,24 @@ class T5_Scale(object):
         return True
 
 
+    def rest_get_active_end_point_count(self):
+        ''' Function to get active end point count
+        Input:
+        Output: return end point count
+        '''
+        t = test.Test()
+        c_master = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/summary/fabric'
+        c_master.rest.get(url)
+        data_master = c_master.rest.content()
+        ep_count = data_master[0]["active-endpoint-count"]
+        helpers.log("Total number of end points are %s" % (ep_count))
+        return ep_count
+
+
+
+
+
         helpers.log(" monitor file under C1: %s" % (result['content']))
 
 
