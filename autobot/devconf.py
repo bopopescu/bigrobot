@@ -113,6 +113,7 @@ class DevConf(object):
                     " Attempting to detect platform using 'show version'."
                     % self._name)
         result = self.cmd("show version")
+        self.mode('cli')
 
         if not re.match(r'^s\d+', self._name):
             helpers.log("Devconf driver patch for '%s' failed - currently only"
@@ -504,6 +505,7 @@ class DevConf(object):
 
 class BsnDevConf(DevConf):
     def __init__(self, *args, **kwargs):
+        # helpers.debug("Creating BsnDevConf '%s'" % kwargs.get('name'))
         super(BsnDevConf, self).__init__(*args, **kwargs)
         self._mode_before_bash = None
 
@@ -749,6 +751,8 @@ class BsnDevConf(DevConf):
 
 class ControllerDevConf(BsnDevConf):
     def __init__(self, *args, **kwargs):
+        helpers.debug("Creating ControllerDevConf '%s'" % kwargs.get('name'))
+
         # !!! FIXME 2014-08-28 Reauth monitoring is disabled because (for some
         # still unknown reason) it causes Exscript to ignore the expect
         # timeout, so a script may hang indefinitely while waiting for a
@@ -835,15 +839,17 @@ class ControllerDevConf(BsnDevConf):
     def close(self):
         if self.test_monitor:
             self.test_monitor.off()
-        helpers.log("Closing ControllerDevConf '%s' (%s)"
-                    % (self.name(), self._host), level=4)
+        helpers.debug("Closing ControllerDevConf '%s' (%s)"
+                      % (self.name(), self._host), level=4)
         super(ControllerDevConf, self).close()
 
 
 class SwitchDevConf(BsnDevConf):
     def __init__(self, *args, **kwargs):
+        helpers.debug("Creating SwitchDevConf '%s'" % kwargs.get('name'))
         super(SwitchDevConf, self).__init__(*args, **kwargs)
         self._info = None
+        # self.mode('cli')
 
     def info(self, key=None, refresh=False):
         if refresh or not self._info:
@@ -872,8 +878,8 @@ class SwitchDevConf(BsnDevConf):
         return self.result()
 
     def close(self):
-        helpers.log("Closing SwitchDevConf '%s' (%s)"
-                    % (self.name(), self._host))
+        helpers.debug("Closing SwitchDevConf '%s' (%s)"
+                      % (self.name(), self._host))
         super(SwitchDevConf, self).close()
 
 
@@ -882,6 +888,7 @@ class MininetDevConf(DevConf):
     :param topology: str, in the form 'tree,4,2'
     """
     def __init__(self, *args, **kwargs):
+        helpers.debug("Creating MininetDevConf '%s'" % kwargs.get('name'))
         self.controller = kwargs.pop('controller', None)
         self.controller2 = kwargs.pop('controller2', None)
         is_start_mininet = kwargs.pop('is_start_mininet', True)
@@ -1058,8 +1065,8 @@ class MininetDevConf(DevConf):
             if self.is_screen_session:
                 helpers.log("Exiting 'screen' session")
                 self.send('exit', quiet=5)  # terminate screen session
-            helpers.log("Closing MininetDevConf '%s' (%s)"
-                        % (self.name(), self._host))
+            helpers.debug("Closing MininetDevConf '%s' (%s)"
+                          % (self.name(), self._host))
             super(MininetDevConf, self).close()
 
 
@@ -1069,6 +1076,7 @@ class T6MininetDevConf(MininetDevConf):
         '--num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0'
     """
     def __init__(self, **kwargs):
+        helpers.debug("Creating T6MininetDevConf '%s'" % kwargs.get('name'))
         super(T6MininetDevConf, self).__init__(**kwargs)
 
     def mininet_cmd(self):
@@ -1087,23 +1095,25 @@ class T6MininetDevConf(MininetDevConf):
                     % (self.controller, self.openflow_port, self.topology))
 
     def close(self):
-        # helpers.log("Closing T6MininetDevConf '%s' (%s)"
-        #            % (self.name(), self._host))
+        helpers.debug("Closing T6MininetDevConf '%s' (%s)"
+                      % (self.name(), self._host))
         super(T6MininetDevConf, self).close()
 
 
 class PduDevConf(DevConf):
     def __init__(self, *args, **kwargs):
+        helpers.debug("Creating PduDevConf '%s'" % kwargs.get('name'))
         super(PduDevConf, self).__init__(*args, **kwargs)
 
     def close(self):
-        helpers.log("Closing PduDevConf '%s' (%s)"
+        helpers.debug("Closing PduDevConf '%s' (%s)"
                     % (self.name(), self._host))
         super(PduDevConf, self).close()
 
 
 class HostDevConf(DevConf):
     def __init__(self, *args, **kwargs):
+        helpers.debug("Creating HostDevConf '%s'" % kwargs.get('name'))
         super(HostDevConf, self).__init__(*args, **kwargs)
         self.bash('uname -a')
 
@@ -1150,6 +1160,6 @@ class HostDevConf(DevConf):
                          timeout=timeout, level=level)
 
     def close(self):
-        helpers.log("Closing HostDevConf '%s' (%s)"
-                    % (self.name(), self._host))
+        helpers.debugh("Closing HostDevConf '%s' (%s)"
+                       % (self.name(), self._host))
         super(HostDevConf, self).close()
