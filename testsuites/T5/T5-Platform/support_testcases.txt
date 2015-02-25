@@ -2,6 +2,7 @@
 Documentation    Support Test Cases
 Force Tags       T5  feature  IronHorse
 Suite Setup     T5 support suite setup
+Suite Teardown  T5 support suite teardown
 Test Teardown    base test teardown
 Library		 OperatingSystem
 Library	 	 String
@@ -96,7 +97,7 @@ TC15 Check Switch Support Log for show inventory
 
 TC16 Check Switch Support Log for debug ofad onlpdump
 	${support_bundle_name}=  get support bundle name  master
-	${result}=  check switch cmd  debug ofad onlpdump  /tmp/${support_bundle_name}  master
+	${result}=  check switch cmd  onlpdump  /tmp/${support_bundle_name}  master
 	Should be True  ${result}
 	[Tags]  support  sanity
 	
@@ -158,6 +159,7 @@ T5 support suite setup
 	Log  ${result}
 	${path}=  get support bundle fs path
 	${support_bundle_name}=  get support bundle name
+	set suite variable   ${support_bundle_name}
 	${master_ip}=  get node ip  master
 	scp get  ${master_ip}  ${path}  /tmp/.  recovery  bsn
 	run_cmd  cmd=tar -xvf /tmp/${support_bundle_name} -C /tmp
