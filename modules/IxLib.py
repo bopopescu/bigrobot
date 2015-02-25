@@ -1813,6 +1813,9 @@ class Ixia(object):
         if str(ixia_traffic_state) == 'started':
             helpers.log("Traffic is Still Running , Stopping the Traffic before applying traffic item..")
             self.ix_stop_traffic()
+        helpers.log("Enabling Packet Loss Duration..")
+        self._handle.setAttribute(self._handle.getRoot() + '/traffic/statistics/packetLossDuration', '-enabled', True)
+        self._handle.commit()
         helpers.log("Applying Traffic as Requested ....")
         helpers.sleep(10)
         self._handle.execute('apply', self._handle.getRoot() + 'traffic')
@@ -2042,6 +2045,8 @@ class Ixia(object):
                     if column == 'Bytes Rx. Rate':
                         frames = int(value) / int(self._frame_size)
                         port_stat['received_frame_rate'] = str(frames)
+                    if re.match(r'.*Loss Duration.*', column):
+                        port_stat['packet_loss_duration_ms'] = value
 
                 port_stats[port_stat['port']] = port_stat
             helpers.log('result:\n%s' % helpers.prettify(port_stats))
@@ -2075,6 +2080,8 @@ class Ixia(object):
                             port_stat['received_frame_rate'] = value
                         if column == 'Frames Delta':
                             port_stat['frames_delta'] = value
+                        if re.match(r'.*Loss Duration.*', column):
+                            port_stat['packet_loss_duration_ms'] = value
             port_stats[port_stat['Traffic_item']] = port_stat
         helpers.log('result:\n%s' % helpers.prettify(port_stats))
         return port_stats

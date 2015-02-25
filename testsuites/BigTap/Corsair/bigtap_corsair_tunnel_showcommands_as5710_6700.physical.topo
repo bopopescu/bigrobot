@@ -20,7 +20,7 @@ s2:
     ip: 10.9.19.8
 
 ## APP-ARISTA-1
-s3:
+as3:
     ip: 10.9.19.3
     console_ip: 10.1.8.97
     console_port: 6003
