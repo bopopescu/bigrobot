@@ -164,41 +164,6 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def cli_show_interface_state(self, node, intf_name, admin_down=False):
-        '''
-            Objective:
-            - Return the Interface State of a given interface on a switch
-
-            Input:
-            | node | Reference to switch (as defined in .topo file) |
-            | intf_name | Interface Name eg. ethernet1 or portchannel1 |
-
-            Return Value:
-            - Interface State of interface.
-        '''
-        try:
-            t = test.Test()
-            s1 = t.switch(node)
-            cli_input = "show interface " + str(intf_name) + " detail"
-            helpers.log("Before issuing the command")
-            s1.enable(cli_input)
-            helpers.log("After issuing the command")
-            new_content = string.split(s1.cli_content(), '\n')
-            helpers.log("Value in content[1] is '%s' " % (new_content[1]))
-            content = new_content[1].rstrip()
-            helpers.log("Value in content is '%s' " % (content))
-            if admin_down:
-                helpers.log("Admin Down is True")
-                (firstvalue, secondvalue, thirdvalue, lastvalue) = content.split()
-                intf_state = thirdvalue + " " + lastvalue
-            else:
-                helpers.log("Admin Down is False")
-                (firstvalue, colon, lastvalue) = content.split()
-                intf_state = lastvalue.rstrip('\n')
-            return intf_state
-        except:
-            helpers.test_log("Could not execute command. Please check log for errors")
-            return False
 
     def cli_show_interface_state(self, node, intf_name, admin_down=False):
         '''
@@ -235,82 +200,47 @@ class SwitchLight(object):
         except:
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
-
-    def cli_show_interface_state(self, node, intf_name, admin_down=False):
-        '''
-            Objective:
-            - Return the Interface State of a given interface on a switch
-
-            Input:
-            | node | Reference to switch (as defined in .topo file) |
-            | intf_name | Interface Name eg. ethernet1 or portchannel1 |
-
-            Return Value:
-            - Interface State of interface.
-        '''
-
-        t = test.Test()
-        s1 = t.switch(node)
-        cli_input = "show interface " + str(intf_name)
-        helpers.log("Before issuing the command")
-        s1.enable(cli_input)
-        helpers.log("After issuing the command")
-        new_content = string.split(s1.cli_content(), '\n')
-        helpers.log("Value in content[1] is '%s' " % (new_content[1]))
-        content = new_content[1:]
-        helpers.log("Value in content is '%s' " % (content))
-        if len(content) > 1:
-            helpers.log("Port-channel interface exists in the output")
-            status = content[0].split()[0]
-            if 'U' in status:
-                helpers.log("Port-channel {} is up".format(intf_name))
-                intf_state = "up"
-                return intf_state
-            else:
-                helpers.log("Port-channel {} is not up and status is {} ".format(intf_name, status))
-                return False
-        else:
-            helpers.log("Expected port-channel {} does not exist in the output".format(intf_name))
-            return False
-
-        #    helpers.test_log("Could not execute command. Please check log for errors")
-         #   return False
 
 #    def cli_show_interface_state(self, node, intf_name, admin_down=False):
 #        '''
 #            Objective:
-#            - Return the Interface State of a given interface on a switch
-
+# #            - Return the Interface State of a given interface on a switch#
+#
 #            Input:
 #            | node | Reference to switch (as defined in .topo file) |
-#            | intf_name | Interface Name eg. ethernet1 or portchannel1 |
-
+#            | intf_name | Interface Name eg. ethernet1 or portchannel1 |#
+#
 #            Return Value:
 #            - Interface State of interface.
-#        '''
-#        try:
-#            t = test.Test()
-#            s1 = t.switch(node)
-#            cli_input = "show interface " + str(intf_name) + " detail"
-#            helpers.log("Before issuing the command")
-#            s1.enable(cli_input)
-#            helpers.log("After issuing the command")
-#            new_content = string.split(s1.cli_content(), '\n')
-#            helpers.log("Value in content[1] is '%s' " % (new_content[1]))
-#            content = new_content[1].rstrip()
-#            helpers.log("Value in content is '%s' " % (content))
-#            if admin_down:
-#                helpers.log("Admin Down is True")
-#                (firstvalue, secondvalue, thirdvalue, lastvalue) = content.split()
-#                intf_state = thirdvalue + " " + lastvalue
+#        '''##
+#
+#        t = test.Test()
+#        s1 = t.switch(node)
+#        cli_input = "show interface " + str(intf_name)
+#        helpers.log("Before issuing the command")
+#        s1.enable(cli_input)
+#        helpers.log("After issuing the command")
+#        new_content = string.split(s1.cli_content(), '\n')
+#        helpers.log("Value in content[1] is '%s' " % (new_content[1]))
+#        content = new_content[1:]
+#        helpers.log("Value in content is '%s' " % (content))
+#        if len(content) > 1:
+#            status = content[0].split()[0]
+#            helpers.log("interface exists in the output and the status is {}".format(status))
+#            if 'U' in status:
+#                helpers.log("Interface {} is up".format(intf_name))
+#                intf_state = "up"
+#                return intf_state
 #            else:
-#                helpers.log("Admin Down is False")
-#                (firstvalue, colon, lastvalue) = content.split()
-#                intf_state = lastvalue.rstrip('\n')
-#            return intf_state
-#        except:
-#            helpers.test_log("Could not execute command. Please check log for errors")
-#            return False
+#                helpers.log("Interface {} is not up and status is {} ".format(intf_name, status))
+#                return False
+ #       else:
+ #           helpers.log("Expected interface {} does not exist in the output".format(intf_name))
+ #           return False
+
+        #    helpers.test_log("Could not execute command. Please check log for errors")
+         #   return False
+
 
     def cli_show_interface_statistics(self, node, intf_name):
         '''
