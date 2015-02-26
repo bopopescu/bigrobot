@@ -12,9 +12,21 @@ Library         keywords/BigTap.py
 * Test Case
 Clear bigtap stats
     [Tags]  skipped
-    Rest Clear Bigtap statistics
+    ${status} =      Rest Clear Bigtap statistics
+    should be true   ${status}
 
 Add bigtap user
+    [Tags]  skipped
+    ${status} =      Rest add user    user123
+    should be true   ${status}
+
+Add bigtap service
+    [Tags]  skipped
+    ${status} =      Rest add service    service123   ABC   XYZ
+    should be true   ${status}
+
+Delete bigtap service
     #[Tags]  skipped
-    Rest add user    user123
+    ${status} =      Rest delete service    service123
+    should be true   ${status}
 
