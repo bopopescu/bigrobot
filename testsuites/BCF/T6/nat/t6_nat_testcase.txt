@@ -111,9 +111,9 @@ Test PNAT case with Controller Failover
 	[Tags]
 Test floating IP case with Controller Failover 
 	[Tags]
-Test VM floating IP with controller failover 
-	[Tags]
 Test connectivity with bringing down Interface for Vswitch NAT container 
+	[Tags]
+Test connectivity with NAT switch failover
 	[Tags]
 	
 
