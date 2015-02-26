@@ -21,6 +21,7 @@ ${vm0_ip}  10.0.1.2
 ${vm1_ip}  10.0.2.2
 ${vm2_ip}  10.0.3.2
 ${vm4_ip}  10.0.4.2
+${vm6_ip}  10.0.5.2
 ${bm0_mac}  00:00:00:00:00:01
 ${bm1_mac}  00:00:00:00:00:02
 ${bm0_intf0}  leaf0a-eth5
@@ -31,10 +32,12 @@ ${hv0_intf0}  hv0-eth3
 ${hv0_intf1}  hv0-eth4
 ${hv1_intf0}  hv1-eth3
 ${hv2_intf0}  hv2-eth3
+${hv3_intf0}  hv3-eth3
 ${vm0_intf0}  vm0-eth0
 ${vm1_intf0}  vm1-eth0
 ${vm2_intf0}  vm2-eth0
 ${vm4_intf0}  vm4-eth0
+${vm6_intf0}  vm6-eth0
 ${hv0_switch}  hv0
 ${hv1_switch}  hv1
 ${hv2_switch}  hv2
@@ -45,7 +48,7 @@ ${hv5_switch}  hv5
 * Test Case 
  
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]     
+   [Tags]   
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -165,7 +168,7 @@ validation error floating IP outside the external segment subnet
 	Should not be True  ${result}
 	
 verify vm connectivity single floating IP
-	[Tags]    smoke   
+	[Tags]   
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -182,7 +185,7 @@ verify vm connectivity single floating IP
     Should Be True  ${loss} == 100 
 	
 verify vm connectivity multiple floating IP
-	[Tags]     
+	[Tags]    
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -192,7 +195,6 @@ verify vm connectivity multiple floating IP
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
 	sleep  10
-	rest add nat profile  A  nat1
 	rest add floating ip  A  nat1  10.0.4.201
 	rest add private ip  A  nat1  10.0.4.201  ${vm1_ip}
 	rest add public mac  A  nat1  10.0.4.201  00:00:11:11:11:12
@@ -206,7 +208,7 @@ verify vm connectivity multiple floating IP
     Should Be True  ${loss} == 0
 	
 verify vm connectivity after changing floating ip assignment
-   [Tags] 
+   [Tags]   
     rest add nat profile  A  nat1
     rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -220,6 +222,7 @@ verify vm connectivity after changing floating ip assignment
 	${loss}=  mininet ping  vm0  ${vm4_ip}
     Should Be True  ${loss} == 0
     rest add private ip  A  nat1  10.0.4.200  ${vm2_ip}
+    sleep  10
 	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${vm2_ip}
 	Should be True  ${result}
 	mininet ping  vm2  ${vm4_ip}
@@ -276,7 +279,7 @@ verify floating IP and PNAT together in a tenant and single nat profile
     Should Be True  ${loss} == 0
  
 verify floating IP and PNAT together in a tenant and different nat profile
-	[Tags]
+	[Tags]  
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -297,14 +300,94 @@ verify floating IP and PNAT together in a tenant and different nat profile
     Should be True  ${result}
     ${result}=  rest verify vswitch l3 cidr nat  external  ${hv0_switch}  0.0.0.0
     Should Not be True  ${result}
-	mininet ping  bm0  ${vm4_ip}
-	${loss}=  mininet ping  bm0  ${vm4_ip}
+	mininet ping  bm0  ${vm6_ip}
+	${loss}=  mininet ping  bm0  ${vm6_ip}
     Should Be True  ${loss} == 0
+	mininet ping  vm0  ${vm4_ip}
 	${loss}=  mininet ping  vm0  ${vm4_ip}
     Should Be True  ${loss} == 0
-    ${loss}=  mininet ping  vm2  ${vm4_ip}
-    Should Be True  ${loss} == 0   
+        
+verify floating IP connection after controller failover
+	[Tags]  skipped
+	rest add nat profile  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	rest add floating ip  A  nat1  10.0.4.200
+	rest add private ip  A  nat1  10.0.4.200  ${vm0_ip}
+	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${vm0_ip}
+	Should be True  ${result}
+	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+	sleep  10
+	mininet ping  vm0  ${vm4_ip}
+	${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    ${loss}=  mininet ping  vm1  ${vm4_ip}
+    Should Be True  ${loss} == 100
+    cluster node reboot
+    mininet ping  vm0  ${vm4_ip}
+	${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    ${loss}=  mininet ping  vm1  ${vm4_ip}
+    Should Be True  ${loss} == 100
 
+verify floating IP connectivity after controller failover and failback
+	[Tags]  skipped
+	rest add nat profile  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	rest add floating ip  A  nat1  10.0.4.200
+	rest add private ip  A  nat1  10.0.4.200  ${vm0_ip}
+	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${vm0_ip}
+	Should be True  ${result}
+	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+	sleep  10
+	mininet ping  vm0  ${vm4_ip}
+	${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    ${loss}=  mininet ping  vm1  ${vm4_ip}
+    Should Be True  ${loss} == 100
+    cluster node reboot
+    mininet ping  vm0  ${vm4_ip}
+	${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    ${loss}=  mininet ping  vm1  ${vm4_ip}
+    Should Be True  ${loss} == 100
+    cluster node reboot
+    mininet ping  vm0  ${vm4_ip}
+	${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    ${loss}=  mininet ping  vm1  ${vm4_ip}
+    Should Be True  ${loss} == 100
+    
+verify floating IP config change after controller failover
+	[Tags]  skipped
+	rest add nat profile  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	rest add floating ip  A  nat1  10.0.4.200
+	rest add private ip  A  nat1  10.0.4.200  ${vm0_ip}
+	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${vm0_ip}
+	Should be True  ${result}
+	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+	sleep  10
+	mininet ping  vm0  ${vm4_ip}
+	${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    ${loss}=  mininet ping  vm1  ${vm4_ip}
+    Should Be True  ${loss} == 100
+    cluster node reboot	 
+	rest add floating ip  A  nat1  10.0.4.201
+	rest add private ip  A  nat1  10.0.4.201  ${vm1_ip}
+	rest add public mac  A  nat1  10.0.4.201  00:00:11:11:11:12
+	${result}=  rest verify floating ip  A  nat1  10.0.4.201  ${vm1_ip}
+	Should be True  ${result}
+	mininet ping  vm0  ${vm4_ip}
+	mininet ping  vm1  ${vm4_ip}
+	${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    ${loss}=  mininet ping  vm1  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    
 * Keywords
 
 T6 base suite setup
@@ -319,6 +402,7 @@ T6 base suite setup
     add a vns  A  C
     add a vns  A  D
     add a vns  external  E
+    add a vns  external  F
     add a portgroup  p1 
     add interface to portgroup  leaf0-a  ${bm0_intf0}  p1
     add interface to portgroup  leaf0-b  ${bm0_intf1}  p1
@@ -335,10 +419,13 @@ T6 base suite setup
     rest add vns ip  A  D  10.0.3.1  24
     rest add router intf  external  E
     rest add vns ip  external  E  10.0.4.1  24
+    rest add router intf  external  F
+    rest add vns ip  external  F  10.0.5.1  24
     rest add portgroup to vns  A  A  p1  -1
     rest add interface to vns  A  B  ${hv0_switch}  ${hv0_intf0}  -1
     rest add interface to vns  A  C  ${hv0_switch}  ${hv0_intf1}  -1
     rest add interface to vns  A  D  ${hv1_switch}  ${hv1_intf0}  -1
+    rest add interface to vns  external  F  ${hv3_switch}  ${hv3_intf0}  -1
     rest add interface to vns  external  E  ${hv2_switch}  ${hv2_intf0}  -1
     rest add tenant routers intf to system  A
     rest add tenant routers intf to system  external
@@ -355,6 +442,8 @@ T6 base suite setup
 	mininet host gw  vm2  10.0.3.1  ${vm2_intf0}
 	mininet host ipcfg  vm4  ${vm4_intf0}  10.0.4.2  24
 	mininet host gw  vm4  10.0.4.1  ${vm4_intf0}
+    mininet host ipcfg  vm6  ${vm6_intf0}  10.0.5.2  24
+	mininet host gw  vm6  10.0.5.1  ${vm6_intf0}
     sleep  5
 
 Tear down the config
