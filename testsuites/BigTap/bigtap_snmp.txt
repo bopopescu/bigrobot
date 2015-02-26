@@ -1,10 +1,10 @@
 *Settings
-Documentation           BigTap SNMP Test Suite Release:Blackbird Feature:SNMP
+Documentation           SNMP Test Suite
 Suite Setup             snmp suite setup
 Suite Teardown          snmp suite teardown
 Test Setup              snmp test setup
 Test Teardown           snmp test teardown
-Force Tags              BigTap  SNMP  blackbird
+Force Tags              BigTap  blackbird-300  snmp  snmp-controller
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -17,109 +17,109 @@ Library                 String.py
 * Test Case
 TC1: Configure and Verify Configuration  
     verify config
-    [Tags]  verify  
+    [Tags]  sanity  feature
 
 TC2: Verify SNMP OID sysContact on Master  
     ${snmp_key}=  snmp get  master  public  sysContact.0
     Should Contain  ${snmp_key}  Big Switch Networks
-    [Tags]  sysContact  master  
+    [Tags]  sanity  feature
 
 TC3: Verify SNMP OID sysContact on Slave  
     ${snmp_key}=  snmp get  slave  public  sysContact.0
     Should Contain  ${snmp_key}  Big Switch Networks
-    [Tags]  sysContact  slave
+    [Tags]  sanity  feature
     
 TC4: Verify SNMP OID sysLocation on Master  
     ${snmp_key}=  snmp get  master  public  sysLocation.0
     Should Contain  ${snmp_key}  Mountain View
-    [Tags]  sysLocation  master  
+    [Tags]  sanity  feature
     
 TC5: Verify SNMP OID sysLocation on Slave  
     ${snmp_key}=  snmp get  slave  public  sysLocation.0
     Should Contain  ${snmp_key}  Mountain View
-    [Tags]  sysLocation  slave  
+    [Tags]  sanity  feature
     
 TC6: Verify SNMP OID sysDescr on Master  
     ${version_string}=  Get Environment Variable  controller_version
     ${snmp_key}=  snmp get  master  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string}    
-    [Tags]  sysDescr  master
+    [Tags]  sanity  feature
     
 TC7: Verify SNMP OID sysDescr on Slave  
     ${version_string}=  Get Environment Variable  controller_version
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string}    
-    [Tags]  sysDescr  slave  
+    [Tags]  sanity  feature
       
 TC8: Verify SNMP OID ifDescr on Master  
     ${snmp_key}=  snmp get  master  public  ifDescr.2
     Should Contain  ${snmp_key}  eth0
-    [Tags]  ifDescr  master
+    [Tags]  sanity  feature
       
 TC9: Verify SNMP OID ifDescr on Slave  
     ${snmp_key}=  snmp get  slave  public  ifDescr.2
     Should Contain  ${snmp_key}  eth0
-    [Tags]  ifDescr  slave    
+    [Tags]  full  feature
    
 TC10: Verify SNMP OID ifType on Master  
     ${snmp_key}=  snmp get  master  public  ifType.2
     Should Contain  ${snmp_key}  ethernetCsmacd
-    [Tags]  ifType  master
+    [Tags]  full  feature
    
 TC11: Verify SNMP OID ifType on Slave  
     ${snmp_key}=  snmp get  slave  public  ifType.2
     Should Contain  ${snmp_key}  ethernetCsmacd
-    [Tags]  ifType  master    
+    [Tags]  full  feature
 
 TC12: Verify SNMP OID ifOperStatus on Master  
     ${snmp_key}=  snmp get  master  public  ifOperStatus.2
     Should Contain  ${snmp_key}  up
-    [Tags]  ifOperStatus  master  
+    [Tags]  full  feature
 
 TC13: Verify SNMP OID ifOperStatus on Slave  
     ${snmp_key}=  snmp get  slave  public  ifOperStatus.2
     Should Contain  ${snmp_key}  up
-    [Tags]  ifOperStatus  slave  
+    [Tags]  full  feature
     
 TC14: Verify SNMP OID ifAdminStatus on Master   
     ${snmp_key}=  snmp get  master  public  ifAdminStatus.2
     Should Contain  ${snmp_key}  up     
-    [Tags]  ifAdminStatus  master 
+    [Tags]  full  feature
     
 TC15: Verify SNMP OID ifAdminStatus on Slave  
     ${snmp_key}=  snmp get  slave  public  ifAdminStatus.2
     Should Contain  ${snmp_key}  up     
-    [Tags]  ifAdminStatus  slave     
+    [Tags]  full  feature
 
 TC16: Verify snmpgetnext works as expected on Master
     ${snmp_key}=  snmp getnext  master  public  ifDescr.1
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmpgetnext  master
+    [Tags]  full  feature
      
 TC17: Verify snmpgetnext works as expected on Slave
     ${snmp_key}=  snmp getnext  slave  public  ifDescr.1
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmpgetnext  slave           
+    [Tags]  full  feature
     
 TC18: Verify snmpbulkget works as expected on Master
     ${snmp_key}=  snmp cmd  master  snmpbulkget  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmpbulkget  master
+    [Tags]  full  feature
 
 TC19: Verify snmpbulkget works as expected on Slave
     ${snmp_key}=  snmp cmd  slave  snmpbulkget  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmpbulkget  slave     
+    [Tags]  full  feature
 
 TC20: Verify snmpbulkwalk works as expected on Master
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmpbulkwalk  master   
+    [Tags]  full  feature
 
 TC21: Verify snmpbulkwalk works as expected on Slave
     ${snmp_key}=  snmp cmd  slave  snmpbulkwalk  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmpbulkwalk  slave  
+    [Tags]  full  feature
 
 TC22: Restart process SNMP on Master controller and verify snmpget
     ${version_string}=  Get Environment Variable  controller_version
@@ -127,7 +127,7 @@ TC22: Restart process SNMP on Master controller and verify snmpget
     Sleep  10    
     ${snmp_key}=  snmp get  master  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string}  
-    [Tags]  restart  
+    [Tags]  ha  robustness  full  process-restart  controller
  
 TC23: Restart process SNMP on Slave controller and verify snmpget
     ${version_string}=  Get Environment Variable  controller_version
@@ -135,7 +135,7 @@ TC23: Restart process SNMP on Slave controller and verify snmpget
     Sleep  10    
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
     Should Contain  ${snmp_key}  ${version_string}  
-    [Tags]  restart 
+    [Tags]  ha  robustness  full  process-restart  controller
     
 TC24: Change community from public to bigswitch and verify snmp walk
     ${version_string}=  Get Environment Variable  controller_version
@@ -144,7 +144,7 @@ TC24: Change community from public to bigswitch and verify snmp walk
     Should Contain  ${snmp_key}  ${version_string}
     rest add snmp keyword  community  public      
     sleep  5 
-    [Tags]  bigtap  snmp  
+    [Tags]  full  negative
 
 TC25: HW Appliance: Verify cpuload (UCD-SNMP-MIB::laLoadInt.1)
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  laLoadInt.1
@@ -152,7 +152,7 @@ TC25: HW Appliance: Verify cpuload (UCD-SNMP-MIB::laLoadInt.1)
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} < 180  0  1
     Should be equal as integers  ${snmp_value}  ${0}             
-    [Tags]  hw  snmp
+    [Tags]  full  feature
  
 TC26: HW Appliance: Verify Total Free Memory (UCD-SNMP-MIB::memTotalFree.0)
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  memTotalFree.0
@@ -160,7 +160,7 @@ TC26: HW Appliance: Verify Total Free Memory (UCD-SNMP-MIB::memTotalFree.0)
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue[3]}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 50000  0  1
     Should be equal as integers  ${snmp_value}  ${0}             
-    [Tags]  hw  snmp
+    [Tags]  full  feature
 
  
 TC27: HW Appliance: Verify CPU Temperature
@@ -169,7 +169,7 @@ TC27: HW Appliance: Verify CPU Temperature
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} < 90  0  1
     Should be equal as integers  ${snmp_value}  ${0}             
-    [Tags]  hw  snmp
+    [Tags]  full  feature
  
 TC28: HW Appliance: Verify Ambient Temperature
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.2001
@@ -177,7 +177,7 @@ TC28: HW Appliance: Verify Ambient Temperature
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} < 47  0  1
     Should be equal as integers  ${snmp_value}  ${0}        
-    [Tags]  hw  snmp
+    [Tags]  full  feature
  
 TC29: HW Appliance: Verify Power Supply 
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.3001
@@ -185,7 +185,7 @@ TC29: HW Appliance: Verify Power Supply
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} < 462  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp  jira-BSC-6090
+    [Tags]  full  feature  jira-BSC-6090
  
 TC30: HW Appliance: Verify Fan Speed
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4011
@@ -193,7 +193,7 @@ TC30: HW Appliance: Verify Fan Speed
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp        
+    [Tags]  full  feature        
  
 TC31: HW Appliance: Verify Fan Speed
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4012
@@ -201,7 +201,7 @@ TC31: HW Appliance: Verify Fan Speed
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp    
+    [Tags]  full  feature    
  
 TC32: HW Appliance: Verify Fan Speed
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4021
@@ -209,7 +209,7 @@ TC32: HW Appliance: Verify Fan Speed
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp    
+    [Tags]  full  feature    
  
 TC33: HW Appliance: Verify Fan Speed
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4022
@@ -217,7 +217,7 @@ TC33: HW Appliance: Verify Fan Speed
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp    
+    [Tags]  full  feature    
  
 TC34: HW Appliance: Verify Fan Speed
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4031
@@ -225,7 +225,7 @@ TC34: HW Appliance: Verify Fan Speed
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp    
+    [Tags]  full  feature    
  
 TC35: HW Appliance: Verify Fan Speed
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4032
@@ -233,7 +233,7 @@ TC35: HW Appliance: Verify Fan Speed
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp    
+    [Tags]  full  feature    
  
 TC36: HW Appliance: Verify Fan Speed
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4041
@@ -241,7 +241,7 @@ TC36: HW Appliance: Verify Fan Speed
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp    
+    [Tags]  full  feature    
  
 TC37: HW Appliance: Verify Fan Speed
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4042
@@ -249,7 +249,7 @@ TC37: HW Appliance: Verify Fan Speed
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp    
+    [Tags]  full  feature    
  
 TC38: HW Appliance: Verify Fan Speed
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4051
@@ -257,7 +257,7 @@ TC38: HW Appliance: Verify Fan Speed
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp    
+    [Tags]  full  feature    
  
 TC39: HW Appliance: Verify Fan Speed
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  .1.3.6.1.2.1.99.1.1.1.4.4052
@@ -265,8 +265,8 @@ TC39: HW Appliance: Verify Fan Speed
     ${snmp_kvalue}=  Convert to integer  ${snmp_keyvalue}    
     ${snmp_value}=  Set Variable If  ${snmp_kvalue} > 720  0  1
     Should be equal as integers  ${snmp_value}  ${0}           
-    [Tags]  hw  snmp            
-                                      
+    [Tags]  full  feature
+    
 * Keywords
 snmp suite setup
     base suite setup

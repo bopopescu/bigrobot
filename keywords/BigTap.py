@@ -19,6 +19,7 @@ import keywords.AppController as AppController
 import json
 import re
 import time
+from BsnCommon import BsnCommon as bsnCommon
 from datetime import datetime
 from time import mktime
 
@@ -951,7 +952,8 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_add_interface_group(self, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+    # def rest_add_interface_group(self, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+    def rest_add_interface_group(self, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin", version="Corsair"):
         '''
             Objective
             - Create a filter-interface-group or delivery-interface-group
@@ -973,10 +975,17 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    if "Augusta" in str(version):
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    else:
+                        url = '/api/v1/data/controller/applications/bigtap/filter-interface-group[name="{}"]'.format(str(group_name))
                 elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    if "Augusta" in str(version):
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    else:
+                        url = '/api/v1/data/controller/applications/bigtap/delivery-interface-group[name="{}"]'.format(str(group_name))
                 else:
+                    helpers.test_log("Invalid Group Type was assigned to variable group_type")
                     return False
                 if "admin" not in user:
                     c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
@@ -990,7 +999,7 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_delete_interface_group(self, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+    def rest_delete_interface_group(self, group_name, group_type, user="admin", password="adminadmin", rbac_view="admin-view", version="Corsair"):
         '''
             Objective
             - Delete an existing filter-interface-group or delivery-interface-group
@@ -1012,9 +1021,15 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    if "Augusta" in str(version):
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    else:
+                        url = '/api/v1/data/controller/applications/bigtap/filter-interface-group[name="{}"]'.format(str(group_name))
                 elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    if "Augusta" in str(version):
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                    else:
+                        url = '/api/v1/data/controller/applications/bigtap/delivery-interface-group[name="{}"]'.format(str(group_name))
                 else:
                     return False
                 if "admin" not in user:
@@ -1029,7 +1044,8 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_add_interface_to_interface_group(self, group_name, group_type, interface_name, rbac_view="admin-view", user="admin", password="adminadmin"):
+    # def rest_add_interface_to_interface_group(self, group_name, group_type, interface_name, , user="admin", password="adminadmin"):
+    def rest_add_interface_to_interface_group(self, group_name, group_type, interface_name, user="admin", password="adminadmin", rbac_view="admin-view", version="Corsair"):
         '''
             Objective
             - Create a filter-interface-group or delivery-interface-group
@@ -1052,9 +1068,15 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]/filter-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    if "Augusta" in str(version):
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]/filter-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    else:
+                        url = '/api/v1/data/controller/applications/bigtap/filter-interface-group[name="{}"]/filter-group[name="{}"]'.format(str(group_name), str(interface_name))
                 elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]/delivery-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    if "Augusta" in str(version):
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]/delivery-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    else:
+                        url = '/api/v1/data/controller/applications/bigtap/delivery-interface-group[name="{}"]/delivery-group[name="{}"]'.format(str(group_name), str(interface_name))
                 else:
                     return False
                 if "admin" not in user:
@@ -1069,7 +1091,8 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_delete_interface_from_interface_group(self, group_name, group_type, interface_name, rbac_view="admin-view", user="admin", password="adminadmin"):
+    # def rest_delete_interface_from_interface_group(self, group_name, group_type, interface_name, rbac_view="admin-view", user="admin", password="adminadmin"):
+    def rest_delete_interface_from_interface_group(self, group_name, group_type, interface_name, user="admin", password="adminadmin", rbac_view="admin-view", version="Corsair"):
         '''
             Objective
             - Delete a interface from an interface group
@@ -1092,9 +1115,15 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]/filter-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    if "Augusta" in str(version):
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]/filter-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    else:
+                        url = '/api/v1/data/controller/applications/bigtap/filter-interface-group[name="{}"]/filter-group[name="{}"]'.format(str(group_name), str(interface_name))
                 elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]/delivery-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    if "Augusta" in str(version):
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]/delivery-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                    else:
+                        url = '/api/v1/data/controller/applications/bigtap/delivery-interface-group[name="{}"]/delivery-group[name="{}"]'.format(str(group_name), str(interface_name))
                 else:
                     return False
                 if "admin" not in user:
@@ -1109,7 +1138,7 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_add_interface_group_to_policy(self, policy_name, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+    def rest_add_interface_group_to_policy(self, policy_name, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin", version="Corsair"):
         '''
             Objective
             - Add filter-interface-group or delivery-interface-group to policy
@@ -1133,15 +1162,21 @@ class BigTap(object):
             c = t.controller('master')
             try:
 
-                # url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view), str(policy_name))
+                #
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/filter-intf-group[name="%s"]' % (str(rbac_view), str(policy_name), str(group_name))
-                    # data = {"filter-intf-group": str(group_name)}
+                    if "Augusta" in str(version):
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view), str(policy_name))
+                        # data = {"filter-intf-group": str(group_name)}
+                    else:
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/filter-intf-group[name="%s"]' % (str(rbac_view), str(policy_name), str(group_name))
                     data = {"name": str(group_name)}
                 elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
-                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/delivery-intf-group[name="%s"]' % (str(rbac_view), str(policy_name), str(group_name))
+                    if "Augusta" in str(version):
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view), str(policy_name))
+                        # data = {"delivery-intf-group": str(group_name)}
+                    else:
+                        url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/delivery-intf-group[name="%s"]' % (str(rbac_view), str(policy_name), str(group_name))
                     data = {"name": str(group_name)}
-                    # data = {"delivery-intf-group": str(group_name)}
                 else:
                     return False
                 if "admin" not in user:
@@ -1157,7 +1192,7 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_delete_interface_group_from_policy(self, policy_name, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+    def rest_delete_interface_group_from_policy(self, policy_name, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin", version="Corsair"):
         '''
             Objective
             - Delete filter-interface-group or delivery-interface-group to policy
@@ -3207,7 +3242,7 @@ class BigTap(object):
                 cli_input_2 = "no associate user " + str(username)
                 c.config(cli_input_2)
             except:
-                helpers.test_log(c.rest.error())
+                helpers.test_log(helpers.exception_info())
                 return False
             else:
                 return True
@@ -3981,3 +4016,38 @@ class BigTap(object):
                 return False
             else:
                 return True
+
+    def bt_cli_run(self, node, command, cmd_timeout=45, user='admin', password='adminadmin', soft_error=False):
+        """
+        Run given CLI command
+
+        Inputs:
+        | node | Reference to switch/controller as defined in .topo file |
+        | command | CLI command to run |
+        | cmd_timeout | Timeout for given command to be executed and controller prompt to be returned |
+        | user | Username to use when logging into the node |
+        | password | Password for the user |
+        | soft_error | Soft Error flag |
+
+        Return Value:
+        - True if command executed with no errors, False otherwise
+        """
+
+        helpers.test_log("Running command: %s on node %s" % (command, node))
+        t = test.Test()
+        bsn_common = bsnCommon()
+        ip_addr = bsn_common.get_node_ip(node)
+        c = t.node_spawn(ip=ip_addr, user=user, password=password)
+        try:
+            c.cli(command, timeout=cmd_timeout)
+            if "Error" in c.cli_content():
+                c.close()
+                helpers.test_failure(c.cli_content(), soft_error)
+                return False
+        except:
+            c.close()
+            helpers.test_failure(c.cli_content(), soft_error)
+            return False
+        else:
+            c.close()
+            return True

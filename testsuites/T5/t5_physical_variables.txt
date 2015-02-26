@@ -98,28 +98,52 @@ Set swith int variables
 	${spine1_leaf2b_intf0}=  get_switch_int_topo  s8  leaf2b_int0
 	Set Suite Variable		${spine1_leaf2b_intf0}
 	
-
-	
+Set host int variables
+	${h1_intf0}=  get_switch_int_topo  s1  h1_int0
+	Set Suite Variable		${h1_intf0}
+	${h1_intf1}=  get_switch_int_topo  s2  h1_int0
+	Set Suite Variable		${h1_intf1}
+	${h2_intf0}=  get_switch_int_topo  s1  h2_int0
+	Set Suite Variable		${h2_intf0}
+	${h2_intf1}=  get_Switch_int_topo  s2  h2_int0
+	Set Suite Variable		${h2_intf1}
+	${h3_intf0}=  get_switch_int_topo  s3  h3_int0
+	Set Suite Variable		${h3_intf0}
+	${h3_intf1}=  get_switch_int_topo  s4  h3_int0
+	Set Suite Variable		${h3_intf1}
+	${h4_intf0}=  get_switch_int_topo  s3  h4_int0
+	Set Suite Variable		${h4_intf0}	
+	${h4_intf1}=  get_switch_int_topo  s4  h4_int0
+	Set Suite Variable		${h4_intf1}
+	${h5_intf0}=  get_switch_int_topo  s5  h5_int0
+	Set Suite Variable		${h5_intf0}
+	${h5_intf1}=  get_switch_int_topo  s6  h5_int0
+	Set Suite Variable		${h5_intf1}
+	${h6_intf0}=  get_switch_int_topo  s5  h6_int0
+	Set Suite Variable		${h6_intf0}
+	${h6_intf1}=  get_switch_int_topo  s6  h6_int0	
+	Set Suite Variable		${h6_intf1}
+	${h3_intf0_single}=  get_switch_int_topo  s3  h3_int1
+	Set Suite Variable		${h3_intf0_single}
+	${h4_intf0_single}=  get_switch_int_topo  s3  h4_int1
+	Set Suite Variable		${h4_intf0_single}
+	${h2_intf0_single}=  get_switch_int_topo  s1  h2_int1
+	Set Suite Variable		${h2_intf0_single}
+	${h1_intf0_single}=  get_switch_int_topo  s1  h1_int1
+	Set Suite Variable		${h1_intf0_single}
+	${h4_mac}=	get_switch_int_topo  h4  bond0_mac
+	Set Suite Variable		${h4_mac}
+	${h5_mac}=	get_switch_int_topo  h5  bond0_mac
+	Set Suite Variable		${h5_mac}
+	${h6_mac}=	get_switch_int_topo  h6  bond0_mac
+	Set Suite Variable		${h6_mac}
 	
 *Variables
 ${h4_ip}  192.168.0.11
 ${h5_ip}  192.168.0.30
 ${h6_ip}  192.168.0.31
-${h4_mac}	00:10:18:f0:e9:70
-${h5_mac}	90:e2:ba:4f:80:dd
-${h6_mac}	90:e2:ba:4e:bb:90
-${h1_intf0}  ethernet48
-${h1_intf1}  ethernet48
-${h2_intf0}  ethernet47
-${h2_intf1}  ethernet47
-${h3_intf0}  ethernet1
-${h3_intf1}  ethernet1
-${h4_intf0}  ethernet2
-${h4_intf1}  ethernet2
-${h5_intf0}  ethernet47
-${h5_intf1}  ethernet47
-${h6_intf0}  ethernet48
-${h6_intf1}  ethernet48
+
+
 ${h1_tag_ip}	  192.168.4.20
 ${h2_tag_ip}	  192.168.4.21
 ${h3_tag_ip}	  192.168.4.10
@@ -134,10 +158,6 @@ ${h1_single_ip}  192.168.1.20
 ${h3_single_mac}  d4:ae:52:c6:bc:cb
 ${h4_single_mac}  d4:ae:52:c6:bb:ab
 ${h2_single_mac}  d4:ae:52:c9:c5:35
-${h3_intf0_single}  ethernet25
-${h4_intf0_single}  ethernet26
-${h2_intf0_single}  ethernet26
-${h1_intf0_single}  ethernet25
 ${h3_eth1_ip}	192.168.2.10/24
 ${h4_eth1_ip}	192.168.2.11/24
 ${h2_eth1_ip}	192.168.2.21/24

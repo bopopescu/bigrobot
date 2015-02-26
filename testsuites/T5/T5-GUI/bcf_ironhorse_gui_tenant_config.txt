@@ -76,9 +76,53 @@ T4.3 Create Logical Router Routes with Next Hop Group ng1 as next hop
 T4.4 Create Logical Router Routes with previous next hop group ng1 as next hop
 	Create Logical Router Routes 		tenant1			1.2.3.4			16			Next Hop Group	 	ng-1
 
-T5.1 Delete All Port Groups 
+### Endpoints Page
+T5.1 Create Endpoint From Endpoint Page with Port Group as an attachment point and MAC and IP
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg1	new-endpoint1		new-description1		Port Group			port-group-1	${EMPTY}		${EMPTY}	32:02:03:22:ff:0f	10.0.1.36  	55
+T5.2 Create Endpoint From Endpoint Page with Port Group as an attachment point and MAC
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg1	new-endpoint2		new-description2		Port Group			port-group-1	${EMPTY}		${EMPTY}	32:12:03:22:ff:0f	${EMPTY}  	56
+T5.3 Create Endpoint From Endpoint Page with Port Group as an attachment point and IP
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg2	new-endpoint3		new-description3		Port Group			port-group-3	${EMPTY}		${EMPTY}	${EMPTY}			10.0.1.37  	57
+T5.4 Create Endpoint From Endpoint Page with Port Group as an attachment point
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg2	new-endpoint4		new-description4		Port Group			port-group-3	${EMPTY}		${EMPTY}	${EMPTY}			${EMPTY}
+T5.5 Create Endpoint From Endpoint Page with no attachment point and MAC and IP
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg3	new-endpoint5		new-description5		None				${EMPTY}		${EMPTY}		${EMPTY}	34:02:03:02:08:0f	10.2.3.14
+T5.6 Create Endpoint From Endpoint Page with no attachment point and MAC
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg3	new-endpoint6		new-description6		None				${EMPTY}		${EMPTY}		${EMPTY}	32:02:03:32:08:0f	${EMPTY}
+T5.7 Create Endpoint From Endpoint Page with no attachment point and IP
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg3	new-endpoint7		new-description7		None				${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}			10.22.23.4
+T5.8 Create Endpoint From Endpoint Page with no attachment point
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg3	new-endpoint8		new-description8		None				${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}			${EMPTY}
+T5.9 Create Endpoint From Endpoint Page with Switch Port as an attachment point and MAC and IP
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg4	new-endpoint9		new-description9		Switch Port			${EMPTY}		switch-leaf1	ethernet5	32:22:1f:01:08:ff	10.0.12.0  	45
+T5.10 Create Endpoint From Endpoint Page with Switch Port as an attachment point and MAC
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg4	new-endpoint10		new-description10		Switch Port			${EMPTY}		switch-leaf1	ethernet5	32:22:1f:01:08:ae	${EMPTY}  	46
+T5.11 Create Endpoint From Endpoint Page with Switch Port as an attachment point and IP
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg5	new-endpoint11		new-description11		Switch Port			${EMPTY}		switch-leaf2	ethernet3	${EMPTY}			10.82.2.2  	47
+T5.12 Create Endpoint From Endpoint Page with Switch Port as an attachment point
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg5	new-endpoint12		new-description12		Switch Port			${EMPTY}		switch-leaf2	ethernet3	${EMPTY}			10.82.62.2  48
+T5.13 Create Endpoint From Endpoint Page with Switch Port as an attachment point and no switch in endpoint and MAC and IP
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg6	new-endpoint13		new-description13		Switch Port			${EMPTY}		${EMPTY}		${EMPTY}	32:22:1f:51:08:ff	10.5.12.0
+T5.14 Create Endpoint From Endpoint Page with Switch Port as an attachment point and no switch in endpoint
+	Go To Endpoints Page
+	Create Endpoint From Endpoint Page		tenant1		log-seg6	new-endpoint14		new-description14		Switch Port			${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}			${EMPTY}
+
+T6.1 Delete All Port Groups
 	Delete All Port Groups
-T5.2 Delete All Tenants
+T6.2 Delete All Tenants
 	Delete All Tenants
 
 			
@@ -88,17 +132,14 @@ config suite setup
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
-    #Start Selenium Server  -trustAllSSLCertificates
-    #CLI Start Mininet Server  tree,3
-    #Rest Open GUI Port
+    Start Selenium Server  -trustAllSSLCertificates
     Open Browser To Login Page
     Valid Login  admin  adminadmin
-    #Config  master  switch switch-11; interface ethernet1; interface ethernet2; interface ethernet3
     
 	
 config suite teardown
 	Clear Switch Config				switch-leaf1
 	Clear Switch Config				switch-leaf2
 	Close Browser
-    #Stop Selenium Server
+    Stop Selenium Server
     base suite teardown

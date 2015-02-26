@@ -327,13 +327,28 @@ Test BigRobot params argument
     ...              This is line 5 of test case description - image <img src="http://oxpedia.org/wiki/images/thumb/c/c6/Ad.jpg/800px-Ad.jpg" alt="arch diagram">
     ...
     ...              An image    [https://docs.python.org/2/_static/py.png|Python icon]
-    #[Tags]           skipped
+    [Tags]           skipped
     #${val}=         params    common.my_image
     #print           Value = ${val}
     test common params
 
 
+Test evaluation
+    [Tags]           skipped
+    ${status}        set variable    10
+    ${status}        evaluate    ${status} + 1
+    log              new status = ${status}
+
+
+Test environment variable
+    #[Tags]           skipped
+    ${BIGROBOT_PATH} =    Get Environment Variable    BIGROBOT_PATH
+    ${PROFILE} =          Set Variable                ${BIGROBOT_PATH}/data/browser/regression_firefox_profile
+    Log                   Start Selenium Server -trustAllSSLCertificates -firefoxProfileTemplate ${PROFILE}
+
+######################################################################################
 * Keywords
+######################################################################################
 Count me
     ${temp}=         expr   ${KW_COUNTER} + 1
     set global variable   ${KW_COUNTER}   ${temp}

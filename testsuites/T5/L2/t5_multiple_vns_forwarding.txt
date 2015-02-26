@@ -21,25 +21,26 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  feature  IronHorse             
+   [Tags]  L2  feature  IronHorse  daily-sanity
+               
    rest verify fabric switch all
    rest verify fabric link
      
 check forwarding table for vlan 
-   [Tags]   L2  feature  IronHorse         
+   [Tags]   L2  feature  IronHorse   daily-sanity       
    rest verify forwarding vlan table  leaf0-b
    rest verify forwarding vlan table  leaf2-b
    rest verify forwarding vlan table  leaf1-a
    
 check the forwarding vlan translation table for all the switches
-	[Tags]  L2  feature  IronHorse    
+	[Tags]  L2  feature  IronHorse    daily-sanity
     rest verify forwarding vlan xlate  leaf0-b  150  ${leaf0b_ixia_intf}	    
     rest verify forwarding vlan xlate  leaf2-b  300  ${leaf2b_ixia_intf}  
     rest verify forwarding vlan xlate  leaf2-b  200  ${leaf2b_ixia_intf}
     rest verify forwarding vlan xlate  leaf1-a  100  ${leaf1a_ixia_intf}
 
 check fabric ports members in the vlan-table with link up/down
-	[Tags]  L2  feature  IronHorse        
+	[Tags]  L2  feature  IronHorse        daily-sanity
 	rest verify forwarding vlan fabric tag members  leaf0-a
 	rest verify forwarding vlan fabric tag members  leaf1-a
 	rest verify forwarding vlan fabric tag members  leaf2-a 
@@ -59,7 +60,7 @@ check fabric ports members in the vlan-table with link up/down
 	rest enable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}         
 
 check edge port members in the vlan-table with linkup/down 
-	[Tags]  L2  feature  IronHorse      
+	[Tags]  L2  feature  IronHorse      daily-sanity
 	rest verify forwarding vlan edge untag members  leaf0-b  ${leaf0b_ixia_intf}  
 	rest verify forwarding vlan edge untag members  leaf1-b  ${leaf1b_ixia_intf}
 	rest disable fabric interface  leaf0-b  ${leaf0b_ixia_intf}
@@ -75,7 +76,7 @@ check edge port members in the vlan-table with linkup/down
 	rest verify forwarding vlan edge tag members  leaf0-a  ${leaf0a_ixia_intf}
 	
 Verify if ingress traffic vlan ID matches the internal VLAN for untagged interface
-	[Tags]  L2  feature  IronHorse
+	[Tags]  L2  feature  IronHorse   daily-sanity
 	${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=00:02:02:00:00:24  dst_mac=00:02:04:00:00:24  ethertype=8100  vlan_id=2  frame_rate=1000  frame_size=68  name=b_d_flow
     start traffic  ${stream}
     rest verify segment internal vlan  t1  v1  2
@@ -87,7 +88,7 @@ Verify if ingress traffic vlan ID matches the internal VLAN for untagged interfa
     stop traffic
 
 Traffic forwarding between multiple tag on the same interface
-	[Tags]  L2  feature  IronHorse      
+	[Tags]  L2  feature  IronHorse     daily-sanity 
 	
     ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=00:02:02:00:00:24  dst_mac=00:02:04:00:00:24  frame_rate=1000  frame_size=68  name=b_d_flow
     start traffic  ${stream}
@@ -121,7 +122,7 @@ Traffic forward ingress wrong vlan id
     stop traffic  ${stream}
 
 Check broadcast source mac learning on the controller
-	[Tags]  L2  feature  IronHorse  
+	[Tags]  L2  feature  IronHorse   daily-sanity
 	 ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=ff:ff:ff:ff:ff:ff  dst_mac=00:02:04:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000    frame_size=68  name=b_d_flow
     start traffic  ${stream}
     ${result}=  rest verify endpoint  v2  150  ff:ff:ff:ff:ff:ff  leaf0-b  ${leaf0b_ixia_intf}
@@ -130,7 +131,7 @@ Check broadcast source mac learning on the controller
     stop traffic  ${stream}
 
 Check multicast source mac learning on the controller
-	[Tags]  L2  feature  IronHorse
+	[Tags]  L2  feature  IronHorse   daily-sanity
 	 ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=01:00:5e:00:00:01  dst_mac=00:02:04:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000    frame_size=68  name=b_d_flow
     start traffic  ${stream}
     ${result}=  rest verify endpoint  v2  150  01:00:5e:00:00:01  leaf0-b  ${leaf0b_ixia_intf}
@@ -150,7 +151,7 @@ Untag Traffic ingress on tag ports
 
    
 Traffic forwarding with edge port flap
-	[Tags]  L2  feature  IronHorse        
+	[Tags]  L2  feature  IronHorse     daily-sanity   
 	
     ${stream}=             L3 add  no_arp=True  flow=b->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000  frame_size=68  name=b_f_flow
     ${stream1}=             L3 add  no_arp=True  flow=f->b  src_mac=00:02:06:00:00:24  dst_mac=00:02:02:00:00:24  vlan_id=200  ethertype=8100  frame_rate=1000  frame_size=68  name=f_b_flow
@@ -384,15 +385,10 @@ Verify forwarding vlan table with deleting tenants and vns
 * Keywords 
 T5 Functional Suite Setup
    base suite setup
-   add fabric switch
+   fabric infra suite setup
    Set swith int variables
    Set switch dpid variables
-   bring up h1 bond0
-   bring up h2 bond0
-   bring up h3 bond0
-   bring up h4 bond0
-   bring up h5 bond0
-   bring up h6 bond0
+   Set host int variables
    sleep  55
    
 T5 Functional Suite Teardown
@@ -506,27 +502,3 @@ T5 test teardown
 	delete traffic
 	base test teardown 
 
-bring up h1 bond0
-	bash init intf  h1  bond0.10
-    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
-    bash ifup intf  h1   bond0 
-bring up h2 bond0
-	bash init intf  h2  bond0.10
-    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
-    bash ifup intf  h2  bond0
-bring up h3 bond0
-	bash init intf  h3  bond0.10
-    bash add ip address  h3  ${h3_tag_ip}/24  bond0.10
-    bash ifup intf  h3  bond0 
-bring up h4 bond0
-	bash init intf  h4  bond0
-    bash add ip address  h4  ${h4_ip}/24  bond0
-    bash ifup intf  h4  bond0
-bring up h5 bond0
-	bash init intf  h5  bond0
-    bash add ip address  h5  ${h5_ip}/24  bond0
-    bash ifup intf  h5  bond0
-bring up h6 bond0
-	bash init intf  h6  bond0
-    bash add ip address  h6  ${h6_ip}/24  bond0
-    bash ifup intf  h6  bond0 

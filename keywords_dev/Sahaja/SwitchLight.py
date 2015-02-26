@@ -2279,6 +2279,87 @@ class SwitchLight(object):
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.switch_cli_exec_walk(node, string, file_name, padding)
 
+#### Author Sahaja
+    def switch_sflow_counters(self, sw):
+        '''
+        Check if the counters are incrementing on Switch which has filter interface configured
+        '''
+        bash_input = 'ofad-ctl modules sflowa counters | grep "SAMPLES REC"'
+        try:
+            t = test.Test()
+            s1 = t.switch(sw)
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+        s1.bash(bash_input)
+        out1 = s1.cli_content()
+        sample1 = out1.split(':')[1]
+        helpers.sleep(5)
+        s1.bash(bash_input)
+        out2 = s1.cli_content()
+        sample2 = out2.split(':')[1]
+        helpers.test_log("Sample1 is {} and type is {}".format(sample1, type(sample1)))
+        smpl = int(sample2.split()[0]) - int(sample1.split()[0])
+        if smpl > 0:
+            helpers.test_log("Sampling is happening on the switch {}".format(sw))
+            return True
+        else:
+            helpers.test_log("Sample1 is {} and sample2 is {} value did not increment on switch {}".format(sample1, sample2, sw))
+            return False
+
+#### Author Sahaja
+    def switch_sflow_sample_rate(self, sw, rate, intf):
+        '''
+        Check if the sample rate config. is pushed to switch
+        '''
+        sflow_bash = 'ofad-ctl modules sflowa port_attributes | grep {}'.format(rate)
+
+        try:
+            t = test.Test()
+            s1 = t.switch(sw)
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+        s1.bash(sflow_bash)
+        out1 = s1.cli_content()
+        lis_fil_intf = out1.split('\n')
+        fil_intf = map(lambda x : x.split()[0], lis_fil_intf)
+        fil_intf = map(int, fil_intf[1:-1])
+        intf = list(intf)
+        expctd_intf_not_in_list = [int(i) for i in intf if int(i) not in fil_intf]
+        helpers.test_log("Compared these two lists for interfaces param: {} type of param {} and  got:{}".format(intf, type(intf), fil_intf))
+        if len(expctd_intf_not_in_list) > 0 :
+            helpers.test_log("Sample rate is not pushed to few filter interfaces {}".format(expctd_intf_not_in_list))
+            return False
+        else:
+            helpers.test_log("Sample rate config is pushed to all the filter interfaces")
+            return True
+
+
+#### Author Sahaja
+    def switch_sflow_collector(self, sw, ip):
+        '''
+        Check if the collector ip is seen on switch
+        '''
+
+        sflow_bash = 'ofad-ctl modules sflowa collectors | grep {}'.format(ip)
+        try:
+            t = test.Test()
+            s1 = t.switch(sw)
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+        s1.bash(sflow_bash)
+        out1 = s1.cli_content()
+        if ip in out1:
+            helpers.log("IP {} is seen on switch".format(ip))
+            return True
+        else:
+            helpers.log("IP {} not observed on switch ".format(ip))
+            return False
+
+
+#####Author Sahaja
 
 
     def parse_switch_cmd(self, node, cmd):
@@ -2299,18 +2380,28 @@ class SwitchLight(object):
 
         sw_content = string.split(switch.cli_content(), '\n')
         sw_content = sw_content[1:]
+        helpers.log("First line of sw_content {} second line : {} last line: {}".format(sw_content[0], sw_content[1], sw_content[-1]))
         if "  " in sw_content[1]:
-            sw_content[1] = re.sub('\s+', '|', sw_content[1])
+            sw_content[1] = re.sub('\s', '|', sw_content[1])
             indeces = [i for i, ltr in enumerate(sw_content[1]) if ltr == '|']  # Will have entry like [4, 5, 10, 11, 26, 27, 34, 35, 42, 43, 49, 50, 67, 68, 85, 86]
+            helpers.log("1) indeces value {}".format(indeces))
             indeces = [indeces[i] for i in range(0, len(indeces)) if i % 2 != 0]  # Will have [5, 11, 27, 35, 43, 50, 68, 86]
+            helpers.log("2) indeces value {}".format(indeces))
         else:
             indeces = [i for i, ltr in enumerate(sw_content[1]) if ltr == '|']
 
         shifted_indeces = indeces
+        helpers.log("1) shifted indeces value {}".format(shifted_indeces))
         indeces.insert(0, 0)
-        len_fields = zip(indeces, shifted_indeces)
+        helpers.log("2) indeces value {}".format(indeces))
+        helpers.log("2) shifted indeces value {}".format(shifted_indeces))
+
+        len_fields = zip(indeces, indeces[1:])
+
+        helpers.log("length fields are  {}".format(len_fields))
         header = [sw_content[0][x:y] for (x, y) in len_fields]
         header = map(lambda x : x.strip(), header)
+        helpers.log("header is {}".format(header))
         dic_data = []
         # ignore_last = len(sw_content)
         for row in sw_content[2:len(sw_content) - 1]:
@@ -2320,6 +2411,8 @@ class SwitchLight(object):
             dic_data.append(row_dict)
         helpers.log("List of dictionaries %s" % dic_data)
         return dic_data
+
+# ##Sahaja
 
     def parse_switch_op(self, sw_content):
         '''
@@ -2352,5 +2445,43 @@ class SwitchLight(object):
             dic_data.append(row_dict)
         # helpers.log("List of dictionaries %s" % dic_data)
         return dic_data
+
+
+# ## Sahaja
+    def check_intf_errors(self, node, intf):
+        '''
+        Function to make sure there are no errors after interface level action
+
+        Input : Switch, Interface
+
+        Output : True or False depending on errors are seen or not
+        '''
+        cmd = 'show interface eth{} detail'.format(intf)
+
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            switch.cli(cmd)
+
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+
+        sw_content = string.split(switch.cli_content(), '\n')
+        sw_content = sw_content[1:]
+
+        for line in sw_content:
+            m = re.search(r'(\d+) error, (\d+) crc', line, re.IGNORECASE)
+            if m:
+                if m.group(1) != 0 or m.group(2) != 0:
+                    print "Errors are {} CRC errors are {}".format(m.group(1), m.group(2))
+                    return False
+                else:
+                    print "Errors are {} CRC errors are {}".format(m.group(1), m.group(2))
+
+
+
+
+
 
 

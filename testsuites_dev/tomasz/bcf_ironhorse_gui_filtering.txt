@@ -1,0 +1,500 @@
+*** Settings ***
+Documentation   	Test suite with tests to check pages, hover over menu and check elements. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Force Tags              T5  GUI  BCF  Feature  IronHorse-Plus
+Library         	keywords/BsnCommon.py
+Library        		keywords/BsnSelenium.py
+Library         	keywords_dev/tomasz/BigTap.py
+Library         	keywords/AppController.py
+Library        		SeleniumLibrary
+Resource        	bcf_resource.txt
+Library       		String
+
+*** Variables ***
+@{ENDPOINT COMPARISON COLUMNS}=   Any  Tenant  Segment  Name  Attachment State  Description  Active Since  Last Moved  IP Addresses  MAC Address  Switch  Interface  Port Group  VLAN
+	
+@{TENANT COMPARISON COLUMNS}=  Any  Name  Description  Router MAC Address  VRF ID  Default Route  Applied Policy List
+...  System Tenant Interface  Total Tenant Interfaces  Total Segment Interfaces  Total Segments  Total Routes  Total Next Hop Groups
+...  Total Policy Lists
+
+@{INTERFACE COMPARISON COLUMNS}=  Any  Switch  Switch MAC  Interface Name  Status  Admin Status  Link Status  Hardware Address  Number
+...  Spine Switch  Leaf Switch  Port Group  Breakout  Auto-Negotiation
+
+*** Test Case ***
+### Endpoints	
+T1.1 Check Endpoints Advanced Query Builder
+	Check Advanced Query Builder  Endpoints  ${ENDPOINT COMPARISON COLUMNS}
+	[Tags]  GUI-16
+
+T1.2 Add Endpoint Filter
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Any  				contains  		test
+	Add Filter Query  VLAN  			greater than  	1
+	Add Filter Query  Tenant  			starts with  	test
+	Add Filter Query  Segment  			ends with  		test
+	Add Filter Query  Name  			contains  		test
+	Add Filter Query  Attachment State	contains  		test
+	Add Filter Query  Description  		contains  		test
+	Add Filter Query  IP Addresses  	contains  		1
+	Add Filter Query  MAC Address  		contains  		test
+	Add Filter Query  Switch  			contains  		test
+	Add Filter Query  Interface  		contains  		test
+	Add Filter Query  Port Group  		contains  		test
+	Close And Filter Advanced Query Builder
+
+#T1.3 Verify Endpoint Filtering
+T1.3.1 Any
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Any  contains  2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  True
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Any  contains  x
+	Add Filter Query  Any  contains  2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+T1.3.2 VLAN
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  VLAN  greater than  11
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  True
+T1.3.3 Tenant
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Tenant  starts with  tenant-
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  True
+T1.3.4 Segment
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Segment  ends with  -2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  True
+T1.3.5 Name
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Name  is  endpoint-1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+T1.3.6 Attachment State
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Attachment State  contains  Down
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  True
+T1.3.7 Description
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Description  contains  endpoint
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+T1.3.8 IP Addresses
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  IP Addresses  contains  2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  False
+T1.3.9 MAC Address
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  MAC Address  contains  2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  True
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  True
+T1.3.10 Switch
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Switch  contains  b
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+T1.3.11 Interface
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Interface  starts with  ethernet
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  True
+T1.3.12 Port Group
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Port Group  contains  pg
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  True
+	Verify Filtering Result  endpoint-3  False
+T1.3.13 Active Since
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Active Since  is after  ${EMPTY}
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+T1.3.14 Last Seen
+	Open Advanced Query Builder  Endpoints
+	Add Filter Query  Last Moved  is after  ${EMPTY}
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  endpoint-1  False
+	Verify Filtering Result  endpoint-2  False
+	Verify Filtering Result  endpoint-3  False
+
+### Tenants
+T2.1 Check Tenants Advanced Query Builder
+	Check Advanced Query Builder  Tenants  ${TENANT COMPARISON COLUMNS}
+	[Tags]  GUI-16
+
+T2.2 Add Tenant Filter
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Any						contains		test
+	Add Filter Query  Name  					contains		test
+	Add Filter Query  Description  				starts with		test
+	Add Filter Query  Router MAC Address  		ends with		test
+	Add Filter Query  VRF ID  					equals			1
+	Add Filter Query  Default Route  			ends with		test
+	Add Filter Query  Applied Policy List		starts with		test
+	Add Filter Query  System Tenant Interface  	True			${EMPTY}
+	Add Filter Query  Total Tenant Interfaces  	equals			1
+	Add Filter Query  Total Segment Interfaces 	greater than 	1
+	Add Filter Query  Total Segments  			less than		1
+	Add Filter Query  Total Routes  			equals			1
+	Add Filter Query  Total Next Hop Groups		greater than	1
+	Add Filter Query  Total Policy Lists		less than		1
+	Close And Filter Advanced Query Builder
+
+#T2.3 Verify Tenant Filtering
+T2.3.1 Any
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  	Any  contains  tenant
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  True
+	Verify Filtering Result  system  False
+T2.3.2 Name
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  	Name  contains  system
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  True
+T2.3.3 Description
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  	Description  contains  test
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  False
+T2.3.4 Router MAC Address
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  	Router MAC Address  contains  5c:16:c7:01
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  True
+	Verify Filtering Result  system  True
+T2.3.5 VRF ID
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  	VRF ID  equals  1023
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  True
+T2.3.6 Default Route
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Default Route  ends with  test
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  False
+T2.3.7 Applied Policy List
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Applied Policy List  starts with  test1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  False
+T2.3.8 System Tenant Interface
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  System Tenant Interface  True  ${EMPTY}
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  True
+	Verify Filtering Result  system  False
+T2.3.9 Total Tenant Interfaces
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Tenant Interfaces  greater than  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  True
+T2.3.10 Total Segment Interfaces
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Segment Interfaces  greater than  0
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  True
+	Verify Filtering Result  system  False
+T2.3.11 Total Segments
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Segments  less than  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  True
+T2.3.12 Total Routes
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Routes  equals  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  True
+	Verify Filtering Result  system  False
+T2.3.13 Total Next Hop Groups
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Next Hop Groups  less than  2
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  True
+	Verify Filtering Result  tenant-b  True
+	Verify Filtering Result  system  True
+T2.3.14 Total Policy Lists
+	Open Advanced Query Builder  Tenants
+	Add Filter Query  Total Policy Lists  less than  1
+	Close And Filter Advanced Query Builder
+	Verify Filtering Result  tenant-a  False
+	Verify Filtering Result  tenant-b  False
+	Verify Filtering Result  system  True
+
+### Interfaces
+T3.1 Check Interfaces Advanced Query Builder
+	Check Advanced Query Builder  Interfaces  ${INTERFACE COMPARISON COLUMNS}
+	[Tags]  GUI-16
+
+T3.2 Add Interface Filter
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Any						contains				test
+	Add Filter Query  Switch  					is						test
+	Add Filter Query  Switch MAC  				starts with				test
+	Add Filter Query  Interface Name  			ends with				test
+	Add Filter Query  Status  					True					${EMPTY}
+	Add Filter Query  Admin Status  			False					${EMPTY}
+	Add Filter Query  Link Status				Null or unspecified  	${EMPTY}
+	Add Filter Query  Hardware Address  		is						test
+	Add Filter Query  Number  					equals					1
+	Add Filter Query  Spine Switch 				True					${EMPTY}
+	Add Filter Query  Leaf Switch  				False					${EMPTY}
+	Add Filter Query  Port Group  				is						test
+	Add Filter Query  Breakout					Null or unspecified  	${EMPTY}
+	Add Filter Query  Auto-Negotiation			Null or unspecified  	${EMPTY}
+	Close And Filter Advanced Query Builder
+
+#T3.3 Verify Interfaces Filtering
+T3.3.1 Any
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Any  contains  ethernet11
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  True
+	Verify Interface Filtering Result  ethernet2  False
+
+T3.3.2 Switch & Interface Name
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Interface Name  ends with  ethernet1
+	Add Filter Query  Switch  contains  leaf
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  False
+	Verify Interface Filtering Result  ethernet2  False
+
+T3.3.3 Switch MAC & Interface Name
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Interface Name  is  ethernet1
+	Add Filter Query  Switch MAC  is  ${s1_mac}
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  False
+	Verify Interface Filtering Result  ${s3_alias}  False
+	Verify Interface Filtering Result  ${s4_alias}  False
+	Verify Interface Filtering Result  ${s5_alias}  False
+	Verify Interface Filtering Result  ethernet2  False
+
+T3.3.4 Status
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Status  True  ${EMPTY}}
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  True
+	Verify Interface Filtering Result  Link Down  False
+
+T3.3.5 Admin Status & Interface Name
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Admin Status  True  ${EMPTY}
+	Add Filter Query  Interface Name  contains  ethernet12
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  True
+
+T3.3.6 Link Status
+	Config  master  switch test-switch; interface test-interface
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Link Status  Null or unspecified  ${EMPTY}
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  False
+	Verify Interface Filtering Result  ${s3_alias}  False
+	Verify Interface Filtering Result  ${s4_alias}  False
+	Verify Interface Filtering Result  ${s5_alias}  False
+	Verify Interface Filtering Result  test-interface  True
+	Config  master  no switch test-switch
+
+T3.3.7 Hardware Address
+	Config  master  switch test-switch; interface test-interface
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Hardware Address  is  ${EMPTY}
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  False
+	Verify Interface Filtering Result  ${s3_alias}  False
+	Verify Interface Filtering Result  ${s4_alias}  False
+	Verify Interface Filtering Result  ${s5_alias}  False
+	Verify Interface Filtering Result  test-interface  True
+	Config  master  no switch test-switch
+
+T3.3.8 Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Number  greater than  53
+	Add Filter Query  Number  less than  55
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  False
+
+T3.3.9 Spine Switch & Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Spine Switch  True  ${EMPTY}
+	Add Filter Query  Number  less than  3
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  False
+	Verify Interface Filtering Result  ${s3_alias}  False
+	Verify Interface Filtering Result  ${s4_alias}  False
+	Verify Interface Filtering Result  ${s5_alias}  True
+	Verify Interface Filtering Result  ethernet5  False
+
+T3.3.10 Leaf Switch & Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Leaf Switch  True  ${EMPTY}
+	Add Filter Query  Number  less than  3
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  False
+	Verify Interface Filtering Result  ethernet5  False
+
+T3.3.11 Port Group & Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Port Group  is  test
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  False
+	Verify Interface Filtering Result  ${s3_alias}  False
+	Verify Interface Filtering Result  ${s4_alias}  False
+	Verify Interface Filtering Result  ${s5_alias}  False
+
+T3.3.12 Breakout & Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Breakout  False  ${EMPTY}
+	Add Filter Query  Number  greater than  50
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  False
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  False
+
+T3.3.13 Auto-Negotiation & Number
+	Open Advanced Query Builder  Interfaces
+	Add Filter Query  Auto-Negotiation  Null or unspecified  ${EMPTY}
+	Add Filter Query  Number  equals  5
+	Close And Filter Advanced Query Builder
+	Verify Interface Filtering Result  ${s1_alias}  True
+	Verify Interface Filtering Result  ${s2_alias}  True
+	Verify Interface Filtering Result  ${s3_alias}  True
+	Verify Interface Filtering Result  ${s4_alias}  True
+	Verify Interface Filtering Result  ${s5_alias}  True
+
+*** Keyword ***
+config suite setup
+    base suite setup
+	Set Selenium Timeout  20
+	${c1_ip}=            get node ip   master
+    set suite variable  ${SERVER}  ${c1_ip}
+    Set URLs
+    #Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+
+	${tmp}  params  node=c1  key=ip
+	set suite variable  ${c1_ip}  ${tmp}
+	${tmp}  params  node=c2  key=ip
+	set suite variable  ${c2_ip}  ${tmp}
+
+	${tmp}  params  node=s1  key=mac
+	set suite variable  ${s1_mac}  ${tmp}
+	${tmp}  params  node=s2  key=mac
+	set suite variable  ${s2_mac}  ${tmp}
+	${tmp}  params  node=s3  key=mac
+	set suite variable  ${s3_mac}  ${tmp}
+	${tmp}  params  node=s4  key=mac
+	set suite variable  ${s4_mac}  ${tmp}
+	${tmp}  params  node=s5  key=mac
+	set suite variable  ${s5_mac}  ${tmp}
+
+	${tmp}  params  node=s1  key=alias
+	set suite variable  ${s1_alias}  ${tmp}
+	${tmp}  params  node=s2  key=alias
+	set suite variable  ${s2_alias}  ${tmp}
+	${tmp}  params  node=s3  key=alias
+	set suite variable  ${s3_alias}  ${tmp}
+	${tmp}  params  node=s4  key=alias
+	set suite variable  ${s4_alias}  ${tmp}
+	${tmp}  params  node=s5  key=alias
+	set suite variable  ${s5_alias}  ${tmp}
+
+	set suite variable  ${s1_dpid}  00:00:${s1_mac}
+	set suite variable  ${s2_dpid}  00:00:${s2_mac}
+	set suite variable  ${s3_dpid}  00:00:${s3_mac}
+	set suite variable  ${s4_dpid}  00:00:${s4_mac}
+	set suite variable  ${s5_dpid}  00:00:${s5_mac}    
+	
+config suite teardown
+	Close Browser
+    #Stop Selenium Server
+    base suite teardown

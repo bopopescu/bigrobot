@@ -1,0 +1,112 @@
+* Setting
+Documentation   Backpressure and congestion testsuite
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      test setup topology
+Test Teardown   test teardown topology
+Force Tags      
+Library         keywords/BsnCommon.py
+Library         keywords/Host.py
+Library         keywords/T5.py
+Library         keywords/T5Platform.py
+Library         keywords/SwitchLight.py
+Library         keywords/T5Utilities.py
+Library         keywords/BsnCommon.py
+Library         Collections.py
+Library         keywords/Ixia.py
+Library         keywords/KVMOperations.py
+Resource        testsuites_dev/slim/Backpressure_and_congestion/Backpressure_congestion_testcase.txt
+### Traffic frame size from 64, 128, 256, 512, 1518 and 9216 bytes
+### Corsair Testcase Description: https://bigswitch.atlassian.net/wiki/pages/viewpage.action?pageId=60850185
+### Setup Information: https://drive.google.com/open?id=0B4kp2PZQLI-Kbjl5bm5JcVhGODg&authuser=1
+### Egress ports should be adjacent to each other, e.g. port1, 2 egress or port 3,4 egress
+### platform tested Acton 6700, 5710, Dell S6000
+
+* Test Cases
+TC01 Oversubscribe one 10gig edge port
+    manual untested
+    [Tags]     feature       platform
+
+TC02 Oversubscribe one 1gig edge port
+    manual untested
+    [Tags]     feature       platform
+
+TC03 Oversubscribe one 40gig edge port
+    manual untested
+    [Tags]     feature       platform
+
+TC04 Oversubscribe one 10gig peer link
+    manual untested
+    [Tags]     feature       platform
+
+TC05 Oversubscribe one 40gig peer link
+    manual untested
+    [Tags]     feature       platform
+
+TC06 Oversubscribe one 40gig spine link
+    manual untested
+    [Tags]     feature       platform
+    
+TC07 Receive pause frame from traffic generator
+    manual untested
+    [Tags]     feature       platform
+
+TC08 Send traffic from one port to two egress port with one port at slower speed
+    manual untested
+    [Tags]     feature       platform
+
+TC09 microburst traffic (reference from Corsair testplan)
+    manual untested
+    [Tags]     feature       platform
+
+TC10 vlan priority traffic (reference from Corsair testplan)
+    manual untested
+    [Tags]     feature       platform
+
+TC11 Oversubscribe one 10gig port in breakout cable 
+    manual untested
+    [Tags]     feature       platform
+
+TC12 Oversubscribe 40gig spine link and verify lldp is not dropped
+    manual untested
+    [Tags]     feature       platform
+    
+TC13 Oversubscribe 10gig peer link and verify lldp is not dropped
+    manual untested
+    [Tags]     feature       platform
+    
+TC14 Verify if buffer allocation in bcf is related to link speed
+    manual untested
+    [Tags]     feature       platform
+    
+TC15 Add Span port to consumed buffer allocation
+    manual untested
+    [Tags]     feature       platform
+    
+TC16 Saturate low speed link and verify high speed link traffic is not dropped
+    manual untested
+    [Tags]     feature       platform
+    
+TC17 Restart ofad and verify traffic behavior after restart
+    manual untested
+    [Tags]     feature       platform
+    
+TC18 Consumed all buffer (to check with Sridhar)
+    manual untested
+    [Tags]     feature       platform
+    
+TC19 link flap on congested port
+    manual untested
+    [Tags]     feature       platform
+    
+TC97 Verify all testcases with two stream, one below 200bytes and the other above 200bytes
+    manual untested
+    [Tags]     feature       platform
+    
+TC98 Verify all testcases with imix traffic
+    manual untested
+    [Tags]     feature       platform
+    
+TC99 Verify all testcases with copper/fiber ports
+    manual untested
+    [Tags]     feature       platform

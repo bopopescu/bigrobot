@@ -13,6 +13,7 @@ Library         keywords/Ixia.py
 Library         keywords/T5.py   
 Library         keywords_dev/kranti/ironhorse/T5SwitchPlatform.py  
 Library         String
+Resource	     testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 #Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
 
 
@@ -69,7 +70,7 @@ Verify the openflow aux channel count on Switch
 	verify openflow aux channel  s1  c1
 	verify openflow aux channel  s2  c1  
 	verify openflow aux channel  s7  c1  
-    [Tags]  switch-platform  ofaux  feature         
+    [Tags]  switch-platform  ofaux  feature   daily-sanity      
 
     
 ### SECTION B: Initial Configuration 
@@ -142,7 +143,7 @@ Verify ntp server on spine after process ntp restart
     bash restart process  s1  ntpd
     Sleep  5
     verify ntp server  s1  time-c.nist.gov    
-    [Tags]  switch-platform  ntp  feature
+    [Tags]  switch-platform  ntp  feature  daily-sanity
 
 Verify ntp configuration on leaf
     configure ntp server  s2  time-c.nist.gov
@@ -158,7 +159,7 @@ Verify ntp server on leaf after process ntp restart
     bash restart process  s2  ntpd
     Sleep  5
     verify ntp server  s2  time-c.nist.gov    
-    [Tags]  switch-platform  ntp  feature
+    [Tags]  switch-platform  ntp  feature  daily-sanity
 
 #Verify the default gateway configuration can be deleted and added
 #    delete static ip  s1  ${netmask}  ${gateway}
@@ -173,7 +174,7 @@ Verify ntp server on leaf after process ntp restart
 
 Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
-    [Tags]  switch-platform  Interface  feature    
+    [Tags]  switch-platform  Interface  feature  daily-sanity  
     
 Shutdown and no shut 10G interface on switch and verify interface state is down and up
     shut interface  s1  ${interface10g}
@@ -182,16 +183,16 @@ Shutdown and no shut 10G interface on switch and verify interface state is down 
     unshut interface  s1  ${interface10g}
     Sleep  15
     verify interface state  s1  ${interface10g}  up
-    [Tags]  switch-platform  interface  feature             
+    [Tags]  switch-platform  interface  feature      daily-sanity       
 
 Shutdown and no shutdown 1G interface on switch and verify interface state is down and up
     shut interface  s1  ${interface1g}
-    Sleep  15
+    Sleep  60
     verify admin interface state  s1  ${interface1g}  True  admin down
     unshut interface  s1  ${interface1g}
-    Sleep  15
+    Sleep  60
     verify interface state  s1  ${interface1g}  up
-    [Tags]  switch-platform  interface  feature  
+    [Tags]  switch-platform  interface  feature   daily-sanity
 
 Verify model in Show version for leaf 
     Log    Step 1 - Verify right model in Show version for leaf as AS5710
@@ -207,11 +208,11 @@ Verify switch interface 1g configuration on switch
     Log    Step 1 - Verify the 1G interface configuration on switch 
     #configure 1g interface on switch  s1  ${interface1g}
     verify 1g interface on switch  s1  ${interface1g}  1G    
-    [Tags]  switch-platform  interface  feature         
+    [Tags]  switch-platform  interface  feature         daily-sanity
 
 verify the ofaux channel on controller  
     verify ofaux channel on controller  c1  ${switch1_name}
-    [Tags]  switch-platform  ofaux  feature  
+    [Tags]  switch-platform  ofaux  feature   daily-sanity
 
 #Verify the user password can have alphanumeric character 
 #    [Tags]  switch-platform  usermanagement  feature     
@@ -311,7 +312,7 @@ Verify the show environment thermal Sensor Status in switch
     verify show environment thermal status  s1  none  thermal  5  Status
     
 Verify the show environment Thermal Sensor temperature in switch
-    [Tags]  switch-platform  environment  feature  
+    [Tags]  switch-platform  environment  feature   daily-sanity
     verify show environment thermal status  s1  none  thermal  1  Temperature
     verify show environment thermal status  s1  none  thermal  2  Temperature
     verify show environment thermal status  s1  none  thermal  3  Temperature
@@ -339,7 +340,8 @@ T5 switch platform test setup
    Set Suite Variable		${interface10g}
    ${interface1g}=   get_switch_int_topo  s1  ixia1_int0
    Set Suite Variable		${interface1g}
-   
+   fabric infra suite setup
+   reconnect switch ips
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
    #rest add dpid  ${switch1_name}   ${swDpid1}

@@ -34,8 +34,8 @@ Test Cluster formation with 2 different versions
     Log     Step 3 - Bring up the stby controller and add it to the same cluster
     Log     Step 4 - Verify that the stby controller can not be added to the same cluster    
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested  
+    [Tags]  Manual
+    Manual Passed 
 
 Test Cluster formation with a disconnected/invalid NTP server
     Log     Step 1 - Test Cluster formation with a disconnected/invalid NTP server 
@@ -65,17 +65,17 @@ Test Simulate with large configs / issuing failover etc
     [Tags]  Manual  skipped
     Manual Passed
 
-Test Continuous SNMP Walks
+Test SNMP Walks
     Log     Step 1 - Test Continuous SNMP Walks   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Test Continuous switch connect/disconnect
     Log     Step 1 - Test Continuous switch connect/disconnect   
     [Tags]  T5  controller  negative   
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Test Continuous switch connect/disconnect Without removing the stdby controller add another stdby controller
     Log     Step 1 - Test Without removing the stdby controller add another stdby controller   
@@ -87,8 +87,8 @@ Try to add more than 2 controllers in to a cluster
     Log     Step 1 - Try to add more than 2 controllers in to a cluster 
     Log     Step 2 - Verify that it should not be allowed and 3rd controller should not join cluster  
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested  
-    Manual untested 
+    [Tags]  Manual  
+    Manual Passed 
 
 Test Active & Stdby controller configured in different time zones
     Log     Step 1 - Test Active & Stdby controller configured in different time zones 
@@ -100,8 +100,8 @@ Test Active & Stdby controller configured in different time zones
 Killing active deamons (eg: keepalived, ntpd, collectd)
     Log     Step 1 - Killing active deamons (eg: keepalived, ntpd, collectd, rsyslog)   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested 
+    [Tags]  Manual
+    Manual Passed 
 
 Test continuous floodlight restarts
     Log     Step 1 - Test continuous floodlight restarts   
@@ -119,8 +119,8 @@ Overlapping / Misconfiguration parameters (Same DPID/MAC with two different swit
 Changes in the switch role (leaf to spine / spine to leaf)
     Log     Step 1 - Changes in the switch role (leaf to spine / spine to leaf)   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Misconfiguration in the leaf groups 
     Log     Step 1 - Misconfiguration in the leaf groups   
@@ -156,18 +156,24 @@ Adding/deleting Controller IP address
     Manual passed
 
 Connecting leaves in between racks
-    Log     Step 1 - Connecting leaves in between racks   
+    Log     Step 1 - Connecting leaves in between racks 
+    Log     Step 2 - show fabric error reported Invalid Link between Leaf groups 
+    Log     Step 3 - 
+    Log     Step 4 - Invalid links Link between Leaf Groups [rack1, rack0 ]
+
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Add spine to spine direct links
     Log     Step 1 - Add spine to spine direct links  
     Log     Step 2 - Verify that fabric error reports the error for invalid links
     Log     Step 3 - Verify that the fabric error shows the misconfigured link is displayed in show fabric error  
+    Log     Step 4 - Invalid links Link between Spine switches
+
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 Try to create external stp loop sending STP bpdu 
     Log     Step 1 - Try to create external stp loop- Bpdu guard is by default enabled and it brings port down 
@@ -182,8 +188,8 @@ Different flavor of traffic types ( CRC, malformed, Invalid protocols)
     Log     Step 3 - Collecting the result matrix with different type of invalid packets 
     Log     Step 4 - Will Mark pass and fail if find any behavior inconsistent
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual Passed
 
 IP header with more than 1500 Bytes Invalid header type 
     Log     Step 1 - IP header with more than 1500 Bytes or Invalid header type 
@@ -195,8 +201,8 @@ IP header with more than 1500 Bytes Invalid header type
 Killing OFAD
     Log     Step 1 - Killing OFAD
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested
-    Manual untested 
+    [Tags]  Manual
+    Manual Passed
 
 Loosely attached SFP<->Fiber connections
     Log     Step 1 - Loosely attached SFP<->Fiber connections
@@ -209,22 +215,22 @@ Loosely attached SFP<->Fiber connections
 Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff, 00:00:00:00:00:00)
     Log     Step 1 - Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff)
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested  
-    Manual untested
+    [Tags]  Manual  
+    Manual Passed
 
 Test with traffic invalid src mac and verify that traffic is dropped 
     Log     Step 1 - Test with invalid src mac like 00:00:00:00:00:00 
     Log     Step 2 - Traffic should be dropped and mac should not be learned 
     [Tags]  T5  switch  negative  
-    [Tags]  Manual-untested     
-    Manual untested
+    [Tags]  Manual    
+    Manual Passed
 
 Test with traffic invalid dst mac and verify that traffic is dropped 
     Log     Step 1 - Test with invalid dst mac like 00:00:00:00:00:00 
     Log     Step 2 - Traffic should be dropped and mac should not be learned 
     [Tags]  T5  switch  negative   
-    [Tags]  Manual-untested  
-    Manual untested
+    [Tags]  Manual  
+    Manual Passed
     
 
 * Keywords

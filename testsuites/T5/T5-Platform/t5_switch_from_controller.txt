@@ -16,13 +16,30 @@ Library         keywords/T5Switch.py
 #Library         keywords_dev/kranti/ironhorse/T5SwitchFromController.py
 Library         String
 #Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Resource	    testsuites/T5/t5_physical_variables.txt
 
 
 *Variables
-${switchlight_version}  Switch Light OS
-${netmask}  18
-${switch1_name}=  leaf0-a
-
+${switchlight_version}   Switch Light OS
+${netmask}               18
+${switch1_name}=         leaf0-a
+${leaf_modelcomp}=       Model
+${leaf_model}=           AS5710-54X
+${leaf_manufcomp}=       Manufacturer
+${leaf_manuf}=           Accton
+${leaf_platcomp}=        Platform
+${leaf_plat}=            powerpc-accton-as5710-54x-r0
+${leaf_platnamecomp}=        Platformname
+${leaf_platname}=            powerpc-accton_as5710_54x-r0
+${leaf_vendorcomp}=          Vendor
+${leaf_vendor}=              Edgecore
+${leaf_cpldcomp}=            CPLD
+${leaf_cpld}=                5.5.5
+${leaf_oniecomp}=            ONIE
+${leaf_onie}=                2014.08.00.09
+${leaf_lagcomp}=             LAG
+${leaf_lag}=                 16
 *Test Case
 
 ###
@@ -197,10 +214,45 @@ TC28 Get and Verify the switch PSU Type information from controller
     ${dpid} =  rest get mac  ${switch1_name}
     verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  Type  
 
+TC29 Verify Manufacturer of leaf switch version from controller 
+    [Tags]  switch-platform  version  feature  
+    verify switch version  ${switch1_name}  ${leaf_manufcomp}  ${leaf_manuf}     
+
+TC30 Verify switch version from controller for Platform of leaf switch
+    [Tags]  switch-platform  version  feature 
+    verify switch version  ${switch1_name}  ${leaf_platcomp}  ${leaf_plat}
+
+TC31 Verify switch version from controller for PlatformName of leaf switch
+    [Tags]  switch-platform  version  feature
+    verify switch version  ${switch1_name}  ${leaf_platnamecomp}  ${leaf_platname}
+
+TC32 Verify switch version from controller for Vendor of leaf switch
+    [Tags]  switch-platform  version  feature
+    verify switch version  ${switch1_name}  ${leaf_vendorcomp}  ${leaf_vendor}
+
+TC33 Verify switch version from controller for CPLD of leaf switch
+    [Tags]  switch-platform  version  feature
+    verify switch version  ${switch1_name}  ${leaf_cpldcomp}  ${leaf_cpld}
+
+TC34 Verify switch version from controller for ONIE of leaf switch
+    [Tags]  switch-platform  version  feature
+    verify switch version  ${switch1_name}  ${leaf_oniecomp}  ${leaf_onie}
+
+TC35 Verify switch version from controller for LAG of leaf switch
+    [Tags]  switch-platform  version  feature
+    verify switch version  ${switch1_name}  ${leaf_lagcomp}  ${leaf_lag}
+
+
 * Keywords
       
 T5 switch platform test setup
    base suite setup
+   Set swith int variables
+   Set switch dpid variables
+   fabric infra suite setup
+   Set swith int variables
+   Set switch dpid variables
+   Set host int variables
    reconnect switch ips
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
@@ -254,4 +306,7 @@ verify switch model info from controller  [Arguments]  ${switch}
 verify switch environment PSU from controller  [Arguments]  ${switch}  ${dpid}  ${model}  ${element}  ${element_number}  ${component}
     ${result}=  rest get switch environment psu from controller  ${switch}  ${dpid}  ${model}  ${element}  ${element_number}  ${component}
            
-   
+verify switch version  [Arguments]  ${switch}  ${component}  ${expectedVal}
+    ${result}=  rest get switch version leaf from controller  ${switch}  ${component}  ${expectedVal}
+    Should be True  ${result}
+      

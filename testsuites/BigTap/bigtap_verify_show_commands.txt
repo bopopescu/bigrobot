@@ -1,18 +1,18 @@
 *Settings
-Documentation  Verify CLI Commands
-Suite Setup  cli suite setup
-Suite Teardown   cli suite teardown
-Test Setup   cli test setup
-Test Teardown  cli test teardown 
-Force Tags   platform Sanity
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
-Library  Collections.py
-Library  OperatingSystem.py
-Library  String.py
+Documentation           Verify CLI Commands
+Suite Setup             cli suite setup
+Suite Teardown          cli suite teardown
+Test Setup              cli test setup
+Test Teardown           cli test teardown 
+Force Tags              BigTap  blackbird-300  Quanta-LB9  Quanta-LY2  show-cli
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
 
 *Variable
 ${switch1_alias}                        app-rlb9-2
@@ -65,13 +65,13 @@ TC1: Verify CLI command show bigtap
     Should be equal as integers   ${filter_dictionary[0]['num-active-policies']}  1
     #Verify num-policies
     Should be equal as integers   ${filter_dictionary[0]['num-policies']}  1
-    [Tags]  feature  cli 
+    [Tags]  full  feature
 
 TC2: Verify CLI show bigtap completion
     ${myversion}=  Get Environment Variable  controller_version
     ${result}=  Run Keyword If  '${myversion}' == '4.1.1'  cli walk command  show bigtap  17  ELSE IF  '${myversion}' == '3.0.0'   cli walk command  show bigtap  12  
     Should be true  ${result}    
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
     
 TC3: Disable/enable inport-masking and verify show bigtap
     ${result}=  rest disable feature  inport-mask
@@ -84,7 +84,7 @@ TC3: Disable/enable inport-masking and verify show bigtap
     sleep  5        
     ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/info
     Should be True  ${filter_dictionary[0]['inport-mask']}     
-    [Tags]  feature  cli  
+    [Tags]  full  feature
     
 TC4: Disable/enable overlap and verify show bigtap
     ${result}=  rest disable feature  overlap
@@ -97,7 +97,7 @@ TC4: Disable/enable overlap and verify show bigtap
     sleep  5        
     ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/info
     Should be True  ${filter_dictionary[0]['overlap']} 
-    [Tags]  feature  cli 
+    [Tags]  full  feature
 
 TC5: Disable/enable tracked-host and verify show bigtap
     ${result}=  rest disable feature  tracked-host
@@ -110,7 +110,7 @@ TC5: Disable/enable tracked-host and verify show bigtap
     sleep  5        
     ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/info
     Should be True  ${filter_dictionary[0]['host-track']} 
-    [Tags]  feature  cli 
+    [Tags]  full  feature
     
 TC6: Verify CLI command show bigtap interface-names
     ${command_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/interface-config
@@ -130,12 +130,12 @@ TC6: Verify CLI command show bigtap interface-names
     Should be equal as strings   ${command_dictionary[3]['interface']}  ${delivery_intf_1}
     Should be equal as strings   ${command_dictionary[3]['name']}  ${delivery_alias_1}
     Should be equal as strings   ${command_dictionary[3]['role']}  delivery
-    [Tags]  feature  cli
+    [Tags]  full  feature
     
 TC7: Verify CLI show bigtap interface-names completion
     ${result}=  cli walk command  show bigtap interface-names  3  
     Should be true  ${result}          
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
     
 TC8: Verify CLI command show bigtap policy
     ${command_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy?select=info
@@ -177,121 +177,147 @@ TC8: Verify CLI command show bigtap policy
     Should not be true  ${command_dictionary[0]['info']['strip-vlan']}
     #Verify type
     Should be equal as strings   ${command_dictionary[0]['info']['type']}  Configured  
-    [Tags]  feature  cli
+    [Tags]  full  feature
         
 TC9: Verify CLI show bigtap policy completion
     ${result}=  cli walk command  show bigtap policy  4  cmd_argument=${policy_name}  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC10: Verify CLI show bigtap policy policy-name completion
     ${result}=  cli walk command  show bigtap policy ${policy_name}   11  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
          
 TC11: Verify CLI show bigtap policy policy-name core completion
     ${result}=  cli walk command  show bigtap policy ${policy_name} core   1  
     Should be true  ${result}
-    [Tags]  feature  cli-completion     
+    [Tags]  full  feature
+    
 TC12: Verify CLI show bigtap policy policy-name delivery-interfaces completion
     ${result}=  cli walk command  show bigtap policy ${policy_name} delivery-interfaces   1  
     Should be true  ${result} 
-    [Tags]  feature  cli-completion     
+    [Tags]  full  feature
 TC13: Verify CLI show bigtap policy policy-name drops completion
     ${result}=  cli walk command  show bigtap policy ${policy_name} drops   1  
     Should be true  ${result} 
-    [Tags]  feature  cli-completion     
+    [Tags]  full  feature
+    
 TC14: Verify CLI show bigtap policy policy-name failed-paths completion
     ${result}=  cli walk command  show bigtap policy ${policy_name} failed-paths   1  
     Should be true  ${result}     
-    [Tags]  feature  cli-completion     
+    [Tags]  full  feature
+    
 TC15: Verify CLI show bigtap policy policy-name history completion
     ${result}=  cli walk command  show bigtap policy ${policy_name} history   1  
     Should be true  ${result}                     
-    [Tags]  feature  cli-completion     
+    [Tags]  full  feature
+    
 TC16: Verify CLI show bigtap policy policy-name match-rules completion
     ${result}=  cli walk command  show bigtap policy ${policy_name} match-rules   1  
     Should be true  ${result}     
-    [Tags]  feature  cli-completion     
+    [Tags]  full  feature
+    
 TC17: Verify CLI show bigtap policy policy-name optimized-match completion
     ${result}=  cli walk command  show bigtap policy ${policy_name} optimized-match   1  
     Should be true  ${result} 
-    [Tags]  feature  cli-completion     
+    [Tags]  full  feature
+    
 TC18: Verify CLI show bigtap policy policy-name services completion
     ${result}=  cli walk command  show bigtap policy ${policy_name} services   1  
     Should be true  ${result} 
-    [Tags]  feature  cli-completion     
+    [Tags]  full  feature
+    
 TC19: Verify CLI show bigtap policy-flow completion
     ${result}=  cli walk command  show bigtap policy-flow  3  cmd_argument=${policy_name}  
     Should be true  ${result} 
-    [Tags]  feature  cli-completion     
+    [Tags]  full  feature
+    
 TC20: Verify CLI show bigtap policy-flow policy-name completion
     ${result}=  cli walk command  show bigtap policy-flow ${policy_name}  1  
     Should be true  ${result} 
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC21: Verify CLI show bigtap rbac-permission completion
-    ${result}=  cli walk command  show bigtap rbac-permission   3  cmd_argument=admin-view  
+    ${result}=  cli walk command  show bigtap rbac-permission   4  cmd_argument=admin-view  
     Should be true  ${result} 
-    [Tags]  feature  cli-completion     
+    [Tags]  full  feature
+    
 TC22: Verify CLI show bigtap rbac-permission rbac-name completion
     ${result}=  cli walk command  show bigtap rbac-permission admin-view   1  
     Should be true  ${result} 
-    [Tags]  feature  cli-completion    
+    [Tags]  full  feature
+    
 TC23: Verify CLI show bigtap services completion
     ${result}=  cli walk command  show bigtap services   3  cmd_argument=${service_name}  
     Should be true  ${result}   
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC24: Verify CLI show bigtap services service-name completion
     ${result}=  cli walk command  show bigtap services ${service_name}  1  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC25: Verify CLI show bigtap topology completion
-    ${result}=  cli walk command  show bigtap topology   6  
+    ${result}=  cli walk command  show bigtap topology   7  
     Should be true  ${result}   
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC26: Verify CLI show bigtap services topology core completion
     ${result}=  cli walk command  show bigtap topology core  1  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC27: Verify CLI show bigtap services topology delivery completion
     ${result}=  cli walk command  show bigtap topology delivery  1  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC28: Verify CLI show bigtap services topology filter completion
     ${result}=  cli walk command  show bigtap topology filter  1  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC29: Verify CLI show bigtap services topology service completion
     ${result}=  cli walk command  show bigtap topology service  1  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC30: Verify CLI show bigtap services topology statistics completion
     ${result}=  cli walk command  show bigtap topology statistics  1  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC31: Verify CLI show bigtap services tracked-hosts completion
-    ${result}=  cli walk command  show bigtap tracked-hosts  1  
+    ${result}=  cli walk command  show bigtap tracked-hosts  5  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC32: Verify CLI show bigtap services connected-devices completion
-    ${result}=  cli walk command  show bigtap connected-devices  1  
+    ${result}=  cli walk command  show bigtap connected-devices  2  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+    
 TC33: Verify CLI show bigtap services interface-names completion
     ${result}=  cli walk command  show bigtap interface-names  3  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+
 TC34: Verify CLI show bigtap services interface-names brief completion
     ${result}=  cli walk command  show bigtap interface-names brief  1  
     Should be true  ${result}
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+
 TC35: Verify CLI show bigtap services interface-names details completion
     ${result}=  cli walk command  show bigtap interface-names details  1  
     Should be true  ${result}    
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+
 TC36: Verify CLI show bigtap services observed-ip completion
     ${result}=  cli walk command  show bigtap observed-ip  1  
     Should be true  ${result}    
-    [Tags]  feature  cli-completion
+    [Tags]  full  feature
+
 TC37: Add service to policy and verify show bigtap policy
     ${result}=  rest add service to policy  admin-view  ${policy_name}  ${service_name}  1
     Should be true  ${result}
@@ -311,7 +337,7 @@ TC37: Add service to policy and verify show bigtap policy
     Should be equal as integers   ${command_dictionary[0]['info']['service-count']}  1
     #Verify service-switch-count
     Should be equal as integers   ${command_dictionary[0]['info']['service-switch-count']}  1
-    [Tags]  feature  cli  service
+    [Tags]  full  feature
     
 TC38: Verify CLI command show bigtap topology service
     ${myversion}=  Get Environment Variable  controller_version
@@ -319,7 +345,7 @@ TC38: Verify CLI command show bigtap topology service
     Should be true  ${result}  
     ${result}=  Run Keyword If  '${myversion}' == '4.1.1'  cli verify command  show bigtap topology service  6  ${service_post_alias}  ELSE IF  '${myversion}' == '3.0.0'   cli verify command  show bigtap topology service  4  ${service_post_alias}  
     Should be true  ${result}           
-    [Tags]  feature  cli        
+    [Tags]  full  feature
 
 * Keyword
 

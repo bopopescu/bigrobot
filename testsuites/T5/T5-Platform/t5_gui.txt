@@ -168,8 +168,8 @@ T1.10. Applying policy list to logical-router
 #	Create new policy list
 
 T1.11. Filtering tenants
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 #	Enter filter in the main field directly
 #	Use popup help to choose from available options
 
@@ -210,8 +210,8 @@ T3.4. Verify that inventory information is correct
     Manual Passed
     [Tags]  manual
 T3.5. Toggle between Active and Standby controllers in controller stats, verify stats correct
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T3.6. Verify that segments stats are correct
     Manual Passed
     [Tags]  manual
@@ -266,8 +266,8 @@ T4.2.4. Clear switch configuration
     [Tags]  skipped
     # automated
 T4.2.5. Shutdown/No shutdown
-	Manual Passed
-	[Tags]  manual
+    [Tags]  skipped
+    # automated
 T4.2.6. Split from Leaf groups
     [Tags]  skipped
     # automated
@@ -295,11 +295,11 @@ T4.2.11. Toggle through Port groups table with arrows/links
 
 #Main pane:
 T4.3.1. Add Spine Switch - empty/invalid/reserved/long mac, name
-	Manual Passed
-	[Tags]  manual
+    [Tags]  skipped
+    # automated
 T4.3.2. Add Leaf Switch - empty/invalid/reserved/long mac, name, leaf group
-	Manual Passed
-	[Tags]  manual
+    [Tags]  skipped
+    # automated
 T4.3.3. Joining switches to leaf-group by dragging
 	Manual Passed
 	[Tags]  manual
@@ -326,29 +326,29 @@ T5.2. Toggling through subtables in expanding switch details with arrows/numbers
     Manual Passed
     [Tags]  manual
 T5.3. Adding Spine Switch - empty/invalid/reserved/long mac, name
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.4. Adding Leaf Switch - empty/invalid/reserved/long mac, name, leaf group
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.5. Adding Dummy Switch - empty/invalid/reserved/long mac, name
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.6. Change fabric role - other to spine/leaf
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.7. Change fabric role - spine to leaf/other
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.8. Change fabric role - leaf to spine/other
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.9. Add, modify, delete leaf-group assignment
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.10. Clear switch configuration
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 
 #Fabric - Interfaces:
 T6.1. Verify that information about interfaces are correct (status, name, spine/leaf switch flag, port group)
@@ -491,8 +491,8 @@ T11.8. Clear segment counters
 
 #Endpoints:
 T12.1. Filtering
-	Manual Failed
-	[Tags]  manual  BVS-2683
+    [Tags]  skipped
+    # automated  BVS-2683
 T12.2. Verify information about endpoints correct
 	Manual Passed
 	[Tags]  manual

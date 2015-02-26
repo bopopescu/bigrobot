@@ -70,8 +70,13 @@ class DevConf(object):
         self.conn.set_timeout(self._timeout)
 
         driver = self.conn.get_driver()
-        helpers.log("Using devconf driver '%s' (name: '%s')"
-                    % (driver, driver.name))
+        if driver.name == 'generic' and console_info == None:
+            # Patch the device driver, possibly due to missing Login banner.
+            # Don't do this if the devconf session is a console.
+            driver = self._patch_driver(driver)
+
+        helpers.log("Node '%s' using devconf driver '%s' (name: '%s')"
+                    % (name, driver, driver.name))
 
         # Devconf autoinit which will invoke driver's init_terminal()
         self.conn.autoinit()
@@ -79,6 +84,55 @@ class DevConf(object):
         # Aliases
         self.set_prompt = self.conn.set_prompt
         self.get_prompt = self.conn.get_prompt
+
+    def _patch_driver(self, d):
+        """
+        A convention commonly seen in device output is an "Authen banner"
+        which appears when connected to the device (but before authentication),
+        followed by a "Login banner" after successfully authenticated. E.g.,
+
+          $ ssh admin@10.8.1.225
+          Warning: Permanently added '10.8.1.225' (RSA) to the list of known hosts.
+          Big Cloud Fabric Appliance 2.0.0-master01-SNAPSHOT (bcf_master #3338)      <=== Authen banner
+          Log in as 'admin' to configure
+
+          admin@10.8.1.225's password: *****
+          Last login: Tue Feb  3 17:42:28 2015 from 10.1.13.188
+          Big Cloud Fabric Appliance 2.0.0-master01-SNAPSHOT (bcf_master #3338)      <=== Login banner
+          Logged in as admin, 2015-02-24 19:13:13.431000 UTC, auth from 10.1.10.25
+          standby controller>
+
+        Exscript and BigRobot relies the Login banner to guess the platform/OS
+        in order to select the appropriate driver.
+
+        2015-02-24 For Switch Light OS, the Login banner has been removed which
+        causes the OS detection to fail and to return a 'generic' device. We
+        attempt to correct the driver issue by guessing the platform/OS from
+        the 'show version' output.
+        """
+
+        helpers.log("Not able to find proper driver for '%s'. Possibly missing Login banner."
+                    " Attempting to detect platform using 'show version'."
+                    % self._name)
+        result = self.cmd("show version")
+        self.mode('cli')
+
+        if not re.match(r'^s\d+', self._name):
+            helpers.log("Devconf driver patch for '%s' failed - currently only"
+                        " support switches (s1, s2, etc.), using Generic driver"
+                        % self._name)
+            return d
+
+        if re.search(r'Software Image Version: Switch Light', result['content']):
+            helpers.log("Devconf driver patch for '%s' detected Switch Light OS"
+                        % self._name)
+            self.conn.set_driver('bsn_switch')
+            self._platform = "switchlight"
+            return self.conn.get_driver()
+        else:
+            helpers.log("Devconf driver patch for '%s' failed - using Generic driver"
+                        % self._name)
+            return d
 
     def mode(self, new_mode=None):
         if new_mode:
@@ -453,6 +507,7 @@ class DevConf(object):
 
 class BsnDevConf(DevConf):
     def __init__(self, *args, **kwargs):
+        # helpers.debug("Creating BsnDevConf '%s'" % kwargs.get('name'))
         super(BsnDevConf, self).__init__(*args, **kwargs)
         self._mode_before_bash = None
 
@@ -698,6 +753,8 @@ class BsnDevConf(DevConf):
 
 class ControllerDevConf(BsnDevConf):
     def __init__(self, *args, **kwargs):
+        helpers.debug("Creating ControllerDevConf '%s'" % kwargs.get('name'))
+
         # !!! FIXME 2014-08-28 Reauth monitoring is disabled because (for some
         # still unknown reason) it causes Exscript to ignore the expect
         # timeout, so a script may hang indefinitely while waiting for a
@@ -784,15 +841,17 @@ class ControllerDevConf(BsnDevConf):
     def close(self):
         if self.test_monitor:
             self.test_monitor.off()
-        helpers.log("Closing ControllerDevConf '%s' (%s)"
-                    % (self.name(), self._host), level=4)
+        helpers.debug("Closing ControllerDevConf '%s' (%s)"
+                      % (self.name(), self._host), level=4)
         super(ControllerDevConf, self).close()
 
 
 class SwitchDevConf(BsnDevConf):
     def __init__(self, *args, **kwargs):
+        helpers.debug("Creating SwitchDevConf '%s'" % kwargs.get('name'))
         super(SwitchDevConf, self).__init__(*args, **kwargs)
         self._info = None
+        # self.mode('cli')
 
     def info(self, key=None, refresh=False):
         if refresh or not self._info:
@@ -821,8 +880,8 @@ class SwitchDevConf(BsnDevConf):
         return self.result()
 
     def close(self):
-        helpers.log("Closing SwitchDevConf '%s' (%s)"
-                    % (self.name(), self._host))
+        helpers.debug("Closing SwitchDevConf '%s' (%s)"
+                      % (self.name(), self._host))
         super(SwitchDevConf, self).close()
 
 
@@ -831,6 +890,7 @@ class MininetDevConf(DevConf):
     :param topology: str, in the form 'tree,4,2'
     """
     def __init__(self, *args, **kwargs):
+        helpers.debug("Creating MininetDevConf '%s'" % kwargs.get('name'))
         self.controller = kwargs.pop('controller', None)
         self.controller2 = kwargs.pop('controller2', None)
         is_start_mininet = kwargs.pop('is_start_mininet', True)
@@ -1007,8 +1067,8 @@ class MininetDevConf(DevConf):
             if self.is_screen_session:
                 helpers.log("Exiting 'screen' session")
                 self.send('exit', quiet=5)  # terminate screen session
-            helpers.log("Closing MininetDevConf '%s' (%s)"
-                        % (self.name(), self._host))
+            helpers.debug("Closing MininetDevConf '%s' (%s)"
+                          % (self.name(), self._host))
             super(MininetDevConf, self).close()
 
 
@@ -1018,6 +1078,7 @@ class T6MininetDevConf(MininetDevConf):
         '--num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0'
     """
     def __init__(self, **kwargs):
+        helpers.debug("Creating T6MininetDevConf '%s'" % kwargs.get('name'))
         super(T6MininetDevConf, self).__init__(**kwargs)
 
     def mininet_cmd(self):
@@ -1036,23 +1097,25 @@ class T6MininetDevConf(MininetDevConf):
                     % (self.controller, self.openflow_port, self.topology))
 
     def close(self):
-        # helpers.log("Closing T6MininetDevConf '%s' (%s)"
-        #            % (self.name(), self._host))
+        helpers.debug("Closing T6MininetDevConf '%s' (%s)"
+                      % (self.name(), self._host))
         super(T6MininetDevConf, self).close()
 
 
 class PduDevConf(DevConf):
     def __init__(self, *args, **kwargs):
+        helpers.debug("Creating PduDevConf '%s'" % kwargs.get('name'))
         super(PduDevConf, self).__init__(*args, **kwargs)
 
     def close(self):
-        helpers.log("Closing PduDevConf '%s' (%s)"
+        helpers.debug("Closing PduDevConf '%s' (%s)"
                     % (self.name(), self._host))
         super(PduDevConf, self).close()
 
 
 class HostDevConf(DevConf):
     def __init__(self, *args, **kwargs):
+        helpers.debug("Creating HostDevConf '%s'" % kwargs.get('name'))
         super(HostDevConf, self).__init__(*args, **kwargs)
         self.bash('uname -a')
 
@@ -1099,6 +1162,6 @@ class HostDevConf(DevConf):
                          timeout=timeout, level=level)
 
     def close(self):
-        helpers.log("Closing HostDevConf '%s' (%s)"
-                    % (self.name(), self._host))
+        helpers.debugh("Closing HostDevConf '%s' (%s)"
+                       % (self.name(), self._host))
         super(HostDevConf, self).close()

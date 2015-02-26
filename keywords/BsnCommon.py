@@ -2120,8 +2120,9 @@ class BsnCommon(object):
                 return interfaces[int_key]
             else:
                 helpers.log("No Interfaces with key: %s defined for node: %s in topo file" % (int_key, node))
-                helpers.log("Exiting ..to resolve above issue..")
-                helpers.exit_robot_immediately("Please fix above issue")
+                return False
+                # helpers.log("Exiting ..to resolve above issue..")
+                # helpers.exit_robot_immediately("Please fix above issue")
         else:
             helpers.log("No Node: %s  Defined in Topo File.." % str(node))
             return False
@@ -2239,4 +2240,31 @@ class BsnCommon(object):
             t.setup_ztn_phase2(node)
         return True
 
+    def get_snmp_id(self, interface=None):
+        '''
+            This function is use to convert given interface to snmp id to check on data traps
+            To FIX:   support Breakout cables
+            -Arun mallina
+        '''
+        if interface is None:
+            helpers.log("Please interface name like: ethernet45, ethernet47")
+            helpers.exit_robot_immediately("Exiting to fix passing interface ..")
+        match = re.match(r"ethernet(.*)", interface)
+        if match:
+            id_string = match.group(1)
+        if len(id_string) == 1:
+            return "100" + id_string
+        else:
+            return "10" + id_string
 
+    def pretty_log(self, *args, **kwargs):
+        """
+        To print out a Python data structure, consider using this keyword.
+        It formats the object to make it more readable. By default, it will
+        also convert the \n found in the string into newline.
+
+        Examples:
+        | pretty log | ${data} |  | Pretty print data structure, converting \n to newline |
+        | pretty log | ${data} | format_newline=${false} | Pretty print data structure, preserve \n in result |
+        """
+        helpers.pretty_log(*args, **kwargs)

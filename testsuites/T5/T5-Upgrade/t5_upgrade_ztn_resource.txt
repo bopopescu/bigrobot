@@ -10,7 +10,8 @@ Verify single node upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPT
 		bash ping background start    h1   label=upgrade_ping   dest_ip=${h2ip}
 	     	
 	log  step 1 - copy the image and check image present and not same as current
-		Log time to console   before copy image
+		 
+		Log time    ${File}   before copy image		
 		copy_pkg_from_server   ${upgradeimage}  
 		Log time    ${File}   after copy image
 		${num}  ${image}=	   cli_check_image 
@@ -18,7 +19,7 @@ Verify single node upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPT
 		Upgrade show command    master
   		
 	log  step 2 - stage the image and check switch image and manifest file in right location
-		Log time to console   before stage image
+		Log time    ${File}    before stage image
 		${result}= 	cli_upgrade_stage   c1
  		Should be True     ${result} 
 		Log time     ${File}   after stage image 		
@@ -62,7 +63,7 @@ Verify single node upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPT
 		Return From Keyword   True
 
 Copy image  [Arguments]    ${upgradeimage}    ${node}=master
-		Log time to console   before copy image
+		Log time    ${File}    before copy image
 		copy_pkg_from_server   ${upgradeimage}    ${node}
 		Log time    ${File}   after copy image
 		${num}  ${image}=	   cli_check_image    ${node}
@@ -77,7 +78,7 @@ Copy image if no image exist   [Arguments]    ${node}
 		
 
 Stage image    [Arguments]    ${node}=master
-		Log time to console   before stage image
+		Log time    ${File}   before stage image
 		${result}= 	cli_upgrade_stage   ${node}
  		Should be True     ${result} 
 		Log time     ${File}   after stage image 		
@@ -88,15 +89,48 @@ Launch image   [Arguments]    ${node}=master
 		${result}= 	cli_upgrade_launch    c1   
  		Should be True     ${result} 
 
-
+Verify all switches connected back
+ 	${switches}=  rest_get_disconnect_switch
+	log   the disconnected switches are ${switches}  	
+	Should Be Empty   ${switches}
+	
+add host port groups
+	REST add portgroup  p1 
+    REST add interface to portgroup  leaf0-a  ${h1_intf0}  p1
+    REST add interface to portgroup  leaf0-b  ${h1_intf1}  p1
+    rest add portgroup lacp  p1
+    REST add portgroup  p2 
+    REST add interface to portgroup  leaf0-a  ${h2_intf0}  p2
+    REST add interface to portgroup  leaf0-b  ${h2_intf1}  p2
+    rest add portgroup lacp  p2
+    REST add portgroup   p3 
+    REST add interface to portgroup  leaf1-a  ${h3_intf0}  p3
+    REST add interface to portgroup  leaf1-b  ${h3_intf1}  p3
+    rest add portgroup lacp  p3
+    REST add portgroup   p4 
+    REST add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    REST add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4
+    REST add portgroup   p5 
+    REST add interface to portgroup  leaf2-a  ${h5_intf0}  p5
+    REST add interface to portgroup  leaf2-b  ${h5_intf1}  p5
+    rest add portgroup lacp  p5
+    REST add portgroup  p6 
+    REST add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+    REST add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+    rest add portgroup lacp  p6
+	sleep  5
 
 Verify switch are booted with correct image
   		Wait Until Keyword Succeeds  	10 min	30 sec   Verify all switches connected back 
- 		Log time   ${File}   all switches connected back	
+ 		Log time   ${File}   all switches connected back
+ 		Log time   ${File}   after upgrade launch	
  		enable   master  show switch	 
 		${switches}=  rest_get_suspended_switch 
  		Should Be Empty   ${switches} 
 		sleep  ${long} 		
+		${result}=  rest_show_fabric_status
+		Should be True   ${result}		
  		${switches}=  get_all_switch_nodes  
 		log   switches are ${switches}
  		: FOR    ${sw}   IN   @{switches}   
@@ -308,19 +342,13 @@ Log to file    [Arguments]    ${File}     ${message}
     ${time}=	Get Time   
     Append To File    ${File}      ${time}\n	     
     Append To File    ${File}      ${message}\n	
-	Append To File    ${File}    *************************************************\n	
-  	   
- 	
-Verify all switches connected back
- 		${switches}=  rest_get_disconnect_switch
-		log   the disconnected switches are ${switches}  	
-		Should Be Empty   ${switches}	
+	Append To File    ${File}    *************************************************\n		
  	
  	
 Verify Switch SWI Version   [Arguments]  ${switch_alias}
 	${swi_version_bundle}=  Bash Get Switchlight Version  swi
 	${swi_version_switch}=  cli_get_switch_image  swi  ${switch_alias}
-	Should Be Equal As Strings  ${swi_version_bundle}  ${swi_version_switch} 	
+	Should Contain  ${swi_version_switch}  ${swi_version_bundle}   	
 
 Verify Switch Installer Version  	[Arguments]  ${switch_alias}
 	${installer_version_bundle}=  Bash Get Switchlight Version  installer
@@ -388,13 +416,15 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		${config_before_c1}=   cli_take_snapshot   c1  run_config=yes
 		${config_before_c2}=   cli_take_snapshot   c2  run_config=yes
 					 
-		Verify Ping is successful   h1     ${h2ip} 		
+		Verify Ping is successful   h1     ${h2_tag_ip} 
+		Verify Ping is successful   h5     ${h6_ip} 		
 	
  		fabric_integrity_checker    before    
-		bash ping background start    h1   label=upgrade_ping   dest_ip=${h2ip}
-	     	
+		bash ping background start    h1   label=upgrade_ping   dest_ip=${h2_tag_ip}
+	    bash ping background start    h5   label=upgrade_ping_1G   dest_ip=${h6_ip} 
+	    	
 	log  step 1 - copy the image and check image present and not same as current
-		Log time to console   before copy image
+		Log time    ${File}   before copy image
 		
 		upgrade_copy_image_HA_parallel     nodes=@{nodes}   image=${upgradeimage} 	     		  
 		Log time    ${File}   after copy image
@@ -405,7 +435,7 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		 
   		
 	log  step 2 - stage the image and check switch image and manifest file in right location
-		Log time to console   before stage image
+		Log time    ${File}   before stage image
 		${result}= 	 upgrade_statge_image_HA_parallel     nodes=@{nodes}   
  		Should be True     ${result} 
 		Log time     ${File}   after stage image 	
@@ -439,14 +469,22 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		Compare runningconfig 	c2    ${config_before_c2}
 			
  		# stop the ping and see how much traffic lost
- 		
-	   	Verify Ping is successful    h1     ${h2ip} 	
+ 		# 10G Hosts
+	   	Verify Ping is successful    h1     ${h2_tag_ip}	
 		${result}=  bash ping background stop    h1   label=upgrade_ping   return_stats=${true}		 
-		log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec
-		
-		log  there are ${result} ping packet loss, 1 ping per sec
-		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec
-		Log To Console   there are ${result['packets_loss']} ping packet loss, 1 ping per sec
+		log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec for 10G Hosts
+		log  there are ${result} ping packet loss, 1 ping per sec for 10G hosts
+		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec for 10G hosts
+		Log To Console   there are ${result['packets_loss']} ping packet loss, 1 ping per sec for 10G Hosts
+		Should be True  ${result['packets_loss']} < 10
+		# 1G hosts
+	   	Verify Ping is successful    h5     ${h6_ip}	
+		${result}=  bash ping background stop    h5   label=upgrade_ping_1G   return_stats=${true}		 
+		log  there are ${result['packets_loss']} ping packet loss, 1 ping per sec for 1G Hosts
+		log  there are ${result} ping packet loss, 1 ping per sec for 1G Hosts
+		Log to file     ${File}    there are ${result} ping packet loss, 1 ping per sec for 1G Hosts
+		Log To Console   there are ${result['packets_loss']} ping packet loss, 1 ping per sec for 1G Hosts	
+		Should be True  ${result['packets_loss']} < 10	
  		fabric_integrity_checker    after      						
 		${result}=  Verify active partition changed after upgrade		c1  ${c1activepartition}
 		Should Be True     ${result}		
@@ -455,7 +493,7 @@ Verify Dual nodes upgrade    [Arguments]    ${upgradeimage}    ${option}=${EMPTY
 		Return From Keyword   True
 
 Dual node copy image    [Arguments]    ${nodes}    ${upgradeimage} 
-		Log time to console   before copy image
+		Log time    ${File}   before copy image
 		upgrade_copy_image_HA_parallel     nodes=@{nodes}   image=${upgradeimage} 	     		  
 		Log time    ${File}   after copy image
  		: FOR    ${node}   IN   @{nodes}   
@@ -464,7 +502,7 @@ Dual node copy image    [Arguments]    ${nodes}    ${upgradeimage}
 		\  Upgrade show command    ${node}
 
 Dual node stage image  [Arguments]    ${nodes}
- 		Log time to console   before stage image
+ 		Log time    ${File}   before stage image
 		${result}= 	 upgrade_statge_image_HA_parallel     nodes=@{nodes}   
  		Should be True     ${result} 
 		Log time     ${File}   after stage image 	
@@ -521,8 +559,8 @@ Upgrade launch negative    [Arguments]   ${node}   ${message}
 
 
 Verify active partition changed after upgrade    [Arguments]   ${node}   ${old}
-	${c1activepartition}=  get_boot_partition   c1   active
-	Run Keyword if   '${c1activepartition}' == '${old}'	   Return From Keyword      False 
+	${activepartition}=  get_boot_partition   ${node}   active
+	Run Keyword if   '${activepartition}' == '${old}'	   Return From Keyword      False 
 	...  ELSE   Return From Keyword     True
 	
  		 

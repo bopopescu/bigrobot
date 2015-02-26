@@ -20,10 +20,10 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  L2  IronHorse
+	[Tags]  L2  IronHorse  daily-sanity  run
 	bigrobot test ztn  False
 	base suite setup   
-    add fabric switch
+	fabric infra suite setup
     bring up h1 bond0
     bring up h2 bond0
     bring up h3 bond0
@@ -33,11 +33,12 @@ Setup Three Rack Dual Leaf Topology
     BuiltIn.Sleep  25
     rest verify fabric switch all
     BuiltIn.Sleep  25
-	rest verify fabric link common 	
+	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common 	
 	Set switch dpid variables
+	Set host int variables
 
 verify static endpoints with port-group
-	[Tags]  L2  IronHorse
+	[Tags]  L2  IronHorse  daily-sanity
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p6 
@@ -63,23 +64,23 @@ verify static endpoints with port-group
     rest delete tenant  t1 
 
 restart ofad to verify the fabric link
-	[Tags]  L2  IronHorse
+	[Tags]  L2  IronHorse  daily-sanity
 	rest verify fabric link common
 	reconnect_switch_ips  s5
-	bash execute command  leaf2-a  service ofad restart
+	bash execute command  leaf2-a  service ofad restart  190
 	BuiltIn.Sleep  2
 	rest verify fabric link common  13
 	BuiltIn.Sleep  45
 	rest verify fabric link common
 	reconnect_switch_ips  s3
-	bash execute command  leaf1-a  service ofad restart
+	bash execute command  leaf1-a  service ofad restart  190
 	BuiltIn.Sleep  2
 	rest verify fabric link common  12
 	BuiltIn.Sleep  45
 	rest verify fabric link common    
 
 Test to check all the cidr routes are created in spine and leaf switches
-	[Tags]  L2  IronHorse     
+	[Tags]  L2  IronHorse    daily-sanity   
 	rest add tenant  internal
 	rest add vns  internal  v1
 	rest add interface to vns  internal  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -118,7 +119,7 @@ Test to check all the cidr routes are created in spine and leaf switches
 	rest delete tenant  system
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
-    [Tags]  L2  IronHorse  run
+    [Tags]  L2  IronHorse  
     bigrobot test ztn  False
     rest add tenant  t1
     rest add vns  t1  v1
@@ -151,7 +152,7 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     rest delete tenant  t1               
      
 shut/no shut the switch with traffic forward
-	[Tags]  L2  IronHorse     
+	[Tags]  L2  IronHorse   daily-sanity   run
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -176,7 +177,7 @@ shut/no shut the switch with traffic forward
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} < 50
     rest delete shutdown fabric switch  leaf2-a
-    BuiltIn.Sleep  15
+    BuiltIn.Sleep  30
     rest verify fabric switch  leaf2-a 
     rest verify fabric link common 
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
@@ -363,7 +364,7 @@ check forwarding vlan table consistency after switch mgmt remove/add
     Should be True  ${count} == 3   
 
 verifying flow reconsilation when new switch is connected to the fabric
-	[Tags]  L2  IronHorse
+	[Tags]  L2  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1 
@@ -378,6 +379,9 @@ verifying flow reconsilation when new switch is connected to the fabric
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 2
     clean configuration
+    rest add tenant  t1
+	rest add vns  t1  v1
+    rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1 
     BuiltIn.Sleep  3
     rest add switch  leaf2-a
     rest add dpid  leaf2-a  ${leaf2a_dpid}
@@ -434,16 +438,9 @@ T5 test setup
     Set swith int variables
     Set switch dpid variables 
 	base test setup
-	add fabric switch
-	BuiltIn.Sleep  55
 	Set switch dpid variables
+	Set host int variables
 	
-bring up 1 gig interface
-	bash execute command  leaf0-a  ofad-ctl autoneg 25
-	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-a  ofad-ctl autoneg 25
-	bash execute command  leaf1-a  ofad-ctl autoneg 26
-
 bring up h1 bond0
 	bash init intf  h1  bond0.10
     bash add ip address  h1  ${h1_tag_ip}/24  bond0.10

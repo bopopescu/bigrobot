@@ -524,7 +524,6 @@ class Test(object):
             if not self._setup_in_progress:
                 self.setup()
 
-        # helpers.prettify_log("_topology:", self._topology)
         if name and node:
             name = self.alias(name, ignore_error=ignore_error)
             self._topology[name] = node
@@ -887,7 +886,7 @@ class Test(object):
                            br_utils.end_of_output_marker()))
         return n
 
-    def node_disconnect(self, node=None):
+    def node_disconnect(self, node=None, delete_session_cookie=True):
         """
         Disconnect the node's SSH/Telnet sessions.
         If node name is not specified, disconnect all the nodes. If node name
@@ -905,10 +904,13 @@ class Test(object):
             for _, handle in self.topology().items():
                 node_handles.append(handle)
         for h in node_handles:
-            h.close()
+            if helpers.is_controller(h.name()):
+                h.close(delete_session_cookie=delete_session_cookie)
+            else:
+                h.close()
             del self._topology[h.name()]
 
-    def node_reconnect(self, node, **kwargs):
+    def node_reconnect(self, node, delete_session_cookie=True, **kwargs):
         helpers.log("Node reconnect for '%s'" % node)
 
         if helpers.is_controller(node):
@@ -938,10 +940,16 @@ class Test(object):
         else:
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
-        self.node(node).close()
+
+        if helpers.is_controller(node_name):
+            self.node(node_name).close(delete_session_cookie=delete_session_cookie)
+        else:
+            self.node(node_name).close()
+
         c = self.node_connect(node_name, quiet=1, **kwargs)
-        if helpers.is_controller(node):
-            c.rest.request_session_cookie()
+        if helpers.is_controller(node_name):
+            helpers.log("Create HTTP session cookie for '%s'" % node_name)
+            self.setup_controller_http_session_cookie(node_name)
         return self.node(node)
 
     def dev_console(self, node, modeless=False, expect_console_banner=False):
@@ -1352,9 +1360,12 @@ class Test(object):
         else:
             helpers.log("reconfig_reauth=%s" % reconfig_reauth)
 
+        helpers.log("I am here... status1=%s status2=%s" % (status1, status2))
         if status1 or status2:
             # Reconnect to device if updates were made to idle/reauth
             # properties.
+
+            helpers.log("Reconnecting nodes")
             self.node_reconnect(name)
         return True
 

@@ -17,7 +17,9 @@ s7:
         port: 7001
     pdu:
         ip: pdu-120-b.bigswitch.com
-        port: 17        
+        port: 17 
+        user: apc
+        password: apc               
     alias: spine0
     mac: 70:72:CF:A8:07:D0    
     set_session_ssh: false
@@ -30,8 +32,10 @@ s8:
         ip: cs-120
         port: 7002
     pdu:
-        ip: pdu-120-b.bigswitch.com
-        port: 15
+        ip: pdu-120-a.bigswitch.com
+        port: 13
+        user: apc
+        password: apc        
     mac: 70:72:CF:AE:B8:3C        
     set_session_ssh: false
     set_init_ping: false
@@ -45,7 +49,9 @@ s1:
         port: 7003
     pdu:
         ip: pdu-120-a.bigswitch.com
-        port: 20        
+        port: 20 
+        user: apc
+        password: apc
     mac: 70:72:CF:B7:6E:3A
     set_session_ssh: false
     set_init_ping: false
@@ -60,7 +66,9 @@ s2:
         port: 7004
     pdu:
         ip: pdu-120-a.bigswitch.com
-        port: 19    
+        port: 12    
+        user: apc
+        password: apc        
     mac: 70:72:CF:B6:01:F2  
     set_session_ssh: false
     set_init_ping: false
@@ -75,7 +83,9 @@ s3:
         port: 7005
     pdu:
         ip: pdu-120-a.bigswitch.com
-        port: 18      
+        port: 11     
+        user: apc
+        password: apc         
     mac: 70:72:CF:B5:E7:5A
     set_session_ssh: false
     set_init_ping: false
@@ -91,6 +101,8 @@ s4:
     pdu:
         ip: pdu-120-a.bigswitch.com
         port: 17      
+        user: apc
+        password: apc
     mac: 70:72:CF:AB:39:98      
     set_session_ssh: false
     set_init_ping: false
@@ -106,6 +118,8 @@ s5:
     pdu:
         ip: pdu-120-a.bigswitch.com
         port: 15        
+        user: apc
+        password: apc
     mac: 70:72:CF:B5:F0:E4
     set_session_ssh: false
     set_init_ping: false
@@ -136,6 +150,8 @@ s9:
     pdu:
         ip: pdu-120-a.bigswitch.com
         port: 3
+        user: apc
+        password: apc
     mac: 70:72:CF:BC:C4:7A
     set_session_ssh: false
     set_init_ping: false
@@ -167,6 +183,8 @@ s13:
     pdu:
         ip: pdu-120-a.bigswitch.com
         port: 9
+        user: apc
+        password: apc        
     mac: 70:72:CF:AE:AE:96
     set_session_ssh: false
     set_init_ping: false
@@ -182,6 +200,8 @@ s14:
     pdu:
         ip: pdu-120-b.bigswitch.com
         port: 2
+        user: apc
+        password: apc
     mac: 70:72:CF:C8:FB:AF
     set_session_ssh: false
     set_init_ping: false
@@ -191,48 +211,48 @@ s14:
     password: adminadmin    
 
     
-h1:
-   ip: 10.8.24.31
-   alias: h1-rack0
-   user: root
-   password: bsn
+#h1:
+#   ip: 10.8.24.31
+#   alias: h1-rack0
+#   user: root
+#   password: bsn
 
-h2:
-   ip: 10.8.24.32
-   alias: h2-rack0
-   user: root
-   password: bsn
+#h2:
+#   ip: 10.8.24.32
+#   alias: h2-rack0
+#   user: root
+#   password: bsn
 
-h3:
-   ip: 10.8.24.33
-   alias: h1-rack1
-   user: root
-   password: bsn
+#h3:
+#   ip: 10.8.24.33
+#   alias: h1-rack1
+#   user: root
+#   password: bsn
      
-h4:
-   ip: 10.8.24.34
-   alias: h2-rack1
-   user: root
-   password: bsn
+#h4:
+#   ip: 10.8.24.34
+#   alias: h2-rack1
+#   user: root
+#   password: bsn
    
-h5:
-   ip: 10.8.24.35
-   alias: h1-rack2
-   user: root
-   password: bsn
+#h5:
+#   ip: 10.8.24.35
+#   alias: h1-rack2
+#   user: root
+#   password: bsn
      
-h6:
-   ip: 10.8.24.36
-   alias: h2-rack2
-   user: root
-   password: bsn
+#h6:
+#   ip: 10.8.24.36
+#   alias: h2-rack2
+#   user: root
+#   password: bsn
     
 
-h10:
-   ip: 10.8.24.40
-   alias: h4-rack2
-   user: root
-   password: bsn
+#h10:
+#   ip: 10.8.24.40
+#   alias: h4-rack2
+#   user: root
+#   password: bsn
     
 
 tg1:

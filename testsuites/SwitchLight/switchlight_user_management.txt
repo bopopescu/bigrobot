@@ -16,141 +16,141 @@ ${dns_server}           10.3.0.4
 ${dns_domain}           qa.bigswitch.com
 
 *Test Case
-Verify username admin can have all lower-case alphabet password
+TC001: Verify username admin can have all lower-case alphabet password
     verify password change  s1  clientclient
-    [Tags]  feature  platform    
+    [Tags]  sanity  feature
 
-Verify username admin can have all upper-case alphabet password
+TC002: Verify username admin can have all upper-case alphabet password
     verify password change  s1  CLIENTCLIENT
-    [Tags]  feature  platform            
+    [Tags]  full  feature        
      
-Verify username admin can have a mix of lower-case and upper-case alphabet password
+TC003: Verify username admin can have a mix of lower-case and upper-case alphabet password
     verify password change  s1  cLiEnTcLiEnT 
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a numeric password
+TC004: Verify username admin can have a numeric password
     verify password change  s1  1234567890
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
     
-Verify username admin can have a alphanumeric (alphabet all small) password
+TC005: Verify username admin can have a alphanumeric (alphabet all small) password
     verify password change  s1  bsn1234
-    [Tags]  feature  platform        
+    [Tags]  sanity  feature    
     
-Verify username admin can have a alphanumeric (alphabet all caps) password
+TC006: Verify username admin can have a alphanumeric (alphabet all caps) password
     verify password change  s1  BSN1234
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a !
+TC007: Verify username admin can have a alphanumeric password with a !
     verify password change  s1  bSn1234!
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a @
+TC008: Verify username admin can have a alphanumeric password with a @
     verify password change  s1  bSn1234@
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a #
+TC009: Verify username admin can have a alphanumeric password with a #
     verify password change  s1  bSn1234#
-    [Tags]  feature  platform        
+    [Tags]  sanity  feature    
 
-Verify username admin can have a alphanumeric password with a $
+TC010: Verify username admin can have a alphanumeric password with a $
     verify password change  s1  bSn1234$
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a %
+TC011: Verify username admin can have a alphanumeric password with a %
     verify password change  s1  bSn1234%
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a ^
+TC012: Verify username admin can have a alphanumeric password with a ^
     verify password change  s1  bSn1234^    
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a &
+TC013: Verify username admin can have a alphanumeric password with a &
     verify password change  s1  bSn1234&
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a *
+TC014: Verify username admin can have a alphanumeric password with a *
     verify password change  s1  bSn1234*
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a (
+TC015: Verify username admin can have a alphanumeric password with a (
     verify password change  s1  bSn1234(
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a )
+TC016: Verify username admin can have a alphanumeric password with a )
     verify password change  s1  bSn1234)
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a -
+TC017: Verify username admin can have a alphanumeric password with a -
     verify password change  s1  bSn1234-
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a _
+TC018: Verify username admin can have a alphanumeric password with a _
     verify password change  s1  bSn1234_
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a +
+TC019: Verify username admin can have a alphanumeric password with a +
     verify password change  s1  bSn1234+
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a }
+TC020: Verify username admin can have a alphanumeric password with a }
     verify password change  s1  bSn1234}
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a {
+TC021: Verify username admin can have a alphanumeric password with a {
     verify password change  s1  bSn1234{
-    [Tags]  feature  platform    
+    [Tags]  full  feature
 
-Verify username admin can have a alphanumeric password with a [
+TC022: Verify username admin can have a alphanumeric password with a [
     verify password change  s1  bSn1234[
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a ]
+TC023: Verify username admin can have a alphanumeric password with a ]
     verify password change  s1  bSn1234]
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a |
+TC024: Verify username admin can have a alphanumeric password with a |
     verify password change  s1  bSn|1234
-    [Tags]  feature  platform       
+    [Tags]  full  feature   
         
-Verify username admin can have a alphanumeric password with a \
+TC025: Verify username admin can have a alphanumeric password with a \
     verify password change  s1  bSn\\1234 
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
         
-Verify username admin can have a alphanumeric password with a :
+TC026: Verify username admin can have a alphanumeric password with a :
     verify password change  s1  bSn:1234
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
     
-Verify username admin can have a alphanumeric password with a ,
+TC027: Verify username admin can have a alphanumeric password with a ,
     verify password change  s1  bSn,1234
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
     
-Verify username admin can have a alphanumeric password with a .
+TC028: Verify username admin can have a alphanumeric password with a .
     verify password change  s1  bSn.1234
-    [Tags]  feature  platform           
+    [Tags]  full  feature       
     
-Verify username admin can have a alphanumeric password with a <
+TC029: Verify username admin can have a alphanumeric password with a <
     verify password change  s1  bSn1234<
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
     
-Verify username admin can have a alphanumeric password with a /
+TC030: Verify username admin can have a alphanumeric password with a /
     verify password change  s1  bSn1234/
-    [Tags]  feature  platform        
+    [Tags]  full  feature    
 
-Verify username admin can have a alphanumeric password with a ~
+TC031: Verify username admin can have a alphanumeric password with a ~
     verify password change  s1  bSn1234~
-    [Tags]  feature  platform     
+    [Tags]  full  feature 
     
-Verify username admin can have a alphanumeric password with a `
+TC032: Verify username admin can have a alphanumeric password with a `
     verify password change  s1  bSn1234`
-    [Tags]  feature  platform     
+    [Tags]  full  feature 
 
-Verify password change is persistent after process OFAD is restarted.
+TC033: Verify password change is persistent after process OFAD is restarted.
     cli change user password  s1  admin  adminadmin  bSn1234
     bash restart process  s1  ofad
     ${verify_change}=  cli verify password change  s1  admin  bSn1234  ${switchlight_version}
     Set Global Variable  ${update_password}  bSn1234
     Should be True  ${verify_change}    
-    [Tags]  feature  platform      
+    [Tags]  full  feature  
  
     
 * Keywords 

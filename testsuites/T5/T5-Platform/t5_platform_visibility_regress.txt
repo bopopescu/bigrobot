@@ -32,7 +32,7 @@ ${gateway2IP}	192.168.0.100
 ${s1SrcSwitch}  leaf0-a
 ${s1SrcInt}		ethernet25
 ${s1DstSwitch}	leaf0-a
-${s1DstInt}		ethernet26
+${s1DstInt}		ethernet28
 ${s1PingIP}		192.168.1.10
 ${s1VerifyHost}  h2
 ${s1VerifyInt}	eth1
@@ -40,7 +40,7 @@ ${s1VerifyInt}	eth1
 ${s2SrcSwitch}  leaf0-a
 ${s2SrcInt}		ethernet48
 ${s2DstSwitch}	leaf0-a
-${s2DstInt}		ethernet26
+${s2DstInt}		ethernet28
 ${s2PingIP}		192.168.4.10
 ${s2VerifyHost}  h2
 ${s2VerifyInt}	eth1
@@ -50,7 +50,7 @@ ${s2ShutInt}  ethernet48
 ${s1IxiaSrcSwitch}  leaf0-a
 ${s1IxiaSrcInt}		ethernet24
 ${s1IxiaDstSwitch}	leaf0-a
-${s1IxiaDstInt}		ethernet26
+${s1IxiaDstInt}		ethernet28
 ${s1IxiaVerifyHost}  h2
 ${s1IxiaVerifyInt}	eth1
 
@@ -68,7 +68,7 @@ ${Ixia6v1IP}  100.5.1.100
 * Test Case 
 
 T1 Configure SPAN session for Single interface - Direction Both
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -79,7 +79,7 @@ T1 Configure SPAN session for Single interface - Direction Both
 	
 	
 T2 Delete SPAN session for Single interface - Direction Both
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  1
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -89,7 +89,7 @@ T2 Delete SPAN session for Single interface - Direction Both
 
 
 T3 Configure SPAN session for Single interface - Direction Ingress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}	 direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
@@ -100,7 +100,7 @@ T3 Configure SPAN session for Single interface - Direction Ingress
 	
 	
 T4 Delete SPAN session for Single interface - Direction Ingress
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  1
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
@@ -110,7 +110,7 @@ T4 Delete SPAN session for Single interface - Direction Ingress
 
 
 T5 Configure SPAN session for Single interface - Direction Egress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}	 direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
@@ -121,7 +121,7 @@ T5 Configure SPAN session for Single interface - Direction Egress
 	
 	
 T6 Delete SPAN session for Single interface - Direction Egress
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  1
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
@@ -131,7 +131,7 @@ T6 Delete SPAN session for Single interface - Direction Egress
 
 
 T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Both
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -156,7 +156,7 @@ T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
     
     
 T8 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Ingress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
@@ -181,7 +181,7 @@ T8 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
 	
 	
 T9 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Egress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
@@ -206,7 +206,7 @@ T9 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
 
 
 T10 Configure SPAN session for Port-Group interface - Direction Both
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
@@ -222,7 +222,7 @@ T10 Configure SPAN session for Port-Group interface - Direction Both
 
 
 T11 Delete SPAN session for Port-Group interface - Direction Both
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  2
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
@@ -232,7 +232,7 @@ T11 Delete SPAN session for Port-Group interface - Direction Both
 
 
 T12 Configure SPAN session for Port-Group interface - Direction Ingress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
@@ -245,7 +245,7 @@ T12 Configure SPAN session for Port-Group interface - Direction Ingress
 	
 	
 T13 Delete SPAN session for Port-Group interface - Direction Ingress
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  2
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
@@ -257,7 +257,7 @@ T13 Delete SPAN session for Port-Group interface - Direction Ingress
 
 
 T14 Configure SPAN session for Port-Group interface - Direction Egress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
@@ -270,7 +270,7 @@ T14 Configure SPAN session for Port-Group interface - Direction Egress
 	
 	
 T15 Delete SPAN session for Port-Group interface - Direction Egress
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  2
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
@@ -282,7 +282,7 @@ T15 Delete SPAN session for Port-Group interface - Direction Egress
 	
 
 T16 Configure SPAN session - Direction Both
-	[Tags]  span  feature  
+	[Tags]  span  feature  daily-sanity  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=both  
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=both
@@ -306,7 +306,7 @@ T16 Configure SPAN session - Direction Both
 	
 
 T17 Configure SPAN Session - Direction Ingress
-	[Tags]  span  feature   
+	[Tags]  span  feature  daily-sanity   
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress
@@ -324,7 +324,7 @@ T17 Configure SPAN Session - Direction Ingress
 	
 	
 T18 Configure SPAN Session - Direction Egress
-	[Tags]  span  feature  
+	[Tags]  span  feature  daily-sanity  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=egress
@@ -342,7 +342,7 @@ T18 Configure SPAN Session - Direction Egress
 
 
 T19 Configure SPAN session for SRC-IP-CIDR - Direction Ingress
-	[Tags]  span  feature   
+	[Tags]  span  feature  daily-sanity   
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.1/32
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.1/32
@@ -375,7 +375,7 @@ T19 Configure SPAN session for SRC-IP-CIDR - Direction Ingress
 
 
 T20 Configure SPAN session for SRC-PORT - Direction Ingress
-	[Tags]  span  feature  
+	[Tags]  span  feature  daily-sanity  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  src-tp-port=1000
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  src-tp-port=1000
@@ -405,7 +405,7 @@ T20 Configure SPAN session for SRC-PORT - Direction Ingress
 	Should not be true  ${returnVal}
 	
 T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
-	[Tags]  span  feature   
+	[Tags]  span  feature  daily-sanity   
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.1/32
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.1/32
@@ -438,7 +438,7 @@ T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
 	
 	
 T22 Configure SPAN session for DST-PORT - Direction Ingress
-	[Tags]  span  feature  
+	[Tags]  span  feature  daily-sanity  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  dst-tp-port=2000
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  dst-tp-port=2000
@@ -469,7 +469,7 @@ T22 Configure SPAN session for DST-PORT - Direction Ingress
 	Should not be true  ${returnVal}
 	
 T23 Configure SPAN session for SRC-MAC - Direction Ingress
-	[Tags]  span  feature  
+	[Tags]  span  feature  daily-sanity  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-mac=aa:bb:01:00:00:01
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-mac=aa:bb:01:00:00:01
@@ -487,65 +487,65 @@ T23 Configure SPAN session for SRC-MAC - Direction Ingress
 	
 	
 T24 Configure SPAN session for DST-MAC - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 T25 Configure SPAN session for IP-Proto - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 	
 T26 Configure SPAN session for IP-DSCP - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed 
 
 T27 Configure SPAN session for IP-ECN - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed 
 
 	
 T28 Configure SPAN session for Ethertype - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed 
 	
 
 T29 Configure SPAN session for Tenant/VNS - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 	
 T30 Configure SPAN session with multiple options - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 
 
 T31 Configure SPAN session with Different VLANs
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 
 
 T32 Configure SPAN session with Spine switches 
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 	
 T33 Configure SPAN session with multiple source interfaces
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 	
 T34 Configure SPAN session with multiple destination interfaces
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 
 
 T35 Configure multiple SPAN sessions in multiple switches
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 
 T36 Configure peer links as source interfaces
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 
 
@@ -553,7 +553,7 @@ T36 Configure peer links as source interfaces
 #################################################################	 	Test Path		#################################################################
 
 T1 Intra Segment: SRC & DST Are In Same Rack - Same Switch
-	[Tags]  testpath  feature  run
+	[Tags]  testpath  feature  daily-sanity  run
 	BASH ping	h1	${h3_tag_ip}	count=5
 	BASH ping	h2	${h3_tag_ip}	count=5
 	BASH ping	h3	${h1_tag_ip}	count=5
@@ -568,7 +568,7 @@ T1 Intra Segment: SRC & DST Are In Same Rack - Same Switch
 	Should Be True  ${returnVal}
 
 T2 Intra Segment: SRC & DST Are In Same Rack - Different Switch
-	[Tags]  testpath  feature 
+	[Tags]  testpath  feature  daily-sanity 
 	sleep  30
 	rest switch int shut   leaf0-a  ${h2_intf0}
 	sleep  5
@@ -585,7 +585,7 @@ T2 Intra Segment: SRC & DST Are In Same Rack - Different Switch
 	
 	
 T3 Intra Segment: SRC & DST Are In Different Racks
-	[Tags]  testpath  feature 
+	[Tags]  testpath  feature  daily-sanity 
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${h3_tag_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test3	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v1	dst-ip=${h3_tag_ip}  ip-protocol=icmp 
@@ -595,7 +595,7 @@ T3 Intra Segment: SRC & DST Are In Different Racks
 
 
 T4 Intra Segment: DST Is Subnet Gateway
-	[Tags]  testpath  feature 
+	[Tags]  testpath  feature  daily-sanity 
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${gateway1IP}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test4	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v1	dst-ip=${gateway1IP}  ip-protocol=icmp 
@@ -605,7 +605,7 @@ T4 Intra Segment: DST Is Subnet Gateway
 
 
 T5 Intra Tenant/ Different Segments - SRC & DST Are In Same Rack - Same Switch
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_ip}  ip-protocol=icmp
@@ -615,7 +615,7 @@ T5 Intra Tenant/ Different Segments - SRC & DST Are In Same Rack - Same Switch
 	
 	
 T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Switch
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	sleep  35
 	rest switch int shut   leaf1-a  ${h4_intf0}
 	rest switch int shut   leaf1-b  ${h3_intf1} 
@@ -633,7 +633,7 @@ T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Swit
 
 
 T7 Intra Tenant/ Different Segments: SRC & DST Are In Different Racks
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_ip}  ip-protocol=icmp
@@ -643,7 +643,7 @@ T7 Intra Tenant/ Different Segments: SRC & DST Are In Different Racks
 
 
 T8 Intra Tenant/ Different Segments: DST Is Other Segment Gateway
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${gateway2IP}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric view  test-name=Test8	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v2	dst-ip=${gateway2IP}  ip-protocol=icmp 
@@ -653,7 +653,7 @@ T8 Intra Tenant/ Different Segments: DST Is Other Segment Gateway
 
 
 T9 Inter Tenant: SRC & DST Are In Same Rack - Same Switch
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT2	src-segment=v1	src-ip=${h1_single_ip}  dst-tenant=Ixia1	dst-segment=v1	dst-ip=100.1.1.1  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test9	 src-tenant=autoT2	src-segment=v1	src-ip=${h1_single_ip}  dst-tenant=Ixia1	dst-segment=v1	dst-ip=100.1.1.1  ip-protocol=icmp
@@ -665,7 +665,7 @@ T9 Inter Tenant: SRC & DST Are In Same Rack - Same Switch
 
 
 T10 Inter Tenant: SRC & DST Are In Same Rack - Different Switch
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia3	src-segment=v1	src-ip=100.3.1.1  
 	...	dst-tenant=Ixia4  dst-segment=v1	dst-ip=100.4.1.1  ip-protocol=tcp  src-l4-port=3000  dst-l4-port=4000  timeout=60
 	Should Be True  ${returnVal}
@@ -678,7 +678,7 @@ T10 Inter Tenant: SRC & DST Are In Same Rack - Different Switch
 	
 
 T11 Inter Tenant: SRC & DST Are In Different Racks
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.5
 	...	dst-tenant=Ixia3  dst-segment=v1	dst-ip=100.3.1.2  ip-protocol=tcp  src-l4-port=1000  dst-l4-port=3000  timeout=60
 	Should Be True  ${returnVal}
@@ -691,7 +691,7 @@ T11 Inter Tenant: SRC & DST Are In Different Racks
 
 
 Test path - Scalability with 20 active test paths
-    [Tags]  testpath  feature  scale
+    [Tags]  testpath  feature  daily-sanity  scale
     
     rest clear testpath
     #bash add route  h1  100.0.0.0/8  192.168.1.100  eth1
@@ -857,65 +857,65 @@ Test path - Scalability with 20 active test paths
 	
 
 Verify test packet path with L2 traffic to an unknown destination originating from a tenant which spans across multiple racks
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
 
 Verify the updated paths in test packet path with L2 traffic within a single tenant while introducing path failures
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
     
 Verify the updated paths in test packet path with L3 traffic between multiple tenants while introducing path failures
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
 
 Verify all the CLI options for the test packet path command
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
 
 Destination as a ECMP Group 
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
     
 Destination as a default router
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
 
 Inter Tenant - Droped by Policy
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
 
 Inter Tenant - Accept by Policy
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
     
 Inter Tenant - Missing Route
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
     
 Inter Tenant - Uninstalled interface
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
 
 Inter Tenant - No Route
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
   
 Inter Tenant - Dropped due to private segment
-   [Tags]  testpath  feature  manual
+   [Tags]  testpath  feature  daily-sanity  manual
     manual passed
   
 Tracking with multiple test paths
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
 
 ################## 		Visibility		################## 	
 
 Verify LED support: beacon switch
-	[Tags]  visibility  feature  manual
+	[Tags]  visibility  feature  daily-sanity  manual
 	manual passed
 
 OF packet capture details
-	[Tags]  visibility  feature  manual
+	[Tags]  visibility  feature  daily-sanity  manual
 	manual passed
 
 
@@ -925,9 +925,22 @@ OF packet capture details
 
 * Keywords 
 T0 Setup
-	add fabric switch
+	fabric infra suite setup
     Set swith int variables
     Set switch dpid variables
+    Set host int variables
+    BASH run command                                h1							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h2							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h3							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h4							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h5							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h6							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH restart networking service                 h1                          timeout=60
+    BASH restart networking service                 h2                          timeout=60
+    BASH restart networking service                 h3                          timeout=60
+    BASH restart networking service                 h4                          timeout=60
+    BASH restart networking service                 h5                          timeout=60
+    BASH restart networking service                 h6                          timeout=60
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure Tenants For SPAN & Test Path
 	#bash execute command  leaf0-a  ofad-ctl autoneg 25

@@ -1,15 +1,15 @@
 *Settings
-Documentation  Scale Limits for Quanta LB9
-Suite Setup  scale suite setup
-Suite Teardown   scale suite teardown
-Test Setup   base test setup
-Test Teardown  base test teardown 
-Force Tags   bigtap  scale
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation                   Scale Limits for Quanta LB9
+Suite Setup                     scale suite setup
+Suite Teardown                  scale suite teardown
+Test Setup                      base test setup
+Test Teardown                   base test teardown 
+Force Tags                      BigTap  Blackbird  3.0.0  Quanta-LB9
+Library                         keywords/BsnCommon.py
+Library                         keywords/AppController.py
+Library                         keywords/BigTap.py
+Library                         keywords/SwitchLight.py
+Library                         keywords/Ixia.py
 
 * Variable
 #### LB9
@@ -48,7 +48,7 @@ TC1: IPv4 Scaling test with 2020 policies in full-match mode
     \    Log    ${mypolicy}      
     \    rest delete policy  admin-view  ${mypolicy}
     sleep  100    
-    [Tags]  ipv4  policy-scale  full-match
+    [Tags]  scaling  longevity  full  policy  full-match
 
 TC2: IPv4 Scaling test with 4040 policies in l3-l4-mode mode
     ${thost_enabled}=  rest enable feature  l3-l4-mode
@@ -76,7 +76,7 @@ TC2: IPv4 Scaling test with 4040 policies in l3-l4-mode mode
     \    Log    ${mypolicy}      
     \    rest delete policy  admin-view  ${mypolicy}
     sleep  100    
-    [Tags]  ipv4  policy-scale  l3-l4-mode
+    [Tags]  scaling  longevity  full  policy  l3-l4-mode
 
 TC3: IPv4 Scaling test with 2020 policies in l3-l4-offset-match mode
     ${thost_enabled}=  rest enable feature  l3-l4-offset-match
@@ -104,7 +104,7 @@ TC3: IPv4 Scaling test with 2020 policies in l3-l4-offset-match mode
     \    Log    ${mypolicy}      
     \    rest delete policy  admin-view  ${mypolicy}
     sleep  100    
-    [Tags]  ipv4  policy-scale  l3-l4-offset-match
+    [Tags]  scaling  longevity  full  policy  l3-l4-offset-match
 
 TC4: IPv4 Scaling test with 1 policy and 2020 match conditions in full-match mode
     ${thost_enabled}=  rest enable feature  full-match
@@ -120,7 +120,7 @@ TC4: IPv4 Scaling test with 1 policy and 2020 match conditions in full-match mod
     Should be true  ${verify_policy}
     sleep  120
     rest delete policy  admin-view  ${policy_lb9}  
-    [Tags]  ipv4  policy-scale  full-match    
+    [Tags]  scaling  longevity  full  policy  full-match    
 
 TC5: IPv6 Scaling test with 1919 policies in full-match mode
     ${thost_enabled}=  rest enable feature  full-match
@@ -148,7 +148,7 @@ TC5: IPv6 Scaling test with 1919 policies in full-match mode
     \    Log    ${mypolicy}      
     \    rest delete policy  admin-view  ${mypolicy}
     sleep  100    
-    [Tags]  ipv6  policy-scale  full-match
+    [Tags]  scaling  longevity  full  policy  full-match
 
 TC6: IPv6 Scaling test with 1919 policies in l3-l4-mode mode
     ${thost_enabled}=  rest enable feature  l3-l4-mode
@@ -176,7 +176,7 @@ TC6: IPv6 Scaling test with 1919 policies in l3-l4-mode mode
     \    Log    ${mypolicy}      
     \    rest delete policy  admin-view  ${mypolicy}
     sleep  100    
-    [Tags]  ipv6  policy-scale  l3-l4-mode
+    [Tags]  scaling  longevity  full  policy  l3-l4-mode
 
 TC7: IPv6 Scaling test with 1 policy and 1919 match conditions in full-match mode
     ${thost_enabled}=  rest enable feature  full-match
@@ -192,7 +192,7 @@ TC7: IPv6 Scaling test with 1 policy and 1919 match conditions in full-match mod
     Should be true  ${verify_policy}
     sleep  120
     rest delete policy  admin-view  ${policy_lb9}  
-    [Tags]  ipv6  policy-scale  full-match   
+    [Tags]  scaling  longevity  full  policy  full-match   
     
 * Keyword
 

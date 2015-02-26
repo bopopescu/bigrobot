@@ -1,0 +1,151 @@
+* Settings
+Documentation   	Test suite with tests to configure interface locking. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Force Tags      	BigTap  GUI  Corsair Plus
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Library         	keywords/BsnCommon.py
+#Library         	keywords_dev/tomasz/BigTap.py
+Library        		keywords/BsnSelenium.py
+Library        		SeleniumLibrary
+Library       		String
+Resource        	testsuites/BigTap/BigTapGUI-Corsair/bigtap_resource.txt
+
+
+
+
+*Test Case 
+### Configure Interface Lock by admin		${role}  	${if-name}
+
+TC Set Up
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rlb9-1			filter			ixia-2-9
+	Configure Big Tap Interface from Big Tap Menu			ethernet2			app-rlb9-1			filter			ixia-try
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rly2-1 			delivery		ixia-2-15	
+	Configure Big Tap Interface from Big Tap Menu			ethernet2			app-rly2-1 			service			ixia-4-8	
+	Configure Big Tap Interface Group from Big Tap Menu 	filter				filter-group		ixia-2-9
+	Configure Big Tap Interface Group from Big Tap Menu		delivery			delivery-group		ixia-2-15
+
+T1.1 Verify admin can configure Patch Mode
+	Configure Match Mode					Patch Mode                                         
+	
+T1.2 Verify filter interface can be locked by admin	
+	Configure Lock on BigTap Interface		filter		ixia-2-9		 
+	  
+T1.3 Verify delivery interface can be locked by admin														
+	Configure Lock on BigTap Interface		delivery	ixia-2-15
+	
+T1.4 Verify service interface can be locked by admin														
+	Configure Lock on BigTap Interface		service		ixia-4-8
+	  
+T1.5 Verify admin can unlock the filter interface 
+	Unlock the BigTap Interface				filter		ixia-2-9
+	
+T1.6 Verify admin can unlock the delivery interface 
+	Unlock the BigTap Interface				delivery	ixia-2-15
+	
+T1.7 Verify admin can unlock the service interface 
+	Unlock the BigTap Interface				service		ixia-4-8		
+	  	  
+T1.8 Verify admin can disable Patch Mode
+	Configure Match Mode					!Patch Mode 
+	
+T1.9   Delete Big Tap Interface from Big Tap Menu    			ixia-2-9				
+	   Delete Big Tap Interface from Big Tap Menu    			ixia-2-15
+	   Delete Big Tap Interface from Big Tap Menu    			ixia-4-8
+	   Configure Big Tap Interface from Big Tap Menu			ethernet12			app-rlb9-1			filter			ixia-try-2	
+	
+### Configure Interface Lock by user in admin group		${role}  	${if-name}
+
+TC2 SetUp
+	Configure User  	user_admin			adminadmin			adminadmin		User group admin		admin
+	Go To Signout Page	
+    Valid Login  	user_admin  adminadmin
+    Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rlb9-1			filter			ixia-2-9
+	Configure Big Tap Interface from Big Tap Menu			ethernet2			app-rlb9-1			filter			ixia-try
+	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rly2-1 			delivery		ixia-2-15	
+	Configure Big Tap Interface from Big Tap Menu			ethernet2			app-rly2-1 			service			ixia-4-8
+
+T2.1 Verify user in admin group can configure Patch Mode
+	Configure Match Mode					Patch Mode                                         
+	
+T2.2 Verify filter interface can be locked by the user	
+	Configure Lock on BigTap Interface		filter		ixia-2-9		 
+	  
+T2.3 Verify delivery interface can be locked by the user														
+	Configure Lock on BigTap Interface		delivery	ixia-2-15
+	
+T2.4 Verify service interface can be locked by the user														
+	Configure Lock on BigTap Interface		delivery	ixia-4-8
+	  
+T2.5 Verify another filter interface can be simultaneously locked by the user													
+	Configure Lock on BigTap Interface		filter		ixia-try
+	  
+T2.6 Verify user can unlock the filter interface 
+	Unlock the BigTap Interface				filter		ixia-2-9
+	
+T2.7 Verify user can unlock the delivery interface 
+	Unlock the BigTap Interface				delivery	ixia-2-15
+	
+T2.8 Verify user can unlock the service interface 
+	Unlock the BigTap Interface				service		ixia-4-8
+	
+T2.9 Verify user can lock the interface created by admin user.
+	Unlock the BigTap Interface				service		ixia-try-2
+	
+#T2.10 Verify user cannot unlock the interface locked by admin user.
+#	Unlock the BigTap Interface				service		ixia-4-8		
+	  	  
+T2.11 Verify user can disable Patch Mode
+	Configure Match Mode					!Patch Mode 	
+		
+T3 SetUp
+	Go To signout page
+ 	Valid Login  admin  adminadmin
+ 	
+T3.1 Verify admin user can lock interfaces created by non-default admin user
+	Configure Lock on BigTap Interface		filter		ixia-2-9
+	
+T3.2 Verify admin cannot lock the interface locked by any other user.
+	Configure Lock on BigTap Interface		filter		ixia-try
+	
+T3.3 Verify admin user can unlock interfaces locked by non-default admin user
+	Configure Lock on BigTap Interface		filter		ixia-try-2
+	
+T3.4 Verify admin cannot lock the interface locked by any other user.
+	Configure Lock on BigTap Interface		filter		ixia-try
+
+T3.5 Verify new user can be created being in Patch Mode
+	Configure User							new-user  password  password  New User  ${EMPTY}
+	
+T3.6 Verify new group can be created being in Patch Mode
+	Configure Lock on BigTap Interface		new-group  new-user  ${EMPTY}
+	
+#T3.7 Verify new view cannot be created being in Patch Mode
+#	Configure Lock on BigTap Interface		
+	
+T3.8 Verify locked interfaces can be deleted
+	Delete Big Tap Interfaces				filter		ixia-2-9
+	
+
+	
+
+	  
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}=            get node ip   master
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+	Delete All Big Tap Resources
+	Configure Switch Alias	00:00:08:9e:01:b3:0c:0c			app-rlb9-1		 							
+ 	Configure Switch Alias	00:00:08:9e:01:f8:6b:8b			app-rly2-1
+
+config suite teardown
+	Close Browser
+    Stop Selenium Server
+    base suite teardown

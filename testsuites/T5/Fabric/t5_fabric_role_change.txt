@@ -19,22 +19,23 @@ Resource  testsuites/T5/t5_physical_variables.txt
 * Test Case   
 
 add Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature  IronHorse
+	[Tags]  Fabric  feature  IronHorse  daily-sanity
    bigrobot test ztn  False
-   add fabric switch
+   fabric infra suite setup
    Set swith int variables
    Set switch dpid variables
-   sleep  125
+   Set host int variables
+   sleep  25
    rest verify fabric switch all
 
 Verify the Fabric feature Role Spine0
-	[Tags]  Fabric  feature  IronHorse
+	[Tags]  Fabric  feature  IronHorse  daily-sanity
    sleep  125
    ${spine0_dpid}=  get_switch_mac_topo  s7
    verify fabric switch role  ${spine0_dpid}  spine  
 
 delete/add the Fabric role spine0
-	[Tags]  Fabric  feature  IronHorse 
+	[Tags]  Fabric  feature  IronHorse  daily-sanity
   REST delete fabric role  spine0
   sleep  125
   ${spine0_dpid}=  get_switch_mac_topo  s7

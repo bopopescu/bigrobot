@@ -6,10 +6,10 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.9.16.66
+  ip: 10.9.16.60
   monitor_reauth: false
 c2:
-  ip: 10.9.16.67
+  ip: 10.9.16.61
   monitor_reauth: false
 
 s1:
@@ -28,6 +28,9 @@ s1:
     spine1_int0: ethernet20
     h1_int0: ethernet13/4
     h2_int0: ethernet10/2
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 3
   set_session_ssh: false
   set_init_ping: false
 s2:
@@ -42,6 +45,9 @@ s2:
     spine1_int0: ethernet20
     h1_int0: ethernet13/2
     h2_int0: ethernet10/3
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 4
   console:
     ip: 10.9.16.213
     port: 7004
@@ -60,6 +66,10 @@ s3:
     spine0_int0: ethernet8
     h3_int0: ethernet1
     h4_int0: ethernet9/3
+    h3_int1: ethernet9/4
+  pdu:
+    ip: pdu-111-b.bigswitch.com
+    port: 1
   console:
     ip: 10.9.16.213
     port: 7007
@@ -77,6 +87,9 @@ s4:
     port: 7008
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-111-b.bigswitch.com
+    port: 2
   interfaces:
     leaf1a_int0: ethernet25
     leaf1a_int0: ethernet15
@@ -96,12 +109,14 @@ s5:
     port: 7005
   set_session_ssh: false
   set_init_ping: false
+
   interfaces:
     leaf2b_int0: ethernet19
     spine0_int0: ethernet8
     spine1_int0: ethernet20
     h5_int0: ethernet1
     h6_int0: ethernet24/2
+    h5_int1: ethernet24/3
 
 s6:
   alias: leaf2-b
@@ -132,6 +147,9 @@ s7:
     port: 7002
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 2
   interfaces:
     leaf0a_int0: ethernet9
     leaf1a_int0: ethernet5
@@ -151,6 +169,9 @@ s8:
     port: 7001
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 1
   interfaces:
     leaf0a_int0: ethernet2
     leaf0b_int0: ethernet7
@@ -163,23 +184,41 @@ h1:
   ip: 10.9.16.217
   user: root
   password: bsn
+  interfaces:
+    leaf0a_int0: eth2
+    leaf0b_int0: eth3
 h2:
   ip: 10.9.16.147
   user: root
   password: bsn
+  interfaces:
+    leaf0a_int0: eth2
+    leaf0b_int0: eth3
 h3:
-  ip: 10.9.16.209
+  ip: 10.9.16.73
   user: root
   password: bsn
+  interfaces:
+    leaf1a_int0: eth4
+    leaf1b_int0: eth5
 h4:
   ip: 10.9.16.205
   user: root
   password: bsn
+  interfaces:
+    leaf1a_int0: eth2
+    leaf1b_int0: eth3
 h5:
   ip: 10.9.16.119
   user: root
   password: bsn
+  interfaces:
+    leaf2a_int0: eth4
+    leaf2b_int0: eth5
 h6:
   ip: 10.9.16.178
   user: root
   password: bsn
+  interfaces:
+    leaf0a_int0: eth2
+    leaf0b_int0: eth3

@@ -4,7 +4,7 @@ Suite Setup             priority suite setup
 Suite Teardown          priority suite teardown
 Test Setup              priority test setup
 Test Teardown           priority test teardown 
-Force Tags              BigTap  ToS  Blackbird
+Force Tags              BigTap  blackbird-300  Quanta-LB9  policy  priority
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -58,7 +58,7 @@ ${policy_overlap_3}                          _ZR1_o_R1
 TC001: Verify Configuration
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}    
-    [Tags]  basic
+    [Tags]  feature  sanity
     
 TC002: Change policy priority and verify policy
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -68,7 +68,7 @@ TC002: Change policy priority and verify policy
     Should be true  ${verify_policy1}
     ${verify_priority}=  rest verify policy key  ${policy_name_1}  info  0  priority
     Should be equal as integers  ${verify_priority}  200
-    [Tags]  feature
+    [Tags]  feature  sanity
 
 TC003: Add a second policy at same priority and verify overlapping policy is created
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -96,7 +96,7 @@ TC003: Add a second policy at same priority and verify overlapping policy is cre
     Should be equal as integers  ${verify_priority_2}  200
     ${verify_priority_3}=  rest verify policy key  ${policy_overlap_1}  info  0  priority
     Should be equal as integers  ${verify_priority_3}  200
-    [Tags]  feature
+    [Tags]  feature  sanity
 
 TC004: Add a second policy at different priority and verify overlapping policy is not created
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=110
@@ -122,7 +122,7 @@ TC004: Add a second policy at different priority and verify overlapping policy i
     Should be equal as integers  ${verify_priority_1}  110
     ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
     Should be equal as integers  ${verify_priority_2}  200
-    [Tags]  negative
+    [Tags]  negative  sanity
 
 TC005: Deactivate and activate policy and verify priority
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -145,7 +145,7 @@ TC005: Deactivate and activate policy and verify priority
     Should be true  ${verify_policy2}
     ${verify_priority_2}=  rest verify policy key  ${policy_name_1}  info  0  priority
     Should be equal as integers  ${verify_priority_2}  200
-    [Tags]  negative
+    [Tags]  negative  full
 
 TC006: Change policy action to rate-measure and verify priority
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -170,7 +170,7 @@ TC006: Change policy action to rate-measure and verify priority
     Should be true  ${verify_policy3}
     ${verify_priority_3}=  rest verify policy key  ${policy_name_1}  info  0  priority
     Should be equal as integers  ${verify_priority_3}  200
-    [Tags]  feature
+    [Tags]  feature  full
 
 TC007: Verify overlapping policies at different priorities
     # Same Filter interface across priorities
@@ -233,7 +233,7 @@ TC007: Verify overlapping policies at different priorities
     Should be equal as integers  ${verify_priority_5}  300
     ${verify_priority_6}=  rest verify policy key  ${policy_overlap_2}  info  0  priority
     Should be equal as integers  ${verify_priority_6}  300
-    [Tags]  feature
+    [Tags]  feature  full
 
 
 TC008: Verify overlapping policies at different priorities
@@ -297,7 +297,7 @@ TC008: Verify overlapping policies at different priorities
     Should be equal as integers  ${verify_priority_5}  300
     ${verify_priority_6}=  rest verify policy key  ${policy_overlap_2}  info  0  priority
     Should be equal as integers  ${verify_priority_6}  300
-    [Tags]  feature
+    [Tags]  feature  full
 
 TC009: Verify policies with common delivery interface but different filter interfaces at different priorities
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -321,7 +321,7 @@ TC009: Verify policies with common delivery interface but different filter inter
     Should be equal as integers  ${verify_priority_1}  200
     ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
     Should be equal as integers  ${verify_priority_2}  300
-    [Tags]  feature
+    [Tags]  feature  full
 
 TC010: Verify policies with common delivery interface but different filter interfaces at same priority
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -345,7 +345,7 @@ TC010: Verify policies with common delivery interface but different filter inter
     Should be equal as integers  ${verify_priority_1}  200
     ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
     Should be equal as integers  ${verify_priority_2}  200
-    [Tags]  feature
+    [Tags]  feature  full
 
 TC011: Verify policies with common filter and delivery interfaces at different priorities
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -371,7 +371,7 @@ TC011: Verify policies with common filter and delivery interfaces at different p
     Should be equal as integers  ${verify_priority_1}  200
     ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
     Should be equal as integers  ${verify_priority_2}  300
-    [Tags]  feature
+    [Tags]  feature  full
 
 TC012: Verify policies with no common filter and delivery interfaces at different priorities
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -397,7 +397,7 @@ TC012: Verify policies with no common filter and delivery interfaces at differen
     Should be equal as integers  ${verify_priority_1}  200
     ${verify_priority_2}=  rest verify policy key  ${policy_name_2}  info  0  priority
     Should be equal as integers  ${verify_priority_2}  300
-    [Tags]  feature
+    [Tags]  feature  full
     
 TC013: Verify policy with service and priority
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -414,7 +414,7 @@ TC013: Verify policy with service and priority
     Should be true  ${verify_policy1}
     ${verify_priority}=  rest verify policy key  ${policy_name_1}  info  0  priority
     Should be equal as integers  ${verify_priority}  200
-    [Tags]  feature
+    [Tags]  feature  full
 
 TC014: Verify priority value less than 10 is not allowed
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -426,7 +426,7 @@ TC014: Verify priority value less than 10 is not allowed
     Should be equal as integers  ${verify_priority}  200
     ${priority_2}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=5
     Should not be True  ${priority_2}
-    [Tags]  negative  
+    [Tags]  negative  full
 
 TC015: Verify priority value greater than 1023 is not allowed
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -438,7 +438,7 @@ TC015: Verify priority value greater than 1023 is not allowed
     Should be equal as integers  ${verify_priority}  200
     ${priority_2}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=2000
     Should not be True  ${priority_2}
-    [Tags]  negative  
+    [Tags]  negative  full  
 
 TC016: Verify priority value of 10 is allowed
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -450,7 +450,7 @@ TC016: Verify priority value of 10 is allowed
     Should be equal as integers  ${verify_priority}  200
     ${priority_2}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=10
     Should be True  ${priority_2}
-    [Tags]  negative  
+    [Tags]  negative  full  
 
 TC017: Verify priority value of 1023 is allowed
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -462,7 +462,7 @@ TC017: Verify priority value of 1023 is allowed
     Should be equal as integers  ${verify_priority}  200
     ${priority_2}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=1023
     Should be True  ${priority_2}
-    [Tags]  negative  
+    [Tags]  negative  full  
     
 TC018: Execute HA Failover and verify priority
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -506,7 +506,7 @@ TC018: Execute HA Failover and verify priority
     Should be equal as integers  ${verify_priority_2}  200
     ${verify_priority_3}=  rest verify policy key  ${policy_overlap_1}  info  0  priority
     Should be equal as integers  ${verify_priority_3}  200
-    [Tags]  ha
+    [Tags]  full  ha  robustness
     
 TC019: Reboot switch and verify priority
     ${priority_1}=  rest update policy priority  admin-view  ${policy_name_1}  policy_priority=200
@@ -550,7 +550,7 @@ TC019: Reboot switch and verify priority
     Should be equal as integers  ${verify_priority_2}  200
     ${verify_priority_3}=  rest verify policy key  ${policy_overlap_1}  info  0  priority
     Should be equal as integers  ${verify_priority_3}  200
-    [Tags]  ha
+    [Tags]  full  ha  robustness
 
 * Keyword
 priority suite setup

@@ -1,18 +1,18 @@
 *Settings
-Documentation       BigTap High Availability Test Suite
-Suite Setup         ha suite setup
-Suite Teardown      ha suite teardown
-Test Setup          ha test setup
-Test Teardown       ha test teardown 
-Force Tags          bigtap  ha
-Library             keywords/BsnCommon.py
-Library             keywords/AppController.py
-Library             keywords/BigTap.py
-Library             keywords/SwitchLight.py
-Library             keywords/Ixia.py
-Library             Collections.py
-Library             OperatingSystem.py
-Library             String.py
+Documentation               BigTap High Availability Test Suite
+Suite Setup                 ha suite setup
+Suite Teardown              ha suite teardown
+Test Setup                  ha test setup
+Test Teardown               ha test teardown 
+Force Tags                  BigTap  blackbird-300  Quanta-LB9  Dell-S4810  Quanta-LY2
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
 
 * Variable
 
@@ -41,7 +41,7 @@ TC001: Verify configuration is successful
     verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
     stop traffic  ${stream}    
-    [Tags]  base  
+    [Tags]  ha  robustness  traffic  full
 
 TC002: Flap filter interface and verify traffic is restored        
     verify config
@@ -59,7 +59,7 @@ TC002: Flap filter interface and verify traffic is restored
     verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     verify results  a  transmitted_frame_rate  d  received_valid_frame_rate              
     stop traffic  ${stream}    
-    [Tags]  filter  
+    [Tags]  ha  robustness  traffic  full
 
 TC003: Flap delivery interfaces and verify traffic is restored        
     verify config
@@ -79,7 +79,7 @@ TC003: Flap delivery interfaces and verify traffic is restored
     verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     verify results  a  transmitted_frame_rate  d  received_valid_frame_rate              
     stop traffic  ${stream}    
-    [Tags]  delivery  
+    [Tags]  ha  robustness  traffic  full
 
 TC004: Shutdown one core interface and verify traffic is unaffected        
     verify config
@@ -100,7 +100,7 @@ TC004: Shutdown one core interface and verify traffic is unaffected
     verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     verify results  a  transmitted_frame_rate  d  received_valid_frame_rate                      
     stop traffic  ${stream}    
-    [Tags]  core 
+    [Tags]  ha  robustness  traffic  full
 
 TC005: Rename filter interface and verify traffic flow
     delete bigtap configuration
@@ -116,7 +116,7 @@ TC005: Rename filter interface and verify traffic flow
     rest delete policy  admin-view  P1
     rest delete policy  admin-view  ZP1
     base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}    
-    [Tags]  renameFilter
+    [Tags]  ha  robustness  traffic  full
 
 TC006: Rename delivery interface and verify traffic flow
     delete bigtap configuration
@@ -131,7 +131,7 @@ TC006: Rename delivery interface and verify traffic flow
     stop traffic  ${stream}
     delete bigtap configuration
     base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}    
-    [Tags]  renameDelivery
+    [Tags]  ha  robustness  traffic  full
 
 
 TC007: Add and remove an additional filter interface to policy and verify no traffic drop is seen
@@ -147,7 +147,7 @@ TC007: Add and remove an additional filter interface to policy and verify no tra
     verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  add-delete-filter
+    [Tags]  ha  robustness  traffic  full
     
 TC008: Deactivate and activate bigtap policy 50 times
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
@@ -170,7 +170,7 @@ TC008: Deactivate and activate bigtap policy 50 times
     \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  activate-deactivate                    
+    [Tags]  ha  robustness  traffic  full
 
 TC009: Flap between action active and rate-measure in a bigtap policy 50 times
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
@@ -193,7 +193,7 @@ TC009: Flap between action active and rate-measure in a bigtap policy 50 times
     \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  active-ratemeasure                   
+    [Tags]  ha  robustness  traffic  full
 
 
 TC010: Delete and re-add bigtap policy 50 times
@@ -212,7 +212,7 @@ TC010: Delete and re-add bigtap policy 50 times
     \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  delete-add                   
+    [Tags]  ha  robustness  traffic  full
 
 TC011: Enable and disable feature overlap 50 times     
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
@@ -229,7 +229,7 @@ TC011: Enable and disable feature overlap 50 times
     \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  enable-disable-overlap      
+    [Tags]  ha  robustness  traffic  full
 
 TC012: Enable and disable feature inport-mask 50 times     
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
@@ -246,8 +246,8 @@ TC012: Enable and disable feature inport-mask 50 times
     \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  enable-disable-inport   
-                        
+    [Tags]  ha  robustness  traffic  full
+
 * Keyword
 
 ha suite setup

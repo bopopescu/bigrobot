@@ -23,10 +23,8 @@ ${medium}  3
 ${long}   30
 ${verylong}     120 
 
-${sw}       leaf0-a
-${intf2}     ethernet2
-${intf1}     ethernet1
-${uut}      leaf0-a
+${sw}       leaf2-b
+${uut}      leaf2-b
 
 ${f_rate}       5000
 ${time}         5	 	 
@@ -56,7 +54,7 @@ T1 Verify default qos weight for CPU queue in all switches
  	: FOR    ${switch}   IN   @{switches}   
 	\   Verify to cpu queue weight    ${switch}   ${expect}
  		 
-	[Tags] 	sanity  feature  fabric_QOS
+	[Tags] 	sanity  feature  fabric_QOS  daily-sanity
 
 T2 Verify qos weight for CPU queue in all switches when qos enabled
 	config   master   fabric 
@@ -71,14 +69,14 @@ T2 Verify qos weight for CPU queue in all switches when qos enabled
     config   master   no qos
 
  		 
-	[Tags] 	sanity  feature  fabric_QOS
+	[Tags] 	sanity  feature  fabric_QOS  daily-sanity
 
 T3 Verify LLDP different src to port 0 queue 1 	
 
  		${f_cnt}=   expr   ${f_rate} * ${time} 
 		
 	log  LLDP stream with different src address
-	 	${LLDP}=  raw stream add  name=LLDP  flow=p2->p1  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
+	 	${LLDP}=  raw stream add  name=LLDP  flow=leaf2b_int1->f  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
 	 	...    frame_cnt=${f_cnt}   src_mac_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01  src_mac=00:23:23:23:00:00	 
 
  		Control Traffic test   ${LLDP}   ${time}	 			
@@ -94,13 +92,13 @@ T3 Verify LLDP different src to port 0 queue 1
  	 	Should Be True   ${status}
 	 
 	 
-	[Tags] 	full  feature   fabric_QOS  
+	[Tags] 	full  feature   fabric_QOS   daily-sanity
 
 T4 Verify LLDP packet with same src mac are rate limited 
 
 		${f_cnt}=   expr   ${f_rate} * ${time} 	
 	log   LLDP stream with same src address
-	 	${LLDP_1}=  raw stream add  name=LLDP_1  flow=p2->p1  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
+	 	${LLDP_1}=  raw stream add  name=LLDP_1  flow=leaf2b_int1->f  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
 	 	...    frame_cnt=${f_cnt}     src_mac=00:24:24:24:00:00
  
  		Control Traffic test   ${LLDP_1}   ${time}	 	
@@ -116,12 +114,12 @@ T4 Verify LLDP packet with same src mac are rate limited
  	 	Should Be True   ${status}
   	 	
  	 	
-	[Tags] 	full  feature   fabric_QOS    
+	[Tags] 	full  feature   fabric_QOS    daily-sanity
 
 T5 Verify LACP packet to port 0 queue 1	
 		${f_cnt}=   expr   ${f_rate} * ${time} 	
 	log   LACP stream with different src address
-		${LACP}=  raw stream add  name=LACP  flow=p2->p1  lacp=True   frame_rate=${f_rate}	
+		${LACP}=  raw stream add  name=LACP  flow=leaf2b_int1->f  lacp=True   frame_rate=${f_rate}	
 	 	...    frame_cnt=${f_cnt}   src_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01  lacp_src_mac=00:25:25:25:00:00	 
  	
 		Control Traffic test   ${LACP}   ${time}	 	
@@ -141,7 +139,7 @@ T5 Verify LACP packet to port 0 queue 1
 T6 Verify LACP packet with same src mac are rate limited 	
 		${f_cnt}=   expr   ${f_rate} * ${time} 	
 	log   LACP stream with same src address
-		${LACP_1}=  raw stream add  name=LACP_1  flow=p2->p1  lacp=True   frame_rate=${f_rate} 
+		${LACP_1}=  raw stream add  name=LACP_1  flow=leaf2b_int1->f  lacp=True   frame_rate=${f_rate} 
 	 	...    frame_cnt=${f_cnt}     lacp_src_mac=00:26:26:26:00:00	 
  	
 		Control Traffic test   ${LACP_1}   ${time}	 	 
@@ -155,7 +153,7 @@ T6 Verify LACP packet with same src mac are rate limited
  	 	Should Be True   ${status}
  
  
- 	[Tags] 	full  feature   fabric_QOS   
+ 	[Tags] 	full  feature   fabric_QOS   daily-sanity
 
  
 T7 Verify ARP packet to port 0 queue 2 
@@ -177,7 +175,7 @@ T9 Verify L2srcmiss mac move(dif port then static endpoint) 1 src address to por
 		${mac_rate}= 	 Set Variable    2000 
  		${f_cnt}=   expr  ${mac_rate} * ${time} 
   		
-		${L2_mv}=  L2 add  name=L2_mv     flow=p2->p1  src_mac=${dst_mac}  dst_mac=00:00:99:99:00:00   frame_rate=${mac_rate} 
+		${L2_mv}=  L2 add  name=L2_mv     flow=leaf2b_int1->f  src_mac=${dst_mac}  dst_mac=00:00:99:99:00:00   frame_rate=${mac_rate} 
 	 	...    frame_cnt=${f_cnt}   vlan_id=10    frame_size=128
  
  		Control Traffic test  ${L2_mv}   ${time} 	
@@ -203,7 +201,7 @@ T10 Verify L2srcmiss mac learning to port 0 queue 3
  		${f_cnt}=   expr  ${mac_rate} * ${time} 		
 	log  config static endpoint
  		
-		${L2}=  L2 add  name=L2     flow=p2->p1  src_mac=${src_mac}  dst_mac=${dst_mac}   frame_rate=${mac_rate} 
+		${L2}=  L2 add  name=L2     flow=leaf2b_int1->f  src_mac=${src_mac}  dst_mac=${dst_mac}   frame_rate=${mac_rate} 
 	 	...    frame_cnt=${f_cnt}   src_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01   vlan_id=10    frame_size=128
 	 	 
  		Control Traffic test  ${L2}   ${time}  	
@@ -229,7 +227,7 @@ T11 Verify L3 packet(intervns big packet) are sent corretly
 		${p_rate}= 	Set Variable    2000 
  		${f_cnt}=   expr  ${p_rate} * ${time} 		
 	
-    	${L3}=  L3 add  name=L3  flow=p1<->p2    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=9000
+    	${L3}=  L3 add  name=L3  flow=f<->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=9000
     	...		src_ip=100.0.0.2  src_gw=100.0.0.1  src_mac=00:1b:1b:1b:00:01   src_gw_prefix=16
     	...		dst_ip=100.1.0.2  dst_gw=100.1.0.1  dst_mac=00:2b:2b:2b:00:01   dst_gw_prefix=16
 
@@ -250,7 +248,7 @@ T12 Verify L3tocpu packet(intervns packet to unknown host) same addresses to por
 		${p_rate}= 	Set Variable    2000 
  		${f_cnt}=   expr  ${p_rate} * ${time} 		
 	
-    	${L3_1}=  L3 add  name=L3_1  flow=p1->p2    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=128
+    	${L3_1}=  L3 add  name=L3_1  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=128
     	...		src_ip=100.0.0.3  src_mac=00:1b:1b:1b:00:01   no_arp=True   
     	...		dst_ip=100.1.0.3  dst_mac=${routermac}   
 
@@ -274,10 +272,10 @@ T13 Verify L3tocpu packet(intervns packet to unknown host) different addresses t
 		${p_rate}= 	Set Variable    2000 
  		${f_cnt}=   expr  ${p_rate} * ${time} 
 
-		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=p1
-		L3 start hosts  port_name=p1
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
  	
-    	${L3_2}=  raw_stream_add  name=L3_2  flow=p1->p2    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=128
+    	${L3_2}=  raw_stream_add  name=L3_2  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=128
     	...		src_ip=100.0.0.2  src_mac=00:1b:1b:1b:00:01   
     	...		dst_ip=100.1.0.3  dst_mac=${routermac}  dst_ip_cnt=${f_cnt}   dst_ip_step=0.0.0.1
 
@@ -302,10 +300,10 @@ T14 Verify L3 miss packet to port 0 queue 6 (consumed by switch)
 		${p_rate}= 	Set Variable    2000 
  		${f_cnt}=   expr  ${p_rate} * ${time} 
  		
-		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=p1
-		L3 start hosts  port_name=p1
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
  					
-    	${L3_3}=  raw_stream_add  name=L3_3  flow=p1->p2    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=128
+    	${L3_3}=  raw_stream_add  name=L3_3  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=128
     	...		src_ip=100.0.0.2  src_mac=00:1b:1b:1b:00:01    
     	...		dst_ip=100.2.0.3  dst_mac=${routermac}   dst_ip_cnt=${f_cnt}   dst_ip_step=0.1.0.0
 
@@ -334,25 +332,26 @@ T16 Verify qos weight for different queue and same port (same rate)
 	log   tested with arp and lacp
 		${f_cnt}=   expr   ${f_rate} * ${time} 
   				
-		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=p1
-		L3 start hosts  port_name=p1
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
 	 		
 	log  LLDP stream with different src address
  	
-	 	${LLDP}=  raw stream add  name=LLDP  flow=p1->p2  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
+	 	${LLDP}=  raw stream add  name=LLDP  flow=f->leaf2b_int1  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
 	 	...    frame_cnt=${f_cnt}   src_mac_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01  src_mac=00:11:11:11:00:00	 
  
 	log  L3 to CPU traffic
   				  	
-    	${L3_2}=  raw_stream_add  name=L3_2  flow=p1->p2    frame_cnt=${f_cnt}    frame_rate=${f_rate}   frame_size=128
+    	${L3_2}=  raw_stream_add  name=L3_2  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${f_rate}   frame_size=128
     	...		src_ip=100.0.0.2  src_mac=00:1b:1b:1b:00:01   
     	...		dst_ip=100.1.0.3  dst_mac=${routermac}  dst_ip_cnt=${f_cnt}   dst_ip_step=0.0.0.1
 
  		Control Traffic test all   ${time}	
  		enable    master   show endpoint		 		
  		enable    master   show switch ${uut} interface ${intf1} counters 		
- 		${rate1}=    Get processed packetin rate     ${time}
+ 		${trate}=    Get processed packetin rate     ${time}
  		${rate2}=    Get lldp rate     ${time}
+ 		${rate1}=    expr	${trate}-${rate2}
  		
 	log   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2} 
 	Log To Console   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2}  
@@ -377,25 +376,26 @@ T17 Verify qos weight for different queue and different port (same rate)
 	log   tested with l3 to cpu and lldp
  		${f_cnt}=   expr   ${f_rate} * ${time} 
   				 				
-		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=p1
-		L3 start hosts  port_name=p1
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
 
 		
 	log  LLDP stream with different src address
-	 	${LLDP}=  raw stream add  name=LLDP  flow=p2->p1  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
+	 	${LLDP}=  raw stream add  name=LLDP  flow=leaf2b_int1->f  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
 	 	...    frame_cnt=${f_cnt}   src_mac_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01  src_mac=00:22:22:22:00:00	 
  
 	log  L3 to CPU traffic
   				  	
-    	${L3_2}=  raw_stream_add  name=L3_2  flow=p1->p2    frame_cnt=${f_cnt}    frame_rate=${f_rate}   frame_size=128
+    	${L3_2}=  raw_stream_add  name=L3_2  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${f_rate}   frame_size=128
     	...		src_ip=100.0.0.2  src_mac=00:00:12:12:12:01   
     	...		dst_ip=100.1.0.3  dst_mac=${routermac}  dst_ip_cnt=${f_cnt}   dst_ip_step=0.0.0.1
 
  		Control Traffic test all   ${time}	
  		enable    master   show endpoint		 		
  		enable    master   show switch ${uut} interface ${intf1} counters 		
- 		${rate1}=    Get processed packetin rate     ${time}
+ 		${trate}=    Get processed packetin rate     ${time}
  		${rate2}=    Get lldp rate     ${time}
+ 		${rate1}=    expr	${trate}-${rate2}
  		
 	log   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2} 
 	Log To Console   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2}  
@@ -419,27 +419,28 @@ T18 Verify qos weight for different queue (different rate)
  
  		${f_cnt}=   expr   ${f_rate} * ${time} 
   				
-		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=p1
-		L3 start hosts  port_name=p1
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
 		
 	log  LLDP stream with different src address
 	
-	 	${LLDP}=  raw stream add  name=LLDP  flow=p1->p2  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
+	 	${LLDP}=  raw stream add  name=LLDP  flow=f->leaf2b_int1  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
 	 	...    frame_cnt=${f_cnt}   src_mac_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01  src_mac=00:11:11:11:00:00	 
  
 	log  L3 to CPU traffic
 		${p_rate}= 	Set Variable    2000 
  		${p_cnt}=   expr  ${p_rate} * ${time} 
   				  	
-    	${L3_2}=  raw_stream_add  name=L3_2  flow=p1->p2    frame_cnt=${p_cnt}    frame_rate=${p_rate}   frame_size=128
+    	${L3_2}=  raw_stream_add  name=L3_2  flow=f->leaf2b_int1    frame_cnt=${p_cnt}    frame_rate=${p_rate}   frame_size=128
     	...		src_ip=100.0.0.2  src_mac=00:00:12:12:12:01   
     	...		dst_ip=100.1.0.3  dst_mac=${routermac}  dst_ip_cnt=${p_cnt}   dst_ip_step=0.0.0.1
 
  		Control Traffic test all   ${time}	
  		enable    master   show endpoint		 		
  		enable    master   show switch ${uut} interface ${intf1} counters 		
- 		${rate1}=    Get processed packetin rate     ${time}
+ 		${trate}=    Get processed packetin rate     ${time}
  		${rate2}=    Get lldp rate     ${time}
+ 		${rate1}=    expr	${trate}-${rate2}
  		
 	log   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2} 
 	Log To Console   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2}  
@@ -461,9 +462,14 @@ T18 Verify qos weight for different queue (different rate)
 
 * Keywords
 fabric infra suite setup
+	${intf1}=	get_switch_int_topo  s6  ixia1_int0
+	Set Suite Variable		${intf1}
+	${intf2}=	get_switch_int_topo  s6  ixia1_int1
+	Set Suite Variable		${intf2}
  	base suite setup 
 # 	rest_delete_tenant_all
-#	set fabric switches 
+	set fabric switches 
+	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
 	reconnect_switch_ips  
 	rest_delete_portgroup_all
 	rest_delete_tenant_all
@@ -474,17 +480,19 @@ qos base suite teardown
 #	base suite teardown	
     sleep  1 
 fabric qos base test teardown
+	base test teardown
 	delete traffic
 	sleep  5
-	base test teardown 
+	 
 	 
 set fabric switches  
-	rest_delete_portgroup_all
  	${switches}=  get_all_switch_nodes  
 	log   switches are ${switches}
  	: FOR    ${sw}   IN   @{switches}   
 	\   ${alias}=   get_node_alias   ${sw} 	
-	\   ${dpid}=   	cli_show_switch_dpid    ${sw}             
+	\	Run Keyword If	'arista' in '${alias}'	Continue For Loop
+	\   ${mac}  params  node=${sw}  key=mac
+	\   ${dpid}=  	Set Variable 	 00:00:${mac}             
   	\   Run Keyword if   'spine' in '${alias}' 	   add fabric switch spine    ${alias}     ${dpid}
   	\   sleep    1
   	\ 	Run Keyword if   'spine' in '${alias}'     rest_verify_fabric_switch_role    ${dpid}   spine

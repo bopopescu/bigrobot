@@ -4,7 +4,7 @@ Suite Setup             flag suite setup
 Suite Teardown          flag suite teardown
 Test Setup              flag test setup
 Test Teardown           flag test teardown 
-Force Tags              corsair  feature  bigtap  
+Force Tags              BigTap  corsair-400  Accton-AS5710  match-conditions  tcp-flags
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -28,7 +28,7 @@ ${policy_name_1}                          policy_tcp_flags       #Policy Name th
 
 *Test Case
 
-Verify all positive combinations of TCP flags
+TC001: Verify all positive combinations of TCP flags
     : FOR    ${INDEX}    IN RANGE    0    63
     \    Log    ${INDEX}
     \    ${match_result}=  rest add policy match  admin-view  ${policy_name_1}  1  {"tcp-flags": ${INDEX}, "ether-type": 2048, "tcp-flags-mask": ${INDEX}, "ip-proto": 6, "sequence": 1} 
@@ -48,10 +48,10 @@ Verify all positive combinations of TCP flags
     \    stop traffic  ${stream}
     \    delete traffic
     \    sleep  2
-    [Tags]  feature  sanity  TCP  positive        
+    [Tags]  feature  full
 
         
-Verify all positive combinations of TCP6 flags
+TC002: Verify all positive combinations of TCP6 flags
     : FOR    ${INDEX}    IN RANGE    0    63
     \    Log    ${INDEX}
     \    ${match_result}=  rest add policy match  admin-view  ${policy_name_1}  1  {"tcp-flags": ${INDEX}, "ether-type": 34525, "tcp-flags-mask": ${INDEX}, "ip-proto": 6, "sequence": 1} 
@@ -71,7 +71,7 @@ Verify all positive combinations of TCP6 flags
     \    stop traffic  ${stream}
     \    delete traffic
     \    sleep  2
-    [Tags]  feature  sanity  TCP6  positive          
+    [Tags]  feature  full
                                           
 * Keyword
 

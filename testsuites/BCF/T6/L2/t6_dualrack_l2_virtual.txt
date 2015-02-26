@@ -1,0 +1,194 @@
+== T6 Sanity Test Suite ==
+
+* Setting
+Documentation    T6 Dual Leaf Dual Rack L2 sanity virtual Test Suite
+Suite Setup      T6 base suite setup
+Suite Teardown   Tear down the config
+Test Setup       T6 base test setup
+Test Teardown    T6 base test teardown
+Force Tags       T6 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library			 keywords/T6.py
+Library          keywords/Mininet.py
+Resource		 testsuites/BCF/T6/t6_virtual_resource.txt
+
+
+* Variables
+${bm0_ip}  10.0.0.1
+${bm1_ip}  10.0.0.2
+${vm0_ip}  10.0.0.3
+${vm1_ip}  10.0.0.4
+${vm2_ip}  10.0.0.5
+${vm3_ip}  10.0.0.6
+${vm4_ip}  10.0.0.7
+${vm5_ip}  10.0.0.8
+${vm6_ip}  10.0.0.9
+${vm7_ip}  10.0.0.10
+${bm0_mac}  00:00:00:00:00:01
+${bm1_mac}  00:00:00:00:00:02
+${bm0_intf0}  leaf0a-eth5
+${bm0_intf1}  leaf0b-eth5
+${bm1_intf0}  leaf1a-eth5
+${bm1_intf1}  leaf1b-eth5
+${hv0_intf0}  hv0-eth3
+${hv0_intf1}  hv0-eth4
+${hv1_intf0}  hv1-eth3
+${hv1_intf1}  hv1-eth4
+${hv2_intf0}  hv2-eth3
+${hv2_intf1}  hv2-eth4
+${hv3_intf0}  hv3-eth3
+${hv3_intf1}  hv3-eth4
+
+* Test Case 
+basic cli show commands test case
+   [Tags]  L2  smoke     feature
+   cli  c1  show version
+   cli  c1  show version detail
+   cli  c1  show running-config
+   cli  c1  show switch
+   cli  c1  show controller
+   config  c1  show controller
+   enable  c1  show controller
+   config  c1  show switch
+   enable  c1  show switch
+   mininet start inband
+   
+add Fabric setup Dual Rack Dual Leaf 
+   [Tags]  L2  smoke    feature
+   sleep  5
+#   add fabric switch
+   rest verify fabric switch all
+   rest verify fabric vswitch all
+   rest verify vswitch portgroup  4
+   rest verify fabric link common  20
+
+ping bm0 to bm1 dual leaf dual rack dynamic endpoints
+   [Tags]  L2  smoke    feature
+   add portgroup to vns  A  A  p1  -1 
+   add portgroup to vns  A  A  p2  -1
+   sleep  10 
+   ${loss}=  mininet ping  bm0  ${bm1_ip}
+   config  c1  show endpoint
+   enable  c1  show endpoint
+   config  c1  show tenant
+   enable  c1  show tenant all
+   config  c1  show segment
+   enable  c1  show segment all
+   Should Be True  ${loss} == 0						 
+
+ping vm0 to vm1 single ivs dynamic endpoints
+   [Tags]  L2  smoke   feature
+   rest add interface to vns  A  A  hv0  ${hv0_intf0}  -1
+   rest add interface to vns  A  A  hv0  ${hv0_intf1}  -1 
+   sleep  5 
+   ${loss}=  mininet ping  vm0  ${vm1_ip}
+   Should Be True  ${loss} == 0					 
+		
+ping vm0 to vm2 same rack dual ivs dynamic endpoints
+   [Tags]  L2     feature     
+   rest add interface to vns  A  A  hv0  ${hv0_intf0}  -1
+   rest add interface to vns  A  A  hv1  ${hv1_intf0}  -1
+   sleep  5
+   ${loss}=  mininet ping  vm0  ${vm2_ip}
+   Should Be True  ${loss} == 0  
+   
+ping vm0 to vm4 dual rack dual ivs dynamic endpoints
+   [Tags]  L2  smoke   feature
+   rest add interface to vns  A  A  hv0  ${hv0_intf0}  -1
+   rest add interface to vns  A  A  hv2  ${hv2_intf0}  -1
+   sleep  5
+   ${loss}=  mininet ping  vm0  ${vm4_ip}
+   Should Be True  ${loss} == 0 
+   
+ping bm0 to vm0 same rack  
+	[Tags]  L2  sanity
+	add portgroup to vns  A  A  p1  -1
+	rest add interface to vns  A  A  hv0  ${hv0_intf0}  -1
+	sleep  5
+	${loss}=  mininet ping  bm0  ${vm0_ip}
+    Should Be True  ${loss} == 0
+    
+ping bm0 to vm4 dual rack	
+	[Tags]  L2 sanity
+	add portgroup to vns  A  A  p1  -1
+	rest add interface to vns  A  A  hv2  ${hv2_intf0}  -1
+	sleep  5
+	${loss}=  mininet ping  bm0  ${vm4_ip}
+    Should Be True  ${loss} == 0				
+ 
+
+* Keywords
+
+T6 base suite setup
+	base suite setup
+    add fabric switch
+    add a portgroup  p1 
+    add interface to portgroup  leaf0-a  ${bm0_intf0}  p1
+    add interface to portgroup  leaf0-b  ${bm0_intf1}  p1
+    add a portgroup  p2 
+    add interface to portgroup  leaf1-a  ${bm1_intf0}  p2
+    add interface to portgroup  leaf1-b  ${bm1_intf1}  p2
+    mininet start inband
+    sleep  5
+
+Tear down the config
+   delete a tenant  A 
+   delete a portgroup  p1
+   delete a portgroup  p2
+   delete fabric switch
+   base suite teardown
+
+T6 base test setup
+   base test setup
+   add a tenant  A 
+   add a vns  A  A
+   sleep  5
+   
+T6 base test teardown
+   delete a tenant  A
+   base test teardown
+   sleep  5
+         
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
+
+delete a tenant  [Arguments]  ${tenant} 
+  	REST delete tenant  ${tenant}    
+
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
+
+delete a vns  [Arguments]  ${tenant}  ${vns} 
+  	REST delete vns  ${tenant}  ${vns}   
+
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
+
+delete a portgroup  [Arguments]  ${pg}
+  	REST delete portgroup  ${pg}    
+
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
+  	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST add interface to portgroup  ${switch}  ${intf}  ${pg}  
+
+delete interface from portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST delete interface from portgroup  ${switch}  ${intf}  ${pg}  
+
+add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
+  	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
+
+add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+  REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+
+delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
+  REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+  
+
+
+ 

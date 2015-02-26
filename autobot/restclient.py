@@ -61,16 +61,23 @@ class RestClient(object):
     def request_session_cookie(self, url=None):
         if url:
             self.session_cookie_url = url
-        helpers.log("session_cookie_url: %s" % self.session_cookie_url)
+        helpers.log("session_cookie_url: '%s'" % self.session_cookie_url)
         authen = {"user":self.user, "password":self.password}
-        helpers.debug("session cookie authen info: %s" % authen)
+        helpers.debug("session cookie authen info: '%s'" % authen)
         result = self.post(self.session_cookie_url, authen)
         session_cookie = result['content']['session_cookie']
         self.set_session_cookie(session_cookie)
         return session_cookie
 
-    def set_session_cookie(self, session):
-        helpers.log("Saving session cookie %s" % session)
+    def delete_session_cookie(self, url=None):
+        result = self.delete(url)
+        helpers.log("Removing session cookie '%s'" % self.session_cookie)
+        self.session_cookie = None
+        return result
+
+    def set_session_cookie(self, session, quiet=False):
+        if not quiet:
+            helpers.log("Saving session cookie '%s'" % session)
         self.session_cookie = session
         return self.session_cookie
 
@@ -133,6 +140,11 @@ class RestClient(object):
         Generic HTTP request for POST, GET, PUT, DELETE, etc.
         data is a Python dictionary.
         """
+        
+        #helpers.log("url: '%s'" % url)
+        #helpers.log("verb: '%s'" % verb)
+        #helpers.log("data: '%s'" % data)
+        
         if url is None:
             url = self.base_url
             if url is None:
@@ -163,8 +175,8 @@ class RestClient(object):
             if len(data_str) > 50:
                 # If data is more than 50 chars long, then prettify JSON
                 data_str = ' %s' % helpers.to_json(data)
-        helpers.bigrobot_devcmd_write("%-9s: %s%s\n"
-                                      % (prefix_str, url, data_str))
+        #helpers.bigrobot_devcmd_write("%-9s: %s%s\n"
+        #                              % (prefix_str, url, data_str))
         if helpers.is_dict(data) or helpers.is_list(data):
             formatted_data = helpers.to_json(data)
         else:
@@ -248,21 +260,24 @@ class RestClient(object):
                 else:
                     raise
             else:
-                # !!! FIXME: Handle case where session cookie is expired for
-                # Big Switch controllers. It really shouldn't be in the generic
-                # module. Should really reside in bsn_restclient.py.
                 if int(result['status_code']) == 401:
                     if self.session_cookie_loop > 5:
                         helpers.test_error("Detected session cookie loop.")
-                    else:
+                    elif ('description' in result['content'] and
+                          re.match(r'.*cookie.*', result['content']['description'], re.I)):
+                        # Retry if:
+                        #   "Authorization failed: No session found for cookie"
+                        #   "Authorization failed: No session cookie provided"
                         self.session_cookie_loop += 1
-
-                    helpers.log("It appears the session cookie has expired."
-                                "  Requesting new session cookie.")
-                    self.request_session_cookie()
-                    # helpers.sleep(2)
-                    # Re-run command
-                    result = self._http_request(*args, **kwargs)
+                        helpers.log("It appears the session cookie has expired."
+                                    "  Requesting new session cookie.")
+                        self.request_session_cookie()
+                        # helpers.sleep(2)
+                        # Re-run command
+                        result = self._http_request(*args, **kwargs)
+                    else:
+                        # Error, possibly due to "invalid user/password combination" or others.
+                        helpers.test_error("Unable to create session cookie.")
                 else:
                     self.session_cookie_loop = 0
                 break

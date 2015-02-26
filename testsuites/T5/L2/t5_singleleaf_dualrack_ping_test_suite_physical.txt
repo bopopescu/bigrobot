@@ -1,4 +1,4 @@
-== T5 Sanity Test Suite ==
+== T5 daily-sanity Test Suite ==
 
 * Setting
 Documentation    T5 Single Leaf Dual Rack Test Suite
@@ -18,12 +18,13 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 Verify fabric switch and Link
-   [Tags]  L2  feature  smoke  sanity  IronHorse   
+   [Tags]  L2  feature  smoke  daily-sanity  IronHorse   
    rest verify fabric switch all
    rest verify fabric link
+   Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common  6
 
 ping h3 to h4 single leaf single rack dynamic endpoints
-   [Tags]  L2  feature  smoke  sanity  IronHorse      
+   [Tags]  L2  feature  smoke  daily-sanity  IronHorse      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1 
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  -1 
    sleep  10
@@ -31,7 +32,7 @@ ping h3 to h4 single leaf single rack dynamic endpoints
    Should Be True  ${loss} < 60  
  
 ping h3 to h4 single leaf single rack static endpoints
-   [Tags]  L2  feature  sanity  IronHorse       
+   [Tags]  L2  feature  daily-sanity  IronHorse       
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf1-a  ${h4_intf0_single}  -1
@@ -47,7 +48,7 @@ ping h3 to h4 single leaf single rack static endpoints
    Should Be True  ${loss} < 60
    
 ping h2 to h3 dual rack single leaf dynamic endpoints
-   [Tags]  L2  feature  smoke  sanity  IronHorse     
+   [Tags]  L2  feature  smoke  daily-sanity  IronHorse     
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1 
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  -1 
    sleep  5 
@@ -55,7 +56,7 @@ ping h2 to h3 dual rack single leaf dynamic endpoints
    Should Be True  ${loss} < 60 					 
 		
 ping h2 to h3 dual rack single leaf static endpoints 
-   [Tags]  L2  feature  sanity  IronHorse        
+   [Tags]  L2  feature  daily-sanity  IronHorse        
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf0-a  ${h2_intf0_single}  -1
@@ -71,7 +72,7 @@ ping h2 to h3 dual rack single leaf static endpoints
    Should Be True  ${loss} < 60   
    
 ping h3 to h4 single leaf single rack dynamic endpoints tag
-   [Tags]  L2  feature  smoke  sanity  IronHorse      
+   [Tags]  L2  feature  smoke  daily-sanity  IronHorse      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20 
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  20
    bash add tag  h3  eth1  20 
@@ -90,7 +91,7 @@ ping h3 to h4 single leaf single rack dynamic endpoints tag
    Should Be True  ${loss} < 60  					
 		
 ping h3 to h4 single leaf single rack static endpoints tag
-   [Tags]  L2  feature  sanity  IronHorse    
+   [Tags]  L2  feature  daily-sanity  IronHorse    
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf1-a  ${h4_intf0_single}  20
@@ -102,21 +103,39 @@ ping h3 to h4 single leaf single rack static endpoints tag
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  20 
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20
    sleep  5 
+   bash add tag  h3  eth1  20 
+   bash add ip address  h3  ${h3_eth1_ip}  eth1.20
+   bash ifup intf  h3  eth1.20
+   bash add tag  h4  eth1  20
+   bash add ip address  h4  ${h4_eth1_ip}  eth1.20
+   bash ifup intf  h4  eth1.20
    ${loss}=  bash ping  h3  ${h4_tag_single_ip}  source_if=eth1.20
    Should Be True  ${loss} < 50
 
 ping h2 to h3 dual rack single leaf dynamic endpoints tag     
-   [Tags]  L2  feature  smoke  sanity  IronHorse      
+   [Tags]  L2  feature  smoke  daily-sanity  IronHorse      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20 
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  20
    sleep  5
+   bash add tag  h2  eth1  20
+   bash add ip address  h2  ${h2_eth1_ip}  eth1.20
+   bash ifup intf  h2  eth1.20
+   bash add tag  h3  eth1  20 
+   bash add ip address  h3  ${h3_eth1_ip}  eth1.20
+   bash ifup intf  h3  eth1.20
    ${loss}=  bash ping  h3  ${h2_tag_single_ip}  source_if=eth1.20
    Should Be True  ${loss} < 60    
    
 ping h2 to h3 dual rack single leaf static endpoints tag 
-   [Tags]  L2  feature  sanity  IronHorse   
+   [Tags]  L2  feature  daily-sanity  IronHorse   
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
+   bash add tag  h2  eth1  20
+   bash add ip address  h2  ${h2_eth1_ip}  eth1.20
+   bash ifup intf  h2  eth1.20
+   bash add tag  h3  eth1  20 
+   bash add ip address  h3  ${h3_eth1_ip}  eth1.20
+   bash ifup intf  h3  eth1.20
    rest add interface to endpoint  A   A  e2  leaf0-a  ${h2_intf0_single}  20
    rest add interface to endpoint  A   A  e1  leaf1-a  ${h3_intf0_single}  20
    REST add ip endpoint  A  A  e1  ${h3_tag_single_ip}
@@ -134,11 +153,21 @@ ping h2 to h3 dual rack single leaf static endpoints tag
 Single Leaf Three Rack Suite Setup
    base suite setup
    add fabric switch
+   Set swith int variables
+   Set switch dpid variables
+   Set host int variables
    bring up eth1 h3
    bring up eth1 h4
    bring up eth1 h2
    sleep  5 
-   
+  
+T5 base test teardown
+   base test teardown
+   delete a tenant  A
+   bash delete tag  h3  eth1.20
+   bash delete tag  h4  eth1.20
+   bash delete tag	h2	eth1.20 
+    
 Single Leaf Three Rack Suite Teardown 
    delete a tenant  A
    delete fabric switch
@@ -153,9 +182,7 @@ T5 base test setup
    add a vns  A  A
    sleep  5
    
-T5 base test teardown
-   base test teardown
-   delete a tenant  A
+
  
    
 add a tenant  [Arguments]  ${tenant} 

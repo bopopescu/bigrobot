@@ -594,9 +594,9 @@ class T5(object):
     def rest_add_ip_endpoint(self, tenant, vns, endpoint, ip):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]' % (tenant, vns, endpoint)
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/ip-address[ip-address="%s"]' % (tenant, vns, endpoint, ip)
         try:
-            c.rest.patch(url, {"ip-address": ip})
+            c.rest.put(url, {"ip-address": ip})
         except:
             return False
         else:
@@ -1514,6 +1514,32 @@ class T5(object):
         else:
             helpers.test_failure("Expected links are not present, expected:%d,Actual:%d" % (int(count), int(link)))
             return False
+    def rest_verify_port_group_state(self, expected_state="up", pg_name=None):
+        '''
+            Fucntion to verify the given port group state in controller using REST APIs
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = ''
+        if pg_name is None:
+            # Verify portgroup state of all configured portgroups
+            url = '/api/v1/data/controller/applications/bcf/info/fabric/port-group'
+        else:
+            url = url + '[name=%s]' % pg_name
+
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log("Total no of portgroups: %s " % str(len(data)))
+        for pg in data:
+            helpers.log("Verifiy state of port group: %s , Mode: %s" % (str(pg["name"]), str(pg["mode"])))
+            for interface in pg["interface"]:
+                if interface["state"] == expected_state:
+                    helpers.log("Port group state as Expected : %s " % expected_state)
+                else:
+                    helpers.log("Port group state is not as Expected Please check the port group state Exiting script to avoind unecessarly failures..")
+                    helpers.exit_robot_immediately("Please fix Portgroup state: %s" % str(pg["name"]))
+        return True
+
 
     def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()
@@ -1643,7 +1669,7 @@ class T5(object):
                 return False
         else:
             helpers.log("fabric role is not configured")
-            return True
+            return False
 
     def rest_verify_fabric_link(self):
         t = test.Test()
@@ -1653,7 +1679,7 @@ class T5(object):
         data = c.rest.content()
         fabric_interface = 0
         for i in range(0, len(data)):
-            if data[i]["type"] == "leaf" or data[i]["type"] == "spine":
+            if data[i]["type"] == "leaf" or data[i]["type"] == "spine" or data[i]["type"] == "virtual":
                 fabric_interface = fabric_interface + 1
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric?select=link' % ()
         c.rest.get(url1)
@@ -3260,15 +3286,27 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
         t.setup_ztn_phase2(name)
         return True
 
-    def remove_no_auto_reload(self, name):
+    def remove_no_auto_reload(self, name=None):
         """
         Remove no-auto-reoload file through given switch console
         """
         t = test.Test()
-        con = t.dev_console(name)
-        helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
-        con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
-        con.cli("")
+        if name is None:
+            params = t.topology_params_nodes()
+            for key in params:
+                if not helpers.is_switch(key):
+                    helpers.log("Skip Remove no_auto_relaod for key: %s" % key)
+                    continue
+                con = t.dev_console(key)
+                helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
+                con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
+                con.cli("")
+                con.close()
+        else:
+            con = t.dev_console(name)
+            helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
+            con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
+            con.cli("")
         return True
 
     def rest_get_router_mac(self, ip, node='master'):
@@ -3317,3 +3355,19 @@ REST-SIMPLE: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/
                 self.cli_link_flap_between_nodes(node1, node2, interval)
 
         return True
+
+    def rest_show_fabric(self):
+        '''return fabric information
+            REST-SIMPLE: GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/summary/fabric
+            Return: content if found
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/summary/fabric'
+        c.rest.get(url)
+        data = c.rest.content()
+        helpers.log ("result: %s" % helpers.prettify(data))
+        if len(data) == 0:
+            return {}
+        else:
+            return data

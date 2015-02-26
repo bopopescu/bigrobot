@@ -5,98 +5,218 @@ Suite Teardown  T5 base suite teardown
 Test Setup      setup topology
 Test Teardown   teardown topology
 Force Tags      T5      L3       IronHorse
+Library         keywords/Ixia.py
 Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/BsnCommon.py
 Library         keywords/SwitchLight.py
 Library         Collections.py
-Resource        testsuites/T5/L3/T5_L3_Scale_Performance/t5_layer3_scale_variables.txt
+Resource        testsuites_dev/slim/temp/t5_layer3_scale_variables.txt
 #Resource       testsuites/T5/L3/T5_L3_Scale_Performance/t5_layer3_resources.txt
 
 
 * Test Cases
-Configure 1k Tenant with 4k segment in global vlan-mapping mode
-    manual passed
-    [Tags]              manual          scale   
+TC01 Configure 1k Tenant with 4k segment in global vlan-mapping mode
+    REST delete all tenants
+    REST set vlan mapping mode                  global
+    REST add tenant                             system
+    ${ipAddr} =                                 Set Variable                    20.0.1.1
+    ${vlanid} =                                 Set Variable                    1
+    : FOR                                       ${i}                            IN RANGE                1                   999
+    \  REST add tenant                          Tenant-${i}
+    \  KLOOP1                                   Tenant-${i}                     ${i}                    ${ipAddr}           ${vlanid}       5
+    REST add tenant                             Tenant-999
+    KLOOP1                                      Tenant-999                      999                     ${ipAddr}           ${vlanid}       9
+    sleep                                       5
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1000
+    Should Be True                              ${noSegments} == 4000
+    ${stream}=                                  L3 add  name=stream1  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                                         src_cnt=2000  dst_cnt=2000  src_ip=20.0.1.11  dst_ip=20.15.160.11
+    ...                                         src_ip_step=0.0.1.0  dst_ip_step=0.0.1.0  src_gw=20.0.1.1  src_gw_step=0.0.1.0
+    ...                                         dst_gw=20.15.160.1  dst_gw_step=0.0.1.0  src_vlan_id=1  vlan_cnt=2000   dst_vlan_id=4000  vlan_count=-2000 
+    [Tags]                      scaling             TC01
 
 L3 Arp learning rate
-    manual passed
-    [Tags]              manual          performance
+  
+    [Tags]              manual          performance  skipped
     
 L3 Arp discovery rate
-    manual passed
-    [Tags]              manual          performance
+    
+    [Tags]              manual          performance  skipped
 
-Configure 1k Tenant with 4k segment in default vlan-mapping mode
-    manual passed
-    [Tags]              manual          scale   
+TC04 Configure 1k Tenant with 4k segment in default vlan-mapping mode
+    REST delete all tenants
+    REST set vlan mapping mode                  default
+    REST add tenant                             system
+    ${ipAddr} =                                 Set Variable                    20.0.1.1
+    ${vlanid} =                                 Set Variable                    1
+    : FOR                                       ${i}                            IN RANGE                1                   501
+    \  REST add tenant                          Tenant-${i}
+    \  KLOOP2                                   Tenant-${i}                     ${i}                    ${ipAddr}           ${vlanid}       5       ${leaf0_a}          ${ixia0a_1}    
+    : FOR                                       ${i}                            IN RANGE                501                 999
+    \  REST add tenant                          Tenant-${i}
+    \  KLOOP2                                   Tenant-${i}                     ${i}                    ${ipAddr}           ${vlanid}       5       ${leaf2_a}          ${ixia2a_1}             
+    REST add tenant                             Tenant-999
+    KLOOP2                                      Tenant-999                      999                     ${ipAddr}           ${vlanid}       9       ${leaf2_a}          ${ixia2a_1}  
+    sleep                                       5
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1000
+    Should Be True                              ${noSegments} == 4000
+    
+    [Tags]                        scaling       TC04
 
 Add and delete all switches to config with 1k tenant and 4k segment in global vlan-mapping mode
-    [Tags]              manual-untested           scale     
+    
+    [Tags]              manual           scaling     skipped
 
 DHCP request from 48k host 
-    [Tags]              manual-untested             scale           
+    
+    [Tags]              manual          scaling         skipped
 
 Delete and add config with 1k tenant with 4k segment in global vlan-mapping mode
-    [Tags]              manual-untested             scale           
+    manual passed
+    [Tags]              manual          scaling         
 
 Delete and add config with 1k tenant with 4k segment in default vlan-mapping mode
-    [Tags]              manual-untested          scale           
+    manual passed
+    [Tags]              manual          scaling           
 
 Add and delete 10k cidr routes in spine switches
-    manual failed
-    [Tags]              manual          scale      BSC-5991     
+    manual passed
+    [Tags]              manual          scaling         
     
 Add and delete 10k cidr routes in leaf switches
-    manual failed
-    [Tags]              manual          scale      BSC-5991              
+    manual passed
+    [Tags]              manual          scaling            
     
 Add and delete 1k nexthop group
-    [Tags]              manual-untested             scale           
+    manual untested
+    [Tags]              manual          scaling         
 
-Add more than 1k tenant
-    manual passed
-    [Tags]              manual          scale           
+TC12 Add more than 1k tenant in global mode
+    REST delete all tenants
+    REST set vlan mapping mode                  global
+    REST add tenant                             system
+    ${ipAddr} =                                 Set Variable                    20.0.1.1
+    ${vlanid} =                                 Set Variable                    1
+    : FOR                                       ${i}                            IN RANGE                1                   999
+    \  REST add tenant                          Tenant-${i}
+    \  KLOOP1                                   Tenant-${i}                     ${i}                    ${ipAddr}           ${vlanid}       5
+    ${value} =                                  REST add tenant                             Tenant-999
+    Should Be True                              ${value}
+    KLOOP1                                      Tenant-999                      999                     ${ipAddr}           ${vlanid}       9
+    sleep                                       5
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1000
+    Should Be True                              ${noSegments} == 4000
+    sleep                                       1
+    ${value} =                                  REST add tenant                 Tenant-1001
+    Should Not Be True                          ${value}    
+    sleep                                       1
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1000
+    Should Be True                              ${noSegments} == 4000
+    [Tags]              manual          scaling           TC12
     
-Add more than 4k segment
-    manual passed
-    [Tags]              manual          scale           
+TC13 Add more than 4k segment
+    REST delete all tenants
+    REST set vlan mapping mode                  default
+    REST add tenant                             Tenant-4k
+    ${ipAddr} =                                 Set Variable                    20.0.1.1
+    ${vlanid} =                                 Set Variable                    1
+    : FOR                                       ${i}                            IN RANGE                1                   2001
+    \   REST add router intf                    Tenant-4k                       Tenant-4k-${vlanid}              
+    \   REST add vns ip                         Tenant-4k                       Tenant-4k-${vlanid}        ${ipAddr}               24 
+    \   REST add vns                            Tenant-4k                       Tenant-4k-${vlanid}    
+    \   REST add interface to vns               Tenant-4k                       Tenant-4k-${vlanid}        ${leaf2_a}              ${ixia2a_1}                ${vlanid}
+    \   ${ipAddr} =                             get next address                ipv4                       ${ipAddr}               0.0.1.0
+    \   ${vlanid} =                             evaluate                        ${vlanid} + 1
+    \   Set Suite Variable                      ${vlanid}
+    \   Set Suite Variable                      ${ipAddr}
+    : FOR                                       ${i}                            IN RANGE                2001                   4001
+    \   REST add router intf                    Tenant-4k                       Tenant-4k-${vlanid}              
+    \   REST add vns ip                         Tenant-4k                       Tenant-4k-${vlanid}        ${ipAddr}               24 
+    \   REST add vns                            Tenant-4k                       Tenant-4k-${vlanid}    
+    \   REST add interface to vns               Tenant-4k                       Tenant-4k-${vlanid}        ${leaf0_a}              ${ixia0a_1}                ${vlanid}
+    \   ${ipAddr} =                             get next address                ipv4                       ${ipAddr}               0.0.1.0
+    \   ${vlanid} =                             evaluate                        ${vlanid} + 1
+    \   Set Suite Variable                      ${vlanid}
+    \   Set Suite Variable                      ${ipAddr}
+    sleep                                       5
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1
+    Should Be True                              ${noSegments} == 4000
+    sleep                                       1
+    ${result} =                                 REST add vns                                Tenant-4k                       Tenant-4k-4001
+    Should Not Be True                          ${result}
+    ${result} =                                 REST show fabric
+    Should Not Be Empty                         ${result}
+    ${noTenants} =                              Set Variable                    ${result['tenant-count']}
+    ${noSegments} =                             Set Variable                    ${result['segment-count']}
+    Should Be True                              ${noTenants} == 1
+    Should Be True                              ${noSegments} == 4000    
+    [Tags]              manual          scaling           TC13           
     
-Add more than 1k nexthop group
-    [Tags]              manual-untested           scale           
+Add more than 1k ecmp nexthop group
+    manual passed
+    [Tags]              manual           scaling           
         
 Test maximum number of dhcp relay enabled interfaces
-    [Tags]              manual-untested           scale           
+    
+    [Tags]              manual           scaling      skipped     
         
-
-
+Set variable
+    Set Suite Variable      ${vlanid}
+    Set Suite Variable      ${ipAddr}
+    
+    
 * Keywords      
-One Tenant 4k VNS with one host each
-    REST delete tenant                          X
-    REST delete tenant                          Y
-    REST delete tenant                          Z
-    REST add tenant                             A
-    ${ipAddr} =                                 Set Variable                    20.0.0.1
-    : FOR                                       ${i}                            IN RANGE                1                   2000
-    \   REST add vns                            A                               A-${i}
-    \   REST add vns ip                         A                               A-${i}                  ${ipAddr}           24
-    \   ${ipAddr} =                             get next address                ipv4                    ${ipAddr}           0.0.1.0
-    \   REST add interface to vns               A                               A-${i}                  leaf0-a             ethernet40      ${i}            
-                
-    ${ipAddr} =                                 Set Variable                    40.0.0.1
-    : FOR                                       ${i}                            IN RANGE                2001                4000
-    \   REST add vns                            A                               B-${i}
-    \   REST add vns ip                         A                               B-${i}                  ${ipAddr}           24
-    \   ${ipAddr} =                             get next address                ipv4                    ${ipAddr}           0.0.1.0
-    \   REST add interface to vns               A                               B-${i}                  leaf1-a             ethernet40      ${i}            
+ 
+KLOOP1  [Arguments]  ${Tenant}  ${Segment}  ${ipAddr}   ${vlanid}   ${range}
+    REST add static routes                      ${Tenant}                        0.0.0.0/0                  {"tenant": "system"}
+    REST add tenant routers intf to system      ${Tenant}
+    REST add system intf to tenant routers      ${Tenant}               
+    : FOR                                       ${j}                             IN RANGE                   1                       ${range}
+    \  REST add router intf                     ${Tenant}                        ${Tenant}-${vlanid}              
+    \  REST add vns ip                          ${Tenant}                        ${Tenant}-${vlanid}        ${ipAddr}               24 
+    \  REST add vns                             ${Tenant}                        ${Tenant}-${vlanid}    
+    \  REST add vlan membership                 ${Tenant}                        ${Tenant}-${vlanid}        ${vlanid}
+    \  ${ipAddr} =                              get next address                 ipv4                       ${ipAddr}               0.0.1.0
+    \  ${vlanid} =                              evaluate                         ${vlanid} + 1
+    \  Set Suite Variable                       ${vlanid}
+    \  Set Suite Variable                       ${ipAddr}
 
-#  ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
-#    ...                        src_cnt=${src_cnt}  dst_cnt=${dst_cnt}  src_ip=20.0.0.1  dst_ip=20.0.0.2
-#    ...                        src_ip_step=0.0.1.0  dst_ip_step=0.0.1.0  src_gw=20.0.0.2  src_gw_step=0.0.1.0
-#    ...                        dst_gw=20.0.0.1  dst_gw_step=0.0.1.0  vlan_id=2  vlan_cnt=${src_cnt}
-   
-
+KLOOP2  [Arguments]  ${Tenant}  ${Segment}  ${ipAddr}   ${vlanid}   ${range}    ${switch}         ${interface}
+    REST add static routes                      ${Tenant}                        0.0.0.0/0                  {"tenant": "system"}
+    REST add tenant routers intf to system      ${Tenant}
+    REST add system intf to tenant routers      ${Tenant}               
+    : FOR                                       ${j}                             IN RANGE                   1                       ${range}
+    \  REST add router intf                     ${Tenant}                        ${Tenant}-${vlanid}              
+    \  REST add vns ip                          ${Tenant}                        ${Tenant}-${vlanid}        ${ipAddr}               24 
+    \  REST add vns                             ${Tenant}                        ${Tenant}-${vlanid}    
+    \  REST add interface to vns                ${Tenant}                        ${Tenant}-${vlanid}        ${switch}               ${interface}        ${vlanid}
+    \  ${ipAddr} =                              get next address                 ipv4                       ${ipAddr}               0.0.1.0
+    \  ${vlanid} =                              evaluate                         ${vlanid} + 1
+    \  Set Suite Variable                       ${vlanid}
+    \  Set Suite Variable                       ${ipAddr}
+    
 initialize host
     BASH delete tag                             h1                              bond0.1001              soft_error=${true}
     BASH delete tag                             h2                              bond0.1002              soft_error=${true}

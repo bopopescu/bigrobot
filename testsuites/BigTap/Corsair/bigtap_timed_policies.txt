@@ -4,7 +4,7 @@ Suite Setup                         time suite setup
 Suite Teardown                      time suite teardown
 Test Setup                          time test setup
 Test Teardown                       time test teardown 
-Force Tags                          bigtap  corsair-plus  4.5.0  accton  AS5710
+Force Tags                          bigtap  corsair-450  Accton-AS5710  timed-policy  policy
 Library                             keywords/BsnCommon.py
 Library                             keywords/AppController.py
 Library                             keywords/BigTap.py
@@ -36,7 +36,7 @@ ${policy_name_overlap}              _ZP1_o_P1
 TC001: Verify configuration
     ${verify_policy}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy}
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC002: Verify timed policy operation with durartion and start time specified (duration: 30 seconds, starting: 10 seconds from now)
     ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=30  starttime=10+  pktcount=0
@@ -50,7 +50,7 @@ TC002: Verify timed policy operation with durartion and start time specified (du
     sleep  40
     ${verify_policy_4}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy_4}
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC003: Verify timed policy operation with durartion and start time specified (duration: 30 seconds, starting now)
     ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=30  starttime=now  pktcount=0
@@ -61,7 +61,7 @@ TC003: Verify timed policy operation with durartion and start time specified (du
     sleep  30
     ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy_3}
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC004: Verify timed policy operation with durartion and start time specified (duration: 30 seconds, starting now)
     ${time}=  Evaluate  datetime.datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')  time,datetime
@@ -74,7 +74,7 @@ TC004: Verify timed policy operation with durartion and start time specified (du
     sleep  30
     ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy_3}
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC005: Verify timed policy operation with durartion and start time specified (duration: 30 seconds, starting now)
     ${time}=  Evaluate  datetime.datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%dT%H:%M:%S')  time,datetime
@@ -87,7 +87,7 @@ TC005: Verify timed policy operation with durartion and start time specified (du
     sleep  30
     ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy_3}
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC006: Verify policy times out when packet count is received correctly.
     ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=1000
@@ -107,7 +107,7 @@ TC006: Verify policy times out when packet count is received correctly.
     ${report}=  fetch port stats
     ${verify_policy_4}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy_4}    
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC007: Verify policy times out when packet count is not received but 60 seconds expires.
     ${stream1}=  L2 add  flow=a->b  frame_rate=100  frame_size=64  frame_cnt=100
@@ -130,7 +130,7 @@ TC007: Verify policy times out when packet count is not received but 60 seconds 
     sleep  50
     ${verify_policy_4}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy_4}
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC008: Verify timed policy operation with start now (starting now)
     ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=0  starttime=now  pktcount=0
@@ -141,7 +141,7 @@ TC008: Verify timed policy operation with start now (starting now)
     sleep  60
     ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy_3}
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC009: Verify timed policy operation with start now (starting now, duration 70 seconds, packet-count 10000)
     ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
@@ -164,7 +164,7 @@ TC009: Verify timed policy operation with start now (starting now, duration 70 s
     sleep  50
     ${verify_policy_4}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy_4}
-    [Tags]  feature  jira-bt-1826
+    [Tags]  full  feature  jira-bt-1826
 
 TC010: Veriy policy times out when "stop" command is given 
     ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=0  starttime=now  pktcount=0
@@ -180,7 +180,7 @@ TC010: Veriy policy times out when "stop" command is given
     sleep  1
     ${verify_policy_4}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy_4}      
-    [Tags]  feature  
+    [Tags]  full  feature  
 
 TC011: Verify overlap policy is removed when one component policy times out
     ${ovelap_enabled}=  rest enable feature  overlap
@@ -210,7 +210,7 @@ TC011: Verify overlap policy is removed when one component policy times out
     Should not be true  ${verify_policy_2}
     ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_policy_3}
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC012: Verify policy with start time in the past does not get installed if duration is less than current date and time
     ${add_time}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=10  starttime=2013-02-18T09:00:00  pktcount=0
@@ -218,7 +218,7 @@ TC012: Verify policy with start time in the past does not get installed if durat
     sleep  3
     ${verify_policy_1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should not be true  ${verify_policy_1}
-    [Tags]  feature
+    [Tags]  full  feature
 
 * Keyword
 

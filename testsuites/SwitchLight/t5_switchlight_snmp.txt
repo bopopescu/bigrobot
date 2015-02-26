@@ -9,6 +9,7 @@ Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
 Library  keywords/SwitchLight.py
+Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 * Variable
 ${switchlight_version}  Switch Light OS
@@ -20,11 +21,11 @@ ${snmp_location_2}  CS_RACK11_6013
 *Test Case
 Configure and Verify Configuration via CLI on LB9 and LY2  
     verify config
-    [Tags]  feature    
+    [Tags]  feature    daily-sanity
 
 Verify SNMP OID sysContact  
     verify snmp attribute  s1  sysContact.0  ${snmp_contact}
-    [Tags]  feature    
+    [Tags]  feature    daily-sanity
 
 Verify SNMP OID sysLocation 
     verify snmp attribute  s1  sysLocation.0  ${snmp_location_1}
@@ -36,7 +37,7 @@ Verify SNMP OID sysDescr
 
 Verify SNMP OID ifDescr of ma1  
     verify snmp attribute  s1  ifDescr.2  ma1
-    [Tags]  feature    
+    [Tags]  feature    daily-sanity
  
 Verify SNMP OID ifType of ma1  
     verify snmp attribute  s1  ifType.2  ethernetCsmacd
@@ -44,82 +45,82 @@ Verify SNMP OID ifType of ma1
     
 Verify SNMP OID ifAdminStatus of ma1  
     verify snmp attribute  s1  ifAdminStatus.2  up
-    [Tags]  feature  run   
+    [Tags]  feature     daily-sanity
     
 Verify SNMP OID ifOperStatus of ma1  
     verify snmp attribute  s1  ifOperStatus.2  up
-    [Tags]  feature    
+    [Tags]  feature    daily-sanity
     
 Verify SNMP OID ifSpeed of ma1  
     verify snmp attribute  s1  ifSpeed.2  1000000000
-    [Tags]  feature    
+    [Tags]  feature    daily-sanity
 
 Verify SNMP OID ifMtu of ma1  
     verify snmp attribute  s1  ifMtu.2  1500
-    [Tags]  feature
+    [Tags]  feature  daily-sanity
 
 Verify SNMP OID ifDescr of 1Gig Data Port
-    verify snmp attribute  s1  ifDescr.1024  ${oneGlb9_name}
+    verify snmp attribute  s1  ifDescr.${oneG_snmp_int}  ${oneGlb9_name}
     [Tags]  feature  1G    
     
 Verify SNMP OID ifType of 1Gig Data Port
-    verify snmp attribute  s1  ifType.1024  ethernetCsmacd
+    verify snmp attribute  s1  ifType.${oneG_snmp_int}  ethernetCsmacd
     [Tags]  feature  1G
         
 Verify SNMP OID ifAdminStatus of 1Gig Data Port
-    verify snmp attribute  s1  ifAdminStatus.1024  up
-    [Tags]  feature  1G
+    verify snmp attribute  s1  ifAdminStatus.${oneG_snmp_int}  up
+    [Tags]  feature  1G  daily-sanity
         
 Verify SNMP OID ifOperStatus of 1Gig Data Port
-    verify snmp attribute  s1  ifOperStatus.1024  up
+    verify snmp attribute  s1  ifOperStatus.${oneG_snmp_int}  up
     [Tags]  feature  1G
         
 Verify SNMP OID ifSpeed of 1Gig Data Port
-    verify snmp attribute  s1  ifSpeed.1024  1000000000
+    verify snmp attribute  s1  ifSpeed.${oneG_snmp_int}  1000000000
     [Tags]  feature  1G
         
 Verify SNMP OID ifHighSpeed of 1Gig Data Port
-    verify snmp attribute  s1  ifHighSpeed.1024  1000
+    verify snmp attribute  s1  ifHighSpeed.${oneG_snmp_int}  1000
     [Tags]  feature  1G
         
 Verify SNMP OID ifPhysAddress of 1Gig Data Port 
     ${mac_address1}=  cli show interface macaddress  s1  ${oneGlb9_name} 
-    verify snmp attribute  s1  ifPhysAddress.1024  ${mac_address1}
+    verify snmp attribute  s1  ifPhysAddress.${oneG_snmp_int}  ${mac_address1}
     [Tags]  feature  1G
         
 Verify SNMP OID ifDescr of 10Gig Data Port
     cli enable interface  s1  ${tenGly2_name}
     sleep  30    
-    verify snmp attribute  s1  ifDescr.1039  ${tenGly2_name}
+    verify snmp attribute  s1  ifDescr.${tenG_snmp_int}  ${tenGly2_name}
     [Tags]  feature  10G
         
 Verify SNMP OID ifType of 10Gig Data Port  
-    verify snmp attribute  s1  ifType.1039  ethernetCsmacd
+    verify snmp attribute  s1  ifType.${tenG_snmp_int}  ethernetCsmacd
     [Tags]  feature  10G
         
 Verify SNMP OID ifAdminStatus of 10Gig Data Port    
-    verify snmp attribute  s1  ifAdminStatus.1039  up
+    verify snmp attribute  s1  ifAdminStatus.${tenG_snmp_int}  up
     [Tags]  feature  10G
         
 Verify SNMP OID ifOperStatus of 10Gig Data Port  
-    verify snmp attribute  s1  ifOperStatus.1039  up
+    verify snmp attribute  s1  ifOperStatus.${tenG_snmp_int}  up
     [Tags]  feature  10G
         
 Verify SNMP OID ifSpeed of 10Gig Data Port  
-    verify snmp attribute  s1  ifSpeed.1039  4294967295
+    verify snmp attribute  s1  ifSpeed.${tenG_snmp_int}  4294967295
     [Tags]  feature  10G
         
 Verify SNMP OID ifHighSpeed of 10Gig Data Port  
-    verify snmp attribute  s1  ifHighSpeed.1039  10000
+    verify snmp attribute  s1  ifHighSpeed.${tenG_snmp_int}  10000
     [Tags]  feature  10G
     
 Verify SNMP OID ifPhysAddress of 10Gig Data Port  
     ${mac_address1}=  cli show interface macaddress  s1  ${tenGly2_name} 
-    verify snmp attribute  s1  ifPhysAddress.1039  ${mac_address1}
-    [Tags]  feature  10G
+    verify snmp attribute  s1  ifPhysAddress.${tenG_snmp_int}  ${mac_address1}
+    [Tags]  feature  10G  daily-sanity
     
 Verify SNMP OID ifDescr of 40Gig Data Port  
-    verify snmp attribute  s1  ifDescr.1049  ${fortyGly2_name}
+    verify snmp attribute  s1  ifDescr.${fortyG_snmp_int}  ${fortyGly2_name}
     [Tags]  feature  40G
         
 Verify SNMP OID ifType of 40Gig Data Port  
@@ -127,25 +128,27 @@ Verify SNMP OID ifType of 40Gig Data Port
     [Tags]  feature  40G
         
 Verify SNMP OID ifAdminStatus of 40Gig Data Port  
-    verify snmp attribute  s1  ifAdminStatus.1049  up
-    [Tags]  feature  40G
+    verify snmp attribute  s1  ifAdminStatus.${fortyG_snmp_int}  up
+    [Tags]  feature  40G  daily-sanity
         
 Verify SNMP OID ifOperStatus 40Gig Data Port  
-    verify snmp attribute  s1  ifOperStatus.1049  up
+    verify snmp attribute  s1  ifOperStatus.${fortyG_snmp_int}  up
     [Tags]  feature  40G
         
 Verify SNMP OID ifSpeed of 40Gig Data Port  
-    verify snmp attribute  s1  ifSpeed.1049  4294967295
+    verify snmp attribute  s1  ifSpeed.${fortyG_snmp_int}  4294967295
     [Tags]  feature  40G
         
-Verify SNMP OID ifHighSpeed of 40Gig Data Port  
-    verify snmp attribute  s1  ifHighSpeed.1049  40000
+Verify SNMP OID ifHighSpeed of 40Gig Data Port 
+	 
+    verify snmp attribute  s1  ifHighSpeed.${fortyG_snmp_int}  40000
     [Tags]  feature  40G
         
 Verify SNMP OID ifPhysAddress of 40Gig Data Port  
     ${mac_address1}=  cli show interface macaddress  s1  ${fortyGly2_name} 
-    verify snmp attribute  s1  ifPhysAddress.1049  ${mac_address1}
-    [Tags]  feature  40G
+    ${snmp_int_id}=   get_snmp_id  ${fortyGly2_name}
+    verify snmp attribute  s1  ifPhysAddress.${snmp_int_id}  ${mac_address1}
+    [Tags]  feature  40G  daily-sanity
     
 Verify snmpgetnext works as expected 
     verify snmpgetnext
@@ -157,23 +160,24 @@ Verify snmpbulkget works as expected
         
 Verify snmpbulkwalk works as expected 
     verify snmpbulkwalk
-    [Tags]  feature
+    [Tags]  feature  daily-sanity
         
 Verify snmptrap is generated on dataport linkflap
     clear snmpttlog  10.9.18.3
     sleep  10
-    cli disable interface  s1  ethernet39
+    cli disable interface  s1  ${tenGly2_name}
     sleep  60
-    ${output}=  return snmptrap output  10.9.18.3  "Link down on interface 1039"
+    ${snmp_int_id}=   get_snmp_id  ${tenGly2_name}
+    ${output}=  return snmptrap output  10.9.18.3  "Link down on interface ${snmp_int_id}"
     Should contain  ${output}  Operational state: 2  
     sleep  10
     clear snmpttlog  10.9.18.3
     sleep  10    
-    cli enable interface  s1  ethernet39
+    cli enable interface  s1  ${tenGly2_name}
     sleep  60
-    ${output}=  return snmptrap output  10.9.18.3  "Link up on interface 1039"
+    ${output}=  return snmptrap output  10.9.18.3  "Link up on interface ${snmp_int_id}"
     Should contain  ${output}  Operational state: 1     
-    [Tags]  feature  jira-pan-741 
+    [Tags]  feature  jira-pan-741  daily-sanity  run
          
 
 Modify SNMP Community and Verify SNMP OID sysContact 
@@ -190,14 +194,22 @@ Restart process SNMPD and verify SNMP Stats
     
 * Keywords  
 snmp suite setup
+	fabric infra suite setup
 	reconnect switch ips  s1
     base suite setup   
     ${oneGlb9_name}=  get_switch_int_topo  s1  ixia1_int0
-    Set Suite Variable		${oneGlb9_name}		
+    Set Suite Variable		${oneGlb9_name}	
+    ${oneG_snmp_int}=  get_snmp_id  	${oneGlb9_name}
+    Set Suite Variable		${oneG_snmp_int}
 	${tenGly2_name}=  get_switch_int_topo  s1  leaf0b_int0
 	Set Suite Variable		${tenGly2_name}
+	${tenG_snmp_int}=  get_snmp_id  	${tenGly2_name}
+	Set Suite Variable		${tenG_snmp_int}
 	${fortyGly2_name}=  get_switch_int_topo  s1  spine0_int0
-	Set Suite Variable		${fortyGly2_name}		
+	Set Suite Variable		${fortyGly2_name}	
+	${fortyG_snmp_int}=  get_snmp_id  	${fortyGly2_name}
+	Set Suite Variable		${fortyG_snmp_int}
+	
     cli add snmp keyword   s1   community   ro public       
     cli add snmp keyword   s1   location   ${snmp_location_1}       
     cli add snmp keyword   s1   contact   ${snmp_contact}       

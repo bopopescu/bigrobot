@@ -1,20 +1,20 @@
 * Setting
-Documentation   BigTap Test Suite Release:Blackbird Feature:L3-L4 Mode
-Suite Setup     Bigtap list op l3_l4 suite setup
-Suite Teardown  Bigtap list op l3_l4 suite teardown
-Test Setup      Bigtap list op l3_l4 case setup
-Test Teardown   Bigtap list op l3_l4 case teardown
-Force Tags      BigTap
-#Library         keywords_dev/mingtao/Common.py
-Library             keywords/BsnCommon.py
-Library             keywords/AppController.py
-Library             keywords/BigTap.py
-Library             keywords/SwitchLight.py
-Library             keywords/Ixia.py
-Library             Collections.py
-Library             OperatingSystem.py
-Library             String.py
-Resource	testsuites/BigTap/blackbird_list_op_l34_resource.txt
+Documentation           BigTap Test Suite Release:Blackbird Feature:L3-L4 Mode
+Suite Setup             Bigtap list op l3_l4 suite setup
+Suite Teardown          Bigtap list op l3_l4 suite teardown
+Test Setup              Bigtap list op l3_l4 case setup
+Test Teardown           Bigtap list op l3_l4 case teardown
+Force Tags              BigTap  blackbird-300  Quanta-LB9  l3-l4-mode
+
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
+Resource                testsuites/BigTap/blackbird_list_op_l34_resource.txt
 
 
 * Variable
@@ -41,130 +41,104 @@ T3.1 Default l3-l4: Test ipv4/6 group and optimization
     ${result}=  cli_show_l3_l4
     Should not be true  ${result}
     Verify l3-l4 mode controler and tcam    False   ${sw1}
- 	Testcase T1.3 Address group IPv4/IPv6     ${sw1}     ${sw1_f1}     ${sw1_d1}
-	bigtap delete all 
- 	Testcase T2.1 Ipv4 prefix list optimization   ${sw1}     ${sw1_f1}     ${sw1_d1}		
-	bigtap delete all 
-	Testcase T2.4 Ipv6 prefix list optimization      ${sw1}     ${sw1_f1}     ${sw1_d1}		
-
-	[Tags]  sanity  l3_l4   BigTap   blackbird_1    
-
+    Testcase T1.3 Address group IPv4/IPv6     ${sw1}     ${sw1_f1}     ${sw1_d1}
+    bigtap delete all 
+    Testcase T2.1 Ipv4 prefix list optimization   ${sw1}     ${sw1_f1}     ${sw1_d1}
+    bigtap delete all 
+    Testcase T2.4 Ipv6 prefix list optimization      ${sw1}     ${sw1_f1}     ${sw1_d1}
+    [Tags]  sanity  feature  optimization
 
 T3.2 Enable l3-l4: Test ipv4/6 group and optimization 
     rest enable feature       l3-l4-mode
-    Sleep	                   ${short}
+    Sleep                       ${short}
     Verify l3-l4 mode controler and tcam    True   ${sw1}  
-	Testcase T1.3 Address group IPv4/IPv6     ${sw1}     ${sw1_f1}     ${sw1_d1}
-	bigtap delete all 
-	Testcase T2.1 Ipv4 prefix list optimization     ${sw1}     ${sw1_f1}     ${sw1_d1}
-	bigtap delete all 
-	Testcase T2.4 Ipv6 prefix list optimization      ${sw1}     ${sw1_f1}     ${sw1_d1}		
-	 
-	[Tags]  sanity  l3_l4   BigTap   blackbird_1    
-
+    Testcase T1.3 Address group IPv4/IPv6     ${sw1}     ${sw1_f1}     ${sw1_d1}
+    bigtap delete all 
+    Testcase T2.1 Ipv4 prefix list optimization     ${sw1}     ${sw1_f1}     ${sw1_d1}
+    bigtap delete all 
+    Testcase T2.4 Ipv6 prefix list optimization      ${sw1}     ${sw1_f1}     ${sw1_d1}
+    [Tags]  sanity  feature  optimization
 
 T3.3 Change l3-l4 with policy with no mac configured
     ${result}=  cli_show_l3_l4
     Should not be true  ${result}
     Verify l3-l4 mode controler and tcam    False   ${sw1}  
-	Testcase T1.3 Address group IPv4/IPv6     ${sw1}     ${sw1_f1}     ${sw1_d1} 
-    ${Flow1}=   rest_show_switch_flow       ${sw1}	
+    Testcase T1.3 Address group IPv4/IPv6     ${sw1}     ${sw1_f1}     ${sw1_d1} 
+    ${Flow1}=   rest_show_switch_flow       ${sw1}    
 
-	rest enable feature                    l3-l4-mode
-    Sleep	                                ${short}
+    rest enable feature                    l3-l4-mode
+    Sleep                                    ${short}
     Verify l3-l4 mode controler and tcam    True   ${sw1}  
-    ${Flow2}=   rest_show_switch_flow       ${sw1}	
+    ${Flow2}=   rest_show_switch_flow       ${sw1}    
     Should Be Equal As Integers            ${Flow1}    ${Flow2}
  
     rest_disable_feature                   l3-l4-mode 
-    Sleep	                                ${short}   
+    Sleep                                    ${short}   
     Verify l3-l4 mode controler and tcam    False   ${sw1}      
-    ${Flow3}=   rest_show_switch_flow       ${sw1}	    
+    ${Flow3}=   rest_show_switch_flow       ${sw1}        
     Should Be Equal As Integers            ${Flow1}    ${Flow3}
-  
-   [Tags]  sanity  l3_l4   BigTap   blackbird_1     
-
+    [Tags]  sanity  feature
 
 T3.4 ipv4 mac can be configured/not configured correctly  
     ${result}=  cli_show_l3_l4
     Should not be true  ${result}
     Verify l3-l4 mode controler and tcam    False   ${sw1}  
-    Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	    
+    Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}        
     Config ipv4 mac+ ip src + dst + vlan range + tcp dsts port range    P1   10  "11:11:11:11:11:11"  "22:22:22:22:22:22"  "111.111.111.0"  "255.255.255.0"   11  12   51  52
     Config ipv4 mac+ ip src + dst + vlan range + tcp dsts + src         P1   20  "11:11:11:11:11:11"  "22:22:22:22:22:22"  "111.111.111.0"  "255.255.255.0"   21  22   100  200
     Config ipv4 any                     P1    30
-    Sleep	                               ${medium} 
-    Verify switch entry                    ${sw1}	 7    
-     
+    Sleep                                   ${medium} 
+    Verify switch entry                    ${sw1}     7    
     ${result}=   rest_enable_feature      l3-l4-mode 
     Should not be True                    ${result}     
-  
     rest_delete_policy_match       admin-view   P1   10  
     rest_delete_policy_match       admin-view   P1   20  
-
     ${result}=   rest_enable_feature    l3-l4-mode 
     Should be True                      ${result}     
-    
-   [Tags]  feature   l3_l4   BigTap   blackbird_1   
-
-
+    [Tags]  feature  full
 
 T3.5 ipv6 mac can be configured/not configured correctly  
     ${result}=  cli_show_l3_l4
     Should not be true  ${result}
     Verify l3-l4 mode controler and tcam    False   ${sw1}  
-    Config bigtap policy                  P1    ${sw1_f1}     ${sw1_d1}	    
+    Config bigtap policy                  P1    ${sw1_f1}     ${sw1_d1}        
     Config ipv6 mac all negative          P1   30     "11:11:11:11:11:11"  "22:22:22:22:22:22" 
     Config ipv6 any                       P1   10
     Config ipv6 tcp any                   P1   20
     Config ipv6 udp any                   P1   25   
-    
-    Sleep	                                ${short} 
-    Verify switch entry                    ${sw1}	 3    
-     
+    Sleep                                    ${short} 
+    Verify switch entry                    ${sw1}     3    
     ${result}=   rest_enable_feature      l3-l4-mode 
     Should be True                    ${result}     
- 
     Config ipv6 mac all negative          P1   30     "11:11:11:11:11:11"  "22:22:22:22:22:22"      
-    Sleep	                              ${short} 
-    Verify switch entry                   ${sw1}	 3    
-  
+    Sleep                                  ${short} 
+    Verify switch entry                   ${sw1}     3
     ${result}=   rest_enable_feature    l3-l4-mode 
     Should be True                      ${result}     
     Config ipv6 mac all negative         P1   30     "11:11:11:11:11:11"  "22:22:22:22:22:22" 
-    Sleep	                            ${short} 
-    Verify switch entry                 ${sw1}	   3    
- 
-    
-   [Tags]  feature   l3_l4   BigTap   blackbird_1     
-
-
-
+    Sleep                                ${short} 
+    Verify switch entry                 ${sw1}       3    
+    [Tags]  feature  full
 
 T3.6 feature integration: l3_l4 & trackhost BT-1144  
     ${result}=  cli_show_l3_l4
     Should not be true  ${result}
     Verify l3-l4 mode controler and tcam    False   ${sw1}  
     ${result}=   rest_enable_feature        tracked-host  
-    Sleep	                               ${medium} 
-	Verify trackhost config                 True     
-    Config bigtap policy                    P1    ${sw1_f1}     ${sw1_d1}	    
+    Sleep                                   ${medium} 
+    Verify trackhost config                 True     
+    Config bigtap policy                    P1    ${sw1_f1}     ${sw1_d1}        
     Config number of ipv4 entries           G1     10.0.0.0          0.1.0.2         255.255.255.254      10 
-	Config ipv4 list src                    P1    "G1" 	  10
-    Sleep	                                ${short} 
-    Verify switch entry                     ${sw1}	 11         
+    Config ipv4 list src                    P1    "G1"       10
+    Sleep                                    ${short} 
+    Verify switch entry                     ${sw1}     11         
     ${result}=   rest_enable_feature       l3-l4-mode 
     Should be True                         ${result}     
-    Verify switch entry                    ${sw1}	11    
+    Verify switch entry                    ${sw1}    11    
     ${result}=   rest_disable_feature       tracked-host 
-    Sleep	                               ${medium}     
-    Verify switch entry                     ${sw1}	10         
+    Sleep                                   ${medium}     
+    Verify switch entry                     ${sw1}    10         
     ${result}=   rest_disable_feature       l3-l4-mode  
-    Sleep	                               ${medium}    
-    Verify switch entry                     ${sw1}	10         
-   
-   [Tags]  sanity  l3_l4   BigTap   blackbird_1     
-
- 
- 
- 	 
+    Sleep                                   ${medium}    
+    Verify switch entry                     ${sw1}    10         
+   [Tags]  sanity  full

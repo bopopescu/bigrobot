@@ -1,0 +1,94 @@
+* Settings
+Documentation    T5 Test Suite
+Suite Setup      T5 longevity suite setup
+Suite Teardown   T5 longevity suite teardown
+Test Setup       base test setup 
+Test Teardown    base test teardown 
+Force Tags       IronHorse   T5   longevity
+Library		keywords/BsnCommon.py
+Library		keywords/Controller.py
+Library		keywords/Mininet.py
+Library		keywords/Host.py
+Library		keywords/Ixia.py
+Library		keywords/T5.py
+Library		keywords/T5L3.py
+Library		keywords/T5Platform.py
+Library		keywords/Controller.py
+Library		keywords/SwitchLight.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library        OperatingSystem
+ 
+ 
+* Variable
+${short}  1
+${medium}  3
+${long}   30
+${verylong}     120 
+${inevent}       30 
+${betweenevent}  60
+
+${Tflapnum}     50 
+${Vflapnum}     50 
+${bigconfigsleep}   60 
+
+
+${loop}    2
+${repeat}      10
+
+
+${leaf1-a}     leaf1-a
+${leaf1-b}     leaf1-b
+${leaf2-a}     leaf2-a
+${leaf2-b}     leaf2-b
+ 
+${spine1}      spine0
+${spine2}      spine1
+ 
+* Test Case
+ 
+ 
+T14 background show command (every 1 hour )
+	log  show command ? Check GUI show ver, show stats
+	 cli  master   show tenant
+	 cli  master   show segment
+	 cli  master   show forwarding
+	 cli  master   show ver
+	 cli  master   show endpoint
+	 cli  master   show running-config
+	 cli  master   show switch all interface all counters 	 
+	 cli  master   show tenant all segment all counters	 
+	 cli  master   show tenant all segment all rates
+	 cli show inventory/interface for all switches	 
+	 	 
+	log  show support  
+		${file}=  generate_support 
+		delete_support	  filename=${file}
+	log  check ntp time
+		cli  master   show ntp 	  
+ 	  
+	[Tags]     full  traffic   backgroupcheck
+
+
+	  
+
+* Keywords
+
+cli show inventory/interface for all switches
+ 	${switches}=  rest_get_switch_names  
+	log   switches are ${switches}
+ 	: FOR    ${sw}   IN   @{switches}   
+	\   cli  master   show switch ${sw} inventory  	
+	\   cli  master   show switch ${sw} connections
+	\   cli  master   show switch ${sw} interface 
+	
+
+ 
+T5 longevity suite setup
+   base suite setup
+ 
+T5 longevity suite teardown
+#   base suite teardown
+	sleep  1
+ 
+    
