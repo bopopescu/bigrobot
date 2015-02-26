@@ -375,6 +375,7 @@ class T6(object):
             
     def rest_add_floating_ip(self, tenant, nat_profile, public_ip):
         '''Function to configure floating IP
+        Input: tenant name, nat profile name, public IP which needs to be part of floating IP 
         '''
         t = test.Test()
         c = t.controller('master')
@@ -388,6 +389,7 @@ class T6(object):
         
     def rest_add_private_ip(self, tenant, nat_profile, public_ip, private_ip):
         '''Function to configure Private IP association to Public floating IP
+        Input: tenant name, nat profile name , public ip confgured for floating IP , private IP of the VM which needs to be added for floating IP
         '''
         t = test.Test()
         c = t.controller('master')
@@ -401,6 +403,7 @@ class T6(object):
         
     def rest_add_public_mac(self, tenant, nat_profile, public_ip, public_mac):
         '''Function to configure Private IP association to Public floating IP
+        Input: tenant name , nat profile name , public IP configured for floating IP , public MAC (you can give any unicast mac)
         '''
         t = test.Test()
         c = t.controller('master')
@@ -414,6 +417,7 @@ class T6(object):
         
     def rest_verify_floating_ip(self, tenant, nat_profile, public_ip, private_ip):
         '''Function to verify nat-profile status for tenant logical router
+        Input: tenant name , nat profile name , public ip cofigured under floating IP section , private IP of the VM
         '''
         t = test.Test()
         c = t.controller('master')
@@ -433,6 +437,7 @@ class T6(object):
             
     def rest_delete_floating_ip(self, tenant, nat_profile, public_ip):
         '''Function to delete floating IP from nat-profile
+        Input: tenant name , nat profile name , public IP configured in floating IP section
         '''
         t = test.Test()
         c = t.controller('master')
@@ -447,6 +452,7 @@ class T6(object):
     def rest_verify_vswitch_l3_cidr_nat(self, tenant, ivs_switch, route):
         '''
         Function to verify route pointing to nat next-hop
+        Input : tenant name , vswitch name , route to match
         '''
         t = test.Test()
         c = t.controller('master')
@@ -465,6 +471,7 @@ class T6(object):
     
     def rest_get_vrf_id(self, tenant):
         '''Function to get VRF ID for a tenant
+        Input: tenant name
         '''
         t = test.Test()
         c = t.controller('master')
