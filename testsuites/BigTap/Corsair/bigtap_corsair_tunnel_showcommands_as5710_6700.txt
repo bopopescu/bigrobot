@@ -558,34 +558,34 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     Should be true  ${in_range}
 
 arista tunnel setup   [Arguments]  ${arista_tunnel_interface}  ${tunnel_address}  ${tunnel_mask}
-    config  node=as3  cmd=ip routing
-    ${content1}=  cli_content  node=as3
+    config  node=s3  cmd=ip routing
+    ${content1}=  cli_content  node=s3
     Should Not Contain  ${content1}  Error
-    config  node=as3  cmd=interface ${arista_tunnel_interface}
-    ${content2}=  cli_content  node=as3
+    config  node=s3  cmd=interface ${arista_tunnel_interface}
+    ${content2}=  cli_content  node=s3
     Should Not Contain  ${content2}  Error
-    config  node=as3  cmd=speed forced 40gfull
-    ${content2}=  cli_content  node=as3
+    config  node=s3  cmd=speed forced 40gfull
+    ${content2}=  cli_content  node=s3
     Should Not Contain  ${content2}  Error
-    config  node=as3  cmd=no switchport
-    ${content3}=  cli_content  node=as3
+    config  node=s3  cmd=no switchport
+    ${content3}=  cli_content  node=s3
     Should Not Contain  ${content3}  Error
-    config  node=as3  cmd=ip address ${tunnel_address} ${tunnel_mask}
-    ${content4}=  cli_content  node=as3
+    config  node=s3  cmd=ip address ${tunnel_address} ${tunnel_mask}
+    ${content4}=  cli_content  node=s3
     Should Not Contain  ${content4}  Error
-    config  node=as3  cmd=exit
+    config  node=s3  cmd=exit
 
 arista tunnel teardown   [Arguments]  ${arista_tunnel_interface}  ${tunnel_address}  ${tunnel_mask}
-    config  node=as3  cmd=interface ${arista_tunnel_interface}
-    ${content2}=  cli_content  node=as3
+    config  node=s3  cmd=interface ${arista_tunnel_interface}
+    ${content2}=  cli_content  node=s3
     Should Not Contain  ${content2}  Error
-    config  node=as3  cmd=no speed forced 40gfull
-    ${content2}=  cli_content  node=as3
+    config  node=s3  cmd=no speed forced 40gfull
+    ${content2}=  cli_content  node=s3
     Should Not Contain  ${content2}  Error
-    config  node=as3  cmd=no ip address ${tunnel_address} ${tunnel_mask}
-    ${content4}=  cli_content  node=as3
+    config  node=s3  cmd=no ip address ${tunnel_address} ${tunnel_mask}
+    ${content4}=  cli_content  node=s3
     Should Not Contain  ${content4}  Error
-    config  node=as3  cmd=exit
+    config  node=s3  cmd=exit
 
 
 corsair suite setup

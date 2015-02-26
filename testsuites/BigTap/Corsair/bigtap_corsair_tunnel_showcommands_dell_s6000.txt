@@ -299,34 +299,34 @@ TC018: Receive-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel st
 
 * Keyword
 arista tunnel setup   [Arguments]  ${arista_tunnel_interface}  ${tunnel_address}  ${tunnel_mask}
-    config  node=as2  cmd=ip routing
-    ${content1}=  cli_content  node=as2
+    config  node=s2  cmd=ip routing
+    ${content1}=  cli_content  node=s2
     Should Not Contain  ${content1}  Error
-    config  node=as2  cmd=interface ${arista_tunnel_interface}
-    ${content2}=  cli_content  node=as2
+    config  node=s2  cmd=interface ${arista_tunnel_interface}
+    ${content2}=  cli_content  node=s2
     Should Not Contain  ${content2}  Error
-    config  node=as2  cmd=speed forced 40gfull
-    ${content2}=  cli_content  node=as2
+    config  node=s2  cmd=speed forced 40gfull
+    ${content2}=  cli_content  node=s2
     Should Not Contain  ${content2}  Error
-    config  node=as2  cmd=no switchport
-    ${content3}=  cli_content  node=as2
+    config  node=s2  cmd=no switchport
+    ${content3}=  cli_content  node=s2
     Should Not Contain  ${content3}  Error
-    config  node=as2  cmd=ip address ${tunnel_address} ${tunnel_mask}
-    ${content4}=  cli_content  node=as2
+    config  node=s2  cmd=ip address ${tunnel_address} ${tunnel_mask}
+    ${content4}=  cli_content  node=s2
     Should Not Contain  ${content4}  Error
-    config  node=as2  cmd=exit
+    config  node=s2  cmd=exit
 
 arista tunnel teardown   [Arguments]  ${arista_tunnel_interface}  ${tunnel_address}  ${tunnel_mask}
-    config  node=as2  cmd=interface ${arista_tunnel_interface}
-    ${content2}=  cli_content  node=as2
+    config  node=s2  cmd=interface ${arista_tunnel_interface}
+    ${content2}=  cli_content  node=s2
     Should Not Contain  ${content2}  Error
-    config  node=as2  cmd=no speed forced 40gfull
-    ${content2}=  cli_content  node=as2
+    config  node=s2  cmd=no speed forced 40gfull
+    ${content2}=  cli_content  node=s2
     Should Not Contain  ${content2}  Error
-    config  node=as2  cmd=no ip address ${tunnel_address} ${tunnel_mask}
-    ${content4}=  cli_content  node=as2
+    config  node=s2  cmd=no ip address ${tunnel_address} ${tunnel_mask}
+    ${content4}=  cli_content  node=s2
     Should Not Contain  ${content4}  Error
-    config  node=as2  cmd=exit
+    config  node=s2  cmd=exit
 
 corsair suite setup
     base suite setup
