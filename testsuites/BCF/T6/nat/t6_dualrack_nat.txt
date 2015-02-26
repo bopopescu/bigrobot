@@ -57,7 +57,7 @@ basic cli show commands test case
    enable  c1  show switch
    
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]  nat   feature   
+   [Tags]  nat   feature     
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -84,6 +84,7 @@ verify nat-profile CLI and output
 	sleep  5
     rest verify pat profile  A  nat1
 	rest verify nat endpoint  A  nat1  external  E
+	rest verify tenant route nat  A  nat1
 	rest delete nat profile  A  nat1
 	${result}=  rest verify nat profile  A  nat1
 	Should not be True  ${result}
@@ -130,6 +131,19 @@ validation error test static endpoint same as NAT public IP
 	rest add mac endpoint  external  E  e1  00:22:22:22:22:22
 	${result}=  rest add ip endpoint  external  E  e1  10.0.4.200
 	Should not be True  ${result}
+	
+verification of logical router show command
+	[Tags]  
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest verify nat profile  A  nat1
+	Should be True  ${result}
+	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+	sleep  5
+	rest verify tenant route nat  A  nat1
+	rest show tenant logical router default route state  A  nat1
 	
 Applying default router using nat next-hop cli test
 	[Tags]  nat        
@@ -238,9 +252,6 @@ verify connectivity bm0 to vm4 different rack
     mininet ping  bm0  ${vm4_ip}
     ${loss}=  mininet ping  bm0  ${vm4_ip}
     Should Be True  ${loss} == 0
-    mininet ping  vm0  ${vm4_ip}
-    ${loss}=  mininet ping  vm0  ${vm4_ip}
-    Should Be True  ${loss} == 0		 
 
 * Keywords
 
