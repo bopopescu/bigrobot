@@ -18,6 +18,8 @@ import autobot.helpers as helpers
 import autobot.test as test
 import subprocess
 import re
+import os
+
 
 class ThirdParty(object):
 
@@ -219,8 +221,13 @@ class ThirdParty(object):
             switch.config(cli_input_2)
             if speed is not None:
                 cli_input_3 = "no speed " + str(speed)
-                switch.config(cli_input_3)
-                switch.expect(r'.*this command? [y/N].*')
+                switch.config("")
+                switch.send(cli_input_3)
+                # os.system("pause")
+                switch.expect(r'[\r\n]*.*proceed with this command')
+                # switch.expect(r'[\r\n.]*')
+
+                # switch.expect(r'\w+[\r\n]![\r\n\s\x!]+\w+![\r\n][\w\[\]]+[#>] ')
                 switch.send("yes")
             return True
 
