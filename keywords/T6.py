@@ -249,7 +249,41 @@ class T6(object):
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/route' % tenant
         c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0, len(data)):
+            if data[i]["logical-router"] == tenant:
+                next_hop = data[i]["next-hop-group"].split(' ')
+                if next_hop[2] == nat_profile:
+                    if data[i]["status"] == "Active":
+                        helpers.log("Tenant Logical router route nexthop is nat profile and status is active")
+                        return True
+                    else:
+                        helpers.log("Tenant logical router nat next hop is not active")
+                        return False
+                else:
+                    continue
+            else:
+                helpers.log("Given tenant is not present in the config")
+                return False
+        return False
         
+    def rest_show_tenant_logical_router_default_route_state(self, tenant, nat_profile):
+        '''function to verify tenant logical router next-hop
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]?select=state' % tenant
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["name"] == tenant:
+            default_state = data[0]["state"][0]["default-route-state"].split(' ')
+            if default_state[3] == nat_profile:
+                    helpers.log("tenant default route showing proper nat next-hop")
+                    return True
+            else:
+                    helpers.log("tenant default route is not showing nat profile")
+                    return False
+       
     def rest_verify_nat_endpoint(self, tenant, nat_profile, remote_tenant, remote_segment):
         '''Function to verify nat endpoint
         '''
