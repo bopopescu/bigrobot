@@ -210,7 +210,7 @@ TC1:AS4600:Verify bidirectional tunnel interface
     Should be true  ${verify_tun_sw1}         
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip} 
     Should be true  ${verify_tun_sw2}
-    [Tags]  sanity  feature  Accton-AS4600
+    [Tags]  sanity  feature  Accton-AS4600  run
 
 TC2:AS4600:Verify receive-only tunnel interface
     ${verify_tun_sw3}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=377  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      

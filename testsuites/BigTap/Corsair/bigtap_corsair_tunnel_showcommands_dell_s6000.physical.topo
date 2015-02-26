@@ -16,7 +16,7 @@ s1:
     ip: 10.9.19.12
   
 ## APP-ARISTA-1
-as2:
+s2:
     ip: 10.9.19.3
     console_ip: 10.1.8.97
     console_port: 6003
