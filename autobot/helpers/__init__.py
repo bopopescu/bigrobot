@@ -1884,12 +1884,19 @@ def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
                 ping_output = result["content"]
 
         elif mode == 'cli':
-            if source_if:
-                test_error("source_if option not supported for controller CLI ping.")
-
             # Ping command on Controller is very basic. It doesn't support
-            # any option.
-            cmd = "ping %s" % (host)
+            # any option besides count.
+
+            cmd = "ping"
+            if is_bcf(node_handle.platform()) or is_bigtap(node_handle.platform()):
+                if source_if:
+                    test_error("source_if option not supported for controller CLI ping.")
+                if count == None or int(count) == -1:  # disable count
+                    pass
+                else:
+                    cmd = "%s count %s" % (cmd, count)
+
+            cmd = "%s %s" % (cmd, host)
             if not quiet:
                 log("Ping command: %s" % cmd, level=4)
             result = node_handle.cli(cmd)
