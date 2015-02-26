@@ -1,15 +1,15 @@
-''' 
+'''
 ###  WARNING !!!!!!!
-###  
+###
 ###  This is where common code for all third party switch will go in.
-###  
-###  To commit new code, please contact the Library Owner: 
+###
+###  To commit new code, please contact the Library Owner:
 ###  Animesh Patcha (animesh.patcha@bigswitch.com)
 ###
 ###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
-###  
+###
 ###  Last Updated: 02/08/2014
-###  
+###
 ###  WARNING !!!!!!!
 '''
 
@@ -30,11 +30,11 @@ class ThirdParty(object):
 
     def cli_arista_add_portchannel(self, node, pc_number, pc_list, pc_mode="active", pc_priority=15000, pc_timeout=5):
         '''Configure Port Channel
-        
-            Input: 
+
+            Input:
                 `pc_number`        Port Channel to be configured
                 `pc_list`          List of port channel interfaces seperated by single space
-            
+
             Return Value:  True on Success
         '''
         try:
@@ -62,11 +62,11 @@ class ThirdParty(object):
 
     def cli_arista_delete_portchannel(self, node, pc_number, pc_list, pc_mode="active", pc_priority=15000):
         '''Configure Port Channel
-        
-            Input: 
+
+            Input:
                 `pc_number`        Port Channel to be configured
                 `pc_list`          List of port channel interfaces seperated by single space
-            
+
             Return Value:  True on Success
         '''
         try:
@@ -91,11 +91,11 @@ class ThirdParty(object):
 
     def cli_arista_add_mtu_interface(self, node, interface_name, mtu_size):
         '''Configure MTU
-        
-            Input: 
+
+            Input:
                 `interface_name`        Name of Interface
                 `mtu_size`          MTU size
-            
+
             Return Value:  True on Success
         '''
         try:
@@ -112,11 +112,11 @@ class ThirdParty(object):
 
     def cli_arista_delete_mtu_interface(self, node, interface_name, mtu_size):
         '''Configure MTU
-        
-            Input: 
+
+            Input:
                 `interface_name`        Name of Interface
                 `mtu_size`          MTU size
-            
+
             Return Value:  True on Success
         '''
         try:
@@ -202,8 +202,8 @@ class ThirdParty(object):
             if speed is not None:
                 cli_input_4 = "speed " + str(speed)
                 switch.config(cli_input_4)
-                switch.expect(r'.*this command? [y/N].*')
-                switch.send("yes")
+                # switch.expect(r'.*this command? [y/N].*')
+                # switch.send("yes")
             return True
 
     def cli_arista_delete_ip_address(self, node, ip_address, mask, interface_name, speed=None):
