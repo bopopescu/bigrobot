@@ -1,0 +1,18 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+    ip: 10.8.34.1
+    password: admin
+c2:
+    ip: 10.8.34.2
+    password: admin
+
+# Dell S6000
+s1:
+    ip: 10.8.4.44
+    password: admin
