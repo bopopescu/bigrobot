@@ -1920,50 +1920,21 @@ class Ixia(object):
         arp_dup_ref_value = self._handle.add(arp_dup_ref, 'singleValue')
         self._handle.setMultiAttribute(arp_dup_ref_value, '-value', False)
         self._handle.commit()
-        if not arp_check:
+        if arp_check == 'False'.lower():
             self._arp_check = False
         if port_name is None:
             for topo in self._topology.values():
                 self._handle.execute('start', topo)
-            if self._arp_check:
-                for port, topo in self._topology.iteritems():
-                    i = 0
-                    while True:
-                        i = i + 1
-                        device1 = self._handle.getList(self._topology[port], 'deviceGroup')
-                        if len(device1) == 0:
-                            helpers.log(' no devices created for this Port , skipping Arp resolution')
-                            break
-                        time.sleep(1)
-                        mac_device1 = self._handle.getList(device1[0], 'ethernet')
-                        if len(mac_device1) == 0:
-                            helpers.log("No Mac devices created for port : %s" % port)
-                        else:
-                            ip_device1 = self._handle.getList(mac_device1[0], ip_type)
-                        resolved_mac = self._handle.getAttribute(ip_device1[0], '-resolvedGatewayMac')
-                        helpers.log ('Sleeping 5 sec ..for Arps to get resolved !')
-                        time.sleep(1)  # Sleep for the gw arp to get Resolved
-                        helpers.log('Successfully Started L3 Hosts on Ixia Port : %s' % str(topo))
-                        helpers.log(' Resolved MAC for Gw : %s' % str(resolved_mac))
-                        match = re.match(r'.*Unresolved*.', resolved_mac[0])
-                        if match:
-                            if i < 10:
-                                continue
-                            else:
-                                raise IxNetwork.IxNetError('Arp for GW not Resolved on port : %s so cannot send L3 Traffic!!' % port)
-                                break
-                        else:
-                            helpers.log('Arp Successfully resolved for gw on port %s !!' % port)
-                            break
-                        helpers.log (' Resolved MAC for Gw : %s' % str(resolved_mac))
-            else:
-                helpers.log('Skipping ARP RESOLUTION CHECK ..AS Manualy Gw Mac is configured')
-                helpers.log('Sleeping 20 sec for IP Host to be UP...')
-                time.sleep(30)
-
         else:
             self._handle.execute('start', self._topology[port_name])
             helpers.log('Successfully Started L3 Hosts on Ixia Port : %s' % str(self._port_map_list[port_name]))
+        if self._arp_check:
+            helpers.log("Checking for Gateway Arp Resolution in IxNetwork..")
+            self.ix_chk_arp()
+        else:
+            helpers.log('Skipping ARP RESOLUTION CHECK ..AS Manualy Gw Mac is configured/ arp_check is False')
+            helpers.log('Sleeping 20 sec for IP Host to be UP...')
+            time.sleep(30)
         return True
 
     def ix_chk_arp(self, ip_type="ipv4"):
