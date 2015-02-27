@@ -209,7 +209,7 @@ Test controller console
     test controller console      c1
 
 Test node reconnect
-    #[Tags]  skipped
+    [Tags]  skipped
     test node reconnect   c1
 
 Test reauth timeout
@@ -270,8 +270,8 @@ Test REST commands
     #patch             c1   /api/v1/data/controller/core/aaa/local-user%5Buser-name%3D%22vui%22%5D   {"full-name": "Vui Bob Le"}
 
 Test controller cli ping (simple)
-    [Tags]  skipped
-    ${loss_pct}=      cli ping          c1   qa-tools1.qa.bigswitch.com
+    #[Tags]  skipped
+    ${loss_pct}=      cli ping          c1   qa-tools1.qa.bigswitch.com   count=3
     log               Packet loss % is ${loss_pct}
 
 Test controller cli ping (complete stats)
