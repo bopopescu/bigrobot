@@ -1901,12 +1901,20 @@ class Ixia(object):
         time.sleep(10)
         helpers.log("### Traffic Started")
         return True
-    def ix_start_hosts(self, port_name=None, ip_type='ipv4'):
+    def ix_start_hosts(self, port_name=None, ip_type='ipv4', arp_check=True):
         '''
             Starts the Topo's that is create under port_name
         '''
         helpers.log("First Checking IXIA vPort States whether Released or not..")
         self.ix_check_vport_state()
+        helpers.log("Adding by Default Arp Re-Trasmit interval: 10000 and Arp Transmit Count: 10")
+        vports = self._handle.getList(self._handle.getRoot(), 'vport')
+        for vport in vports:
+            self._handle.setAttribute(vport + '/protocolStack/options', '-ipv4RetransTime' , '10000')
+            self._handle.setAttribute(vport + '/protocolStack/options', '-ipv4McastSolicit' , '10')
+        self._handle.commit()
+        if not arp_check:
+            self._arp_check = False
         if port_name is None:
             for topo in self._topology.values():
                 self._handle.execute('start', topo)
