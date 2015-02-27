@@ -1905,6 +1905,7 @@ class Ixia(object):
         '''
             Starts the Topo's that is create under port_name
         '''
+        helpers.log("arp_chek: %s" % arp_check)
         helpers.log("First Checking IXIA vPort States whether Released or not..")
         self.ix_check_vport_state()
         helpers.log("Adding Arp Re-Trasmit interval: %s and Arp Transmit Count: %s" % (RetransmitInterval, RetransmitCount))
@@ -1920,7 +1921,8 @@ class Ixia(object):
         arp_dup_ref_value = self._handle.add(arp_dup_ref, 'singleValue')
         self._handle.setMultiAttribute(arp_dup_ref_value, '-value', False)
         self._handle.commit()
-        if arp_check == 'False'.lower():
+        if str(arp_check).lower() == 'False'.lower():
+            helpers.log("Disable Arp Check in Ixia...")
             self._arp_check = False
         if port_name is None:
             for topo in self._topology.values():
