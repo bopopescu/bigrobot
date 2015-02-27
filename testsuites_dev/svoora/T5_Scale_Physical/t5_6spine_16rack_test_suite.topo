@@ -62,7 +62,7 @@ s2:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-217-1.bigswitch.com
+   ip: pdu-217-a.bigswitch.com
    port: 15
    
 s3:
@@ -94,8 +94,8 @@ s4:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 19
+   ip: pdu-217-a.bigswitch.com
+   port: 22
 s5:
   #ip: 10.8.0.155
   alias: leaf2-a
@@ -109,7 +109,7 @@ s5:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-217-a.bigswitch.com
+   ip: pdu-217-b.bigswitch.com
    port: 14
 s6:
   #ip: 10.8.0.152
@@ -124,8 +124,8 @@ s6:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 19
+   ip: pdu-217-a.bigswitch.com
+   port: 21
 s7:
   #ip: 10.8.0.153
   alias: leaf3-a
@@ -140,8 +140,8 @@ s7:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-217-a.bigswitch.com
-   port: 13
+   ip: pdu-218-b.bigswitch.com
+   port: 19
 s8:
   #ip: 10.8.0.153
   alias: leaf3-b
@@ -160,7 +160,7 @@ s8:
   set_init_ping: false
   pdu:
    ip: pdu-218-b.bigswitch.com
-   port: 19
+   port: 18
 s9:
   #ip: 10.8.0.147
   alias: leaf4-a
@@ -175,8 +175,8 @@ s9:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-218-b.bigswitch.com
-   port: 18
+   ip: pdu-218-a.bigswitch.com
+   port: 17
   
 s10:
   #ip: 10.8.0.150
@@ -191,8 +191,8 @@ s10:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-218-a.bigswitch.com
-   port: 17
+   ip: pdu-218-b.bigswitch.com
+   port: 15
 s11:
   #ip: 10.8.0.146
   alias: leaf5-a
@@ -206,8 +206,8 @@ s11:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-218-b.bigswitch.com
-   port: 15
+   ip: pdu-218-a.bigswitch.com
+   port: 10
 s12:
   #ip: 10.8.0.151
   alias: leaf5-b
@@ -221,8 +221,8 @@ s12:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-218-a.bigswitch.com
-   port: 10
+   ip: pdu-218-b.bigswitch.com
+   port: 9
 s13:
   #ip: 10.8.0.155
   alias: leaf6-a
@@ -236,8 +236,8 @@ s13:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-218-b.bigswitch.com
-   port: 9
+   ip: pdu-218-a.bigswitch.com
+   port: 3
 s14:
   #ip: 10.8.0.152
   alias: leaf6-b
@@ -252,7 +252,7 @@ s14:
   set_init_ping: false
   pdu:
    ip: pdu-218-a.bigswitch.com
-   port: 3
+   port: 2
 s15:
   #ip: 10.8.0.155
   alias: leaf7-a
@@ -266,8 +266,8 @@ s15:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-218-a.bigswitch.com
-   port: 2
+   ip: pdu-219-b.bigswitch.com
+   port: 20
 s16:
   #ip: 10.8.0.152
   alias: leaf7-b
@@ -421,8 +421,8 @@ s25:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 19
+   ip: pdu-320-b.bigswitch.com
+   port: 22
   
 s26:
   #ip: 10.8.0.150
@@ -437,8 +437,8 @@ s26:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 19
+   ip: pdu-320-b.bigswitch.com
+   port: 23
 s27:
   #ip: 10.8.0.146
   alias: leaf13-a
@@ -452,8 +452,8 @@ s27:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 19
+   ip: pdu-319-a.bigswitch.com
+   port: 23
 s28:
   #ip: 10.8.0.151
   alias: leaf13-b
@@ -467,8 +467,8 @@ s28:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 19
+   ip: pdu-319-b.bigswitch.com
+   port: 23
 s29:
   #ip: 10.8.0.155
   alias: leaf14-a
@@ -482,8 +482,8 @@ s29:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 19
+   ip: pdu-318-b.bigswitch.com
+   port: 22
 s30:
   #ip: 10.8.0.152
   alias: leaf14-b
@@ -497,8 +497,8 @@ s30:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 19
+   ip: pdu-318-b.bigswitch.com
+   port: 21
 s31:
  #ip: 10.8.0.155
   alias: leaf15-a
@@ -512,8 +512,8 @@ s31:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 19
+   ip: pdu-317-a.bigswitch.com
+   port: 23
 s32:
   #ip: 10.8.0.152
   alias: leaf15-b
@@ -527,8 +527,8 @@ s32:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 19
+   ip: pdu-317-a.bigswitch.com
+   port: 22
   
 s33:
    #ip: 10.8.0.153
