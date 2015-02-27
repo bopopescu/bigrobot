@@ -1,0 +1,10 @@
+#s1:
+#  ip: 10.192.81.115  # Animesh's Arista
+#  user: admin
+#  password: arastra
+
+h1:
+  ip: qa-monitor2
+  protocol: telnet
+  user: bsn
+  password: bsn
