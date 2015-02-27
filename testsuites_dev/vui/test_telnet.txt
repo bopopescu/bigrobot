@@ -1,0 +1,16 @@
+* Setting
+Documentation   This suite is my sandbox for experimentation.
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+Library         keywords/Controller.py
+Library         keywords_dev/vui/MyTest.py
+
+
+* Test Case
+Test basic
+    #[Tags]  skipped
+    bash     h1   uptime

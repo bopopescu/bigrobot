@@ -4,7 +4,7 @@
 #  password: arastra
 
 s1:
-  ip: dummy
+  ip: 10.9.19.24
 
   pdu:
     ip: pdu-314-b.bigswitch.com

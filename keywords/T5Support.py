@@ -216,6 +216,31 @@ class T5Support(object):
                                         result = True
         return result
 
+    def generate_support(self, node='master'):
+        helpers.log("***Entering==> generate support file  \n")
+
+        t = test.Test()
+        c = t.controller(node)
+
+        c.enable('')
+        c.send('support')
+        options = c.expect([r'\(yes/no\)\?', c.get_prompt()], timeout=1800)
+        if options[0] == 0 :
+            c.send('yes')
+            c.expect(timeout=1200)
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        lines = helpers.str_to_list(temp)
+        helpers.log("*****Output is :\n%s" % temp)
+        for line in lines:
+            helpers.log("INFO: line is %s" % line)
+            match = re.match(r'Name.*: (floodlight.*)', line)
+            if match:
+                helpers.log("INFO: file name is: %s" % match.group(1))
+                return  match.group(1)
+
+        helpers.test_failure("Error: %s" % temp)
+
     def check_controller_cli_cmds(self, support_bundle_folder=None, node_name='master'):
         '''
             check for controller cli cmds are logged
