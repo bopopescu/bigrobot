@@ -1913,7 +1913,7 @@ class Ixia(object):
             self._handle.setAttribute(vport + '/protocolStack/options', '-ipv4RetransTime' , RetransmitInterval)
             self._handle.setAttribute(vport + '/protocolStack/options', '-ipv4McastSolicit' , RetransmitCount)
         self._handle.commit()
-        helpers.log("Disable Suppression of Arp for Duplicate packet in IxNetwork..")
+        helpers.log("Disable Suppression of Arp for Duplicate gateway in IxNetwork..")
         arp_dup_ref = self._handle.getAttribute(self._handle.getRoot() + 'globals/topology/ipv4', '-suppressArpForDuplicateGateway')
         self._handle.setMultiAttribute(arp_dup_ref, '-clearOverlays', False, '-pattern', 'singleValue')
         self._handle.commit()
