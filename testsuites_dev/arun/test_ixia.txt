@@ -42,7 +42,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  
     
 02_Bi-Direction L2 Traffic with line rate
 # Basic test case with all default values and just start the flow
@@ -571,11 +571,22 @@ Test IXIA
 41_Basic L3 Add Hosts with VLAN ID and vlan step and Stop Hosts with chk Arp Resolution for Gateways
 	${Hosts}=  L3 add host   src_ip=30.0.0.2  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=a  
 	    ...    src_mac=00:70:03:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_step=1  vlan_priority=1  vlan_priority_step=1
-	pause
 	L3 start hosts  port_name=a
 	${result}=  L3 chk gw arp
 	should be true  ${result}
-	[Tags]  traffic  L3 	run
+	[Tags]  traffic  L3 	
+	
+42_Basic L3 Add Hosts with start host with arp retransmit intervals and counts
+	${Hosts1}=  L3 add host   src_ip=30.0.0.2  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=a  
+	    ...    src_mac=00:70:03:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+	${Hosts1}=  L3 add host   src_ip=30.0.0.1  src_ip_step=0.0.1.0  gw_ip=30.0.0.2  src_gw_step=0.0.1.0  port_name=b  
+	    ...    src_mac=00:90:03:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+
+	L3 start hosts  RetransmitInterval=10000  RetransmitCount=10  arp_check=False
+	
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	[Tags]  traffic  L3  run
 *Keywords
 atest teardown
 	delete traffic
