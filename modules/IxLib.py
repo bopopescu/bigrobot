@@ -1901,17 +1901,24 @@ class Ixia(object):
         time.sleep(10)
         helpers.log("### Traffic Started")
         return True
-    def ix_start_hosts(self, port_name=None, ip_type='ipv4', arp_check=True):
+    def ix_start_hosts(self, port_name=None, ip_type='ipv4', arp_check=True, RetransmitInterval='3000', RetransmitCount='4'):
         '''
             Starts the Topo's that is create under port_name
         '''
         helpers.log("First Checking IXIA vPort States whether Released or not..")
         self.ix_check_vport_state()
-        helpers.log("Adding by Default Arp Re-Trasmit interval: 10000 and Arp Transmit Count: 10")
+        helpers.log("Adding Arp Re-Trasmit interval: %s and Arp Transmit Count: %s" % (RetransmitInterval, RetransmitCount))
         vports = self._handle.getList(self._handle.getRoot(), 'vport')
         for vport in vports:
-            self._handle.setAttribute(vport + '/protocolStack/options', '-ipv4RetransTime' , '10000')
-            self._handle.setAttribute(vport + '/protocolStack/options', '-ipv4McastSolicit' , '10')
+            self._handle.setAttribute(vport + '/protocolStack/options', '-ipv4RetransTime' , RetransmitInterval)
+            self._handle.setAttribute(vport + '/protocolStack/options', '-ipv4McastSolicit' , RetransmitCount)
+        self._handle.commit()
+        helpers.log("Disable Suppression of Arp for Duplicate gateway in IxNetwork..")
+        arp_dup_ref = self._handle.getAttribute(self._handle.getRoot() + 'globals/topology/ipv4', '-suppressArpForDuplicateGateway')
+        self._handle.setMultiAttribute(arp_dup_ref, '-clearOverlays', False, '-pattern', 'singleValue')
+        self._handle.commit()
+        arp_dup_ref_value = self._handle.add(arp_dup_ref, 'singleValue')
+        self._handle.setMultiAttribute(arp_dup_ref_value, '-value', False)
         self._handle.commit()
         if not arp_check:
             self._arp_check = False
