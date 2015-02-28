@@ -107,6 +107,22 @@ class T5_Scale(object):
         c1.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR > c1_%s &' % (file_name))
         c2.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR > c2_%s &' % (file_name))
 
+    def start_monitor_switch_errors(self, file_name):
+        t = test.Test()
+        c1 = t.controller('c1')
+
+        helpers.log("INFO: connecting to bash mode")
+        helpers.log("INFO: Checking if file already exist in the controller")
+        result = c1.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C1: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C1, deleting the file")
+            c1.sudo('rm -rf c1_%s' % (file_name))
+        helpers.log("Enabling the tail and redirecting to filename")
+        c1.sudo('tail -f /var/log/switch/* | grep faultd | grep \"/bin/ofad\" > c1_%s &' % (file_name))
+
+
+
     def pid_return_monitor_file(self, role):
         t = test.Test()
         c = t.controller(role)
@@ -120,6 +136,24 @@ class T5_Scale(object):
             return pid
         else:
             return 0
+
+    def pid_return_switch_monitor_file(self):
+        t = test.Test()
+        c = t.controller('c1')
+        helpers.log("Verifing for monitor job")
+        c_result = c.sudo('ps ax | grep tail | grep sudo')
+        helpers.log("dumping sudo o/p:%s" % (c_result['content']))
+        split = re.split('\s+', c_result['content'])
+        # FIXME: Need to find another way to regex, to get pid rather splitting
+        if split[9]:
+            pid = split[9]
+            return pid
+        else:
+            return 0
+
+
+
+
     def stop_monitor_exception(self, pid, role):
         t = test.Test()
         c = t.controller(role)
@@ -127,6 +161,16 @@ class T5_Scale(object):
         c.sudo('kill %s' % (pid))
         # #FIXME: Need to check if pid got killed or not
         helpers.log(" monitor file pid killed")
+
+
+    def stop_monitor_switch_error(self, pid):
+        t = test.Test()
+        c = t.controller('c1')
+        helpers.log("killing monitor job pid:%s" % (pid))
+        c.sudo('kill %s' % (pid))
+        # #FIXME: Need to check if pid got killed or not
+        helpers.log(" monitor file pid killed")
+
 
     def parse_exception(self, role, file_name):
         t = test.Test()
@@ -156,6 +200,33 @@ class T5_Scale(object):
         else:
             helpers.log("File not Found")
             return False
+
+    def parse_switch_error(self, file_name):
+        t = test.Test()
+        c = t.controller('c1')
+        helpers.log("checking file exist in the controller")
+        result = c.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found, continuing parsing")
+            split = re.split('\s+', result['content'])
+            helpers.log ("dumping list of file %s" % (split))
+            helpers.log("checking file size now")
+            # FIXME: Need to check file size correctly
+            size = split[10]
+            helpers.log("Exception log file size:%s" % (size))
+            if size == '0':
+                helpers.log("no exceptions found, you are good")
+                return size
+            else:
+                # FIXME: Need to copy log file to external server
+                helpers.log("Exceptions found in the file, !!!FILE A BUG!!! and dumping exceptions log to logfile")
+                c.sudo('cat c1_%s' % (file_name))
+        else:
+            helpers.log("File not Found")
+            return False
+
+
 
     def cli_copy_file_to_running_config(self, file_name):
         ''' Function to copy <file> to running-config
