@@ -50,7 +50,7 @@ ${hv5_switch}  hv5
 * Test Case 
 
 add Fabric setup Three Rack Dual Leaf 
-   [Tags]  nat  feature         
+   [Tags]  nat  feature           
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -143,7 +143,7 @@ verify vm connectivity using multiple nat next-hop multiple tenants
     Should Be True  ${loss} == 0
     
 verify bm-vm connectivity using multiple nat next-hop (single external tenant)
-   [Tags]  nat  feature  
+   [Tags]  nat  feature   
     add a tenant  external
     add a vns  external  s1
     add a vns  external  s2
@@ -182,7 +182,7 @@ verify bm-vm connectivity using multiple nat next-hop (single external tenant)
     Should Be True  ${loss} == 0
 
 verify bm-vm connectivity using multiple nat next-hop multiple tenants
-	[Tags]  nat  feature
+	[Tags]  nat  feature  
 	add a tenant  external
 	add a tenant  external1
     add a vns  external  s1
@@ -313,7 +313,7 @@ verify vm connectivity after changing nat profile
     Should Be True  ${loss} == 0
 	
 verify vm connectivity changing route from system to nat
-	[Tags]  nat  feature
+	[Tags]  nat  feature  
 	rest add static routes  t2  0.0.0.0/0  {"tenant": "system"}
 	add a tenant  external
 	add a tenant  external1
@@ -485,7 +485,7 @@ verify NAT connectvity after controller failover and failback
     Should be True  ${loss} == 100
 
 verify vm connectivity with nat switch interface failover
-   [Tags]  nat  feature   
+   [Tags]  nat  feature     
     add a tenant  external
     add a vns  external  s1
     add a vns  external  s2
@@ -523,7 +523,7 @@ verify vm connectivity with nat switch interface failover
     \	Should Be True  ${loss} == 0
 
 verify vm connectivity with dynamic nat switch failover
-	[Tags]  nat feature  
+	[Tags]  nat feature    
 	add a tenant  external
 	add a tenant  external1
     add a vns  external  s1
@@ -672,7 +672,7 @@ T6 base suite setup
 	mininet host gw  vm7  10.1.1.1  ${vm7_intf0}
 	mininet host ipcfg  vm11  ${vm11_intf0}  10.1.2.3  24
 	mininet host gw  vm11  10.1.2.1  ${vm11_intf0}
-    sleep  5
+    sleep  10
 
 Tear down the config
    delete a tenant  t1
