@@ -1,0 +1,98 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: 10.192.108.2
+
+c2:
+  ip: 10.192.108.4
+  
+
+s1:
+#  ip: 10.195.0.21
+   ip: 10.210.160.5
+   
+s2:
+#  ip: 10.195.0.22
+   ip: 10.210.160.6
+  
+s3:
+#  ip: 10.195.0.33
+   ip: 10.210.160.7
+
+s4:
+#  ip: 10.195.0.34
+   ip: 10.210.160.8
+  
+s5:
+#  ip: 10.195.0.35
+   ip: 10.210.160.9
+
+s6:
+#  ip: 10.195.0.36 
+   ip: 10.210.160.10
+
+s7:
+#  ip: 10.195.0.31
+   ip: 10.210.160.11
+
+s8:
+#  ip: 10.195.0.32
+   ip: 10.210.160.12
+
+
+#h1:
+#  ip: 10.193.0.21
+#   ip: 10.195.0.103
+#   user: root
+#   password: bsn
+   
+      
+#h2:
+#  ip: 10.195.0.104
+#  user: root
+#  password: bsn
+  
+#h3:
+#  ip: 10.195.0.101
+#  user: root
+#  password: bsn
+   
+#h4:
+#  ip: 10.195.0.102
+#  user: root
+#  password: bsn
+     
+#h5:
+#  ip: 10.195.0.105
+#  user: root
+#  password: bsn
+     
+#h6:
+#  ip: 10.195.0.106
+#  user: root
+#  password: bsn
+  
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.210.192.2
+  tcl_server_ip: 10.194.64.185
+  ports:
+    a:
+      name: 12/1
+    b:
+      name: 12/2
+    c:
+      name: 12/3
+    d:
+      name: 12/4
+    e:
+      name: 12/6
+    f:
+      name: 12/7
+        
+ 
