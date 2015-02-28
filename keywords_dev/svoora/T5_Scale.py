@@ -391,21 +391,61 @@ class T5_Scale(object):
         return ep_count
 
 
+    def get_L3_table_count(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "brcmdriver3 flow-stats"'
+        content = s.enable(string)['content']
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            match = re.match(r'L3_HOST_ROUTE (\d+)\s+(\d+).*', line)
+            if match:
+                helpers.log("INFO: Total L3 table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
+                return match.group(2)
+            else:
+                return 0
+
+    def get_L2_table_count(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "brcmdriver3 flow-stats"'
+        content = s.enable(string)['content']
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            match = re.match(r'L2 (\d+)\s+(\d+).*', line)
+            if match:
+                helpers.log("INFO: Total L2 table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
+                return match.group(2)
+            else:
+                return 0
+
+    def get_ACL_table_count(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "brcmdriver3 flow-stats"'
+        content = s.enable(string)['content']
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            match = re.match(r'INGRESS_ACL (\d+)\s+(\d+).*', line)
+            if match:
+                helpers.log("INFO: Total INGRESS_ACL table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
+                return match.group(2)
+            else:
+                return 0
 
 
-
-        helpers.log(" monitor file under C1: %s" % (result['content']))
-
-
-
-
-        helpers.log("Printing digest from master and standby controllers %s and %s" % (master_digest, slave_digest))
-        if (master_digest == slave_digest):
-            helpers.log("Config is in sync between controlelrs and digest match")
-            return True
-        else:
-            helpers.log("config digest do not match between controllers")
-            return False
 
 
 
