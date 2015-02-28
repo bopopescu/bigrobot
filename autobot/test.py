@@ -1067,7 +1067,7 @@ class Test(object):
 
     def power_cycle(self, node, minutes=0):
         self._pdu_mgt(node, 'reboot')
-        helpers.log("Powered cycled '%s'. Sleeping for %s minutes while it comes up."
+        helpers.log("Power cycled '%s'. Sleeping for %s minutes while it comes up."
                     % (node, minutes))
         helpers.sleep(int(minutes) * 60)
 
