@@ -197,7 +197,7 @@ class BsnCommon(object):
         support = T5Support.T5Support()
         helpers.log("Deleting old Support Bundles from the BCF Controller: %s" % node)
         support.delete_support_bundles(node)
-        result = support.generate_support(node)
+        result = support.cli_generate_support(node)
         helpers.log("Support File : %s" % str(result))
         support_file = support.get_support_bundle_fs_path(node)
         Host().bash_scp(node,
