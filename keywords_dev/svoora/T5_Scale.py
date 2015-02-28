@@ -406,8 +406,7 @@ class T5_Scale(object):
             if match:
                 helpers.log("INFO: Total L3 table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
                 return match.group(2)
-            else:
-                return 0
+        return 0
 
     def get_L2_table_count(self, node):
         t = test.Test()
@@ -424,8 +423,7 @@ class T5_Scale(object):
             if match:
                 helpers.log("INFO: Total L2 table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
                 return match.group(2)
-            else:
-                return 0
+        return 0
 
     def get_ACL_table_count(self, node):
         t = test.Test()
@@ -442,8 +440,8 @@ class T5_Scale(object):
             if match:
                 helpers.log("INFO: Total INGRESS_ACL table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
                 return match.group(2)
-            else:
-                return 0
+
+        return 0
 
 
 
