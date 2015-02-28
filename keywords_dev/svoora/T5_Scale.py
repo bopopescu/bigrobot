@@ -294,12 +294,14 @@ class T5_Scale(object):
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/sync-state-table'
         c_master.rest.get(url)
         data_master = c_master.rest.content()
+        helpers.log("Data returned for total number of switches %d" % (len(data_master)))
         if (len(data_master) == 0):
             helpers.log("Sync state information is not available")
             return False
         else:
             for i in range(0, len(data_master)):
-                if (data_master[i]["sync-state"] != "success"):
+                helpers.log("Printing sync-state info for switch dp-id:%s and status:%s" % (str(data_master[i]["switch-id"]), str(data_master[i]["sync-state"])))
+                if (str(data_master[i]["sync-state"]) != "success"):
                     return False
         return True
 
