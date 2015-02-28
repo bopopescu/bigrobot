@@ -15,8 +15,8 @@ c1:
    user: admin
    password: adminadmin
    pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 9
+    ip: pdu-220-b.bigswitch.com
+    port: 9
 c2:
    ip: 10.9.0.11
  #set_init_ping: false            # default: true
@@ -27,8 +27,8 @@ c2:
    user: admin
    password: adminadmin
    pdu:
-   ip: pdu-220-b.bigswitch.com
-   port: 10
+    ip: pdu-220-b.bigswitch.com
+    port: 10
    
    
    
