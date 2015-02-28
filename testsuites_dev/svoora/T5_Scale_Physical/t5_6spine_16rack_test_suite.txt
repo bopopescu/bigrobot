@@ -64,6 +64,7 @@ ${empty_cfg_file_path}       /home/svoora/scale_empty.snp
 ${cfg_file_server}		10.8.22.2
 ${file_server_passwd}	bsn
 ${monitor_file}			exception_file.log
+${image}      bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-*.pkg
 
 * Test Case 
 
@@ -376,6 +377,58 @@ Reboot spine print traffic convergence time
     print L2 packet_loss_duration
     
 
+PowerOff spine print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s33
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+PowerOn spine print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s33
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
 Reboot leaf print traffic convergence time   
     [Tags]   reboot
     create L2 streams
@@ -400,8 +453,86 @@ Reboot leaf print traffic convergence time
     Should Be True  ${return}
     stop traffic
     print L2 packet_loss_duration
+
+PowerOff leaf print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+PowerOn leaf print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
         
 Shutdown leaf 40g interface and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    ##SHUT DOWN LEAF 40G INTERFACE
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+Bringup leaf 40g interface and print traffic convergence time   
     [Tags]   reboot
     create L2 streams
     clear stats
@@ -452,8 +583,277 @@ Shutdown spine 40g interface and print traffic convergence time
     stop traffic
     print L2 packet_loss_duration
    
+Bringup spine 40g interface and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    ##SHUT DOWN spine 40G INTERFACE
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+   
+
+Remove leaf from configuration and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+Add leaf to configuration and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+Remove spine from configuration and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+Add spine to configuration and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+Restart ofad in spine and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+Restart ofad in leaf and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+restart floodlight in master controller
+   [Tags]  HA2
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    ###RESTART floodlight deamon
+    ${returnVal}=  cli verify cluster master reboot
+    Should Be True  ${returnVal}
+    stop monitoring the exception
+    parse monitoring file
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    sleep  5
+    stop traffic
+    verify L2 packet_loss_duration
+    reconnect switch ips   s1
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} > 45000
+    ${acl_table}=  get ACL table count  s1
+    Should be true  ${acl_table} == 3001
+    
+restart floodlight in slave controller
+   [Tags]  HA2
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    ###RESTART floodlight deamon
+    ${returnVal}=  cli verify cluster master reboot
+    Should Be True  ${returnVal}
+    stop monitoring the exception
+    parse monitoring file
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    sleep  5
+    stop traffic
+    verify L2 packet_loss_duration
+    reconnect switch ips   s1
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} > 45000
+    ${acl_table}=  get ACL table count  s1
+    Should be true  ${acl_table} == 3001
     
 	
+upgrade stage in master
+    [Tags]  stage
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    ${num}  ${_}=      cli_check_image   master
+    Run Keyword if   ${num} == -1    copy_pkg_from_server    ${image}        master
+    ${result}=      cli_upgrade_stage      master
+    Should be True     ${result}
+    stop monitoring the exception
+    parse monitoring file
+    
+upgrade stage in slave
+    [Tags]  stage
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    ${num}  ${_}=      cli_check_image   slave
+    Run Keyword if   ${num} == -1    copy_pkg_from_server    ${image}        slave
+    ${result}=      cli_upgrade_stage      slave
+    Should be True     ${result}
+    stop monitoring the exception
+    parse monitoring file
+    
+    
 * Keywords
 
 create L2 streams
