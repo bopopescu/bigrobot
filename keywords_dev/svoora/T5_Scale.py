@@ -284,6 +284,24 @@ class T5_Scale(object):
                 return False
         return True
 
+    def rest_verify_sync_state(self):
+        ''' Function to verify forwarding sync state for all the switches
+        Input:
+        Output: True/False
+        '''
+        t = test.Test()
+        c_master = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/sync-state-table'
+        c_master.rest.get(url)
+        data_master = c_master.rest.content()
+        if (len(data_master) == 0):
+            helpers.log("Sync state information is not available")
+            return False
+        else:
+            for i in range(0, len(data_master)):
+                if (data_master[i]["sync-state"] != "success"):
+                    return False
+        return True
 
     def rest_get_active_end_point_count(self):
         ''' Function to get active end point count
