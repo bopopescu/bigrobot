@@ -853,7 +853,17 @@ upgrade stage in slave
     stop monitoring the exception
     parse monitoring file
     
-    
+   
+collect tech-support
+    [Tags]  support
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    cli  master  support
+    sleep  1200
+    stop monitoring the exception
+    parse monitoring file
+     
 * Keywords
 
 create L2 streams
