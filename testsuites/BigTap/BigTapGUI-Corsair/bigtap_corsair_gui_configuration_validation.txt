@@ -103,46 +103,46 @@ T2 Teardown
 ### Configure Big Tap Interface Group from Big Tap Menu
 #                                                             ID                     Switch                            Role            Name                Interface Name
 T3 Test set up:
-    Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9			     filter	        ixia-2-9
+    Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1			 filter	        ixia-2-9
     Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-intern1       delivery       ixia-2-15
     Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             filter         ixia-4-8    
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.1 Filter Interface group with no filter interface and name filter-group        
      Configure Big Tap Interface Group from Big Tap Menu            filter                filter-group          ${EMPTY}
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.2 Delivery Interface with 1 delivery interface and name delivery_group    
     Configure Big Tap Interface Group from Big Tap Menu            delivery               delivery-group        ${EMPTY}
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.3 Filter Interface group with 1 filter interface and name filter-group        
      Configure Big Tap Interface Group from Big Tap Menu            filter                filter_group1         ixia-2-9
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.4 Delivery Interface with 1 delivery interface and name delivery_group    
     Configure Big Tap Interface Group from Big Tap Menu            delivery               delivery_group1       ixia-2-15
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.5 Another Filter Interface group with previous filter interface and name filter group 1                    
      Configure Big Tap Interface Group from Big Tap Menu           filter                 filter:group2         ixia-2-9
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.6 Another Delivery Interface group with previous delivery interface                
      Configure Big Tap Interface Group from Big Tap Menu            delivery              delivery:group2        ixia-2-15    
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.7 Filter Interface group with all filter interfaces and name filter group 3       
      Configure Big Tap Interface Group from Big Tap Menu            filter                filter-group_3           All
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.8 Delivery Interface with 1 delivery interface and name delivery_group    
     Configure Big Tap Interface Group from Big Tap Menu            delivery               delivery-group_3         All
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.9 Delete filter interface from Filter Interface group                    
      Delete Big Tap Interface from Interface Group                  filter                filter_group1          ixia-2-9
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.10 Delete delivery interface from Delivery Interface group                
      Delete Big Tap Interface from Interface Group                  delivery              delivery_group1        ixia-2-15
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.11 Delete Filter Interface group                    
      Delete Big Tap Interface group                                                       filter-group        
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3.12 Delete Delivery Interface group                
     Delete Big Tap Interface group                                                        delivery_group1                    
-    [Tags]  corsair  full  feature  interface-group  all
+    [Tags]  corsair  full  feature  interface-group
 T3 Teardown
     Delete All Big Tap Resources
     [Tags]  corsair  full  feature  interface-group
