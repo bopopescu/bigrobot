@@ -6,8 +6,9 @@ Suite Setup          config suite setup
 Suite Teardown      config suite teardown
 Force Tags          bigtap  gui
 Library             keywords/BsnCommon.py
-Library                keywords/BsnSelenium.py
-Library                SeleniumLibrary
+Library             keywords/BsnSelenium.py
+Library             SeleniumLibrary
+Library             keywords/AppController.py
 Resource            bigtap_resource.txt
 
 Library               String
@@ -15,132 +16,134 @@ Library               String
 
         
 *Test Case
-### Configure Big Tap Interface from Controller Menu         ID                         Switch                Role                Name         
+### Configure Big Tap Interface from Controller Menu         	ID                       Switch                Role           Name         
 T1.1 Interface with regular name-filter        
-     Configure Big Tap Interface from Controller Menu        ethernet1                app-rlb9-1            filter                filter-1
+     Configure Big Tap Interface from Controller Menu        	ethernet1                app-rlb9-intern1       filter         filter-1
     [Tags]  blackbird  full  feature  interface  sanity
 T1.2 Interface with regular name-delivery-1    
-     Configure Big Tap Interface from Controller Menu        ethernet1                app-rly2-1            delivery            delivery_1
+     Configure Big Tap Interface from Controller Menu        	ethernet1                app-rlb9-1             delivery       delivery_1
     [Tags]  blackbird  full  feature  interface  sanity
-#T1.3 Interface with regular name-delivery-2    
-#     Configure Big Tap Interface from Controller Menu        ethernet2                app-rly2-1            delivery            delivery 2
-T1.4 Interface with regular name-service-1    
-     Configure Big Tap Interface from Controller Menu        ethernet3                app-rlb9-1            service                SERVICE-1
+T1.3 Interface with regular name-service-1    
+     Configure Big Tap Interface from Controller Menu        	ethernet2                app-rly2-1       		service       SERVICE-1
     [Tags]  blackbird  full  feature  interface   sanity
-T1.5 Edit regular name-filter    
-     Edit Big Tap Interface from Controller Menu                ethernet1                app-rlb9-1            filter                filter-new-1
+T1.4 Edit regular name-filter    
+     Edit Big Tap Interface from Controller Menu                ethernet1                app-rlb9-intern1       filter        filter-new-1
     [Tags]  blackbird  full  feature  interface
-T1.6 Edit regular name-delivery-1                
-     Edit Big Tap Interface from Controller Menu                ethernet1                app-rly2-1            delivery            delivery-new-1
+T1.5 Edit regular name-delivery-1                
+     Edit Big Tap Interface from Controller Menu                ethernet1                app-rlb9-1             delivery       delivery-new-1
     [Tags]  blackbird  full  feature  interface
-#T1.7 Edit regular name-delivery-2                
-#    Edit Big Tap Interface from Controller Menu                ethernet2                app-rly2-1            delivery            delivery-new-2
-T1.8 Edit regular name-service-1                
-     Edit Big Tap Interface from Controller Menu                ethernet3                app-rlb9-1            service                service-new-1
+T1.6 Edit regular name-service-1                
+     Edit Big Tap Interface from Controller Menu                ethernet2                app-rly2-1		        service        service-new-1
     [Tags]  blackbird  full  feature  interface
-T1.9 Edit interface type and name1            
-     Edit Big Tap Interface from Controller Menu                ethernet1                app-rlb9-1            delivery            delivery-new-3
+T1.7 Edit interface type and filter name            
+     Edit Big Tap Interface from Controller Menu                ethernet1                app-rlb9-intern1      delivery       delivery-new-2
     [Tags]  blackbird  full  feature  interface
-T1.10 Edit interface type and name2            
-    Edit Big Tap Interface from Controller Menu                ethernet1                app-rly2-1            filter                filter-new-4
+T1.8 Edit interface type and delivery name            
+    Edit Big Tap Interface from Controller Menu                 ethernet1                app-rlb9-1           filter          filter-new-2
     [Tags]  blackbird  full  feature  interface
-#T1.11 Edit interface type and name2            
-#    Edit Big Tap Interface from Controller Menu                ethernet2                app-rly2-1            filter                filter-new interface    
-T1.12 Delete regular name-filter                
-     Edit Big Tap Interface from Controller Menu                ethernet1                app-rlb9-1            ${EMPTY}            ${EMPTY}
+T1.9 Edit interface type and service name            
+    Edit Big Tap Interface from Controller Menu                 ethernet2                app-rly2-1            filter          filter-new-3    
+	[Tags]  blackbird  full  feature  interface
+T1.10 Delete regular name-filter                
+     Edit Big Tap Interface from Controller Menu                ethernet1                app-rlb9-intern1      ${EMPTY}        ${EMPTY}
     [Tags]  blackbird  full  feature  interface
-T1.13 Delete regular name-delivery-1            
-    Edit Big Tap Interface from Controller Menu                ethernet1                app-rly2-1            ${EMPTY}            ${EMPTY}
+T1.11 Delete regular name-delivery-1            
+    Edit Big Tap Interface from Controller Menu                 ethernet1                app-rlb9-1            ${EMPTY}        ${EMPTY}
     [Tags]  blackbird  full  feature  interface
-#T1.14 Delete regular name-delivery-2        
-#     Edit Big Tap Interface from Controller Menu                ethernet2                app-rly2-1            ${EMPTY}            ${EMPTY}
-T1.15 Delete regular name-service-1            
-     Edit Big Tap Interface from Controller Menu                ethernet3                 app-rlb9-1            ${EMPTY}            ${EMPTY}
+T1.12 Delete regular name-service-1            
+     Edit Big Tap Interface from Controller Menu                ethernet2                app-rly2-1		       ${EMPTY}       ${EMPTY}
     [Tags]  blackbird  full  feature  interface
 T1 Teardown
      Delete All Big Tap Resources
 
 
-###    Configure Big Tap Interface from Big Tap Menu             ID                         Switch                            Role                Name
+###    Configure Big Tap Interface from Big Tap Menu             ID                    Switch                Role                 Name
 T2.1 Interface with regular name-filter        
-     Configure Big Tap Interface from Big Tap Menu            ethernet1                app-rlb9-1            filter                filter-1
+     Configure Big Tap Interface from Big Tap Menu            ethernet1                app-rlb9-intern1      filter               filter-1
     [Tags]  blackbird  full  feature    interface
 T2.2 Interface with regular name-delivery-1    
-     Configure Big Tap Interface from Big Tap Menu            ethernet1                app-rly2-1            delivery            delivery-1
+     Configure Big Tap Interface from Big Tap Menu            ethernet1                app-rlb9-1            delivery             delivery_1
     [Tags]  blackbird  full  feature  interface
-T2.3 Interface with regular name-delivery-2    
-     Configure Big Tap Interface from Big Tap Menu            ethernet2                app-rly2-1            delivery            delivery-2
+T2.3 Interface with regular name-service-2    
+     Configure Big Tap Interface from Big Tap Menu            ethernet2                app-rly2-1		     service              service-1
     [Tags]  blackbird  full  feature  interface
-T2.4 Interface with regular name-service-2    
-     Configure Big Tap Interface from Big Tap Menu            ethernet3                app-rlb9-1            service                service-2
+T2.4 Interface with regular name-filter-2    
+     Configure Big Tap Interface from Big Tap Menu            ethernet5                app-rly2-1		     filter               filter-2
     [Tags]  blackbird  full  feature  interface
 T2.5 Edit regular name-filter    
-     Edit Big Tap Interface from Big Tap Menu                ethernet1                app-rlb9-1            filter                filter-new-1
+     Edit Big Tap Interface from Big Tap Menu                 ethernet1                app-rlb9-intern1      filter               filter-new2
     [Tags]  blackbird  full  feature  interface
 T2.6 Edit regular name-delivery-1                
-     Edit Big Tap Interface from Big Tap Menu                ethernet1                app-rly2-1            delivery            delivery-new-1
+     Edit Big Tap Interface from Big Tap Menu                 ethernet1                app-rlb9-1            delivery             delivery-new2
     [Tags]  blackbird  full  feature  interface
-T2.7 Edit regular name-delivery-2                
-     Edit Big Tap Interface from Big Tap Menu                ethernet2                app-rly2-1            delivery            delivery-new-2
+T2.7 Edit regular name-service-2                
+     Edit Big Tap Interface from Big Tap Menu                 ethernet2                app-rly2-1		     service              service-new2
     [Tags]  blackbird  full  feature  interface
-T2.8 Edit regular name-service-2                
-     Edit Big Tap Interface from Big Tap Menu                ethernet3                app-rlb9-1            service                service-new-2
-    [Tags]  blackbird  full  feature  interface
-T2.9 Edit interface type and name1            
-     Edit Big Tap Interface from Big Tap Menu                ethernet1                app-rlb9-1            delivery            delivery-new-3
+T2.8 Edit interface type and name1            
+     Edit Big Tap Interface from Big Tap Menu                 ethernet1                app-rlb9-intern1      service              service_new_3
     [Tags]  blackbird  full  feature
-T2.10 Edit interface type and name2      interface        
-    Edit Big Tap Interface from Big Tap Menu                ethernet1                app-rly2-1            filter                filter-new-4
+T2.9 Edit interface type and name2        
+    Edit Big Tap Interface from Big Tap Menu                  ethernet1                app-rlb9-1            filter               filter_new_3
     [Tags]  blackbird  full  feature  interface
-T2.11 Edit interface type and name            
-    Edit Big Tap Interface from Big Tap Menu                ethernet2                app-rly2-1            filter                filter-new-5    
+T2.10 Edit interface type and name            
+    Edit Big Tap Interface from Big Tap Menu                  ethernet2                app-rly2-1            delivery             delivery-new-3    
     [Tags]  blackbird  full  feature  interface
-#T2.12 Delete regular name-filter                
-#     Delete Big Tap Interface from Big Tap Menu                                                                                            delivery-new-3
-T2.13 Delete regular name-delivery-1            
-    Delete Big Tap Interface from Big Tap Menu                                                                                            filter-new-4
+T2.11 Delete Big Tap filter interface            
+    Delete Big Tap Interface from Big Tap Menu                                                                                    filter_new_3
     [Tags]  blackbird  full  feature  interface
-T2.14 Delete regular name-delivery-2        
-     Delete Big Tap Interface from Big Tap Menu                                                                                            filter-new-5
+T2.12 Delete Big Tap delivery interface        
+     Delete Big Tap Interface from Big Tap Menu                                                                                   delivery-new-3
     [Tags]  blackbird  full  feature  interface
-T2.15 Delete regular name-service-2            
-     Delete Big Tap Interface from Big Tap Menu                                                                                            service-new-2            
+T2.13 Delete Big Tap service interface            
+     Delete Big Tap Interface from Big Tap Menu                                                                                   service_new_3            
     [Tags]  blackbird  full  feature  interface
 T2 Teardown
-     Delete All Big Tap Resources
+     Delete All Big Tap Interfaces
 # 
 ### Configure Big Tap Interface Group from Big Tap Menu
 #                                                             ID                     Switch                            Role            Name                Interface Name
 T3 Test set up:
-    Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1            filter            ixia-2-9
-    Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rly2-1         delivery        ixia-2-15
-    Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1         delivery        ixia-4-8    
+    Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1			 filter	        ixia-2-9
+    Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-intern1       delivery       ixia-2-15
+    Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             filter         ixia-4-8    
     [Tags]  corsair  full  feature  interface-group
-T3.1 Filter Interface group with 1 filter interface and name filter-group        
-     Configure Big Tap Interface Group from Big Tap Menu            filter                filter-group        ixia-2-9
+T3.1 Filter Interface group with no filter interface and name filter-group        
+     Configure Big Tap Interface Group from Big Tap Menu            filter                filter-group          ${EMPTY}
     [Tags]  corsair  full  feature  interface-group
 T3.2 Delivery Interface with 1 delivery interface and name delivery_group    
-    Configure Big Tap Interface Group from Big Tap Menu            delivery            delivery_group        ixia-2-15
+    Configure Big Tap Interface Group from Big Tap Menu            delivery               delivery-group        ${EMPTY}
     [Tags]  corsair  full  feature  interface-group
-T3.3 Another Filter Interface group with previous filter interface and name filter group 1                    
-     Configure Big Tap Interface Group from Big Tap Menu            filter                filter-group2        ixia-2-9
+T3.3 Filter Interface group with 1 filter interface and name filter-group        
+     Configure Big Tap Interface Group from Big Tap Menu            filter                filter_group1         ixia-2-9
     [Tags]  corsair  full  feature  interface-group
-T3.4 Another Delivery Interface group with previous delivery interface                
-     Configure Big Tap Interface Group from Big Tap Menu            delivery            delivery:group2        ixia-2-15    
+T3.4 Delivery Interface with 1 delivery interface and name delivery_group    
+    Configure Big Tap Interface Group from Big Tap Menu            delivery               delivery_group1       ixia-2-15
     [Tags]  corsair  full  feature  interface-group
-T3.5 Delete filter interface from Filter Interface group                    
-     Delete Big Tap Interface from Interface Group                filter                filter-group        ixia-2-9
+T3.5 Another Filter Interface group with previous filter interface and name filter group 1                    
+     Configure Big Tap Interface Group from Big Tap Menu           filter                 filter:group2         ixia-2-9
     [Tags]  corsair  full  feature  interface-group
-T3.6 Delete delivery interface from Delivery Interface group                
-     Delete Big Tap Interface from Interface Group                delivery            delivery_group        ixia-2-15
+T3.6 Another Delivery Interface group with previous delivery interface                
+     Configure Big Tap Interface Group from Big Tap Menu            delivery              delivery:group2        ixia-2-15    
     [Tags]  corsair  full  feature  interface-group
-T3.7 Delete Filter Interface group                    
-     Delete Big Tap Interface group                                                    filter-group        
+T3.7 Filter Interface group with all filter interfaces and name filter group 3       
+     Configure Big Tap Interface Group from Big Tap Menu            filter                filter-group_3           All
     [Tags]  corsair  full  feature  interface-group
-T3.8 Delete Delivery Interface group                
-    Delete Big Tap Interface group                                                    delivery_group                    
+T3.8 Delivery Interface with 1 delivery interface and name delivery_group    
+    Configure Big Tap Interface Group from Big Tap Menu            delivery               delivery-group_3         All
     [Tags]  corsair  full  feature  interface-group
-T3.9 Teardown
+T3.9 Delete filter interface from Filter Interface group                    
+     Delete Big Tap Interface from Interface Group                  filter                filter_group1          ixia-2-9
+    [Tags]  corsair  full  feature  interface-group
+T3.10 Delete delivery interface from Delivery Interface group                
+     Delete Big Tap Interface from Interface Group                  delivery              delivery_group1        ixia-2-15
+    [Tags]  corsair  full  feature  interface-group
+T3.11 Delete Filter Interface group                    
+     Delete Big Tap Interface group                                                       filter-group        
+    [Tags]  corsair  full  feature  interface-group
+T3.12 Delete Delivery Interface group                
+    Delete Big Tap Interface group                                                        delivery_group1                    
+    [Tags]  corsair  full  feature  interface-group
+T3 Teardown
     Delete All Big Tap Resources
     [Tags]  corsair  full  feature  interface-group
 
@@ -252,8 +255,14 @@ config suite setup
     #Configure Switch Alias    00:00:08:9e:01:f8:6b:8b            app-rly2-1   
     ${switch_dpid_s1}=  rest return switch dpid from ip  s1
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
-    Configure Switch Alias  ${switch_dpid_s1}   app-rlb9-1
-    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-1     
+    ${switch_dpid_s3}=  rest return switch dpid from ip  s3
+    ${switch_dpid_s4}=  rest return switch dpid from ip  s4
+    ${switch_dpid_s5}=  rest return switch dpid from ip  s5
+    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
     
 config suite teardown
     Close Browser
