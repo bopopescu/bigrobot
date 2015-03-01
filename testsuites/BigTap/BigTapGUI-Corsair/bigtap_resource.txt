@@ -37,6 +37,9 @@ ${BT SIGNOUT TITLE}  		Big Tap Login
 ${USERS TITLE}				Big Tap Security - Users
 ${GROUPS TITLE}				Big Tap Security - Groups
 ${RBAC TITLE}				Big Tap Security - RBAC Permissions
+${BT DHCP SERVERS TITLE}		Big Tap DHCP Servers
+${BT DNS SERVERS TITLE}		Big Tap DNS Servers
+${SFLOW TITLE}				Big Tap sFlow
 
 #${LOGIN BUTTON}					xpath=/html/body/div/div/div/div/form/div[5]/span/span/span/span[3]
 ${LOGIN BUTTON}					xpath=//span[@id='submit_button_label']
@@ -581,6 +584,9 @@ Set URLs
 	Set Suite Variable     	${HOST TRACKER URL}   			https://${SERVER}/bigtap/host_tracker
 	Set Suite Variable     	${OBSERVED IP URL}    			https://${SERVER}/bigtap/observed_ip
 	Set Suite Variable 		${USER DEFINED OFFSETS URL}  	https://${SERVER}/bigtap/user_defined_offsets
+	Set Suite Variable 		${DHCP SERVERS URL}				https://${SERVER}/bigtap/dhcp_servers
+	Set Suite Variable 		${DNS SERVERS URL}				https://${SERVER}/bigtap/dns_servers
+	Set Suite Variable 		${SFLOW URL}					https://${SERVER}/bigtap/sflow
 
 
 Valid Login
@@ -611,89 +617,11 @@ Go To Login Page
     Wait Until Page Loaded 
     Title Should Contain  ${LOG IN TITLE}
 	Sleep  1
-	
-Go To Big Tap Page
-    Go To  ${BIGTAP URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BIGTAP TITLE}
-    Sleep  1
 
-Go To Big Tap Topology Page
-    Go To  ${TOPOLOGY URL}
+Go To Landing Page
+    Go To  ${WELCOME URL}
     Wait Until Page Loaded 
-    Title Should Contain  ${TOPOLOGY TITLE}
-    Sleep  1
-
-Go To Big Tap Policies Page
-    Go To  ${POLICIES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${POLICIES TITLE}
-    Sleep  1
-
-Go To Big Tap IP Lists Page
-    Go To  ${IP ADDRESS GROUPS URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${IP ADDRESS GROUPS TITLE}
-    Sleep  1
-
-Go To Big Tap Services Page
-    Go To  ${SERVICES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${SERVICES TITLE}
-    Sleep  1
-
-Go To Big Tap Interfaces Page
-    Go To  ${BT INTERFACES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT INTERFACES TITLE}
-    Sleep  1
-    
-Go To Big Tap Filter Interfaces Page
-    Go To  ${BT FILTER INTERFACES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT FILTER INTERFACES TITLE}
-    Sleep  1
-    
-Go To Big Tap Delivery Interfaces Page
-    Go To  ${BT DELIVERY INTERFACES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT DELIVERY INTERFACES TITLE}
-    Sleep  1
-    
-Go To Big Tap Service Interfaces Page
-    Go To  ${BT SERVICE INTERFACES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT SERVICE INTERFACES TITLE}
-    Sleep  1
-   
-Go To Big Tap Host Tracker Page
-	Go To  ${HOST TRACKER URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT HOST TRACKER TITLE}
-    Sleep  1
-    
-Go To Big Tap Observed IP Addresses Page
-	Go To  ${OBSERVED IP URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT OBSERVED IP TITLE}
-    Sleep  1
-    
-Go To Big Tap User Defined Offsets Page
-	Go To  ${USER DEFINED OFFSETS URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT USER DEFINED OFFSETS TITLE}
-    Sleep  1
-    
-Go To Signout Page
-	Go To  ${BT SIGNOUT URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT SIGNOUT TITLE}
-    Sleep  1
-    
-Go To Big Tap Interface Groups Page
-	Go To  ${BT INTERFACE GROUPS URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT INTERFACE GROUPS TITLE}
+    Title Should Contain  ${DASHBOARD TITLE}
     Sleep  1
 
 Go To Controller Switches Page
@@ -706,6 +634,84 @@ Go To Controller Interfaces Page
     Go To  ${INTERFACES URL}
     Wait Until Page Loaded 
     Title Should Contain  ${INTERFACES TITLE}
+    Sleep  1
+	
+Go To Big Tap Page
+    Go To  ${BIGTAP URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BIGTAP TITLE}
+    Sleep  1
+
+Go To Big Tap Policies Page
+    Go To  ${POLICIES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${POLICIES TITLE}
+    Sleep  1
+    
+Go To Big Tap Services Page
+    Go To  ${SERVICES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SERVICES TITLE}
+    Sleep  1
+
+Go To Big Tap Interfaces Page
+    Go To  ${BT INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT INTERFACES TITLE}
+    Sleep  1
+    
+Go To Big Tap Host Tracker Page
+	Go To  ${HOST TRACKER URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT HOST TRACKER TITLE}
+    Sleep  1
+
+Go To Big Tap DHCP Servers Page
+    Go To  ${DHCP SERVERS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT DHCP SERVERS TITLE}
+    Sleep  1
+
+Go To Big Tap DNS Servers Page
+    Go To  ${DNS SERVERS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT DNS SERVERS TITLE}
+    Sleep  1
+    
+Go To Big Tap Observed IP Addresses Page
+	Go To  ${OBSERVED IP URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT OBSERVED IP TITLE}
+    Sleep  1
+
+Go To Big Tap IP Lists Page
+    Go To  ${IP ADDRESS GROUPS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${IP ADDRESS GROUPS TITLE}
+    Sleep  1
+
+Go To Big Tap Interface Groups Page
+	Go To  ${BT INTERFACE GROUPS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT INTERFACE GROUPS TITLE}
+    Sleep  1
+
+Go To Big Tap User Defined Offsets Page
+	Go To  ${USER DEFINED OFFSETS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT USER DEFINED OFFSETS TITLE}
+    Sleep  1
+
+Go To sFlow Page
+	Go To  ${SFLOW URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SFLOW TITLE}
+    Sleep  1
+
+Go To Big Tap Topology Page
+    Go To  ${TOPOLOGY URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TOPOLOGY TITLE}
     Sleep  1
 
 Go To Security Users Page
@@ -726,11 +732,31 @@ Go To Security RBAC Page
     Title Should Contain  ${RBAC TITLE}
     Sleep  1
 
-Go To Landing Page
-    Go To  ${WELCOME URL}
+Go To Signout Page
+	Go To  ${BT SIGNOUT URL}
     Wait Until Page Loaded 
-    Title Should Contain  ${DASHBOARD TITLE}
+    Title Should Contain  ${BT SIGNOUT TITLE}
     Sleep  1
+
+    
+Go To Big Tap Filter Interfaces Page
+    Go To  ${BT FILTER INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT FILTER INTERFACES TITLE}
+    Sleep  1
+    
+Go To Big Tap Delivery Interfaces Page
+    Go To  ${BT DELIVERY INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT DELIVERY INTERFACES TITLE}
+    Sleep  1
+    
+Go To Big Tap Service Interfaces Page
+    Go To  ${BT SERVICE INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT SERVICE INTERFACES TITLE}
+    Sleep  1
+        
 
 Select Checkbox
 	[Arguments]  ${selected}  ${unselected}
@@ -2430,7 +2456,6 @@ Add Filter Interface to Group
     ...		ELSE
     ...     Add Selected Filter Interface to group  ${interface-name}
     
-    Sleep  20
     Verify Page Contains Element  ${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}
 	Click Element  ${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}  and don't wait
 	
@@ -2464,7 +2489,6 @@ Add Delivery Interface to Group
     ...		ELSE
     ...     Add Selected Delivery Interface to group  ${interface-name}
    
-   Sleep  20 
    Verify Page Contains Element  ${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}
    Click Element  ${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}  and don't wait
 	
