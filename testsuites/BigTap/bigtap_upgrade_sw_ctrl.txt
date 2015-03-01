@@ -14,7 +14,7 @@ TC01: Switch Upgrade
     Run Keyword And Ignore Error  bash upgrade switch   s1   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
     Run Keyword And Ignore Error  bash upgrade switch   s2   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
     Run Keyword And Ignore Error  bash upgrade switch   s3   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s4   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+#    Run Keyword And Ignore Error  bash upgrade switch   s4   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
     Run Keyword And Ignore Error  bash upgrade switch   s5   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
     Run Keyword And Ignore Error  bash upgrade switch   s6   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
     Run Keyword And Ignore Error  bash upgrade switch   s7   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
@@ -33,7 +33,7 @@ TC01: Switch Upgrade
     cli  node=s2  cmd=show version
     ${content2}=  cli_content  node=s2
     Should Contain  ${content2}  ${version}
-    
+   
     cli  node=s3  cmd=show version
     ${content3}=  cli_content  node=s3
     Should Contain  ${content3}  ${version}
@@ -62,9 +62,9 @@ TC01: Switch Upgrade
     ${content9}=  cli_content  node=s9
     Should Contain  ${content9}  ${version}
     
-    #cli  node=s10  cmd=show version
-    #${content10}=  cli_content  node=s10
-    #Should Contain  ${content10}  ${version}
+    cli  node=s10  cmd=show version
+    ${content10}=  cli_content  node=s10
+    Should Contain  ${content10}  ${version}
     	
     cli  node=s11  cmd=show version
     ${content11}=  cli_content  node=s11
