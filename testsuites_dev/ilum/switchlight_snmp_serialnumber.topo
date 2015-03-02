@@ -7,12 +7,8 @@
 
 c1:
     ip: 10.8.34.1
-    password: admin
 c2:
     ip: 10.8.34.2
-    password: admin
 
-# Dell S6000
 s1:
     ip: 10.8.4.44
-    password: admin
