@@ -133,10 +133,14 @@ TC009: L2: All possible matches. Configure two policies with common filter and d
 
 
 TC010: Add multiple filter interfaces (same filter switch) to both policies and verify overlap
-    rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_2}  filter
-    rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_3}  filter
-    rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_2}  filter
-    rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_3}  filter
+    ${result1}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_2}  filter
+    Should be true  ${result1}
+    ${result2}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_3}  filter
+    Should be true  ${result2}
+    ${result3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_2}  filter
+    Should be true  ${result3}
+    ${result4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_3}  filter
+    Should be true  ${result4}
     sleep  20
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=3  num_delivery_intf=1
     Should be true  ${verify_policy1}
@@ -155,10 +159,14 @@ TC010: Add multiple filter interfaces (same filter switch) to both policies and 
     [Tags]  sanity  feature  traffic
 
 TC011: Add multiple filter interfaces (different filter switches) to both policies and verify overlap
-    rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_2}  filter
-    rest add policy interface  admin-view  ${policy_name_1}   ${switch3_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_2}  filter
-    rest add policy interface  admin-view  ${policy_name_2}   ${switch3_filter_alias_1}  filter
+    ${result1}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_2}  filter
+    Should be true  ${result1}
+    ${result2}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch3_filter_alias_1}  filter
+    Should be true  ${result2}
+    ${result3}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_2}  filter
+    Should be true  ${result3}
+    ${result4}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch3_filter_alias_1}  filter
+    Should be true  ${result4}
     sleep  20
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=3  num_delivery_intf=1
     Should be true  ${verify_policy1}
@@ -177,7 +185,8 @@ TC011: Add multiple filter interfaces (different filter switches) to both polici
     [Tags]  sanity  feature  traffic
      
 TC012: Delete match condition in P1 and verify overlap goes away
-    rest delete policy match  admin-view  ${policy_name_1}   1
+    ${result1}=  rest delete policy match  admin-view  ${policy_name_1}   1
+    Should be true  ${result1}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}   num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
@@ -190,7 +199,8 @@ TC012: Delete match condition in P1 and verify overlap goes away
     verify results  a  d  transmitted_frames  received_valid_frames
     return ixia txrx value  c  received_valid_frames  0
     # Add back    
-    rest add policy match  admin-view  ${policy_name_1}   1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
+    ${result2}=  rest add policy match  admin-view  ${policy_name_1}   1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
+    Should be true  ${result2}
     Sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}   num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -203,7 +213,8 @@ TC012: Delete match condition in P1 and verify overlap goes away
     [Tags]  full  feature  traffic
     
 TC013: Change action to inactive in P1 and verify overlap goes away
-    rest update policy action  admin-view  ${policy_name_1}  inactive
+    ${result1}=  rest update policy action  admin-view  ${policy_name_1}  inactive
+    Should be true  ${result1}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}   num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
@@ -216,7 +227,8 @@ TC013: Change action to inactive in P1 and verify overlap goes away
     verify results  a  d  transmitted_frames  received_valid_frames
     return ixia txrx value  c  received_valid_frames  0
     #Add back    
-    rest update policy action  admin-view  ${policy_name_1}  forward
+    ${result2}=  rest update policy action  admin-view  ${policy_name_1}  forward
+    Should be true  ${result2}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}   num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}               
@@ -229,8 +241,8 @@ TC013: Change action to inactive in P1 and verify overlap goes away
     [Tags]  full  feature  traffic
     
 TC014: Set policy action to rate-measure and verify overlap goes away
-    ${result}=  rest update policy action  admin-view  ${policy_name_2}  rate-measure
-    Should be true  ${result}
+    ${result1}=  rest update policy action  admin-view  ${policy_name_2}  rate-measure
+    Should be true  ${result1}
     sleep  30
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
@@ -256,7 +268,8 @@ TC014: Set policy action to rate-measure and verify overlap goes away
     ${in_range_3}=  ixia verify traffic rate  ${rx_value_2}   0         
     Should be true  ${in_range_3}    
     #Add back        
-    rest update policy action  admin-view  ${policy_name_2}  forward
+    ${result2}=  rest update policy action  admin-view  ${policy_name_2}  forward
+    Should be true  ${result2}
     sleep  30
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -271,7 +284,8 @@ TC014: Set policy action to rate-measure and verify overlap goes away
     [Tags]  full  feature  traffic
 
 TC015: Set different priorities in P1 and P2 and verify overlap goes away
-    rest update policy priority  admin-view  ${policy_name_1}   200
+    ${result1}=  rest update policy priority  admin-view  ${policy_name_1}   200
+    Should be true  ${result1}
     sleep  10
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
@@ -284,7 +298,8 @@ TC015: Set different priorities in P1 and P2 and verify overlap goes away
     verify results  a  c  transmitted_frames  received_valid_frames
     return ixia txrx value  d  received_valid_frames  0    
     #Add back       
-    rest update policy priority  admin-view  ${policy_name_1}   100
+    ${result2}=  rest update policy priority  admin-view  ${policy_name_1}   100
+    Should be true  ${result2}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -300,7 +315,8 @@ TC015: Set different priorities in P1 and P2 and verify overlap goes away
 
     
 TC016: Add vlan re-write to one policy and verify overlap goes away
-    rest add vlan rewrite  admin-view  ${policy_name_1}   200
+    ${result1}=  rest add vlan rewrite  admin-view  ${policy_name_1}   200
+    Should be true  ${result1}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
@@ -313,7 +329,8 @@ TC016: Add vlan re-write to one policy and verify overlap goes away
     verify results  a  c  transmitted_frames  received_valid_frames
     return ixia txrx value  d  received_valid_frames  0 
     return ixia txrx value  d  received_valid_frames  0         
-    rest delete vlan rewrite  admin-view  ${policy_name_1}   200
+    ${result2}=  rest delete vlan rewrite  admin-view  ${policy_name_1}   200
+    Should be true  ${result2}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -328,8 +345,10 @@ TC016: Add vlan re-write to one policy and verify overlap goes away
     [Tags]  full  feature  traffic
     
 TC017: Add vlan re-write to both policies and verify overlap stays
-    rest add vlan rewrite  admin-view  ${policy_name_1}   200
-    rest add vlan rewrite  admin-view  ${policy_name_2}   200    
+    ${result1}=  rest add vlan rewrite  admin-view  ${policy_name_1}   200
+    Should be true  ${result1}
+    ${result2}=  rest add vlan rewrite  admin-view  ${policy_name_2}   200
+    Should be true  ${result2}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -341,8 +360,10 @@ TC017: Add vlan re-write to both policies and verify overlap stays
     stop traffic  ${stream}    
     verify results  a  c  transmitted_frames  received_valid_frames     
     verify results  a  d  transmitted_frames  received_valid_frames      
-    rest delete vlan rewrite  admin-view  ${policy_name_1}   200
-    rest delete vlan rewrite  admin-view  ${policy_name_2}   200    
+    ${result3}=  rest delete vlan rewrite  admin-view  ${policy_name_1}   200
+    Should be true  ${result3}
+    ${result4}=  rest delete vlan rewrite  admin-view  ${policy_name_2}   200
+    Should be true  ${result4}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -356,7 +377,8 @@ TC017: Add vlan re-write to both policies and verify overlap stays
 
     
 TC018: Add a service to P1 and verify overlap policy stays
-    rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
+    ${result1}=  rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
+    Should be true  ${result1}
     sleep  10
     ${verify_overlap}=  rest verify bigtap policy   ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -368,7 +390,8 @@ TC018: Add a service to P1 and verify overlap policy stays
     stop traffic  ${stream}         
     verify results  a  c  transmitted_frames  received_valid_frames
     return ixia txrx value  d  received_valid_frames  0               
-    rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name} 
+    ${result2}=  rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name}
+    Should be true  ${result2}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy   ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -384,8 +407,10 @@ TC018: Add a service to P1 and verify overlap policy stays
 
 
 TC019: Add same service to both policies and verify overlap policy stays
-    rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
-    rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1    
+    ${result1}=  rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
+    Should be true  ${result1}
+    ${result2}=  rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1
+    Should be true  ${result2}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy   ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -409,7 +434,8 @@ TC019: Add same service to both policies and verify overlap policy stays
     stop traffic  ${stream_one}         
     verify results  a  c  transmitted_frames  received_valid_frames
     return ixia txrx value  d  received_valid_frames  0    
-    rest delete service from policy  admin-view  ${policy_name_2}  ${switch1_service_name} 
+    ${result3}=  rest delete service from policy  admin-view  ${policy_name_2}  ${switch1_service_name}
+    Should be true  ${result3}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy   ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -424,8 +450,10 @@ TC019: Add same service to both policies and verify overlap policy stays
     [Tags]  full  feature  traffic
 
 TC020: Add a service to both policies and verify overlap policy is created. Bring down pre-service interface, verify overlap goes away
-    rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
-    rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1 
+    ${result1}=  rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
+    Should be true  ${result1}
+    ${result2}=  rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1
+    Should be true  ${result2}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}    
@@ -437,16 +465,20 @@ TC020: Add a service to both policies and verify overlap policy is created. Brin
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}    
-    rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name} 
-    rest delete service from policy  admin-view  ${policy_name_2}  ${switch1_service_name} 
+    ${result3}=  rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name}
+    Should be true  ${result3}
+    ${result4}=  rest delete service from policy  admin-view  ${policy_name_2}  ${switch1_service_name}
+    Should be true  ${result4}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
     [Tags]  full  feature  skipped  
 
 TC021: Add a service to both policies and verify overlap policy is created. Bring down post-service interface, verify overlap goes away
-    rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
-    rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1   
+    ${result1}=  rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
+    Should be true  ${result1}
+    ${result2}=  rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1
+    Should be true  ${result2}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -458,19 +490,25 @@ TC021: Add a service to both policies and verify overlap policy is created. Brin
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}    
-    rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name} 
-    rest delete service from policy  admin-view  ${policy_name_2}  ${switch1_service_name} 
+    ${result3}=  rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name}
+    Should be true  ${result3}
+    ${result4}=  rest delete service from policy  admin-view  ${policy_name_2}  ${switch1_service_name}
+    Should be true  ${result4}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
     [Tags]  full  feature  skipped  
 
 TC022: Verify overlap is not created when component policies have different protocols 
-    rest delete policy match  admin-view  ${policy_name_1}  1
-    rest delete policy match  admin-view  ${policy_name_2}   1
+    ${result1}=  rest delete policy match  admin-view  ${policy_name_1}  1
+    Should be true  ${result1}
+    ${result2}=  rest delete policy match  admin-view  ${policy_name_2}  1
+    Should be true  ${result2}
     sleep  3
-    rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "ether-type": 2048, "src-ip": "192.0.0.2", "dst-ip-mask": "255.255.255.255", "src-tp-port": 1234, "ip-proto": 6, "dst-ip": "192.0.0.1", "dst-tp-port": 80}
-    rest add policy match  admin-view  ${policy_name_2}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "ether-type": 2048, "src-ip": "192.0.0.2", "dst-ip-mask": "255.255.255.255", "src-tp-port": 2345, "ip-proto": 17, "dst-ip": "192.0.0.1", "dst-tp-port": 53}                               
+    ${result3}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "ether-type": 2048, "src-ip": "192.0.0.2", "dst-ip-mask": "255.255.255.255", "src-tp-port": 1234, "ip-proto": 6, "dst-ip": "192.0.0.1", "dst-tp-port": 80}
+    Should be true  ${result3}
+    ${result4}=  rest add policy match  admin-view  ${policy_name_2}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "ether-type": 2048, "src-ip": "192.0.0.2", "dst-ip-mask": "255.255.255.255", "src-tp-port": 2345, "ip-proto": 17, "dst-ip": "192.0.0.1", "dst-tp-port": 53}                               
+    Should be true  ${result4}
     sleep  15
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
@@ -488,8 +526,10 @@ TC022: Verify overlap is not created when component policies have different prot
     stop traffic  ${stream}   
     return ixia txrx value  c  received_valid_frames  100000
     return ixia txrx value  d  received_valid_frames  0          
-    rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
-    rest add policy match  admin-view  ${policy_name_2}   1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}    
+    ${result5}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
+    Should be true  ${result5}
+    ${result6}=  rest add policy match  admin-view  ${policy_name_2}   1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}    
+    Should be true  ${result6}
     Sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -593,11 +633,15 @@ TC028: Disable tracked hosts knob and verify overlapping policies are not affect
     [Tags]  full  negative  traffic
 
 TC029: Verify overlapping policies work in l3-l4-mode mode.
-    rest delete policy match  admin-view  ${policy_name_1}  1
-    rest delete policy match  admin-view  ${policy_name_2}  1    
+    ${result1}=  rest delete policy match  admin-view  ${policy_name_1}  1
+    Should be true  ${result1}
+    ${result2}=  rest delete policy match  admin-view  ${policy_name_2}  1
+    Should be true  ${result2}
     sleep  10
-    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
-    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-tp-port": 80, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
+    ${result3}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
+    Should be true  ${result3}
+    ${result4}=  rest add policy match  admin-view  ${policy_name_2}  1  {"dst-tp-port": 80, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
+    Should be true  ${result4}
     sleep  10
     verify overlapping policies
     ${thost_enabled}=  rest enable feature  l3-l4-mode
@@ -617,11 +661,15 @@ TC029: Verify overlapping policies work in l3-l4-mode mode.
     [Tags]  full  negative  traffic
 
 TC030: Verify overlapping policies work in l3-l4-offset-match mode.
-    rest delete policy match  admin-view  ${policy_name_1}  1
-    rest delete policy match  admin-view  ${policy_name_2}  1    
+    ${result1}=  rest delete policy match  admin-view  ${policy_name_1}  1
+    Should be true  ${result1}
+    ${result2}=  rest delete policy match  admin-view  ${policy_name_2}  1
+    Should be true  ${result2}
     sleep  10
-    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
-    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-tp-port": 80, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
+    ${result3}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
+    Should be true  ${result3}
+    ${result4}=  rest add policy match  admin-view  ${policy_name_2}  1  {"dst-tp-port": 80, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
+    Should be true  ${result4}
     sleep  10
     verify overlapping policies
     ${thost_enabled}=  rest enable feature  l3-l4-offset-match
@@ -641,11 +689,15 @@ TC030: Verify overlapping policies work in l3-l4-offset-match mode.
     [Tags]  full  negative  traffic
     
 TC031: Verify overlapping policies work on reverting back to full-match mode.
-    rest delete policy match  admin-view  ${policy_name_1}  1
-    rest delete policy match  admin-view  ${policy_name_2}  1    
+    ${result1}=  rest delete policy match  admin-view  ${policy_name_1}  1
+    Should be true  ${result1}
+    ${result2}=  rest delete policy match  admin-view  ${policy_name_2}  1
+    Should be true  ${result2}
     sleep  10
-    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
-    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-tp-port": 80, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
+    ${result3}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 1234, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
+    Should be true  ${result3}
+    ${result4}=  rest add policy match  admin-view  ${policy_name_2}  1  {"dst-tp-port": 80, "sequence": 2, "ip-proto": 6, "ether-type": 2048}
+    Should be true  ${result4}
     sleep  10
     verify overlapping policies
     ${thost_enabled}=  rest enable feature  full-match
@@ -786,9 +838,11 @@ TC039: Execute HA Failover and verify overlapping policies still exist
     [Tags]  full  ha  robustness  traffic
 
 TC040: Change configuration execute HA Failback and verify overlapping policies still exist
-    rest delete policy match  admin-view  ${policy_name_1}  1
+    ${result1}=  rest delete policy match  admin-view  ${policy_name_1}  1
+    Should be true  ${result1}
     sleep  10
-    rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": ${src_mac_other}, "ether-type": 2048, "sequence": 1}
+    ${result2}=  rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": ${src_mac_other}, "ether-type": 2048, "sequence": 1}
+    Should be true  ${result2}
     ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
     ...         ethertype=0800  src_mac=${src_mac_other}  dst_mac=${dst_mac}
     verify overlapping policies   
@@ -818,63 +872,63 @@ overlap suite setup
     ${ovelap_enabled}=  rest enable feature  overlap
     Should be true  ${ovelap_enabled}  
     #Configure Switch 1
-    ${result}=  rest add switch alias  s1  ${switch1_alias}
-    Should be true  ${result}      
-    ${result}=  rest add interface role  s1  ${switch1_filter_intf_1}  filter  ${switch1_filter_alias_1}
-    Should be true  ${result}  
-    ${result}=  rest add interface role  s1  ${switch1_filter_intf_2}  filter  ${switch1_filter_alias_2}
-    Should be true  ${result}
-    ${result}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter  ${switch1_filter_alias_3}
-    Should be true  ${result}  
-    ${result}=  rest add interface role  s1  ${switch1_filter_intf_4}  filter  ${switch1_filter_alias_4}
-    Should be true  ${result}
-    ${result}=  rest add interface role  s1  ${switch1_delivery_intf_1}  filter  ${switch1_delivery_alias_1}
-    Should be true  ${result}  
-    ${result}=  rest add interface role  s1  ${switch1_delivery_intf_2}  filter  ${switch1_delivery_alias_2}
-    Should be true  ${result}
-    ${result}=  rest add interface role  s1  ${switch1_delivery_intf_3}  filter  ${switch1_delivery_alias_3}
-    Should be true  ${result}  
-    ${result}=  rest add interface role  s1  ${switch1_delivery_intf_4}  filter  ${switch1_delivery_alias_4}
-    Should be true  ${result}    
-    ${result}=  rest add interface role  s1  ${switch1_preservice_intf_1}  service  ${switch1_preservice_alias_1}
-    Should be true  ${result}  
-    ${result}=  rest add interface role  s1  ${switch1_postservice_intf_1}  service  ${switch1_postservice_alias_1}
-    Should be true  ${result}     
+    ${result1}=  rest add switch alias  s1  ${switch1_alias}
+    Should be true  ${result1}
+    ${result2}=  rest add interface role  s1  ${switch1_filter_intf_1}  filter  ${switch1_filter_alias_1}
+    Should be true  ${result2}  
+    ${result3}=  rest add interface role  s1  ${switch1_filter_intf_2}  filter  ${switch1_filter_alias_2}
+    Should be true  ${result3}
+    ${result4}=  rest add interface role  s1  ${switch1_filter_intf_3}  filter  ${switch1_filter_alias_3}
+    Should be true  ${result4}  
+    ${result5}=  rest add interface role  s1  ${switch1_filter_intf_4}  filter  ${switch1_filter_alias_4}
+    Should be true  ${result5}
+    ${result6}=  rest add interface role  s1  ${switch1_delivery_intf_1}  filter  ${switch1_delivery_alias_1}
+    Should be true  ${result6}  
+    ${result7}=  rest add interface role  s1  ${switch1_delivery_intf_2}  filter  ${switch1_delivery_alias_2}
+    Should be true  ${result7}
+    ${result8}=  rest add interface role  s1  ${switch1_delivery_intf_3}  filter  ${switch1_delivery_alias_3}
+    Should be true  ${result8}  
+    ${result9}=  rest add interface role  s1  ${switch1_delivery_intf_4}  filter  ${switch1_delivery_alias_4}
+    Should be true  ${result9}    
+    ${result10}=  rest add interface role  s1  ${switch1_preservice_intf_1}  service  ${switch1_preservice_alias_1}
+    Should be true  ${result10}  
+    ${result11}=  rest add interface role  s1  ${switch1_postservice_intf_1}  service  ${switch1_postservice_alias_1}
+    Should be true  ${result11}     
     Sleep  5    
     #Configure Switch 2    
-    ${result}=  rest add switch alias  s2  ${switch2_alias}
-    Should be true  ${result}      
-    ${result}=  rest add interface role  s2  ${switch2_delivery_intf_1}  delivery  ${switch2_delivery_alias_1}
-    Should be true  ${result}  
-    ${result}=  rest add interface role  s2  ${switch2_delivery_intf_2}  delivery  ${switch2_delivery_alias_2}
-    Should be true  ${result}
-    ${result}=  rest add interface role  s2  ${switch2_preservice_intf_1}  service  ${switch2_preservice_alias_1}
-    Should be true  ${result}  
-    ${result}=  rest add interface role  s2  ${switch2_postservice_intf_1}  service  ${switch2_postservice_alias_1}
-    Should be true  ${result}      
+    ${result12}=  rest add switch alias  s2  ${switch2_alias}
+    Should be true  ${result12}      
+    ${result13}=  rest add interface role  s2  ${switch2_delivery_intf_1}  delivery  ${switch2_delivery_alias_1}
+    Should be true  ${result13}  
+    ${result14}=  rest add interface role  s2  ${switch2_delivery_intf_2}  delivery  ${switch2_delivery_alias_2}
+    Should be true  ${result14}
+    ${result15}=  rest add interface role  s2  ${switch2_preservice_intf_1}  service  ${switch2_preservice_alias_1}
+    Should be true  ${result15}  
+    ${result16}=  rest add interface role  s2  ${switch2_postservice_intf_1}  service  ${switch2_postservice_alias_1}
+    Should be true  ${result16}      
     Sleep  5
     
     #Configure Switch 3    
-    ${result}=  rest add switch alias  s3  ${switch3_alias}
-    Should be true  ${result}      
-    ${result}=  rest add interface role  s3  ${switch3_filter_intf_1}  filter  ${switch3_filter_alias_1}
-    Should be true  ${result}  
-    ${result}=  rest add interface role  s3  ${switch3_delivery_intf_1}  delivery  ${switch3_delivery_alias_1}
-    Should be true  ${result}
-    ${result}=  rest add interface role  s3  ${switch3_preservice_intf_1}  service  ${switch3_preservice_alias_1}
-    Should be true  ${result}  
-    ${result}=  rest add interface role  s3  ${switch3_postservice_intf_1}  service  ${switch3_postservice_alias_1}
-    Should be true  ${result}
+    ${result17}=  rest add switch alias  s3  ${switch3_alias}
+    Should be true  ${result17}      
+    ${result18}=  rest add interface role  s3  ${switch3_filter_intf_1}  filter  ${switch3_filter_alias_1}
+    Should be true  ${result18}  
+    ${result19}=  rest add interface role  s3  ${switch3_delivery_intf_1}  delivery  ${switch3_delivery_alias_1}
+    Should be true  ${result19}
+    ${result20}=  rest add interface role  s3  ${switch3_preservice_intf_1}  service  ${switch3_preservice_alias_1}
+    Should be true  ${result20}  
+    ${result21}=  rest add interface role  s3  ${switch3_postservice_intf_1}  service  ${switch3_postservice_alias_1}
+    Should be true  ${result21}
     Sleep  5
-    
+
 
     #Configure  All Services
-    ${result}=  rest add service  ${switch1_service_name}  ${switch1_preservice_alias_1}  ${switch1_postservice_alias_1}   
-    Should be true  ${result}
-    ${result}=  rest add service  ${switch2_service_name}  ${switch2_preservice_alias_1}  ${switch2_postservice_alias_1}   
-    Should be true  ${result}
-    ${result}=  rest add service  ${switch3_service_name}  ${switch3_preservice_alias_1}  ${switch3_postservice_alias_1}   
-    Should be true  ${result}
+    ${result22}=  rest add service  ${switch1_service_name}  ${switch1_preservice_alias_1}  ${switch1_postservice_alias_1}   
+    Should be true  ${result22}
+    ${result23}=  rest add service  ${switch2_service_name}  ${switch2_preservice_alias_1}  ${switch2_postservice_alias_1}   
+    Should be true  ${result23}
+    ${result24}=  rest add service  ${switch3_service_name}  ${switch3_preservice_alias_1}  ${switch3_postservice_alias_1}   
+    Should be true  ${result24}
 
 verify overlapping policies
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -904,122 +958,147 @@ verify protocol matches  [Arguments]  ${match_dictionary}
     \    ${NINDEX}=  Evaluate  ${INDEX} + ${length}/2  
     \    Log    ${match_dictionary[${INDEX}]}
     \    Log    ${match_dictionary[${NINDEX}]}
-    \    rest delete policy match  admin-view  ${policy_name_1}   1
-    \    rest delete policy match  admin-view  ${policy_name_2}   1
+    \    ${result1}=  rest delete policy match  admin-view  ${policy_name_1}   1
+    \    Should be true  ${result1}
+    \    ${result2}=  rest delete policy match  admin-view  ${policy_name_2}   1
+    \    Should be true  ${result2}
     \    Sleep  5
-    \    rest add policy match  admin-view  ${policy_name_1}   1  ${match_dictionary[${INDEX}]}   flag=True
-    \    rest add policy match  admin-view  ${policy_name_2}   1  ${match_dictionary[${NINDEX}]}  flag=True
+    \    ${result3}=  rest add policy match  admin-view  ${policy_name_1}   1  ${match_dictionary[${INDEX}]}   flag=True
+    \    Should be true  ${result3}
+    \    ${result4}=  rest add policy match  admin-view  ${policy_name_2}   1  ${match_dictionary[${NINDEX}]}  flag=True
+    \    Should be true  ${result4}
     \    Sleep  5
     \    verify overlapping policies 
     
 overlap test setup
     ${result1}=  write version to file
     Should be true  ${result1}
-    ${result}=  start syslog monitor
-    Should be true  ${result}
-    rest add policy  admin-view  ${policy_name_1}   forward
-    rest add policy match  admin-view  ${policy_name_1}   1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name_1}   ${switch2_delivery_alias_1}  delivery 
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
+    ${result3}=  rest add policy  admin-view  ${policy_name_1}   forward
+    Should be true  ${result3}
+    ${result4}=  rest add policy match  admin-view  ${policy_name_1}   1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
+    Should be true  ${result4}
+    ${result5}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_1}  filter
+    Should be true  ${result5}
+    ${result6}=  rest add policy interface  admin-view  ${policy_name_1}   ${switch2_delivery_alias_1}  delivery
+    Should be true  ${result6}
     Sleep  5  
-    rest add policy  admin-view  ${policy_name_2}   forward
-    rest add policy match  admin-view  ${policy_name_2}   1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name_2}   ${switch2_delivery_alias_2}  delivery
+    ${result7}=  rest add policy  admin-view  ${policy_name_2}   forward
+    Should be true  ${result7}
+    ${result8}=  rest add policy match  admin-view  ${policy_name_2}   1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}
+    Should be true  ${result8}
+    ${result9}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_1}  filter
+    Should be true  ${result9}
+    ${result10}=  rest add policy interface  admin-view  ${policy_name_2}   ${switch2_delivery_alias_2}  delivery
+    Should be true  ${result10}
     Sleep  60
 
 overlap test teardown
     delete traffic
-    rest delete policy  admin-view  ${policy_name_1}
-    rest delete policy  admin-view  ${policy_name_2}
-    sleep  5     
-    ${result1}=  stop syslog monitor
+    ${result1}=  rest delete policy  admin-view  ${policy_name_1}
     Should be true  ${result1}
+    ${result2}=  rest delete policy  admin-view  ${policy_name_2}
+    Should be true  ${result2}
+    sleep  5     
+    ${result3}=  stop syslog monitor
+    Should be true  ${result3}
 
 overlap suite teardown
-    rest delete policy  admin-view  ${policy_name_1}
-    rest delete policy  admin-view  ${policy_name_2}
-    rest delete service  ${switch1_service_name}
-    rest delete service  ${switch2_service_name}
-    rest delete service  ${switch3_service_name}        
-    ${result}=  rest delete interface role  s1  ${switch1_filter_intf_1}   filter
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s1  ${switch1_filter_intf_2}   filter
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s1  ${switch1_filter_intf_3}   filter
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s1  ${switch1_filter_intf_4}   filter
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s1  ${switch1_delivery_intf_1}   filter
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s1  ${switch1_delivery_intf_2}   filter
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s1  ${switch1_delivery_intf_3}   filter
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s1  ${switch1_delivery_intf_4}   filter
-    Should be true  ${result}            
-    ${result}=  rest delete interface role  s1  ${switch1_preservice_intf_1}   service
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s1  ${switch1_postservice_intf_1}   service    
-    Should be true  ${result}    
-    ${result}=  rest delete interface role  s2  ${switch2_delivery_intf_1}   delivery
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s2  ${switch2_delivery_intf_2}   delivery
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s2  ${switch2_preservice_intf_1}   service
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s2  ${switch2_postservice_intf_1}   service
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s3  ${switch3_filter_intf_1}   filter
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s3  ${switch3_delivery_intf_1}   delivery
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s3  ${switch3_preservice_intf_1}   service
-    Should be true  ${result}
-    ${result}=  rest delete interface role  s3  ${switch3_postservice_intf_1}   service
-    Should be true  ${result}
+    ${result1}=  rest delete policy  admin-view  ${policy_name_1}
+    Should be true  ${result1}
+    ${result2}=  rest delete policy  admin-view  ${policy_name_2}
+    Should be true  ${result2}
+    ${result3}=  rest delete service  ${switch1_service_name}
+    Should be true  ${result3}
+    ${result4}=  rest delete service  ${switch2_service_name}
+    Should be true  ${result4}
+    ${result5}=  rest delete service  ${switch3_service_name}
+    Should be true  ${result5}
+    ${result6}=  rest delete interface role  s1  ${switch1_filter_intf_1}   filter
+    Should be true  ${result6}
+    ${result7}=  rest delete interface role  s1  ${switch1_filter_intf_2}   filter
+    Should be true  ${result7}
+    ${result8}=  rest delete interface role  s1  ${switch1_filter_intf_3}   filter
+    Should be true  ${result8}
+    ${result9}=  rest delete interface role  s1  ${switch1_filter_intf_4}   filter
+    Should be true  ${result9}
+    ${result10}=  rest delete interface role  s1  ${switch1_delivery_intf_1}   filter
+    Should be true  ${result10}
+    ${result11}=  rest delete interface role  s1  ${switch1_delivery_intf_2}   filter
+    Should be true  ${result11}
+    ${result12}=  rest delete interface role  s1  ${switch1_delivery_intf_3}   filter
+    Should be true  ${result12}
+    ${result13}=  rest delete interface role  s1  ${switch1_delivery_intf_4}   filter
+    Should be true  ${result13}            
+    ${result14}=  rest delete interface role  s1  ${switch1_preservice_intf_1}   service
+    Should be true  ${result14}
+    ${result15}=  rest delete interface role  s1  ${switch1_postservice_intf_1}   service    
+    Should be true  ${result15}    
+    ${result16}=  rest delete interface role  s2  ${switch2_delivery_intf_1}   delivery
+    Should be true  ${result16}
+    ${result17}=  rest delete interface role  s2  ${switch2_delivery_intf_2}   delivery
+    Should be true  ${result17}
+    ${result18}=  rest delete interface role  s2  ${switch2_preservice_intf_1}   service
+    Should be true  ${result18}
+    ${result19}=  rest delete interface role  s2  ${switch2_postservice_intf_1}   service
+    Should be true  ${result19}
+    ${result20}=  rest delete interface role  s3  ${switch3_filter_intf_1}   filter
+    Should be true  ${result20}
+    ${result21}=  rest delete interface role  s3  ${switch3_delivery_intf_1}   delivery
+    Should be true  ${result21}
+    ${result22}=  rest delete interface role  s3  ${switch3_preservice_intf_1}   service
+    Should be true  ${result22}
+    ${result23}=  rest delete interface role  s3  ${switch3_postservice_intf_1}   service
+    Should be true  ${result23}
     Sleep  5
-    ${result}=  rest delete interface  s1  ${switch1_filter_intf_1}   
-    Should be true  ${result}
-    ${result}=  rest delete interface  s1  ${switch1_filter_intf_2} 
-    Should be true  ${result}
-    ${result}=  rest delete interface  s1  ${switch1_filter_intf_3}   
-    Should be true  ${result}
-    ${result}=  rest delete interface  s1  ${switch1_filter_intf_4} 
-    Should be true  ${result}
-    ${result}=  rest delete interface  s1  ${switch1_delivery_intf_1}   
-    Should be true  ${result}
-    ${result}=  rest delete interface  s1  ${switch1_delivery_intf_2} 
-    Should be true  ${result}
-    ${result}=  rest delete interface  s1  ${switch1_delivery_intf_3}   
-    Should be true  ${result}
-    ${result}=  rest delete interface  s1  ${switch1_delivery_intf_4} 
-    Should be true  ${result}        
-    ${result}=  rest delete interface  s1  ${switch1_preservice_intf_1}
-    Should be true  ${result}
-    ${result}=  rest delete interface  s1  ${switch1_postservice_intf_1}
-    Should be true  ${result}            
-    ${result}=  rest delete interface  s2  ${switch2_delivery_intf_1}   
-    Should be true  ${result}
-    ${result}=  rest delete interface  s2  ${switch2_delivery_intf_2} 
-    Should be true  ${result}
-    ${result}=  rest delete interface  s2  ${switch2_preservice_intf_1}
-    Should be true  ${result}
-    ${result}=  rest delete interface  s2  ${switch2_postservice_intf_1}
-    Should be true  ${result}  
-    ${result}=  rest delete interface  s3  ${switch3_filter_intf_1}   
-    Should be true  ${result}
-    ${result}=  rest delete interface  s3  ${switch3_delivery_intf_1} 
-    Should be true  ${result}
-    ${result}=  rest delete interface  s3  ${switch3_preservice_intf_1}
-    Should be true  ${result}
-    ${result}=  rest delete interface  s3  ${switch3_postservice_intf_1}
-    Should be true  ${result}  
+    ${result24}=  rest delete interface  s1  ${switch1_filter_intf_1}   
+    Should be true  ${result24}
+    ${result25}=  rest delete interface  s1  ${switch1_filter_intf_2} 
+    Should be true  ${result25}
+    ${result26}=  rest delete interface  s1  ${switch1_filter_intf_3}   
+    Should be true  ${result26}
+    ${result27}=  rest delete interface  s1  ${switch1_filter_intf_4} 
+    Should be true  ${result27}
+    ${result28}=  rest delete interface  s1  ${switch1_delivery_intf_1}   
+    Should be true  ${result28}
+    ${result29}=  rest delete interface  s1  ${switch1_delivery_intf_2} 
+    Should be true  ${result29}
+    ${result30}=  rest delete interface  s1  ${switch1_delivery_intf_3}   
+    Should be true  ${result30}
+    ${result31}=  rest delete interface  s1  ${switch1_delivery_intf_4} 
+    Should be true  ${result31}        
+    ${result32}=  rest delete interface  s1  ${switch1_preservice_intf_1}
+    Should be true  ${result32}
+    ${result33}=  rest delete interface  s1  ${switch1_postservice_intf_1}
+    Should be true  ${result33}            
+    ${result34}=  rest delete interface  s2  ${switch2_delivery_intf_1}   
+    Should be true  ${result34}
+    ${result35}=  rest delete interface  s2  ${switch2_delivery_intf_2} 
+    Should be true  ${result35}
+    ${result36}=  rest delete interface  s2  ${switch2_preservice_intf_1}
+    Should be true  ${result36}
+    ${result37}=  rest delete interface  s2  ${switch2_postservice_intf_1}
+    Should be true  ${result37}
+    ${result38}=  rest delete interface  s3  ${switch3_filter_intf_1}   
+    Should be true  ${result38}
+    ${result39}=  rest delete interface  s3  ${switch3_delivery_intf_1} 
+    Should be true  ${result39}
+    ${result40}=  rest delete interface  s3  ${switch3_preservice_intf_1}
+    Should be true  ${result40}
+    ${result41}=  rest delete interface  s3  ${switch3_postservice_intf_1}
+    Should be true  ${result41}
     Sleep  5
-    rest delete switch alias  s1
-    rest delete switch alias  s2
-    rest delete switch alias  s3
-    rest delete switch   s1
-    rest delete switch   s2
-    rest delete switch   s3     
+    ${result42}=  rest delete switch alias  s1
+    Should be true  ${result42}
+    ${result43}=  rest delete switch alias  s2
+    Should be true  ${result43}
+    ${result44}=  rest delete switch alias  s3
+    Should be true  ${result44}
+    ${result45}=  rest delete switch   s1
+    Should be true  ${result45}
+    ${result46}=  rest delete switch   s2
+    Should be true  ${result46}
+    ${result47}=  rest delete switch   s3
+    Should be true  ${result47}
     base suite teardown
