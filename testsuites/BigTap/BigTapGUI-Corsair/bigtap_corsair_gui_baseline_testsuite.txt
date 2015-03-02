@@ -26,42 +26,42 @@ T1.3 Check Controller Interfaces Page
 T1.4 Check Big Tap Page
     Go To Big Tap Page
     [Tags]  blackbird  sanity  feature
-T1.5 Check Big Tap Topology Page
-    Go To Big Tap Topology Page
-    [Tags]  blackbird  sanity  feature
-T1.6 Check Big Tap Policies Page
+T1.5 Check Big Tap Policies Page
     Go To Big Tap Policies Page
     [Tags]  blackbird  sanity  feature
-T1.7 Check Big Tap Services Page
+T1.6 Check Big Tap Services Page
     Go To Big Tap Services Page
     [Tags]  blackbird  sanity  feature
-T1.8 Check Big Tap Filter Interfaces Page
-    Go To Big Tap Filter Interfaces Page
-    [Tags]  blackbird  sanity  feature
-T1.9 Check Big Tap Delivery Interfaces Page
-    Go To Big Tap Delivery Interfaces Page
-    [Tags]  blackbird  sanity  feature
-T1.10 Check Big Tap Service Interfaces Page
-    Go To Big Tap Service Interfaces Page
-    [Tags]  blackbird  sanity  feature
-T1.11 Check Big Tap Interfaces Page
+T1.7 Check Big Tap Interfaces Page
     Go To Big Tap Interfaces Page
     [Tags]  blackbird  sanity  feature
-T1.12 Check Big Tap Host Tracker Page
+T1.8 Check Big Tap Host Tracker Page
     Go To Big Tap Host Tracker Page
     [Tags]  corsair  sanity  feature
-T1.13 Check Big Tap Observed IP Addresses Page
+T1.9 Check Big Tap DHCP Servers Page
+    Go To Big Tap DHCP Servers Page
+    [Tags]  corsair  sanity  feature
+T1.10 Check Big Tap DNS Servers Page
+    Go To Big Tap DNS Servers Page
+    [Tags]  corsair  sanity  feature   
+T1.11 Check Big Tap Observed IP Addresses Page
     Go To Big Tap Observed IP Addresses Page
     [Tags]  corsair  sanity  feature
+T1.12 Check Big Tap IP Lists Page
+    Go To Big Tap IP Lists Page
+    [Tags]  blackbird  sanity  feature
+T1.13 Check Big Tap Interface Groups Page
+	Go To Big Tap Interface Groups Page
+	[Tags]  corsair  sanity  feature
 T1.14 Check Big Tap User Defined Offsets Page
     Go To Big Tap User Defined Offsets Page
     [Tags]  corsair  sanity  feature
-T1.15 Check Big Tap IP Lists Page
-    Go To Big Tap IP Lists Page
+T1.15 Check sFlow Page
+    Go To sFlow Page
+    [Tags]  corsair  sanity  feature
+T1.16 Check Big Tap Topology Page
+    Go To Big Tap Topology Page
     [Tags]  blackbird  sanity  feature
-T1.16 Check Big Tap Interface Groups Page
-	Go To Big Tap Interface Groups Page
-	[Tags]  corsair  sanity  feature
 T1.17 Check Security Users Page
     Go To Security Users Page
     [Tags]  blackbird  sanity  feature
