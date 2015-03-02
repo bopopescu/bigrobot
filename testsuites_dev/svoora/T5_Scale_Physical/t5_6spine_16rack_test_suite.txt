@@ -72,7 +72,7 @@ copy config file to controller
 	[Tags]  T1 
 	#manual passed
 	Log To console  Getting config file server
-	copy config from server  ${cfg1_file_path}  ${cfg_file_server}  ${file_server_passwd}  ${copied_file1} 
+	copy config from server to snapshot   ${cfg1_file_path}  ${cfg_file_server}  ${file_server_passwd}  ${copied_file1} 
 	verify file  ${copied_file1}
 	Log To Console  Verifiing cluster formation
 	${returnVal}=  rest verify show cluster
