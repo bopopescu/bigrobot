@@ -475,8 +475,10 @@ TC020: Add a service to both policies and verify overlap policy is created. Brin
     [Tags]  full  feature  skipped  
 
 TC021: Add a service to both policies and verify overlap policy is created. Bring down post-service interface, verify overlap goes away
-    rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
-    rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1   
+    ${result1}=  rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
+    Should be true  ${result1}
+    ${result2}=  rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1
+    Should be true  ${result2}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
@@ -488,8 +490,10 @@ TC021: Add a service to both policies and verify overlap policy is created. Brin
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}    
-    rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name} 
-    rest delete service from policy  admin-view  ${policy_name_2}  ${switch1_service_name} 
+    ${result3}=  rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name}
+    Should be true  ${result3}
+    ${result4}=  rest delete service from policy  admin-view  ${policy_name_2}  ${switch1_service_name}
+    Should be true  ${result4}
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
