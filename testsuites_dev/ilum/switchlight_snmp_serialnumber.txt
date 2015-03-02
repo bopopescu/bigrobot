@@ -79,7 +79,7 @@ environment suite setup
     
 environment suite teardown
     cli disable switch snmp   s1
-    cli delete snmp keyword   s1   community   ro bsn 
-    cli delete snmp keyword   s1   community   rw private 
+    cli delete snmp keyword   s1   community   ${read_only} ${snmp_community_2}  
+    cli delete snmp keyword   s1   community   ${read_write} ${snmp_community_3} 
     cli delete snmp keyword   s1   location   ${snmp_location_1}
     cli delete snmp keyword   s1   contact   ${snmp_contact_1}
