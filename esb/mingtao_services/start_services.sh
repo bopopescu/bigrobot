@@ -12,5 +12,6 @@ fi
 pwd=`pwd`
 app=`basename $pwd`
 set -x
+export BIGROBOT_ESB=True
 (cd ..; celery -A $app worker --app $app.celery_app:app --loglevel info -n $app)
 set +x
