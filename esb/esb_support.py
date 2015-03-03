@@ -4,6 +4,15 @@ import autobot.helpers as helpers
 import autobot.test as test
 
 
+def _archive_logs(task_id):
+    helpers.log("Archiving logs for task %s before ending task." % task_id)
+
+    server = helpers.bigrobot_log_archiver()
+    dest_path = '/var/www/bigrobot_esb'
+    user = 'root'
+    password = 'bsn'
+    helpers.scp_put(server, helpers.bigrobot_log_path_exec_instance(), dest_path, user, password)
+
 def task_execute(params, task_func):
     """
     A wrapper function which executes the task specified in task_func
@@ -24,22 +33,21 @@ def task_execute(params, task_func):
                     helpers.bigrobot_log_path_exec_instance() +
                     "/bigrobot_autobot.log")
 
-    # esb=True is the equivalent of setting helpers.bigrobot_esb('True').
-    t = test.Test(esb=True, params=params)
+    try:
+        # esb=True is the equivalent of setting helpers.bigrobot_esb('True').
+        t = test.Test(esb=True, params=params)
 
-    content = task_func()
+        content = task_func()
 
-    t.node_disconnect()
-
-    helpers.log("Archiving logs for task %s before ending task." % task_id)
-
-    server = helpers.bigrobot_log_archiver()
-    dest_path = '/var/www/bigrobot_esb'
-    user = 'root'
-    password = 'bsn'
-    helpers.scp_put(server, helpers.bigrobot_log_path_exec_instance(), dest_path, user, password)
-
-    helpers.log("Ending task %s." % task_id)
-
-    return content
+        t.node_disconnect()
+    except:
+        helpers.log("Error while executing task %s!!! Gathering logs before raising exception."
+                    % task_id)
+        helpers.log("Ending task %s on exception." % task_id)
+        helpers.log(helpers.exception_info())
+        _archive_logs(task_id)
+        raise
+    else:
+        helpers.log("Ending task %s." % task_id)
+        return content
 
