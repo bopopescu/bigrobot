@@ -134,7 +134,7 @@ def summary_log(s, level=2, all_levels=False):
 
 
 def log_task_output(task_id):
-    info("Task output - http://%s/bigrobot_esb/%s.log.gz"
+    info("Task output - http://%s/bigrobot_esb/%s/"
          % (bigrobot_log_archiver(), task_id))
 
 
@@ -2079,6 +2079,7 @@ def params_to_file(params_dict, path='/tmp', prefix='bigrobot_params_',
     """
     yaml_str = to_yaml(params_dict) if is_dict(params_dict) else params_dict
     _, filename = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=path)
+    os.chmod(filename, 0644)  # Fix default permission from 600 - read/write by user only
     file_write_once(filename, yaml_str)
     return filename
 
