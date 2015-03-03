@@ -21,19 +21,25 @@ T1.2 Remote admin1
 	Valid Login                 bt-admin       		adminadmin
 	[Tags]  sanity  feature
 T1.3 Remote admin2
-	Valid Login                 test1          		admin_ADMIN
+	Valid Login                 sakshi-admin        adm1n
 	[Tags]  sanity  feature
 T1.4 Local user1 
-	Valid Login                 test           		adminadmin
+	Login With Invalid Credentials Should Fail                 test           		adminadmin
 	[Tags]  sanity  feature
 T1.5 Local user2      
-	Valid Login                 test-user-local     ,./[]<:{}`~!@#$^&*()_-1234567890
+	Login With Invalid Credentials Should Fail                 test-user-local     ,./[]<:{}`~!@#$^&*()_-1234567890
 	[Tags]  sanity  feature
 T1.6 Remote user1   
-	Valid Login                 sakshikalra1         adminAdmin
+	Login With Invalid Credentials Should Fail                 taco-user         		taco
 	[Tags]  sanity  feature
-T1.7 Remote user2    
-	Valid Login	                test-user-remote    `0-=~!@#$^&*()_+,./;[]<>?:{}|
+T1.7 Remote user2 with a group    
+	Valid Login									                test-user-remote    `0-=~!@#$^&*()_+,./;[]<>?:{}|
+	[Tags]  sanity  feature
+T1.8 Remote read only user1    
+	Valid Login	                								bigtap-read-only    bsnbsn
+	[Tags]  sanity  feature
+T1.9 Remote read only user2    
+	Valid Login	                								remote-reader	    bsnbsn
 	[Tags]  sanity  feature
 
 
@@ -72,7 +78,6 @@ Setup
     #CLI Configure User    tomasz
     CLI Configure User    test    adminadmin
     CLI Configure User    test-user-local    ,./[]<:{}`~!@#$^&*()_-1234567890
-    CLI Configure User    test-user-remote
     #Rest Open GUI Port
     Open Browser To Login Page
 

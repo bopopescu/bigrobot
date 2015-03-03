@@ -1029,10 +1029,10 @@ corsair suite setup
     bash  s3  ofad-ctl crc enable
     bash  s4  ofad-ctl crc enable    
     #Add ip address to 40G ports on arista
-    cli arista add ip address  as7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
-    cli arista add ip address  as7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull                      
-    cli arista add mtu interface  as7  Ethernet49/1  9212
-    cli arista add mtu interface  as7  Ethernet51/1  9212     
+    cli arista add ip address  s7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
+    cli arista add ip address  s7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull                      
+    cli arista add mtu interface  s7  Ethernet49/1  9212
+    cli arista add mtu interface  s7  Ethernet51/1  9212     
     Sleep  10    
     #Setup tunnels across  Accton 4600 (app-ac4600-1)
     extreme tunnel setup  s6  ${extreme1_sw1_tunnel_name}  ${extreme1_sw1_tunnel_intf1}  ${extreme1_sw1_tunnel_ip}  ${extreme1_sw1_tunnel_mask}
@@ -1124,10 +1124,10 @@ tunnel teardown
 corsair suite teardown
     tunnel teardown
     #Delete previously added ip address to 40G ports on arista
-    cli arista delete ip address  as7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
-    cli arista delete ip address  as7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull
-    cli arista delete mtu interface  as7  Ethernet49/1  9212
-    cli arista delete mtu interface  as7  Ethernet51/1  9212    
+    cli arista delete ip address  s7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
+    cli arista delete ip address  s7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull
+    cli arista delete mtu interface  s7  Ethernet49/1  9212
+    cli arista delete mtu interface  s7  Ethernet51/1  9212    
     REST delete policy  admin-view  ${policy_name_1}
     REST delete policy  admin-view  ${policy_name_2} 
     REST delete policy  admin-view  ${policy_name_3} 

@@ -252,11 +252,6 @@ class Ixia(object):
             topo_devices.append(topo_device)
             self._is_device_created = True
 
-        # return if the mac_devices and ip_devices are already created with same mac
-#         if len(mac_devices) != 0:
-#             helpers.log("Returning ALready Created ETH_DEVICE AND IP_DEVCIES: %s %s" % (mac_devices, ip_devices))
-#             return mac_devices, ip_devices
-
         for (topo_device, multi, topo, mac) in zip(topo_devices, mac_mults, topology, macs):
             helpers.log('### topo device : %s' % str(topo_device))
             topo_name = self._handle.getAttribute(topo, '-name')
@@ -1593,6 +1588,10 @@ class Ixia(object):
 #         if vlan_id is not None:
 #             ethertype = '8100'
 #             protocol = kwargs.get('protocol', 'UDP')
+        if vlan_cnt > 1:
+            helpers.log("Adding src_cnt and dst_cnt as vln_cnt is given to increment devices..")
+            s_cnt = vlan_cnt
+            d_cnt = vlan_cnt
 
         if ethertype.lower() == '86dd':
             src_ip = kwargs.get('src_ip', '2001:0:0:0:0:0:0:c4')
@@ -1722,7 +1721,7 @@ class Ixia(object):
                 (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
                                                                               dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                               dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type=ip_type,
-                                                                              vlan_id=vlan_id, src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, vlan_p=vlan_priority)
+                                                                              vlan_id=vlan_id, vlan_step=vlan_step, src_gw_prefix=src_gw_prefix, dst_gw_prefix=dst_gw_prefix, vlan_p=vlan_priority)
                 helpers.log('Created Mac Devices : %s ' % mac_devices)
                 if vlan_priority is None:
                     traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],

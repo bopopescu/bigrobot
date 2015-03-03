@@ -102,7 +102,7 @@ class T5Support(object):
     def delete_support_bundles(self, node_name="master"):
         t = test.Test()
         node = t.controller(node_name)
-        data = self.get_support_bundles()
+        data = self.get_support_bundles(node_name=node_name)
         helpers.prettify(data)
         if len(data) == 0:
             helpers.log("No Support Bundles on controller %s" % node_name)
@@ -114,7 +114,7 @@ class T5Support(object):
                 node.rest.delete(delete_url, {})
                 helpers.log("Success Deleting Support Bundle: %s" % data[i]['name'])
         helpers.log("Checking again to check all the support bundles are deleted..")
-        data = self.get_support_bundles()
+        data = self.get_support_bundles(node_name=node_name)
         helpers.prettify(data)
         if len(data) == 0:
             helpers.log("No Support Bundles on controller %s" % node_name)
@@ -216,30 +216,10 @@ class T5Support(object):
                                         result = True
         return result
 
-    def generate_support(self, node='master'):
-        helpers.log("***Entering==> generate support file  \n")
-
-        t = test.Test()
-        c = t.controller(node)
-
-        c.enable('')
-        c.send('support')
-        options = c.expect([r'\(yes/no\)\?', c.get_prompt()], timeout=1800)
-        if options[0] == 0 :
-            c.send('yes')
-            c.expect(timeout=1200)
-        content = c.cli_content()
-        temp = helpers.strip_cli_output(content)
-        lines = helpers.str_to_list(temp)
-        helpers.log("*****Output is :\n%s" % temp)
-        for line in lines:
-            helpers.log("INFO: line is %s" % line)
-            match = re.match(r'Name.*: (floodlight.*)', line)
-            if match:
-                helpers.log("INFO: file name is: %s" % match.group(1))
-                return  match.group(1)
-
-        helpers.test_failure("Error: %s" % temp)
+    def cli_generate_support(self, node='master'):
+        import keywords.T5Platform as T5Platform
+        T5_Platform = T5Platform.T5Platform()
+        return T5_Platform.generate_support(node)
 
     def check_controller_cli_cmds(self, support_bundle_folder=None, node_name='master'):
         '''

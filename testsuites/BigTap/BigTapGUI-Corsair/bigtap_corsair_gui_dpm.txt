@@ -6,8 +6,9 @@ Suite Teardown      config suite teardown
 Force Tags          bigtap  corsair  gui  match-conditions  dpm
 Library             keywords/BsnCommon.py
 #Library            keywords_dev/tomasz/BigTap.py
-Library             SeleniumLibrary
+Library             keywords/AppController.py
 Library             keywords/BsnSelenium.py
+Library             SeleniumLibrary
 Library             String
 Resource            bigtap_resource.txt
 
@@ -15,10 +16,10 @@ Resource            bigtap_resource.txt
 
 ### Configure Big Tap Policy with DPM                                    policy        ethertype                ipprotocol    udf0            value0       mask0       udf1           value1       mask1        udf2        value2        mask2        src-port       dst-port       VLAN Header
 TCSetup 1
-        Configure Big Tap Interface from Big Tap Menu                    ethernet1            app-rlb9-1        filter            ixia-2-9
-        Configure Big Tap Interface from Big Tap Menu                    ethernet1            app-rly2-1         delivery        ixia-2-15    
-        Configure Big Tap Interface from Big Tap Menu                    ethernet2            app-rly2-1         delivery        ixia-4-8
-        Configure Big Tap Policy                                         policy-gtp            admin-view        Forward            IPv4 - 0x800 (2048)        ixia-2-9    ixia-2-15    ${EMPTY}    ${EMPTY}    ${EMPTY}    
+		Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1			 filter	        ixia-2-9
+    	Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-intern1       delivery       ixia-2-15
+    	#Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             filter	        ixia-4-8    
+		Configure Big Tap Policy                                 policy-gtp           admin-view        	 Forward        IPv4 - 0x800 (2048)        ixia-2-9    ixia-2-15    ${EMPTY}    ${EMPTY}    ${EMPTY}    
         [Tags]  sanity  feature
 TC001 Policy with offset match on GTP' v1 (Protocol UDP)
         Associate DPM Rule                                                 policy-gtp    IPv4 - 0x800 (2048)        UDP (17)     Offset: 8        20000000    e0000000      ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}    3386        ${EMPTY}
@@ -106,14 +107,14 @@ TC028 Offset match on VXLAN VNI
         [Tags]  full  feature
 TCSetup 2
         Delete All Bigtap Resources
-        Configure Big Tap Interface from Big Tap Menu                    ethernet1            app-rlb9-1        filter            ixia-2-9
-        Configure Big Tap Interface from Big Tap Menu                    ethernet1            app-rly2-1         delivery        ixia-2-15    
-        Configure Big Tap Interface from Big Tap Menu                    ethernet2            app-rly2-1         delivery        ixia-4-8
-        Configure Big Tap User Defined Offsets                            udf0                    L4 Start            36
-        Configure Big Tap User Defined Offsets                            udf1                    L4 Start            40
-        Configure Big Tap User Defined Offsets                            udf2                    L4 Start            44
-        Configure Big Tap User Defined Offsets                            udf3                    L4 Start            48
-        Configure Big Tap Policy                                         policy-gtp2                admin-view        Forward        IPv4 - 0x800 (2048)        ixia-2-9    ixia-2-15    ${EMPTY}    ${EMPTY}    ${EMPTY}
+        Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1			 filter	        ixia-2-9
+    	Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-intern1       delivery       ixia-2-15
+    	#Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             filter	        ixia-4-8          
+        Configure Big Tap User Defined Offsets                   udf0                 L4 Start               36
+        Configure Big Tap User Defined Offsets                   udf1                 L4 Start               40
+        Configure Big Tap User Defined Offsets                   udf2                 L4 Start               44
+        Configure Big Tap User Defined Offsets                   udf3                 L4 Start               48
+        Configure Big Tap Policy                                 policy-gtp2          admin-view             Forward        IPv4 - 0x800 (2048)        ixia-2-9    ixia-2-15    ${EMPTY}    ${EMPTY}    ${EMPTY}
         
 TC029 Offset match on GTP-U inner src-ip
         Associate DPM Rule                                                 policy-gtp2        IPv4 - 0x800 (2048)        UDP (17)     Offset: 36        1010101        ffffffff    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}    2152        ${EMPTY}
@@ -161,8 +162,14 @@ config suite setup
      #Configure Switch Alias    00:00:08:9e:01:f8:6b:8b            app-rly2-1   
     ${switch_dpid_s1}=  rest return switch dpid from ip  s1
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
-    Configure Switch Alias  ${switch_dpid_s1}   app-rlb9-1
-    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-1    
+    ${switch_dpid_s3}=  rest return switch dpid from ip  s3
+    ${switch_dpid_s4}=  rest return switch dpid from ip  s4
+    ${switch_dpid_s5}=  rest return switch dpid from ip  s5
+    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
     
 config suite teardown
     Close Browser

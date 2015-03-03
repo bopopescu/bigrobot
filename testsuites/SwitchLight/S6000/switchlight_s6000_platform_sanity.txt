@@ -199,7 +199,7 @@ TC021: Verify Switch Serial Number
 
 TC022: Verify Maximum number of component ports in a LAG on switch
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To Integer  16
+    ${match1}=  Convert To Integer  24
     ${match2}=  Convert To Integer  ${switch_dict['MaxLagPorts']}
     Should be equal as integers  ${match1}  ${match2}
     [Tags]  sanity  feature

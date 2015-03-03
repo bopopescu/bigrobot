@@ -38,7 +38,7 @@ s6:
   protocol: telnet
 
 ## APP-ARISTA-1  
-as7:
+s7:
   ip: 10.9.19.3
   user: admin
   password: arastra

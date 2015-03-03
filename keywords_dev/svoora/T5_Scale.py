@@ -50,6 +50,36 @@ class T5_Scale(object):
             return False
 
 
+    def copy_config_from_server_to_snapshot(self, file_path, server, server_passwd, dest_file='cfg_file_from_server.cfg'):
+        t = test.Test()
+        c = t.controller('master')
+        c.config('')
+        # helpers.log("INFO: ****Getting config file from server")
+        # string = "copy scp://root@%s:%s %s" % (server, file_path, dest_file)
+        # helpers.log("copy string file is:%s" % string)
+        # c.send(string)
+        try:
+            helpers.log("INFO: ****Getting config file from server")
+            dest_file_format = "snapshot://" + dest_file
+            string = "copy scp://root@%s:%s %s" % (server, file_path, dest_file_format)
+            helpers.log("copy string file is:%s" % string)
+            c.send (string)
+            try:
+                c.expect(r"Are you sure you want to continue connecting \(yes/no\)?")
+                c.send("yes")
+            except:
+                helpers.test_log("Apparently already RSA key fingerprint stored")
+            c.expect("password")
+            c.send(server_passwd)
+            c.expect()
+            cli_content = c.cli_content()
+            assert "100%" in cli_content
+            assert "Error" not in cli_content
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return False
 
         # opt = c.expect([r'[\r\n].+password:', r'[\r\n].+(yes/no)?'])
         # helpers.log("received option %s" % opt)
@@ -107,6 +137,22 @@ class T5_Scale(object):
         c1.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR > c1_%s &' % (file_name))
         c2.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR > c2_%s &' % (file_name))
 
+    def start_monitor_switch_errors(self, file_name):
+        t = test.Test()
+        c1 = t.controller('c1')
+
+        helpers.log("INFO: connecting to bash mode")
+        helpers.log("INFO: Checking if file already exist in the controller")
+        result = c1.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C1: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C1, deleting the file")
+            c1.sudo('rm -rf c1_%s' % (file_name))
+        helpers.log("Enabling the tail and redirecting to filename")
+        c1.sudo('tail -f /var/log/switch/* | grep faultd | grep \"/bin/ofad\" > c1_%s &' % (file_name))
+
+
+
     def pid_return_monitor_file(self, role):
         t = test.Test()
         c = t.controller(role)
@@ -120,6 +166,24 @@ class T5_Scale(object):
             return pid
         else:
             return 0
+
+    def pid_return_switch_monitor_file(self):
+        t = test.Test()
+        c = t.controller('c1')
+        helpers.log("Verifing for monitor job")
+        c_result = c.sudo('ps ax | grep tail | grep sudo')
+        helpers.log("dumping sudo o/p:%s" % (c_result['content']))
+        split = re.split('\s+', c_result['content'])
+        # FIXME: Need to find another way to regex, to get pid rather splitting
+        if split[9]:
+            pid = split[9]
+            return pid
+        else:
+            return 0
+
+
+
+
     def stop_monitor_exception(self, pid, role):
         t = test.Test()
         c = t.controller(role)
@@ -127,6 +191,16 @@ class T5_Scale(object):
         c.sudo('kill %s' % (pid))
         # #FIXME: Need to check if pid got killed or not
         helpers.log(" monitor file pid killed")
+
+
+    def stop_monitor_switch_error(self, pid):
+        t = test.Test()
+        c = t.controller('c1')
+        helpers.log("killing monitor job pid:%s" % (pid))
+        c.sudo('kill %s' % (pid))
+        # #FIXME: Need to check if pid got killed or not
+        helpers.log(" monitor file pid killed")
+
 
     def parse_exception(self, role, file_name):
         t = test.Test()
@@ -156,6 +230,33 @@ class T5_Scale(object):
         else:
             helpers.log("File not Found")
             return False
+
+    def parse_switch_error(self, file_name):
+        t = test.Test()
+        c = t.controller('c1')
+        helpers.log("checking file exist in the controller")
+        result = c.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found, continuing parsing")
+            split = re.split('\s+', result['content'])
+            helpers.log ("dumping list of file %s" % (split))
+            helpers.log("checking file size now")
+            # FIXME: Need to check file size correctly
+            size = split[10]
+            helpers.log("Exception log file size:%s" % (size))
+            if size == '0':
+                helpers.log("no exceptions found, you are good")
+                return size
+            else:
+                # FIXME: Need to copy log file to external server
+                helpers.log("Exceptions found in the file, !!!FILE A BUG!!! and dumping exceptions log to logfile")
+                c.sudo('cat c1_%s' % (file_name))
+        else:
+            helpers.log("File not Found")
+            return False
+
+
 
     def cli_copy_file_to_running_config(self, file_name):
         ''' Function to copy <file> to running-config
@@ -284,6 +385,26 @@ class T5_Scale(object):
                 return False
         return True
 
+    def rest_verify_sync_state(self):
+        ''' Function to verify forwarding sync state for all the switches
+        Input:
+        Output: True/False
+        '''
+        t = test.Test()
+        c_master = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/sync-state-table'
+        c_master.rest.get(url)
+        data_master = c_master.rest.content()
+        helpers.log("Data returned for total number of switches %d" % (len(data_master)))
+        if (len(data_master) == 0):
+            helpers.log("Sync state information is not available")
+            return False
+        else:
+            for i in range(0, len(data_master)):
+                helpers.log("Printing sync-state info for switch dp-id:%s and status:%s" % (str(data_master[i]["switch-id"]), str(data_master[i]["sync-state"])))
+                if (str(data_master[i]["sync-state"]) != "success"):
+                    return False
+        return True
 
     def rest_get_active_end_point_count(self):
         ''' Function to get active end point count
@@ -300,21 +421,59 @@ class T5_Scale(object):
         return ep_count
 
 
+    def get_L3_table_count(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "brcmdriver3 flow-stats"'
+        content = s.enable(string)['content']
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            match = re.match(r'L3_HOST_ROUTE (\d+)\s+(\d+).*', line)
+            if match:
+                helpers.log("INFO: Total L3 table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
+                return match.group(2)
+        return 0
+
+    def get_L2_table_count(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "brcmdriver3 flow-stats"'
+        content = s.enable(string)['content']
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            match = re.match(r'L2 (\d+)\s+(\d+).*', line)
+            if match:
+                helpers.log("INFO: Total L2 table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
+                return match.group(2)
+        return 0
+
+    def get_ACL_table_count(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        string = 'debug ofad "brcmdriver3 flow-stats"'
+        content = s.enable(string)['content']
+        temp = helpers.strip_cli_output(content, to_list=True)
+        helpers.log("***temp is: %s  \n" % temp)
+
+        for line in temp:
+            helpers.log("***line is: %s  \n" % line)
+            line = line.lstrip()
+            match = re.match(r'INGRESS_ACL (\d+)\s+(\d+).*', line)
+            if match:
+                helpers.log("INFO: Total INGRESS_ACL table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
+                return match.group(2)
+
+        return 0
 
 
-
-        helpers.log(" monitor file under C1: %s" % (result['content']))
-
-
-
-
-        helpers.log("Printing digest from master and standby controllers %s and %s" % (master_digest, slave_digest))
-        if (master_digest == slave_digest):
-            helpers.log("Config is in sync between controlelrs and digest match")
-            return True
-        else:
-            helpers.log("config digest do not match between controllers")
-            return False
 
 
 

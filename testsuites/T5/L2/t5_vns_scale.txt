@@ -222,6 +222,7 @@ verify traffic
     stop traffic  ${stream}
     
 T5 test teardown
+	base test teardown
 	delete traffic
 	rest delete tenant  t1
 	sleep  5

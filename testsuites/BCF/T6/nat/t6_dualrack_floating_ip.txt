@@ -444,7 +444,7 @@ T6 base suite setup
 	mininet host gw  vm4  10.0.4.1  ${vm4_intf0}
     mininet host ipcfg  vm6  ${vm6_intf0}  10.0.5.2  24
 	mininet host gw  vm6  10.0.5.1  ${vm6_intf0}
-    sleep  5
+    sleep  10
 
 Tear down the config
    delete a tenant  A

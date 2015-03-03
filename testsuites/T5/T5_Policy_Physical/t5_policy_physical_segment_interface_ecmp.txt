@@ -22,6 +22,8 @@ Library         OperatingSystem
 Library         Collections
 Library         Dialogs
 
+* Variable
+${ecmp_fake}          2.2.2.2
 
 
 * Test Cases

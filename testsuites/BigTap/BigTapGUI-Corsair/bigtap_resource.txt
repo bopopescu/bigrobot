@@ -12,10 +12,10 @@ Library         keywords/Ixia.py
 
 *** Variables ***
 ${BROWSER}       				GoogleChrome
+#${BROWSER}       				firefox
 ${DELAY}         				0
 ${VALID USER}    				admin
 ${VALID PASSWD}  				adminadmin
-
 ${DASHBOARD TITLE}  		Big Tap Dashboard
 ${SWITCHES TITLE}    		Big Tap Fabric - Switches
 ${INTERFACES TITLE}			Big Tap Fabric - Interfaces
@@ -37,7 +37,12 @@ ${BT SIGNOUT TITLE}  		Big Tap Login
 ${USERS TITLE}				Big Tap Security - Users
 ${GROUPS TITLE}				Big Tap Security - Groups
 ${RBAC TITLE}				Big Tap Security - RBAC Permissions
+${BT DHCP SERVERS TITLE}		Big Tap DHCP Servers
+${BT DNS SERVERS TITLE}		Big Tap DNS Servers
+${SFLOW TITLE}				Big Tap sFlow
 
+#${LOGIN BUTTON}					xpath=/html/body/div/div/div/div/form/div[5]/span/span/span/span[3]
+${LOGIN BUTTON}					xpath=//span[@id='submit_button_label']
 ${SHOW ALL BUTTON}  			xpath=//div[contains(@class, 'item') and contains(text(), 'All')]
 ${MAIN MINUS BUTTON}			xpath=//div[@class='icon_node minus']
 ${CONFIRM DELETION POPUP}		xpath=//div[@title='Confirm Deletion']
@@ -87,7 +92,7 @@ ${MATCH MODE EDIT POPUP}							xpath=//div[@title='Configure Switching Mode']/sp
 ${SWITCHING MODE L3-L4 OFFSET MATCH RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_0']/input
 ${SWITCHING MODE L3-L4 MATCH RADIO BUTTON} 			xpath=//div[@id='bsn_widgets_form_RadioButton_1']/input
 ${SWITCHING MODE FULL MATCH RADIO BUTTON}			xpath=//div[@id='bsn_widgets_form_RadioButton_2']/input
-${SWITCHING MODE SUBMIT BUTTON}						xpath=//span[@id='dijit_form_Button_4_label']
+${SWITCHING MODE SUBMIT BUTTON}						xpath=//span[@id='dijit_form_Button_5_label']
 ${LIST TYPE KNOB POLICY OVERLAP}					xpath=//tbody[@id='bigtap_widgets_PolicyOverlap_0']/descendant::div[@class='knob_icon']
 ${LIST TYPE KNOB INPORT MASK}						xpath=//tbody[@id='bigtap_widgets_InportMask_0']/descendant::div[@class='knob_icon']
 ${LIST TYPE KNOB CRC CHECK}							xpath=//tbody[@id='bigtap_widgets_CRCChecking_0']/descendant::div[@class='knob_icon']
@@ -453,12 +458,14 @@ ${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}		xpath=//descendant::span[
 ${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
 ${INTERFACE SAVE BUTTON}						xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 ${BIG TAP INTERFACE GROUP KNOB BUTTON}  		xpath=//div[@class='knob_icon']
-${BIG TAP INTERFACE GROUP KNOB LOCK BUTTON}  		xpath=//div[@class='knob_icon lock']
+${BIG TAP INTERFACE GROUP KNOB LOCK BUTTON}  			xpath=//div[@class='knob_icon lock']
 #xpath=//div[@id='bsn_widgets_ToggleSwitch_0']
-${BIG TAP INTERFACE GROUPS DELETE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
-${BIG TAP EDIT MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
-${BIG TAP INTERFACE REMOVE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Remove')]
-${BIG TAP INTERFACE GROUPS CONFIRM POPUP}			xpath=//div[@title='Confirm']
+${BIG TAP INTERFACE GROUPS DELETE MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${BIG TAP EDIT MENU ITEM}								xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${BIG TAP INTERFACE REMOVE MENU ITEM}					xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Remove')]
+${BIG TAP INTERFACE GROUPS CONFIRM POPUP}				xpath=//div[@title='Confirm']
+${BIG TAP ADD ALL INTERFACES TO GROUP CHECKBOX}         xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_3']
+
 
 
 ### Big Tap Services Page
@@ -536,7 +543,7 @@ ${SHOW HIDE SELECT ALL STATS BUTTON}					xpath=//div[@data-dojo-attach-point='ti
 ${SHOW HIDE RESTORE DEFAULTS BUTTON}					xpath=//span[contains(text(), 'Restore Defaults')]
 ${SHOW HIDE SAVE PREFERENCES BUTTON}					xpath=//span[contains(text(), 'Save Preferences')]
 
-
+${BIGTAP CLEAR STATS BUTTON}							xpath=//div[@class='icon_node reset']
 
 
 #### Big Tap Interface Lock
@@ -547,6 +554,11 @@ ${CONFIRM OK BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button
 ${BIGTAP INTERFACE UNLOCK}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Unlock')]
 ${CONFIRM UNLOCK POPUP}			xpath=//div[@title='Confirm Unlock']
 
+#### Advanced Query
+${FILTER QUERY FIELD}						xpath=//span[@class='dijitPlaceHolder dijitInputField' and contains(text(), 'Filter table rows')]/parent::div/input
+${FILTER QUERY BUTTON}						xpath=//span[@class='dijitReset dijitInline dijitButtonText' and contains(text(), 'Filter')]
+${FILTER QUERY CLEAR BUTTON}				xpath=//div[@class='bsn_button_group bottom']/div[1]
+${SHOW 100 INTERFACES BUTTON}				xpath=//div[contains(@class, 'item') and contains(text(), '100')]
 
 *** Keywords ***
 Set URLs
@@ -572,6 +584,9 @@ Set URLs
 	Set Suite Variable     	${HOST TRACKER URL}   			https://${SERVER}/bigtap/host_tracker
 	Set Suite Variable     	${OBSERVED IP URL}    			https://${SERVER}/bigtap/observed_ip
 	Set Suite Variable 		${USER DEFINED OFFSETS URL}  	https://${SERVER}/bigtap/user_defined_offsets
+	Set Suite Variable 		${DHCP SERVERS URL}				https://${SERVER}/bigtap/dhcp_servers
+	Set Suite Variable 		${DNS SERVERS URL}				https://${SERVER}/bigtap/dns_servers
+	Set Suite Variable 		${SFLOW URL}					https://${SERVER}/bigtap/sflow
 
 
 Valid Login
@@ -602,89 +617,11 @@ Go To Login Page
     Wait Until Page Loaded 
     Title Should Contain  ${LOG IN TITLE}
 	Sleep  1
-	
-Go To Big Tap Page
-    Go To  ${BIGTAP URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BIGTAP TITLE}
-    Sleep  1
 
-Go To Big Tap Topology Page
-    Go To  ${TOPOLOGY URL}
+Go To Landing Page
+    Go To  ${WELCOME URL}
     Wait Until Page Loaded 
-    Title Should Contain  ${TOPOLOGY TITLE}
-    Sleep  1
-
-Go To Big Tap Policies Page
-    Go To  ${POLICIES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${POLICIES TITLE}
-    Sleep  1
-
-Go To Big Tap IP Lists Page
-    Go To  ${IP ADDRESS GROUPS URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${IP ADDRESS GROUPS TITLE}
-    Sleep  1
-
-Go To Big Tap Services Page
-    Go To  ${SERVICES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${SERVICES TITLE}
-    Sleep  1
-
-Go To Big Tap Interfaces Page
-    Go To  ${BT INTERFACES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT INTERFACES TITLE}
-    Sleep  1
-    
-Go To Big Tap Filter Interfaces Page
-    Go To  ${BT FILTER INTERFACES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT FILTER INTERFACES TITLE}
-    Sleep  1
-    
-Go To Big Tap Delivery Interfaces Page
-    Go To  ${BT DELIVERY INTERFACES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT DELIVERY INTERFACES TITLE}
-    Sleep  1
-    
-Go To Big Tap Service Interfaces Page
-    Go To  ${BT SERVICE INTERFACES URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT SERVICE INTERFACES TITLE}
-    Sleep  1
-   
-Go To Big Tap Host Tracker Page
-	Go To  ${HOST TRACKER URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT HOST TRACKER TITLE}
-    Sleep  1
-    
-Go To Big Tap Observed IP Addresses Page
-	Go To  ${OBSERVED IP URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT OBSERVED IP TITLE}
-    Sleep  1
-    
-Go To Big Tap User Defined Offsets Page
-	Go To  ${USER DEFINED OFFSETS URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT USER DEFINED OFFSETS TITLE}
-    Sleep  1
-    
-Go To Signout Page
-	Go To  ${BT SIGNOUT URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT SIGNOUT TITLE}
-    Sleep  1
-    
-Go To Big Tap Interface Groups Page
-	Go To  ${BT INTERFACE GROUPS URL}
-    Wait Until Page Loaded 
-    Title Should Contain  ${BT INTERFACE GROUPS TITLE}
+    Title Should Contain  ${DASHBOARD TITLE}
     Sleep  1
 
 Go To Controller Switches Page
@@ -697,6 +634,84 @@ Go To Controller Interfaces Page
     Go To  ${INTERFACES URL}
     Wait Until Page Loaded 
     Title Should Contain  ${INTERFACES TITLE}
+    Sleep  1
+	
+Go To Big Tap Page
+    Go To  ${BIGTAP URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BIGTAP TITLE}
+    Sleep  1
+
+Go To Big Tap Policies Page
+    Go To  ${POLICIES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${POLICIES TITLE}
+    Sleep  1
+    
+Go To Big Tap Services Page
+    Go To  ${SERVICES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SERVICES TITLE}
+    Sleep  1
+
+Go To Big Tap Interfaces Page
+    Go To  ${BT INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT INTERFACES TITLE}
+    Sleep  1
+    
+Go To Big Tap Host Tracker Page
+	Go To  ${HOST TRACKER URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT HOST TRACKER TITLE}
+    Sleep  1
+
+Go To Big Tap DHCP Servers Page
+    Go To  ${DHCP SERVERS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT DHCP SERVERS TITLE}
+    Sleep  1
+
+Go To Big Tap DNS Servers Page
+    Go To  ${DNS SERVERS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT DNS SERVERS TITLE}
+    Sleep  1
+    
+Go To Big Tap Observed IP Addresses Page
+	Go To  ${OBSERVED IP URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT OBSERVED IP TITLE}
+    Sleep  1
+
+Go To Big Tap IP Lists Page
+    Go To  ${IP ADDRESS GROUPS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${IP ADDRESS GROUPS TITLE}
+    Sleep  1
+
+Go To Big Tap Interface Groups Page
+	Go To  ${BT INTERFACE GROUPS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT INTERFACE GROUPS TITLE}
+    Sleep  1
+
+Go To Big Tap User Defined Offsets Page
+	Go To  ${USER DEFINED OFFSETS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT USER DEFINED OFFSETS TITLE}
+    Sleep  1
+
+Go To sFlow Page
+	Go To  ${SFLOW URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SFLOW TITLE}
+    Sleep  1
+
+Go To Big Tap Topology Page
+    Go To  ${TOPOLOGY URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TOPOLOGY TITLE}
     Sleep  1
 
 Go To Security Users Page
@@ -717,11 +732,31 @@ Go To Security RBAC Page
     Title Should Contain  ${RBAC TITLE}
     Sleep  1
 
-Go To Landing Page
-    Go To  ${WELCOME URL}
+Go To Signout Page
+	Go To  ${BT SIGNOUT URL}
     Wait Until Page Loaded 
-    Title Should Contain  ${DASHBOARD TITLE}
+    Title Should Contain  ${BT SIGNOUT TITLE}
     Sleep  1
+
+    
+Go To Big Tap Filter Interfaces Page
+    Go To  ${BT FILTER INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT FILTER INTERFACES TITLE}
+    Sleep  1
+    
+Go To Big Tap Delivery Interfaces Page
+    Go To  ${BT DELIVERY INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT DELIVERY INTERFACES TITLE}
+    Sleep  1
+    
+Go To Big Tap Service Interfaces Page
+    Go To  ${BT SERVICE INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT SERVICE INTERFACES TITLE}
+    Sleep  1
+        
 
 Select Checkbox
 	[Arguments]  ${selected}  ${unselected}
@@ -763,6 +798,10 @@ Get Matching Xpath Count Tokenize
 Show All
 	Verify Element Visible  ${SHOW ALL BUTTON}
 	Click Element  ${SHOW ALL BUTTON}  and don't wait
+	
+Show All
+	Verify Element Visible  ${SHOW ALL BUTTON}
+	Click Element  ${SHOW ALL BUTTON}  and don't wait
 
 
 Delete All
@@ -780,8 +819,7 @@ Delete All
 	Verify Element Visible   ${PROCEED DELTE BUTTON}
 	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
 	Verify Element Invisible  ${CONFIRM DELETION POPUP}
-
-
+		
 Input Username  [Arguments]  ${username}
     Input Text  username  ${username}
 
@@ -792,7 +830,7 @@ Input Password  [Arguments]  ${password}
 
 Submit Credentials
 	Mouse Over  xpath=//span[@id='submit_button']
-    Click Element   xpath=//span[@id='submit_button_label']
+    Click Element   ${LOGIN BUTTON}	
 
 
 Welcome Page Should Be Open
@@ -804,7 +842,17 @@ Login Should Have Failed
     Location Should Be  ${ERROR URL}
     Title Should Contain  ${LOG IN TITLE}
 
-
+Add Simple Filtering Query
+	[Arguments]  ${query}
+	Clear Filtering Query
+	Verify Element Visible  ${FILTER QUERY FIELD}
+	Input Text And Verify  ${FILTER QUERY FIELD}  ${query}
+	Verify Element Visible  ${FILTER QUERY BUTTON}
+	Click Element  ${FILTER QUERY BUTTON}  and don't wait
+	
+Clear Filtering Query
+	Click Element  ${FILTER QUERY CLEAR BUTTON}  and don't wait
+	
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
     ${regex}  Generate Random String  ${suffix_len}  [NUMBERS]
@@ -1177,7 +1225,7 @@ Configure Group
 	[Arguments]  ${group_name}  ${user}  ${rbac}
 	${random_rbacname}  Generate Random Name  Rbac  5
     Run Keyword IF  '${rbac}'=='__new__'  
-    ...		Configure RBAC  ${random_rbacname}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
+    ...		Configure RBAC  ${random_rbacname}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
     ${rbac}  Set Variable If  '${rbac}'=='__new__'  ${random_rbacname}  ${rbac} 
 
     ${random_username}  Generate Random Name  User  5
@@ -1433,9 +1481,9 @@ Associate Match Rule
 Configure Big Tap Policy
 	[Arguments]  ${policy}  ${rbac}  ${action}  ${ethertype}	${filter}  ${delivery}  ${service}  ${filter-group}  ${delivery-group}
 	${random_rbacname}  Generate Random Name  Rbac  5
-    Run Keyword If  '${rbac}'=='__new__'  
-    ...		Configure RBAC   	${random_rbacname}			admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}
-    ${rbac}  Set Variable If  '${rbac}'=='__new__'  ${random_rbacname}  ${rbac} 
+    #Run Keyword If  '${rbac}'=='__new__'  
+    #...		Configure RBAC   	${random_rbacname}	admin	${EMPTY}  ${EMPTY}	${EMPTY}  ${EMPTY}	${EMPTY}  ${EMPTY}
+    #${rbac}  Set Variable If  '${rbac}'=='__new__'  ${random_rbacname}  ${rbac} 
 
     ${random_policyname}  Generate Random Name  Policy  5
     ${policy}  Set Variable If  '${policy}'=='__random__'  ${random_policyname}  ${policy}
@@ -1562,7 +1610,7 @@ Edit Big Tap Policy
 	
 	${random_rbacname}  Generate Random Name  Rbac  5
     Run Keyword If  '${rbac}'=='__new__'  
-    ...		Configure RBAC   	${random_rbacname}			admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}
+    ...		Configure RBAC   	${random_rbacname}	admin	${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}	${EMPTY}  ${EMPTY} 
     ${rbac}  Set Variable If  '${rbac}'=='__new__'  ${random_rbacname}  ${rbac}
     
     Go To Big Tap Policies Page
@@ -2231,7 +2279,9 @@ Configure Switch Alias
 Configure Big Tap Interface from Controller Menu
 	[Arguments]  ${id}  ${switch}  ${role}  ${name}
     Go To Controller Interfaces Page
-    Show All
+    #Show All
+    Add Simple Filtering Query  ${switch}
+    Click Element  ${SHOW 100 INTERFACES BUTTON}  and don't wait
     Verify Page Contains Text  ${id}
     ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  ${id}  ${switch}
     Verify Element Visible  ${action_menu}
@@ -2264,7 +2314,9 @@ Configure Big Tap Interface from Controller Menu
 Edit Big Tap Interface from Controller Menu
 	[Arguments]  ${id}  ${switch}  ${role}  ${name}
     Go To Controller Interfaces Page
-    Show All
+    #Show All
+    Add Simple Filtering Query  ${switch}
+    Click Element  ${SHOW 100 INTERFACES BUTTON}  and don't wait
     Verify Page Contains Text  ${id}
     ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  ${id}  ${switch}
     Verify Element Visible  ${action_menu}
@@ -2348,15 +2400,15 @@ Configure Big Tap Interface Group from Big Tap Menu
     Click Element  ${BIG TAP INTERFACE GROUP PLUS BUTTON}  and don't wait
     Verify Element Visible  ${BIG TAP INTERFACE GROUP CONFIGURE POPUP}
 
-    Verify Page Contains Element  ${BIG TAP INTERFACE GROUP VIEW DROPDOWN BUTTON}
+    #Verify Page Contains Element  ${BIG TAP INTERFACE GROUP VIEW DROPDOWN BUTTON}
     Verify Page Contains Element  ${BIG TAP INTERFACE GROUP NAME FIELD}
 
-    Run Keyword Unless  '${name}'=='${EMPTY}'
-    ...		Select From List And Verify  
-    ... 	${BIG TAP INTERFACE GROUP VIEW DROPDOWN BUTTON}
-    ...		${BIG TAP INTERFACE GROUP VIEW DROPDOWN LIST} 
-    ... 	${BIG TAP INTERFACE GROUP VIEW FIELD}
-    ... 	admin-view
+    #Run Keyword Unless  '${name}'=='${EMPTY}'
+    #...	Select From List And Verify  
+    #... 	${BIG TAP INTERFACE GROUP VIEW DROPDOWN BUTTON}
+    #...	${BIG TAP INTERFACE GROUP VIEW DROPDOWN LIST} 
+    #... 	${BIG TAP INTERFACE GROUP VIEW FIELD}
+    #... 	admin-view
 
 
     Run Keyword Unless  '${name}'=='${EMPTY}'
@@ -2394,7 +2446,26 @@ Add Filter Interface to Group
 	Verify Element Visible  ${BIG TAP ADD FILTER INTERFACE PLUS BUTTON}
     Click Element  ${BIG TAP ADD FILTER INTERFACE PLUS BUTTON}  and don't wait
     Verify Element Visible  ${BIGTAP ADD FILTER INTERFACE POPUP}
-    ${filter_checkbox}    Generate Checkbox Xpath  div[@title='Add Filter Interfaces']/following-sibling::div   ${interface-name}
+    #Run Keyword If  '${role}'=='delivery'
+    #...   	 Add Delivery Interface to Group   ${interface-name}
+    
+    Run Keyword If  '${interface-name}'=='All'
+    ...		Click Element  ${BIG TAP ADD ALL INTERFACES TO GROUP CHECKBOX}  and don't wait
+    ...		ELSE IF    	   '${interface-name}'=='${EMPTY}'
+    ...		Return From Keyword
+    ...		ELSE
+    ...     Add Selected Filter Interface to group  ${interface-name}
+    
+    Verify Page Contains Element  ${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}
+	Click Element  ${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}  and don't wait
+	
+
+	Verify Element Invisible  ${BIGTAP ADD FILTER INTERFACE POPUP}
+	Verify Page Contains Text  ${interface-name}
+
+Add Selected Filter Interface to group
+	[Arguments]    ${interface-name}
+	${filter_checkbox}    Generate Checkbox Xpath  div[@title='Add Filter Interfaces']/following-sibling::div   ${interface-name}
     #Verify Page Contains Element  ${FILTER CHECKBOX}
 	#Click Element  ${FILTER CHECKBOX}  and don't wait
 	#Checkbox Should Be Selected  ${FILTER CHECKBOX}
@@ -2402,15 +2473,7 @@ Add Filter Interface to Group
 	Verify Page Contains Element  ${filter_checkbox}
 	Click Element  ${filter_checkbox}  and don't wait
 	Checkbox Should Be Selected  ${filter_checkbox}
-	
-
-	Verify Page Contains Element  ${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}
-	Click Element  ${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}  and don't wait
-	
-
-	Verify Element Invisible  ${BIGTAP ADD FILTER INTERFACE POPUP}
-	Verify Page Contains Text  ${interface-name}
-	
+		
 Add Delivery Interface to Group 
 	[Arguments]    ${interface-name}
 	
@@ -2418,7 +2481,24 @@ Add Delivery Interface to Group
 	Verify Element Visible  ${BIG TAP ADD DELIVERY INTERFACE PLUS BUTTON}
     Click Element  ${BIG TAP ADD DELIVERY INTERFACE PLUS BUTTON}  and don't wait
     Verify Element Visible  ${BIGTAP ADD DELIVERY INTERFACE POPUP}
-    ${delivery_checkbox}    Generate Checkbox Xpath  div[@title='Add Delivery Interfaces']/following-sibling::div   ${interface-name}
+    
+    Run Keyword If  '${interface-name}'=='All'
+    ...		Click Element  ${BIG TAP ADD ALL INTERFACES TO GROUP CHECKBOX}  and don't wait
+    ...		ELSE IF    	   '${interface-name}'=='${EMPTY}'
+    ...		Return From Keyword
+    ...		ELSE
+    ...     Add Selected Delivery Interface to group  ${interface-name}
+   
+   Verify Page Contains Element  ${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}
+   Click Element  ${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}  and don't wait
+	
+
+	Verify Element Invisible  ${BIGTAP ADD DELIVERY INTERFACE POPUP}
+	Verify Page Contains Text  ${interface-name}  
+    
+Add Selected Delivery Interface to group
+	[Arguments]    ${interface-name}
+	${delivery_checkbox}    Generate Checkbox Xpath  div[@title='Add Delivery Interfaces']/following-sibling::div   ${interface-name}
     #Verify Page Contains Element  ${DELIVERY CHECKBOX}
 
 	#Click Element  ${DELIVERY CHECKBOX}  and don't wait
@@ -2428,15 +2508,8 @@ Add Delivery Interface to Group
 	Click Element  ${delivery_checkbox}  and don't wait
 	Checkbox Should Be Selected  ${delivery_checkbox}
 	
-
-	Verify Page Contains Element  ${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}
-	Click Element  ${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}  and don't wait
 	
-
-	Verify Element Invisible  ${BIGTAP ADD DELIVERY INTERFACE POPUP}
-	Verify Page Contains Text  ${interface-name}
-
-
+	
 Edit Big Tap Interface from Big Tap Menu
 	[Arguments]  ${id}  ${switch}  ${role}  ${name}
     Go To Big Tap Interfaces Page
@@ -2985,7 +3058,8 @@ Delete Tunnel
 	[Arguments]  ${interface}  ${switch}
 	
 	Go To Controller Interfaces Page
-    Show All
+    #Show All
+    Add Simple Filtering Query  ${switch}
     Verify Page Contains Text  ${interface}
     ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  ${interface}  ${switch}
     Verify Element Visible  ${action_menu}
@@ -3389,7 +3463,20 @@ Verify Total Traffic
     
     Run Keyword If  '${role}'=='Delivery' 
     ...		Should Contain   ${bigtap_total_delivery_traffic}  ${traffic}
-    
+ 
+Verify Clear Stats Button	
+	[Arguments]  ${page}
+	Run Keyword If  '${page}'=='Interfaces' 
+    ...		Go To Big Tap Interfaces Page
+    #Sleep  2
+    #Run Keyword If  '${page}'=='Interfaces' 
+    #...		Click Element  ${BIGTAP INTERFACES CLEAR STATS BUTTON}  and don't wait
+    Run Keyword If  '${page}'=='Policy' 
+    ...		Go To Big Tap Policies Page
+    Sleep  2
+    #Run Keyword If  '${page}'=='Policy' 
+    Click Element  ${BIGTAP CLEAR STATS BUTTON}  and don't wait
+       
 Configure Lock on BigTap Interface
 	[Arguments]  ${role}  ${if-name}
 	
@@ -3434,7 +3521,7 @@ Unlock the BigTap Interface
   	Verify Element Visible  ${CONFIRM OK BUTTON}
     Click Element  ${CONFIRM OK BUTTON}  and don't wait
     
-	
+
 
     
     

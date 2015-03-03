@@ -14,6 +14,9 @@ c1:
    #libvirt_vm_name: amallina_ztn-c1_06251549
    user: admin
    password: adminadmin
+   pdu:
+    ip: pdu-220-b.bigswitch.com
+    port: 9
 c2:
    ip: 10.9.0.11
  #set_init_ping: false            # default: true
@@ -23,6 +26,12 @@ c2:
    #libvirt_vm_name: amallina_snt-c2_06251553
    user: admin
    password: adminadmin
+   pdu:
+    ip: pdu-220-b.bigswitch.com
+    port: 10
+   
+   
+   
 s1:
   #ip: 10.8.0.147
   alias: leaf0-a
@@ -36,6 +45,9 @@ s1:
     protocol: telnet
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-217-b.bigswitch.com
+   port: 22
   
 s2:
   #ip: 10.8.0.150
@@ -49,6 +61,10 @@ s2:
     port: 7006
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-217-a.bigswitch.com
+   port: 15
+   
 s3:
   #ip: 10.8.0.146
   alias: leaf1-a
@@ -61,6 +77,10 @@ s3:
     port: 7007
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-217-b.bigswitch.com
+   port: 15
+   
 s4:
   #ip: 10.8.0.151
   alias: leaf1-b
@@ -73,6 +93,9 @@ s4:
     port: 7008
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-217-a.bigswitch.com
+   port: 22
 s5:
   #ip: 10.8.0.155
   alias: leaf2-a
@@ -85,6 +108,9 @@ s5:
     port: 7009
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-217-b.bigswitch.com
+   port: 14
 s6:
   #ip: 10.8.0.152
   alias: leaf2-b
@@ -97,6 +123,9 @@ s6:
     port: 7010
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-217-a.bigswitch.com
+   port: 21
 s7:
   #ip: 10.8.0.153
   alias: leaf3-a
@@ -108,11 +137,11 @@ s7:
   console:
     ip: 10.1.8.98
     port: 7011
-  #pdu:
-    #ip: pdu-314-b.bigswitch.com
-    #port: 19
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-218-b.bigswitch.com
+   port: 19
 s8:
   #ip: 10.8.0.153
   alias: leaf3-b
@@ -129,6 +158,9 @@ s8:
     #port: 19
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-218-b.bigswitch.com
+   port: 18
 s9:
   #ip: 10.8.0.147
   alias: leaf4-a
@@ -142,6 +174,9 @@ s9:
     protocol: telnet
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-218-a.bigswitch.com
+   port: 17
   
 s10:
   #ip: 10.8.0.150
@@ -155,6 +190,9 @@ s10:
     port: 7014
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-218-b.bigswitch.com
+   port: 15
 s11:
   #ip: 10.8.0.146
   alias: leaf5-a
@@ -167,6 +205,9 @@ s11:
     port: 7015
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-218-a.bigswitch.com
+   port: 10
 s12:
   #ip: 10.8.0.151
   alias: leaf5-b
@@ -179,6 +220,9 @@ s12:
     port: 7016
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-218-b.bigswitch.com
+   port: 9
 s13:
   #ip: 10.8.0.155
   alias: leaf6-a
@@ -191,6 +235,9 @@ s13:
     port: 7017
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-218-a.bigswitch.com
+   port: 3
 s14:
   #ip: 10.8.0.152
   alias: leaf6-b
@@ -203,6 +250,9 @@ s14:
     port: 7018
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-218-a.bigswitch.com
+   port: 2
 s15:
   #ip: 10.8.0.155
   alias: leaf7-a
@@ -215,6 +265,9 @@ s15:
     port: 7019
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-219-b.bigswitch.com
+   port: 20
 s16:
   #ip: 10.8.0.152
   alias: leaf7-b
@@ -227,6 +280,9 @@ s16:
     port: 7020
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-219-b.bigswitch.com
+   port: 19
   
 s17:
   #ip: 10.8.0.147
@@ -241,6 +297,9 @@ s17:
     protocol: telnet
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-219-b.bigswitch.com
+   port: 18
   
 s18:
   #ip: 10.8.0.150
@@ -254,6 +313,9 @@ s18:
     port: 7022
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-219-b.bigswitch.com
+   port: 17
 s19:
   #ip: 10.8.0.146
   alias: leaf9-a
@@ -266,6 +328,9 @@ s19:
     port: 7023
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-219-b.bigswitch.com
+   port: 15
 s20:
   #ip: 10.8.0.151
   alias: leaf9-b
@@ -278,6 +343,9 @@ s20:
     port: 7024
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-219-b.bigswitch.com
+   port: 14
 s21:
   #ip: 10.8.0.155
   alias: leaf10-a
@@ -290,6 +358,9 @@ s21:
     port: 7025
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-219-b.bigswitch.com
+   port: 13
 s22:
   #ip: 10.8.0.152
   alias: leaf10-b
@@ -302,6 +373,9 @@ s22:
     port: 7026
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-219-b.bigswitch.com
+   port: 12
 s23:
  #ip: 10.8.0.155
   alias: leaf11-a
@@ -314,6 +388,9 @@ s23:
     port: 7027
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-220-a.bigswitch.com
+   port: 23
 s24:
   #ip: 10.8.0.152
   alias: leaf11-b
@@ -326,6 +403,9 @@ s24:
     port: 7028
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-220-b.bigswitch.com
+   port: 23
   
 s25:
   #ip: 10.8.0.147
@@ -340,6 +420,9 @@ s25:
     protocol: telnet
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-320-b.bigswitch.com
+   port: 22
   
 s26:
   #ip: 10.8.0.150
@@ -353,6 +436,9 @@ s26:
     port: 7030
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-320-b.bigswitch.com
+   port: 23
 s27:
   #ip: 10.8.0.146
   alias: leaf13-a
@@ -365,6 +451,9 @@ s27:
     port: 7031
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-319-a.bigswitch.com
+   port: 23
 s28:
   #ip: 10.8.0.151
   alias: leaf13-b
@@ -377,6 +466,9 @@ s28:
     port: 7032
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-319-b.bigswitch.com
+   port: 23
 s29:
   #ip: 10.8.0.155
   alias: leaf14-a
@@ -389,6 +481,9 @@ s29:
     port: 7033
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-318-b.bigswitch.com
+   port: 22
 s30:
   #ip: 10.8.0.152
   alias: leaf14-b
@@ -401,6 +496,9 @@ s30:
     port: 7034
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-318-b.bigswitch.com
+   port: 21
 s31:
  #ip: 10.8.0.155
   alias: leaf15-a
@@ -413,6 +511,9 @@ s31:
     port: 7035
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-317-a.bigswitch.com
+   port: 23
 s32:
   #ip: 10.8.0.152
   alias: leaf15-b
@@ -425,6 +526,9 @@ s32:
     port: 7036
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-317-a.bigswitch.com
+   port: 22
   
 s33:
    #ip: 10.8.0.153
@@ -441,6 +545,9 @@ s33:
     #port: 19
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-219-b.bigswitch.com
+   port: 21
 s34:
   #ip: 10.8.0.149
   alias: spine1
@@ -456,6 +563,9 @@ s34:
     #port: 20
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-219-b.bigswitch.com
+   port: 22
   
   
 s35:
@@ -473,6 +583,9 @@ s35:
     #port: 19
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-218-b.bigswitch.com
+   port: 20
 s36:
   #ip: 10.8.0.149
   alias: spine3
@@ -488,6 +601,9 @@ s36:
     #port: 20
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-218-b.bigswitch.com
+   port: 21
   
 s37:
    #ip: 10.8.0.153
@@ -504,6 +620,9 @@ s37:
     #port: 19
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-219-b.bigswitch.com
+   port: 23
 s38:
   #ip: 10.8.0.149
   alias: spine5
@@ -519,34 +638,11 @@ s38:
     #port: 20
   set_session_ssh: false
   set_init_ping: false
+  pdu:
+   ip: pdu-218-b.bigswitch.com
+   port: 23
 
-#h1:
-#  ip: 10.193.0.21
-#   ip: 10.195.0.103
-#   user: root
-#   password: bsn
-   
-      
-#h2:
-#  ip: 10.195.0.104
-#  user: root
-#  password: bsn
-  
-#h3:
-#  ip: 10.195.0.101
-#  user: root
-#  password: bsn
-   
-#h4:
-#  ip: 10.195.0.102
-#  user: root
-#  password: bsn
-     
-#h5:
-#  ip: 10.195.0.105
-#  user: root
-#  password: bsn
-     
+
 #h6:
 #  ip: 10.195.0.106
 #  user: root

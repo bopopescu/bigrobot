@@ -1065,19 +1065,25 @@ class Test(object):
         p.cli(str(reboot_cmd).encode('ascii'))
         p.close()
 
-    def power_cycle(self, node, minutes=5):
+    def power_cycle(self, node, minutes=0):
         self._pdu_mgt(node, 'reboot')
         helpers.log("Power cycled '%s'. Sleeping for %s minutes while it comes up."
                     % (node, minutes))
         helpers.sleep(int(minutes) * 60)
 
-    def power_down(self, node):
+    def power_down(self, node, minutes=0):
         self._pdu_mgt(node, 'off')
         helpers.log("Powered down '%s'" % node)
+        helpers.log("Powered down '%s'. Sleeping for %s minutes while it comes up."
+                    % (node, minutes))
+        helpers.sleep(int(minutes) * 60)
 
-    def power_up(self, node):
+    def power_up(self, node, minutes=0):
         self._pdu_mgt(node, 'on')
         helpers.log("Powered up '%s'" % node)
+        helpers.log("Powered up '%s'. Sleeping for %s minutes while it comes up."
+                    % (node, minutes))
+        helpers.sleep(int(minutes) * 60)
 
     def initialize(self):
         """

@@ -496,79 +496,79 @@ class T5Platform(object):
                           master, slave, c1 c2, all
 
           usage:
-          output:  
-                   
+          output:
+
         '''
- 
+
         t = test.Test()
-        master = t.controller("master")       
+        master = t.controller("master")
         obj = utilities()
-      
+
         string = 'boot partition ' + option
-        if node == 'all':     
-            slave = t.controller("slave")  
+        if node == 'all':
+            slave = t.controller("slave")
             slave_name = slave.name()
-            slave_contr = t.controller(slave_name)     
-            helpers.log("***** USR INFO:  Node name is : %s" %  slave_name)                
+            slave_contr = t.controller(slave_name)
+            helpers.log("***** USR INFO:  Node name is : %s" % slave_name)
             ipAddr2 = slave_contr.ip()
-            
-            master_name = master.name()   
-            master_contr = t.controller(master_name)      
-            ipAddr1 = master_contr.ip() 
-           
-            
+
+            master_name = master.name()
+            master_contr = t.controller(master_name)
+            ipAddr1 = master_contr.ip()
+
+
             slave_contr.enable('')
             slave_contr.send(string)
-            slave_contr.expect(r'[\r\n].+ to continue\):', timeout=180)            
+            slave_contr.expect(r'[\r\n].+ to continue\):', timeout=180)
             slave_contr.send("yes")
             try:
                 slave_contr.expect(r'The system is going down for reboot NOW!', timeout=60)
                 content = slave_contr.cli_content()
-                helpers.log("*****Output is :\n%s" % content)            
-            
+                helpers.log("*****Output is :\n%s" % content)
+
             except:
                 helpers.log('ERROR: SLave boot partition NOT successfully')
                 return False
             else:
-                helpers.log('INFO: Slave boot partition successfully')     
-            
-            master_contr.enable('')            
+                helpers.log('INFO: Slave boot partition successfully')
+
+            master_contr.enable('')
             master_contr.send(string)
-            master_contr.expect(r'[\r\n].+ to continue\):', timeout=180)            
+            master_contr.expect(r'[\r\n].+ to continue\):', timeout=180)
             master_contr.send("yes")
             try:
                 master_contr.expect(r'The system is going down for reboot NOW!', timeout=60)
                 content = master_contr.cli_content()
-                helpers.log("*****Output is :\n%s" % content)            
-            
+                helpers.log("*****Output is :\n%s" % content)
+
             except:
                 helpers.log('ERROR: Master boot partition NOT successfully')
                 return False
             else:
-                helpers.log('INFO: Master boot partition successfully')                       
-            
-                                         
+                helpers.log('INFO: Master boot partition successfully')
+
+
         else:
-            node = t.controller(node)                
+            node = t.controller(node)
             ipAddr1 = node.ip()
             name = node.name()
-            c = t.controller(name) 
+            c = t.controller(name)
             string = 'boot partition ' + option
             c.enable('')
             c.send(string)
-            c.expect(r'[\r\n].+ to continue\):', timeout=180)            
+            c.expect(r'[\r\n].+ to continue\):', timeout=180)
             c.send("yes")
             try:
                 c.expect(r'The system is going down for reboot NOW!', timeout=180)
                 content = c.cli_content()
-                helpers.log("*****Output is :\n%s" % content)            
-            
+                helpers.log("*****Output is :\n%s" % content)
+
             except:
                 helpers.log('ERROR: boot partition NOT successfully')
                 return False
             else:
-                helpers.log('INFO: boot partition successfully')                       
-          
+                helpers.log('INFO: boot partition successfully')
+
         helpers.log("Node is rebooting")
         helpers.sleep(120)
         count = 0
@@ -586,7 +586,7 @@ class T5Platform(object):
                 helpers.log("Controller just came alive. Waiting for it to become fully functional")
                 helpers.sleep(180)
                 break
-            
+
         if node == 'all':
             while (True):
                 loss = helpers.ping(ipAddr2)
@@ -599,12 +599,12 @@ class T5Platform(object):
                     count += 1
                     helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr2, count))
                 else:
-                    helpers.log("Controller came alive. ")                      
+                    helpers.log("Controller came alive. ")
                     break
         return True
- 
-    
-        
+
+
+
 
     def cluster_node_reload(self, masterNode=True):
 
@@ -5859,15 +5859,13 @@ class T5Platform(object):
     def spawn_log_out(self, session_id, node='master'):
 
         bsn = bsnCommon()
-        helpers.log("***Entering==> spawn_log_in   \n")
+        helpers.log("***Entering==> spawn_log_out   \n")
 
         for session in session_id:
             session.close()
 
-        helpers.log("***Exiting==> spawn_log_in   \n")
+        helpers.log("***Exiting==> spawn_log_out   \n")
         return True
-
-
 
     def generate_support(self, node='master'):
         helpers.log("***Entering==> generate support file  \n")
@@ -5916,8 +5914,6 @@ class T5Platform(object):
         else:
             c.enable('delete support ' + filename)
         return True
-
-
 
     def cli_get_upgrade_progress(self, node='master'):
         '''
@@ -6199,12 +6195,12 @@ class T5Platform(object):
     def get_boot_partition_image(self, node, flag):
         '''
         input:  flag type - Active,  Boot   Pending
-        in progress 
+        in progress
         '''
         helpers.test_log("Entering ==> get_boot_partition")
 
         partition = self.cli_show_boot_partition(node)
- 
+
         if flag == 'alternate':
             for key in partition:
                 if 'Active' not in partition[key]['state']:
@@ -6215,7 +6211,7 @@ class T5Platform(object):
                 if 'Active' in partition[key]['state']:
                     return partition[key]['image']
                     break
- 
+
 
     def cli_verify_node_upgrade_partition(self, singleNode=False):
 
@@ -6641,21 +6637,20 @@ class T5Platform(object):
             return False
 
     def rest_show_fabric_status(self):
-        '''Return True is overall-status is OK  
+        '''Return True is overall-status is OK
             Return False if overall-status is NOT OK
-            
+
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bcf/info/summary/fabric'      
+        url = '/api/v1/data/controller/applications/bcf/info/summary/fabric'
         c.rest.get(url)
         data = c.rest.content()
         if data[0]['overall-status'] == "NOT OK":
-            helpers.log("ERROR:  fabric status is NOT OK  \n  %s"  % data  )
+            helpers.log("ERROR:  fabric status is NOT OK  \n  %s" % data)
             c.enable("show fabric error")
             return False
         else:
-            helpers.log("USR INFO:  fabric status is OK  \n  %s"  % data  ) 
+            helpers.log("USR INFO:  fabric status is OK  \n  %s" % data)
             return True
 
- 

@@ -2276,10 +2276,10 @@ corsair suite setup
     bash  s3  ofad-ctl crc enable
     bash  s4  ofad-ctl crc enable    
     #Add ip address to 40G ports on arista
-    cli arista add ip address  as7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
-    cli arista add ip address  as7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull                      
-    cli arista add mtu interface  as7  Ethernet49/1  9212
-    cli arista add mtu interface  as7  Ethernet51/1  9212     
+    cli arista add ip address  s7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
+    cli arista add ip address  s7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull                      
+    cli arista add mtu interface  s7  Ethernet49/1  9212
+    cli arista add mtu interface  s7  Ethernet51/1  9212     
     Sleep  10    
     #Setup tunnels across  Accton 4600 (app-ac4600-1)
     #### CORE IS TUNNEL
@@ -2348,10 +2348,10 @@ corsair suite teardown
     Run Keyword and Ignore Error  tunnel teardown
     Run Keyword and Ignore Error  cli enable interface  s4  ${interswitch_link_5710_6700}
     #Delete previously added ip address to 40G ports on arista
-    Run Keyword and Ignore Error  cli arista delete ip address  as7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
-    Run Keyword and Ignore Error  cli arista delete ip address  as7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull
-    Run Keyword and Ignore Error  cli arista delete mtu interface  as7  Ethernet49/1  9212
-    Run Keyword and Ignore Error  cli arista delete mtu interface  as7  Ethernet51/1  9212    
+    Run Keyword and Ignore Error  cli arista delete ip address  s7  192.168.29.2  30  Ethernet49/1  speed=forced 40gfull
+    Run Keyword and Ignore Error  cli arista delete ip address  s7  192.168.22.2  30  Ethernet51/1  speed=forced 40gfull
+    Run Keyword and Ignore Error  cli arista delete mtu interface  s7  Ethernet49/1  9212
+    Run Keyword and Ignore Error  cli arista delete mtu interface  s7  Ethernet51/1  9212    
     Run Keyword and Ignore Error  REST delete policy  admin-view  ${policy_name}
     Run Keyword and Ignore Error  REST delete policy  admin-view  ${policy_name_1}
     Run Keyword and Ignore Error  rest delete interface role  s1  ${switch1_filter_intf}  filter 

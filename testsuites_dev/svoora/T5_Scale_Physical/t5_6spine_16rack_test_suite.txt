@@ -18,6 +18,7 @@ Library         keywords/T5Utilities.py
 Library         keywords/BsnCommon.py
 Library         Collections.py
 Library         keywords/Ixia.py
+Library         keywords/T5ZTN.py
 #Resource        testsuites_dev/svoora/T5_policy_physical/t5_policy_physical_inter_variables.txt
 Library         OperatingSystem
 Library         Collections
@@ -63,6 +64,7 @@ ${empty_cfg_file_path}       /home/svoora/scale_empty.snp
 ${cfg_file_server}		10.8.22.2
 ${file_server_passwd}	bsn
 ${monitor_file}			exception_file.log
+${image}      bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-*.pkg
 
 * Test Case 
 
@@ -70,7 +72,7 @@ copy config file to controller
 	[Tags]  T1 
 	#manual passed
 	Log To console  Getting config file server
-	copy config from server  ${cfg1_file_path}  ${cfg_file_server}  ${file_server_passwd}  ${copied_file1} 
+	copy config from server to snapshot   ${cfg1_file_path}  ${cfg_file_server}  ${file_server_passwd}  ${copied_file1} 
 	verify file  ${copied_file1}
 	Log To Console  Verifiing cluster formation
 	${returnVal}=  rest verify show cluster
@@ -88,6 +90,23 @@ config controller with copied config file
 	sleep  120
 	stop monitoring the exception
 	parse monitoring file
+	${return}=  rest verify sync state
+    Should Be True  ${return}
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    verify fabric switch link and errors
+    reconnect switch ips   s1
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} < 200
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} < 1
+    ${acl_table}=  get ACL table count  s1
+    Should be true  ${acl_table} == 3001
+    
+    
+    
 	
 verify config sync between controllers
 	[Tags]  T3
@@ -105,90 +124,913 @@ verify disk usage in controllers
     Should Be True  ${return}
         
 	
-Create L3 devices in ixia
-    [Tags]   T5L3
-    ${redirect-host_a}=  L3 add host  src_ip=30.0.0.2  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=a  
-    ...                      src_mac=00:70:03:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_b}=  L3 add host  src_ip=30.0.0.3  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=b  
-    ...                      src_mac=00:70:04:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_c}=  L3 add host  src_ip=30.0.0.4  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=c  
-    ...                      src_mac=00:70:05:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_d}=  L3 add host  src_ip=30.0.0.5  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=d  
-    ...                      src_mac=00:70:06:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_e}=  L3 add host  src_ip=30.0.0.6  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=e  
-    ...                      src_mac=00:70:07:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_f}=  L3 add host  src_ip=30.0.0.7  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=f  
-    ...                      src_mac=00:70:08:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_g}=  L3 add host  src_ip=30.0.0.8  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=g  
-    ...                      src_mac=00:70:09:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_h}=  L3 add host  src_ip=30.0.0.9  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=h  
-    ...                      src_mac=00:70:10:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_i}=  L3 add host  src_ip=30.0.0.10  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=i  
-    ...                      src_mac=00:70:11:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_j}=  L3 add host  src_ip=30.0.0.11  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=j  
-    ...                      src_mac=00:70:12:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_k}=  L3 add host  src_ip=30.0.0.12  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=k  
-    ...                      src_mac=00:70:13:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_l}=  L3 add host  src_ip=30.0.0.13  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=l  
-    ...                      src_mac=00:70:14:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_m}=  L3 add host  src_ip=30.0.0.14  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=m  
-    ...                      src_mac=00:70:15:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_n}=  L3 add host  src_ip=30.0.0.15  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=n  
-    ...                      src_mac=00:70:16:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_o}=  L3 add host  src_ip=30.0.0.16  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=o  
-    ...                      src_mac=00:70:17:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    ${redirect-host_p}=  L3 add host  src_ip=30.0.0.17  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=p  
-    ...                      src_mac=00:70:18:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
-    
-    pause    FREEZZEE!!!
-    
 
 Create L2 devices in ixia
-    [Tags]   T5L2
-    ${flow_a_to_c}=  L2 add  name=port_a_to_c  flow=a<->c  src_mac=00:70:03:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:05:00:01:01   
-    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
-    
-    ${flow_b_to_d}=  L2 add  name=port_b_to_d  flow=b<->d  src_mac=00:70:04:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:06:00:01:01   
-    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
-    
-    ${flow_e_to_g}=  L2 add  name=port_e_to_g  flow=e<->g  src_mac=00:70:07:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:09:00:01:01   
-    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
-    
-    ${flow_f_to_h}=  L2 add  name=port_f_to_h  flow=f<->h  src_mac=00:70:08:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:10:00:01:01   
-    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
-    
-    ${flow_i_to_k}=  L2 add  name=port_i_to_k  flow=i<->k  src_mac=00:70:11:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:13:00:01:01   
-    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
-    
-    ${flow_j_to_l}=  L2 add  name=port_j_to_l  flow=j<->l  src_mac=00:70:12:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:14:00:01:01   
-    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
-    
-    ${flow_m_to_o}=  L2 add  name=port_m_to_o  flow=m<->o  src_mac=00:70:15:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:17:00:01:01   
-    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
-    
-    ${flow_n_to_p}=  L2 add  name=port_n_to_p  flow=n<->p  src_mac=00:70:16:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:18:00:01:01   
-    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
-    pause      
+    [Tags]   T5L2   traffic
+    reconnect switch ips   s1
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    create L2 streams
     clear stats
     apply traffic
     start traffic
     #pause    FREEZZEEE!!!
     sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    verify L2 packet_loss_duration
+        
+
+    
+    
+Create L3 devices in ixia
+    [Tags]   T5L3   traffic
+    reconnect switch ips   s1
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    create L3 streams
+    #pause    FREEZZEE!!!
+    L3 start hosts    RetransmitInterval=10000   RetransmitCount=10    arp_check=False
+    sleep  120   #Sleeping for 100 seconds for the ARP to complete for 46K end points
+    #pause       FREEZZEEE!!!
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} > 45000
+    
+    
+
+Controller HA failover with L2 traffic
+    [Tags]  HA1
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    cli cluster take leader
+    stop monitoring the exception
+    parse monitoring file
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    verify fabric switch link and errors
+    sleep  5
+    stop traffic
+    verify L2 packet_loss_duration
+    reconnect switch ips   s1
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} > 45000
+    ${acl_table}=  get ACL table count  s1
+    Should be true  ${acl_table} == 3001
+    
+    
+Controller Master reboot    
+    [Tags]  HA2
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    ${returnVal}=  cli verify cluster master reboot
+    Should Be True  ${returnVal}
+    stop monitoring the exception
+    parse monitoring file
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    sleep  5
+    stop traffic
+    verify L2 packet_loss_duration
+    reconnect switch ips   s1
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} > 45000
+    ${acl_table}=  get ACL table count  s1
+    Should be true  ${acl_table} == 3001
+    
+
+Controller Slave Reboot
+    [Tags]  HA3
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    ${returnVal}=  cli verify cluster slave reboot
+    Should Be True  ${returnVal}
+    stop monitoring the exception
+    parse monitoring file
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    sleep  5
+    stop traffic
+    verify L2 packet_loss_duration
+    reconnect switch ips   s1
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} > 45000
+    ${acl_table}=  get ACL table count  s1
+    Should be true  ${acl_table} == 3001
+    
+
+Power off Master Controller
+    [Tags]  HA4
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    {active}=  get node name   master
+    power down switch  {active}
+    sleep  5
+    power up switch  ${active}
+    sleep  180
+    
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    verify L2 packet_loss_duration
+    reconnect switch ips   s1
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} > 45000
+    ${acl_table}=  get ACL table count  s1
+    Should be true  ${acl_table} == 3001
+    
+
+
+Power off Slave Controller
+    [Tags]  HA5
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    {slave}=  get node name   slave
+    power down switch  {slave}
+    sleep  5
+    power up switch  ${slave}
+    sleep  180
+    
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    verify L2 packet_loss_duration
+    reconnect switch ips   s1
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} > 45000
+    ${acl_table}=  get ACL table count  s1
+    Should be true  ${acl_table} == 3001
+    
+
+Reboot all switches
+    [Tags]   reboot
+    Reboot all switches
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    reconnect switch ips   s1
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} < 200
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} < 1
+    ${acl_table}=  get ACL table count  s1
+    Should be true  ${acl_table} == 3001
+    
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    verify L2 packet_loss_duration
+    
+    
+
+Reboot spine print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s33
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+    
+
+PowerOff spine print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s33
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+PowerOn spine print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s33
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+Reboot leaf print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+PowerOff leaf print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+PowerOn leaf print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+        
+Shutdown leaf 40g interface and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    ##SHUT DOWN LEAF 40G INTERFACE
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+Bringup leaf 40g interface and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    ##SHUT DOWN LEAF 40G INTERFACE
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+   
+
+Shutdown spine 40g interface and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    ##SHUT DOWN spine 40G INTERFACE
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+   
+Bringup spine 40g interface and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    ##SHUT DOWN spine 40G INTERFACE
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+   
+
+Remove leaf from configuration and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+Add leaf to configuration and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+Remove spine from configuration and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+Add spine to configuration and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+Restart ofad in spine and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+Restart ofad in leaf and print traffic convergence time   
+    [Tags]   reboot
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    verify mac learning rate
+    ${ep_count}=  rest get active end point count
+    Should be true  ${ep_count} > 48000
+    #pause   FREEZZEEE!!!!
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    stop traffic
+    clear stats
+    start traffic
+    power cycle switch   s7
+    sleep   120
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
+restart floodlight in master controller
+   [Tags]  HA2
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    ###RESTART floodlight deamon
+    ${returnVal}=  cli verify cluster master reboot
+    Should Be True  ${returnVal}
+    stop monitoring the exception
+    parse monitoring file
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    sleep  5
+    stop traffic
+    verify L2 packet_loss_duration
+    reconnect switch ips   s1
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} > 45000
+    ${acl_table}=  get ACL table count  s1
+    Should be true  ${acl_table} == 3001
+    
+restart floodlight in slave controller
+   [Tags]  HA2
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    ###RESTART floodlight deamon
+    ${returnVal}=  cli verify cluster master reboot
+    Should Be True  ${returnVal}
+    stop monitoring the exception
+    parse monitoring file
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    verify fabric switch link and errors
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    sleep  5
+    stop traffic
+    verify L2 packet_loss_duration
+    reconnect switch ips   s1
+    ${l2_table}=  get L2 table count  s1
+    Should be true  ${l2_table} > 48000
+    ${l3_table}=  get L3 table count  s1
+    Should be true  ${l3_table} > 45000
+    ${acl_table}=  get ACL table count  s1
+    Should be true  ${acl_table} == 3001
+    
+	
+upgrade stage in master
+    [Tags]  stage
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    ${num}  ${_}=      cli_check_image   master
+    Run Keyword if   ${num} == -1    copy_pkg_from_server    ${image}        master
+    ${result}=      cli_upgrade_stage      master
+    Should be True     ${result}
+    stop monitoring the exception
+    parse monitoring file
+    
+upgrade stage in slave
+    [Tags]  stage
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    ${num}  ${_}=      cli_check_image   slave
+    Run Keyword if   ${num} == -1    copy_pkg_from_server    ${image}        slave
+    ${result}=      cli_upgrade_stage      slave
+    Should be True     ${result}
+    stop monitoring the exception
+    parse monitoring file
+    
+   
+collect tech-support
+    [Tags]  support
+    start monitoring the exception
+    ${file_exist}=  verify file  ${copied_file1}
+    Should Be True  ${file_exist}
+    cli  master  support  timeout=1200
+    #sleep  1200
+    stop monitoring the exception
+    parse monitoring file
+     
+* Keywords
+
+create L2 streams
+
+    ${flow_a_to_c}=  L2 add  name=port_a_to_c  flow=a<->c  src_mac=00:70:03:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:05:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable  ${flow_a_to_c}
+    ${flow_b_to_d}=  L2 add  name=port_b_to_d  flow=b<->d  src_mac=00:70:04:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:06:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable  ${flow_b_to_d}
+    ${flow_e_to_g}=  L2 add  name=port_e_to_g  flow=e<->g  src_mac=00:70:07:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:09:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable  ${flow_e_to_g}
+    ${flow_f_to_h}=  L2 add  name=port_f_to_h  flow=f<->h  src_mac=00:70:08:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:10:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable  ${flow_f_to_h}
+    ${flow_i_to_k}=  L2 add  name=port_i_to_k  flow=i<->k  src_mac=00:70:11:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:13:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable  ${flow_i_to_k}
+    ${flow_j_to_l}=  L2 add  name=port_j_to_l  flow=j<->l  src_mac=00:70:12:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:14:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${flow_j_to_l}
+    ${flow_m_to_o}=  L2 add  name=port_m_to_o  flow=m<->o  src_mac=00:70:15:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:17:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable   ${flow_m_to_o}
+    ${flow_n_to_p}=  L2 add  name=port_n_to_p  flow=n<->p  src_mac=00:70:16:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:18:00:01:01   
+    ...                  dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
+   Set Suite Variable    ${flow_n_to_p}
+
+create L3 streams
+
+    ${host_a}=  L3 add host  src_ip=30.0.0.2  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=a  arp_check=False  RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:03:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_a}
+    
+    ${host_b}=  L3 add host  src_ip=30.0.0.3  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=b  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:04:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_b}
+    
+    ${host_c}=  L3 add host  src_ip=30.0.0.4  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=c  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:05:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_c}
+    
+    ${host_d}=  L3 add host  src_ip=30.0.0.5  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=d  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:06:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_d}
+    
+    ${host_e}=  L3 add host  src_ip=30.0.0.6  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=e  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:07:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_e}
+    
+    ${host_f}=  L3 add host  src_ip=30.0.0.7  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=f  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:08:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_f}
+    
+    ${host_g}=  L3 add host  src_ip=30.0.0.8  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=g  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:09:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_g}
+    
+    ${host_h}=  L3 add host  src_ip=30.0.0.9  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=h  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:10:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_h}
+    
+    ${host_i}=  L3 add host  src_ip=30.0.0.10  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=i  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:11:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_i}
+    
+    ${host_j}=  L3 add host  src_ip=30.0.0.11  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=j  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:12:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_j}
+    
+    ${host_k}=  L3 add host  src_ip=30.0.0.12  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=k  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:13:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_k}
+    
+    ${host_l}=  L3 add host  src_ip=30.0.0.13  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=l  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:14:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_l}
+    
+    ${host_m}=  L3 add host  src_ip=30.0.0.14  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=m  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:15:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_m}
+    
+    ${host_n}=  L3 add host  src_ip=30.0.0.15  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=n  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:16:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_n}
+    
+    ${host_o}=  L3 add host  src_ip=30.0.0.16  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=o  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:17:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_o}
+    
+    ${host_p}=  L3 add host  src_ip=30.0.0.17  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=p  arp_check=False    RetransmitInterval=10000  RetransmitCount=10  
+    ...                      src_mac=00:70:18:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_cnt=3000  vlan_step=1
+    Set Suite Variable    ${host_p}
+    
+    
+verify L2 packet_loss_duration
+
+    ${ATOC}=  fetch port stats  stream=${flow_a_to_c}
+    ${rx_value_c}=  verify dict key  ${ATOC}  port_a_to_c  packet_loss_duration_ms
+    should be true   ${rx_value_c} == 0
+    
+    ${BTOD}=  fetch port stats  stream=${flow_b_to_d}
+    ${rx_value_b}=  verify dict key  ${BTOD}  port_b_to_d  packet_loss_duration_ms
+    Should be true  ${rx_value_b} == 0
+    
+    ${ETOG}=  fetch port stats  stream=${flow_e_to_g}
+    ${rx_value_e}=  verify dict key  ${ETOG}  port_e_to_g  packet_loss_duration_ms
+    Should be true  ${rx_value_e} == 0
+    
+    ${FTOH}=  fetch port stats  stream=${flow_g_to_h}
+    ${rx_value_f}=  verify dict key  ${FTOH}  port_f_to_h  packet_loss_duration_ms
+    Should be true  ${rx_value_f} == 0
+    
+    ${ITOK}=  fetch port stats  stream=${flow_i_to_k}
+    ${rx_value_i}=  verify dict key  ${ITOK}  port_i_to_k  packet_loss_duration_ms
+    Should be true  ${rx_value_i} == 0
+    
+    ${JTOL}=  fetch port stats  stream=${flow_j_to_l}
+    ${rx_value_j}=  verify dict key  ${JTOL}  port_j_to_l  packet_loss_duration_ms
+    Should be true  ${rx_value_j} == 0
+    
+    ${MTOO}=  fetch port stats  stream=${flow_m_to_o}
+    ${rx_value_m}=  verify dict key  ${MTOO}  port_m_to_o  packet_loss_duration_ms
+    Should be true  ${rx_value_m} == 0
+    
+    ${NTOP}=  fetch port stats  stream=${flow_n_to_p}
+    ${rx_value_n}=  verify dict key  ${ATOC}  port_n_to_p  packet_loss_duration_ms
+    Should be true  ${rx_value_n} == 0
+   
+print L2 packet_loss_duration
+
+    ${ATOC}=  fetch port stats  stream=${flow_a_to_c}
+    ${rx_value_c}=  verify dict key  ${ATOC}  port_a_to_c  packet_loss_duration_ms
+    Log to console   ${rx_value_c}
+    
+    ${BTOD}=  fetch port stats  stream=${flow_b_to_d}
+    ${rx_value_b}=  verify dict key  ${BTOD}  port_b_to_d  packet_loss_duration_ms
+    Log to console   ${rx_value_b} 
+    
+    ${ETOG}=  fetch port stats  stream=${flow_e_to_g}
+    ${rx_value_e}=  verify dict key  ${ETOG}  port_e_to_g  packet_loss_duration_ms
+    Log to console     ${rx_value_e} 
+    
+    ${FTOH}=  fetch port stats  stream=${flow_g_to_h}
+    ${rx_value_f}=  verify dict key  ${FTOH}  port_f_to_h  packet_loss_duration_ms
+    Log to console     ${rx_value_f} 
+    
+    ${ITOK}=  fetch port stats  stream=${flow_i_to_k}
+    ${rx_value_i}=  verify dict key  ${ITOK}  port_i_to_k  packet_loss_duration_ms
+    Log to console     ${rx_value_i} 
+    
+    ${JTOL}=  fetch port stats  stream=${flow_j_to_l}
+    ${rx_value_j}=  verify dict key  ${JTOL}  port_j_to_l  packet_loss_duration_ms
+    Log to console     ${rx_value_j} 
+    
+    ${MTOO}=  fetch port stats  stream=${flow_m_to_o}
+    ${rx_value_m}=  verify dict key  ${MTOO}  port_m_to_o  packet_loss_duration_ms
+    Log to console     ${rx_value_m} 
+    
+    ${NTOP}=  fetch port stats  stream=${flow_n_to_p}
+    ${rx_value_n}=  verify dict key  ${ATOC}  port_n_to_p  packet_loss_duration_ms
+    Log to console     ${rx_value_n} 
+   
+   
+verify mac learning rate
+
     ${results}=  fetch port stats  
     ${rx_value_c}=  verify dict key  ${results}  c  received_frame_rate
     ${tx_value_a}=  verify dict key  ${results}  a  transmitted_frame_rate
@@ -236,862 +1078,50 @@ Create L2 devices in ixia
     ${tx_value_p}=  verify dict key  ${results}  p  transmitted_frame_rate
     ${in_range}=  ixia verify traffic rate  ${rx_value_n}  ${tx_value_p}
     Should be true  ${in_range}
+       
+
+Reboot all switches
     
-    ${ep_count}=  rest get active end point count
-    Should be true  ${ep_count} > 48000
-    
-    #pause   FREEZZEEE!!!!
-    stop traffic
-    
-    ${ATOC}=  fetch port stats  stream=${flow_a_to_c}
-    ${rx_value_c}=  verify dict key  ${ATOC}  port_a_to_c  packet_loss_duration_ms
-    should be true   ${rx_value_c} == 0
-    
-    ${BTOD}=  fetch port stats  stream=${flow_b_to_d}
-    ${rx_value_b}=  verify dict key  ${BTOD}  port_b_to_d  packet_loss_duration_ms
-    
-    Should be true  ${rx_value_b} == 0
-    
-    ${ETOG}=  fetch port stats  stream=${flow_e_to_g}
-    ${rx_value_e}=  verify dict key  ${ETOG}  port_e_to_g  packet_loss_duration_ms
-    
-    Should be true  ${rx_value_e} == 0
-    
-    ${FTOH}=  fetch port stats  stream=${flow_g_to_h}
-    ${rx_value_f}=  verify dict key  ${FTOH}  port_f_to_h  packet_loss_duration_ms
-    
-    Should be true  ${rx_value_f} == 0
-    
-    ${ITOK}=  fetch port stats  stream=${flow_i_to_k}
-    ${rx_value_i}=  verify dict key  ${ITOK}  port_i_to_k  packet_loss_duration_ms
-    
-    Should be true  ${rx_value_i} == 0
-    
-    ${JTOL}=  fetch port stats  stream=${flow_j_to_l}
-    ${rx_value_j}=  verify dict key  ${JTOL}  port_j_to_l  packet_loss_duration_ms
-    
-    Should be true  ${rx_value_j} == 0
-    
-    ${MTOO}=  fetch port stats  stream=${flow_m_to_o}
-    ${rx_value_m}=  verify dict key  ${MTOO}  port_m_to_o  packet_loss_duration_ms
-    
-    Should be true  ${rx_value_m} == 0
-    
-    ${NTOP}=  fetch port stats  stream=${flow_n_to_p}
-    ${rx_value_n}=  verify dict key  ${ATOC}  port_n_to_p  packet_loss_duration_ms
-    
-    Should be true  ${rx_value_n} == 0
-    
-    
+    power cycle switch  s1
+    power cycle switch  s2
+    power cycle switch  s3
+    power cycle switch  s4
+    power cycle switch  s5
+    power cycle switch  s6
+    power cycle switch  s7
+    power cycle switch  s8
+    power cycle switch  s9
+    power cycle switch  s10
+    power cycle switch  s11
+    power cycle switch  s12
+    power cycle switch  s13
+    power cycle switch  s14
+    power cycle switch  s15
+    power cycle switch  s16
+    power cycle switch  s17
+    power cycle switch  s18
+    power cycle switch  s19
+    power cycle switch  s20
+    power cycle switch  s21
+    power cycle switch  s22
+    power cycle switch  s23
+    power cycle switch  s24
+    power cycle switch  s25
+    power cycle switch  s26
+    power cycle switch  s27
+    power cycle switch  s28
+    power cycle switch  s29
+    power cycle switch  s30
+    power cycle switch  s31
+    power cycle switch  s32
+    power cycle switch  s33
+    power cycle switch  s34
+    power cycle switch  s35
+    power cycle switch  s36
+    power cycle switch  s37
+    power cycle switch  s38
 
 
-ping bms to check L2 fwding
-	[Tags]  scaling  manual 
-	manual passed 
-	[Tags]  scaling   	
-	#Log To console  Configuring mininet bms
-	#mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
-	#mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
-	#mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
-	#mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
-	
-	#mininet host gw  bm0  10.10.1.1  bm0-bond0
-	#mininet host gw  bm5  10.10.1.1  bm5-bond0
-	#mininet host gw  bm1  10.10.2.1  bm1-bond0
-	#mininet host gw  bm4  10.10.2.1  bm4-bond0
-	
-	#Log to console  Pinging from bm0 to bm5
-    #${loss}=  mininet ping  bm0  bm5
-    #pause                UNDER MININET!!!!
-    #Should Be True  ${loss} == 0
-    #Run Keyword Unless  ${loss} == 0    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
-			
-	
-ping bms to check L3 fwding
-	[Tags]  scaling  manual 
-	manual passed 
-	#Log To Console  Removing Tenant1 and adding its vns to Tenant0
-	#rest delete tenant  Tenant1
-	#rest add vns ip  Tenant0  Tenant1-VNS1  10.10.2.1  24
-	#rest add vns  Tenant0  Tenant1-VNS1
-	#rest add portgroup to vns  Tenant0  Tenant1-VNS1  leaf0-bm1  -1
-	#rest add portgroup to vns  Tenant0  Tenant1-VNS1  ${m_pg}   -1
-	#Log To console  Configuring mininet bms
-	#mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
-	#mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
-	#mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
-	#mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
-	
-	#mininet host gw  bm0  10.10.1.1  bm0-bond0
-	#mininet host gw  bm5  10.10.1.1  bm5-bond0
-	#mininet host gw  bm1  10.10.2.1  bm1-bond0
-	#mininet host gw  bm4  10.10.2.1  bm4-bond0
-	
-	#Log To console  Checking ping between vns
-	#${loss}=  mininet l3 ping  bm0  10.10.2.2
-	#Should Be True  ${loss} < 100
-	#Test pause execution (SHELL)
-    #pause            Freeze!!!
-	#${loss}=  mininet l3 ping  bm1  10.10.1.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm5  10.10.2.3
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm4  10.10.1.3
-	#Should Be True  ${loss} < 100
-	
-Remove spine0 and check L2/L3 
-	[Tags]  scaling  manual 
-	manual passed   
-	#Log To Console  Removing spine0 from configuation
-	#start monitoring the exception
-	#rest delete fabric switch  spine0 
-	#sleep  5
-	#stop monitoring the exception
-	#parse monitoring file
-	
-	#Log to console  Pinging from bm0 to 10.10.1.3
-    #${loss}=  mininet ping  bm0  10.10.1.3
-    #Should Be True  ${loss} < 100
-    #Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
-	#Log To console  Configuring mininet bms
-	#mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
-	#mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
-	#mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
-	#mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
-	
-	#mininet host gw  bm0  10.10.1.1  bm0-bond0
-	#mininet host gw  bm5  10.10.1.1  bm5-bond0
-	#mininet host gw  bm1  10.10.2.1  bm1-bond0
-	#mininet host gw  bm4  10.10.2.1  bm4-bond0
-	
-	#Log To console  Checking ping between vns
-	#${loss}=  mininet l3 ping  bm0  10.10.2.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm1  10.10.1.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm5  10.10.2.3
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm4  10.10.1.3
-	#Should Be True  ${loss} < 100
-	
-Add spine0 back and check L2/L3
-	[Tags]  scaling  manual 
-	manual passed     
-	#Log To Console  Adding back spine0
-	#start monitoring the exception
-	#rest add switch  spine0
-	#rest add dpid  spine0  00:00:00:00:00:01:00:01
-	#rest add fabric role  spine0  spine		
-	#sleep  5
-	#stop monitoring the exception
-	#parse monitoring file
-	
-	##Log to console  Pinging from bm0 to 10.10.1.3
-    #${loss}=  mininet ping  bm0  10.10.1.3
-    #Should Be True  ${loss} < 100
-    #Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
-	
-	#Log To console  Configuring mininet bms
-	#mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
-	#mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
-	#mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
-	#mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
-	
-	#mininet host gw  bm0  10.10.1.1  bm0-bond0
-	#mininet host gw  bm5  10.10.1.1  bm5-bond0
-	#mininet host gw  bm1  10.10.2.1  bm1-bond0
-	#mininet host gw  bm4  10.10.2.1  bm4-bond0
-	
-	#Log To console  Checking ping between vns
-	#${loss}=  mininet l3 ping  bm0  10.10.2.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm1  10.10.1.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm5  10.10.2.3
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm4  10.10.1.3
-	#Should Be True  ${loss} < 100
-	
-stop and start mininet and verify L2/L3 fwding
-	[Tags]  scaling  manual 
-	manual passed      
-	#Log To Console  Stopping mininet in topo
-	#start monitoring the exception
-	#mininet stop	
-	#sleep  100
-	#pause               UNDER MININET!!!!
-	#stop monitoring the exception
-	#parse monitoring file
-	#sleep  100
-	#Log To Console  Starting mininet in topo
-	#start monitoring the exception
-	#mininet start	
-	#sleep  100
-	#pause               UNDER MININET!!!!
-	#stop monitoring the exception
-	#parse monitoring file
-	
-	#Log To console  Configuring mininet bms
-	#mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
-	#mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
-	#mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
-	#mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
-	
-	#mininet host gw  bm0  10.10.1.1  bm0-bond0
-	#mininet host gw  bm5  10.10.1.1  bm5-bond0
-	#mininet host gw  bm1  10.10.2.1  bm1-bond0
-	#mininet host gw  bm4  10.10.2.1  bm4-bond0
-	
-	#Log to Console  Verifing Traffic
-	#Log to console  Pinging from bm0 to 10.10.1.3
-    #${loss}=  mininet ping  bm0  10.10.1.3
-    #Should Be True  ${loss} < 100
-    #Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
-	
-	
-	#Log To console  Checking ping between vns
-	#${loss}=  mininet l3 ping  bm0  10.10.2.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm1  10.10.1.2
-	#Should Be True  ${loss} < 100
-	##${loss}=  mininet l3 ping  bm5  10.10.2.3
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm4  10.10.1.3
-	#Should Be True  ${loss} < 100
-	
-	 
-reboot master controller and verify L2/L3 fwding
-	[Tags]  scaling  manual 
-	manual passed    
-	#Log To Console  Rebooting master controller	 
-	#start monitoring the exception
-	#cli verify cluster master reboot
-	#sleep  20
-	#stop monitoring the exception
-	#parse monitoring file
-	
-	#Log To console  Checking L2/L3 fwding
-	#Log to console  Pinging from bm0 to 10.10.1.3
-    #${loss}=  mininet ping  bm0  10.10.1.3
-    #Should Be True  ${loss} < 100
-    #Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
-	
-	#Log To console  Configuring mininet bms
-	#mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
-	#mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
-	#mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
-	#mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
-	
-	#mininet host gw  bm0  10.10.1.1  bm0-bond0
-	#mininet host gw  bm5  10.10.1.1  bm5-bond0
-	#mininet host gw  bm1  10.10.2.1  bm1-bond0
-	#mininet host gw  bm4  10.10.2.1  bm4-bond0
-	
-	#Log To console  Checking ping between vns
-	#${loss}=  mininet l3 ping  bm0  10.10.2.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm1  10.10.1.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm5  10.10.2.3
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm4  10.10.1.3
-	#Should Be True  ${loss} < 100
-	
-reboot slave controller and verify L2/L3 fwding
-	[Tags]  scaling  manual 
-	manual passed  
-	#Log To Console  Rebooting slave controller	 
-	#start monitoring the exception
-	#cli verify cluster slave reboot
-	#sleep  20
-	#stop monitoring the exception
-	#parse monitoring file
-	
-	#Log To console  Checking L2/L3 fwding
-	#Log to console  Pinging from bm0 to 10.10.1.3
-    #${loss}=  mininet ping  bm0  10.10.1.3
-    #Should Be True  ${loss} < 100
-    #Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
-	
-	#Log To console  Configuring mininet bms
-	#mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
-	#mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
-	#mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
-	#mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
-	
-	#mininet host gw  bm0  10.10.1.1  bm0-bond0
-	#mininet host gw  bm5  10.10.1.1  bm5-bond0
-	#mininet host gw  bm1  10.10.2.1  bm1-bond0
-	#mininet host gw  bm4  10.10.2.1  bm4-bond0
-	
-	#Log To console  Checking ping between vns
-	#${loss}=  mininet l3 ping  bm0  10.10.2.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm1  10.10.1.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm5  10.10.2.3
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm4  10.10.1.3
-	#Should Be True  ${loss} < 100
-
-cluster failover and verify L2/L3 fwding
-	[Tags]  scaling  manual 
-	manual passed  
-	#Log To Console  cluster failover	 
-	#start monitoring the exception
-	#rest verify cluster election take leader
-	#sleep  20
-	#stop monitoring the exception
-	#parse monitoring file
-	
-	#Log To console  Checking L2/L3 fwding
-	#Log to console  Pinging from bm0 to 10.10.1.3
-    #${loss}=  mininet ping  bm0  10.10.1.3
-    #Should Be True  ${loss} < 100
-    #Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
-	
-	#Log To console  Configuring mininet bms
-	#mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
-	#mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
-	#mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
-	#mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
-	
-	#mininet host gw  bm0  10.10.1.1  bm0-bond0
-	#mininet host gw  bm5  10.10.1.1  bm5-bond0
-	#mininet host gw  bm1  10.10.2.1  bm1-bond0
-	#mininet host gw  bm4  10.10.2.1  bm4-bond0
-	
-	#Log To console  Checking ping between vns
-	#${loss}=  mininet l3 ping  bm0  10.10.2.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm1  10.10.1.2
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm5  10.10.2.3
-	#Should Be True  ${loss} < 100
-	#${loss}=  mininet l3 ping  bm4  10.10.1.3
-	#Should Be True  ${loss} < 100
-	
-
-
-
-T1 First Hello World Test
-    [Tags]  feature
-    Log To Console  Starting to Run in Scale
-
-
-T1 Verify L2 Traffic Convergence with scale configuration first time
-    Log    Build scale configuration with Scale Config
-    Log    Copy Scale Config to Master Controller
-    Log    Start Traffic on all ixia ports + BigTap ports
-    Log    Copy scale config to running config
-    Log    Measure traffic convergence time for L2 
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	
-
-T2 Verify L3 Traffic Convergence with scale configuration first time
-    Log    Build scale configuration with Scale Config
-    Log    Copy Scale Config to Master Controller
-    Log    Start Traffic on all ixia ports + BigTap ports
-    Log    Copy scale config to running config
-    Log    Measure traffic convergence time for L3
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-    Manual passed
-     
-T3 Verify L2/L3 Traffic Convergence with scale configuration first time
-    Log    Build scale configuration with Scale Config
-    Log    Copy Scale Config to Master Controller
-    Log    Start Traffic on all ixia ports + BigTap ports
-    Log    Copy scale config to running config
-    Log    Measure traffic convergence time for L2/L3 mixed
-    #manual untested
-	[Tags] 	sanity    Manual   scaling
-    Manual passed
-    
-T4 Verify L2 traffic drop time after deleting the scale config
-    Log    Repeat T1
-    Log    Delete scale configuration under Master controller
-    Log    Measure complete traffic drop time
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-
-T5 Verify L3 traffic drop time after deleting the scale config
-    Log    Repeat T2
-    Log    Delete scale configuration under Master controller
-    Log    Measure complete traffic drop time
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-    Manual passed
-    
-T6 Verify L2/L3 traffic drop time after deleting the scale config
-    Log    Repeat T3
-    Log    Delete scale configuration under Master controller
-    Log    Measure complete traffic drop time
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-
-
-T7 Reboot entire fabric to measure time all flows start forwarding without any traffic drop
-    Log    Copy scale configuration to master controller
-    Log    Make sure fabric is in stable state
-    Log    Start L2/L3 traffic profiles
-    Log    Reboot entire fabric
-    Log    Measure the time all traffic flows are forwarding without any packet drops
-    Log    Repeat T7 for 32k/64k/96k/ L2/L3 hosts
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-    Manual passed
-    
-T8 Generate ARP requests from all L3 hosts
-    Log    Copy scale configuration to master controller
-    Log    Make sure fabric is in stable state
-    Log    Send ARP from all L3 hosts 2k ARPs per switch
-    Log    Verify ARP resolve
-    Log    Repeat T8 for 16k/32k/48k L3 hosts
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-    manual passed
-    
-T9 Controller HA fail-over via CLI
-    Log    Repeat T3
-    Log    Perform controller fail-over
-    Log    Verify traffic loss
-    Log    Repeat for 32k/64k/96k L2/L3 hosts
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	
-T10 Controller HA fail-over/fail-back via CLI
-    Log    Repeat T9
-    Log    Make sure fabric in stable state
-    Log    Perform controller fail-over/fail-back
-    Log    Verify traffic loss
-    Log    Repeat for 32k/64k/96k L2/L3 hosts
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	
-T11 Controller HA fail-over/fail-back via CLI
-    Log    Repeat T9
-    Log    Fabric is not in stable state
-    Log    Perform controller fail-over/fail-back
-    Log    Verify traffic loss
-    Log    Repeat for 32k/64k/96k L2/L3 hosts
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	
-T12 Controller master reboot    
-    Log    Repeat T9
-    Log    Fabric is not in stable state
-    Log    Master Controller reboot
-    Log    Verify traffic loss
-    Log    Repeat for 32k/64k/96k L2/L3 hosts
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	
-T13 Controller slave reboot    
-    Log    Repeat T9
-    Log    Fabric is not in stable state
-    Log    Master Controller reboot
-    Log    Verify traffic loss
-    Log    Repeat for 32k/64k/96k L2/L3 hosts
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	    
-T14 Verify/Measure Non-Graceful operations    
-    Log    Repeat T9
-    Log    Fabric is not in stable state
-    Log    Master Controller power off
-    Log    Verify traffic loss/Standby take over
-    Log    Repeat for 32k/64k/96k L2/L3 hosts
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	   
-
-T15 Verify/Measure Non-Graceful operations    
-    Log    Repeat T9
-    Log    Fabric is not in stable state
-    Log    Slave Controller power off
-    Log    Verify traffic loss/Standby take over
-    Log    Repeat for 32k/64k/96k L2/L3 hosts
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	   
-T16 Kill floodlight deamon in master contorller
-    Log   Repeat T3
-    Log   Make sure fabric is in stable state
-    Log   Verify no traffic loss
-    Log   kill floodlight with kill option 9 under master controller
-    Log   Verify fabric state
-    Log   Measure traffic loss/Convergence time
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	manual passed
-	
-	
-T17 Kill floodlight deamon in slave contorller
-    Log   Repeat T3
-    Log   Make sure fabric is in stable state
-    Log   Verify no traffic loss
-    Log   kill floodlight with kill option 9 under slave controller
-    Log   Verify fabric state
-    Log   Measure traffic loss/Convergence time
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	manual passed
-	
-T18 Kill floodlight deamon in master/slave contorller
-    Log   Repeat T3
-    Log   Make sure fabric is in stable state
-    Log   Verify no traffic loss
-    Log   kill floodlight with kill option 9 under master/slave controller
-    Log   Verify fabric state
-    Log   Measure traffic loss/Convergence time
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	manual passed
-	
-T19 Power off one spine
-    Log   Repeat T3    
-    Log   Make sure fabric is in stable state
-    Log   Verify no traffic loss
-    Log   Power off one spine
-    Log   Verify fabric state
-    Log   Measure traffic loss/Convergence time
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	
-T20 Power on one spine    
-    Log   Repeat T3    
-    Log   Make sure fabric is in stable state
-    Log   Verify no traffic loss
-    Log   Power on one spine
-    Log   Verify fabric state
-    Log   Measure traffic loss/Convergence time
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	
-T21 Power off/on spine    
-    Log   Repeat T19/T20 for multiple spines    
-    Log   Make sure fabric is in stable state
-    Log   Verify off/no traffic loss
-    Log   Power on one spine
-    Log   Verify fabric state
-    Log   Measure traffic loss/Convergence time
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	
-T22 Power off one leaf
-    Log   Repeat T3    
-    Log   Make sure fabric is in stable state
-    Log   Verify no traffic loss
-    Log   Power off one leaf
-    Log   Verify fabric state
-    Log   Measure traffic loss/Convergence time
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	manual passed
-	
-T23 Power on one leaf    
-    Log   Repeat T3    
-    Log   Make sure fabric is in stable state
-    Log   Verify no traffic loss
-    Log   Power on one leaf
-    Log   Verify fabric state
-    Log   Measure traffic loss/Convergence time
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	manual passed
-	
-	
-T24 Power off/on leaf    
-    Log   Repeat T23/T24 for multiple leaf racks    
-    Log   Make sure fabric is in stable state
-    Log   Verify off/no traffic loss
-    Log   Power on one leaf
-    Log   Verify fabric state
-    Log   Measure traffic loss/Convergence time
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	manual passed
-	
-T25 Power down 16th rack
-    Log   Repeat T3
-    Log   Make sure fabric is in stable state
-    Log   Verify traffic loss
-    Log   Power down 16th rack (spines/leafs/servers)
-    Log   Verify fabric stability
-    Log   Measure traffic convergence/loss    
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	    
-T26 Power up 16th rack
-    Log   Repeat T25
-    Log   Make sure fabric is in stable state
-    Log   Verify traffic loss
-    Log   Power up 16th rack (spines/leafs/servers)
-    Log   Verify fabric stability
-    Log   Measure traffic convergence/loss
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	
-T27 Disconnect all switches from BSN controller
-    Log   Repeat T3
-    Log   Makre sure fabric is in stable state
-    Log   Verify no traffic loss
-    Log   Disconnect all switch management ports
-    Log   Verify controller stability
-    Log   Measure time till traffic gets dropped
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	
-T28 Reconnect all switches from BSN controller
-    Log   Repeat T27
-    Log   Reconnect all switch management ports
-    Log   Verify controller stability
-    Log   Measure time till traffic gets dropped
-    #manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	           
-T29 Fail management switch one at a time               
-    Log   Repeat T3
-    Log   Makre sure fabric is in stable state
-    Log   Verify no traffic loss
-    Log   Fail one management switch 
-    Log   Verify controller/fabric stability
-    Log   Measure time till traffic gets dropped
-    #Manual untested
-	[Tags] 	sanity    Manual  scaling
-	Manual passed
-	
-T30 Restart ofad in spine
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one spine
-   Log   Verify/measure traffic loss/convergence
-   #Manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-T31 Restart ofad in leaf
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #Manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-T32 Verify L2 learning rate
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-T33 Verify L3 hosts ageout and relearn
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-T34 Verify traffic loss/convergence after removing static endpoints
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-T35 Verify image upgrade of controller
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #Manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-	
-T37 Verify parallel upgrades of all spines/leafs
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed	
-	
-T38 Verify L2 mac move with multiple macs (repeat with 16k/32k/48k L2 hosts)
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-	
-T39 Verify L3 hosts move with inter-tenant traffic (repeat with 16k/32k/48k L3 hosts)
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual-untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-	
-T40 Verify/measure traffic convergence/cli times for incremental config changes
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-	
-T41 Verify fabric stability on spine/leaf interface continuous flap
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-T42 Verify traffic loss in headless mode of controller
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-T43 Verify traffic loss in controller split brain mode
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling 
-   Manual passed
-	
-T44 Verify traffic loss in half switches connected to master and rest have connection to standby controller
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-T45 Repeat T44, all switches connect back to master, verify fabric stability
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-	
-T46 Verify snmp polling (get/getnext/getbulk)
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-	[Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-T47 Verify controller stability when switch sends line rate traffic to controller
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual-untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-	
-T48 Verify switch stability when controller sends line rate traffic switch
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-   [Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-	
-T49 Verify VIP changes
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-	[Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-T50 Verify policy changes
-   Log   Repeat T3
-   Log   Make sure fabric is in stable state
-   Log   Verify no traffic loss
-   Log   Restart ofad in one leaf
-   Log   Verify/measure traffic loss/convergence
-   #manual untested
-	[Tags] 	sanity    Manual  scaling
-   Manual passed
-	
-
-
-	
-	
-* Keywords
 
 test setup topology
     base suite setup

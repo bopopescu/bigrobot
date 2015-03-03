@@ -1784,7 +1784,7 @@ class T5ZTN(object):
 
 
 
-    def power_cycle_switch(self, switch):
+    def power_cycle_switch(self, switch, minutes=0):
         """
         Power cycle a switch
 
@@ -1795,9 +1795,9 @@ class T5ZTN(object):
         - True if successfully power cycled the switch, False otherwise
         """
         t = test.Test()
-        t.power_cycle(switch)
+        t.power_cycle(switch, minutes=minutes)
         return True
-    def power_down_switch(self, switch):
+    def power_down_switch(self, switch, minutes=0):
         """
         Power cycle a switch
 
@@ -1808,10 +1808,10 @@ class T5ZTN(object):
         - True if successfully powered down the switch, False otherwise
         """
         t = test.Test()
-        t.power_down(switch)
+        t.power_down(switch, minutes=minutes)
         return True
 
-    def power_up_switch(self, switch):
+    def power_up_switch(self, switch, minutes=0):
         """
         Power cycle a switch
 
@@ -1822,7 +1822,7 @@ class T5ZTN(object):
         - True if successfully powered up the switch, False otherwise
         """
         t = test.Test()
-        t.power_up(switch)
+        t.power_up(switch, minutes=minutes)
         return True
 
     def cli_get_switch_image(self, image, switch):

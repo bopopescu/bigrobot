@@ -6,6 +6,7 @@ Suite Teardown  	config suite teardown
 Force Tags      	bigtap  blackbird  gui  policy
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
+Library             keywords/AppController.py
 Library        		SeleniumLibrary
 Resource        	bigtap_resource.txt
 Library       		String
@@ -14,11 +15,11 @@ Library       		String
  	
 ### Configure Big Tap Policy with different names	
 T1 Test set up:
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rlb9-1		filter			ixia-2-9
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rly2-1 		delivery		ixia-2-15	
-	Configure Big Tap Interface from Big Tap Menu			ethernet2			app-rly2-1 		delivery		ixia-4-8	
-	Configure Big Tap Interface Group from Big Tap Menu 	filter				filter-group		ixia-2-9
-	Configure Big Tap Interface Group from Big Tap Menu		delivery			delivery-group		ixia-2-15	
+	Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1			 filter	        ixia-2-9
+    Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-intern1       delivery       ixia-2-15
+    Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             delivery       ixia-4-8    	
+	Configure Big Tap Interface Group from Big Tap Menu 	 filter				  filter-group			 ixia-2-9
+	Configure Big Tap Interface Group from Big Tap Menu		 delivery			  delivery-group		 ixia-2-15	
     [Tags]  full  feature  policy
 #Arguments												Policy	 				RBAC 			Action 			Ethertype				Filter			Delivery 		Service			fg				dg	
 T1.1 Policy with policy name as alphabets
@@ -170,8 +171,15 @@ config suite setup
     #Configure Switch Alias    00:00:08:9e:01:f8:6b:8b            app-rly2-1   
     ${switch_dpid_s1}=  rest return switch dpid from ip  s1
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
-    Configure Switch Alias  ${switch_dpid_s1}   app-rlb9-1
-    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-1     
+    ${switch_dpid_s3}=  rest return switch dpid from ip  s3
+    ${switch_dpid_s4}=  rest return switch dpid from ip  s4
+    ${switch_dpid_s5}=  rest return switch dpid from ip  s5
+    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
+ 	write version to file   
     
     
 config suite teardown
