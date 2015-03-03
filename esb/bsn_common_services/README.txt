@@ -38,7 +38,7 @@ Updating services:
   you need to redeploy the service.
 - Log into the deployment server (as described in the section above) and kill
   the service daemon - press Control-C.
-- Update the branch using 'git update'
-    $ git update
+- Update the branch using 'git pull'
+    $ git pull
 - Restart the service daemon:
     $ ./start_services.sh
