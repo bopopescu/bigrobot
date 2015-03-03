@@ -6,13 +6,9 @@
 # mn  : Mininet server
 
 c1:
-    ip: 10.9.18.7
+    ip: 10.8.30.15
 c2:
-    ip: 10.9.18.8
+    ip: 10.8.30.16
 
 s1:
     ip: 10.9.19.14
-    console:
-        ip:  10.1.8.97
-        protocol: telnet
-        port: 6014
