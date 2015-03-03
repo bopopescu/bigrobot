@@ -3907,7 +3907,7 @@ class BigTap(object):
         Copy image 'http://10.2.3.22/abat/last-passed-m.bsc.bigdb/vm/bigswitchcontroller-upgrade.pkg' to both the controllers to upgrade
         '''
         # image = 'http://10.2.3.22/abat/last-passed-m.bsc.bigdb/vm/bigswitchcontroller-upgrade.pkg'
-        image = 'http://10.2.3.22/abat/2015.02.28.0019-b.bsc.corsair-4.5.0beta2/vm/bigswitchcontroller-upgrade.pkg'
+        image = 'http://10.2.3.22/abat/last-passed-b.bsc.corsair-4.5.0beta3/vm/bigswitchcontroller-upgrade.pkg'
         try:
             t = test.Test()
             node_handles = t.controllers()
