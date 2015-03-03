@@ -17,7 +17,7 @@ Library       		String
 T1 Test set up:
 	Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1			 filter	        ixia-2-9
     Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-intern1       delivery       ixia-2-15
-    Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             filter         ixia-4-8    	
+    Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             delivery       ixia-4-8    	
 	Configure Big Tap Interface Group from Big Tap Menu 	 filter				  filter-group			 ixia-2-9
 	Configure Big Tap Interface Group from Big Tap Menu		 delivery			  delivery-group		 ixia-2-15	
     [Tags]  full  feature  policy
