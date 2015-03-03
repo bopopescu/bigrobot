@@ -2686,7 +2686,7 @@ class BigTap(object):
 ############ CORSAIR: TUNNELLING ### START #
 ############################################
 
-    def rest_add_tunnel_interface(self, node, tunnel_name, switch_alias=None, sw_dpid=None, loopback=None, pinterface=None, tdirection=None, sip=None, mask=None, dip=None, gip=None, user="admin", password="adminadmin", soft_error=False):
+    def rest_add_tunnel_interface(self, node, tunnel_name, switch_alias=None, sw_dpid=None, loopback=None, pinterface=None, tdirection=None, sip=None, mask=None, dip=None, gip=None, vpnkey=1234, user="admin", password="adminadmin", soft_error=False):
         t = test.Test()
         try:
             c = t.controller('master')
@@ -2772,7 +2772,7 @@ class BigTap(object):
                     helpers.test_error("Non-Admin users cannot create tunnel interfaces", soft_error)
                     return False
                 else:
-                    c.rest.patch(url, {"encap-type": "gre"})
+                    c.rest.patch(url, {"vpn-key": int(vpnkey), "encap-type": "gre"})
                 return True
 
     def rest_verify_tunnel_status(self, node, tunnel_name, switch_alias=None, sw_dpid=None, tunnel_number=None, runtime_state=None, parent_interface=None, tunnel_direction=None, sip=None, mask=None, dip=None, gip=None, user="admin", password="adminadmin", soft_error=False):
