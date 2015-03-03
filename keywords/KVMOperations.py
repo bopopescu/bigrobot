@@ -416,11 +416,21 @@ class KVMOperations(object):
                                                    password=kvm_password)
             vm_state = self._get_vm_running_state(kvm_handle=kvm_handle,
                                                   vm_name=vm_name)
-            if 'running' in vm_state:
+
+            if 'running' or 'paused' in vm_state:
                 helpers.summary_log("Tearing down VM with Name on kvm host: %s"
                                     % vm_name)
                 self._destroy_vm(kvm_handle=kvm_handle, vm_name=vm_name)
                 self._undefine_vm(kvm_handle=kvm_handle, vm_name=vm_name)
+                helpers.summary_log("Checking The State of Vm : %s" % vm_name)
+                new_vm_state = self._get_vm_running_state(kvm_handle=kvm_handle, vm_name=vm_name)
+                helpers.log(" new vm_state : %s" % new_vm_state)
+                if new_vm_state != '':
+                    helpers.log("Vm still alive trying to destroy again..")
+                    self.vm_teardown(vm_name, kvm_host, kvm_user, kvm_password)
+                else:
+                    helpers.log("Vm Is Dead!")
+
             elif 'shut' in vm_state:
                 helpers.summary_log("Deleting down the VM : %s" % vm_name)
                 self._undefine_vm(kvm_handle=kvm_handle, vm_name=vm_name)
