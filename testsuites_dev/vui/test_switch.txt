@@ -13,7 +13,7 @@ Library         keywords_dev/vui/MyTest.py
 
 * Test Case
 Test switch
-    #[Tags]  skipped
+    [Tags]  skipped
     switch show version  s1
 
 Test switch show walk
@@ -57,4 +57,14 @@ Test get node alias
 Test switch bash execute command
     [Tags]  skipped
     bash execute command   s1   uname -a
+
+Test debug bash
+   bash   s1   cat /etc/passwd
+#   cli    s1   exit
+   cli exit    s1
+   
+#   node reconnect   s1
+#   cli restart switch   s1
+#   log    "We reloaded the switch"
+   bash   s1   uptime
 
