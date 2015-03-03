@@ -426,8 +426,10 @@ class KVMOperations(object):
                 new_vm_state = self._get_vm_running_state(kvm_handle=kvm_handle, vm_name=vm_name)
                 helpers.log(" new vm_state : %s" % new_vm_state)
                 if new_vm_state != '':
-                    helpers.summary_log("Vm still alive trying to destroy again..")
+                    helpers.log("Vm still alive trying to destroy again..")
                     self.vm_teardown(vm_name, kvm_host, kvm_user, kvm_password)
+                else:
+                    helpers.log("Vm Is Dead!")
 
             elif 'shut' in vm_state:
                 helpers.summary_log("Deleting down the VM : %s" % vm_name)
