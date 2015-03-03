@@ -1,0 +1,368 @@
+== T6 PNAT Test Suite ==
+
+* Setting
+Documentation    T6 Dual Leaf Dual Rack PNAT Test Suite
+Suite Setup      T6 base suite setup
+Suite Teardown   Tear down the config
+Test Setup       T6 base test setup
+Test Teardown    T6 base test teardown
+Force Tags       T6  feature  nat 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library			 keywords/T5L3.py
+Library			 keywords/T6.py
+Library          keywords/Mininet.py
+Resource		 testsuites/BCF/T6/t6_virtual_resource.txt
+
+
+* Variables
+${bm0_ip}  10.0.0.2
+${vm0_ip}  10.0.1.2
+${vm1_ip}  10.0.2.2
+${vm2_ip}  10.0.3.2
+${vm4_ip}  10.0.4.2
+${bm0_mac}  00:00:00:00:00:01
+${bm1_mac}  00:00:00:00:00:02
+${bm0_intf0}  leaf0a-eth5
+${bm0_intf1}  leaf0b-eth5
+${bm1_intf0}  leaf1a-eth5
+${bm1_intf1}  leaf1b-eth5
+${hv0_intf0}  hv0-eth3
+${hv0_intf1}  hv0-eth4
+${hv1_intf0}  hv1-eth3
+${hv2_intf0}  hv2-eth3
+${vm0_intf0}  vm0-eth0
+${vm1_intf0}  vm1-eth0
+${vm2_intf0}  vm2-eth0
+${vm4_intf0}  vm4-eth0
+${hv0_switch}  hv0
+${hv1_switch}  hv1
+${hv2_switch}  hv2
+${hv3_switch}  hv3
+${hv4_switch}  hv4
+${hv5_switch}  hv5
+
+* Test Case 
+
+basic cli show commands test case
+   [Tags]  nat    feature 
+   cli  c1  show version
+   cli  c1  show version detail
+   cli  c1  show running-config
+   cli  c1  show switch
+   cli  c1  show controller
+   config  c1  show controller
+   enable  c1  show controller
+   config  c1  show switch
+   enable  c1  show switch
+   
+add Fabric setup Dual Rack Dual Leaf 
+   [Tags]  nat   feature     
+   sleep  5
+   rest verify fabric switch all
+   rest verify fabric vswitch all
+   rest verify vswitch portgroup  4
+   rest verify fabric link common  20
+   
+Verify nat-pool CLI and output
+	[Tags]  nat   feature
+	rest add nat switch  ${hv1_switch}
+	${result}=  rest verify nat switch  ${hv1_switch}
+	Should be True  ${result}
+	rest delete nat switch  ${hv1_switch}
+	${result}=  rest verify nat switch  ${hv1_switch}
+	Should not be True  ${result}
+
+verify nat-profile CLI and output
+	[Tags]  nat    feature 
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest verify nat profile  A  nat1
+	Should be True  ${result}
+	sleep  5
+    rest verify pat profile  A  nat1
+	rest verify nat endpoint  A  nat1  external  E
+	rest verify tenant route nat  A  nat1
+	rest delete nat profile  A  nat1
+	${result}=  rest verify nat profile  A  nat1
+	Should not be True  ${result}
+	
+validation error test public ip for nat same as public ip for another nat
+	[Tags]
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
+	rest add nat remote tenant  A  nat1  external  E
+	add a tenant  t1
+	rest add nat profile  t1  nat2
+	rest add pat  t1  nat2
+	rest add nat remote tenant  t1  nat2  external  E
+	${result}=  rest add pat public ip  t1  nat2  10.0.4.254
+	Should not be True  ${result}
+	
+validation error test public ip for nat outiside the exteral segment subnet
+	[Tags]
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest add pat public ip  A  nat1  10.0.5.254
+	Should not be True  ${result}
+	  
+validation error test public ip same as static endpoint in external segment
+	[Tags]  
+	rest add endpoint  external  E  e1
+	rest add ip endpoint  external  E  e1  10.0.4.200
+	rest add mac endpoint  external  E  e1  00:22:22:22:22:22
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest add pat public ip  A  nat1  10.0.4.200
+	Should not be True  ${result}
+
+validation error test static endpoint same as NAT public IP
+	[Tags]
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	rest add pat public ip  A  nat1  10.0.4.200
+	rest add endpoint  external  E  e1
+	rest add mac endpoint  external  E  e1  00:22:22:22:22:22
+	${result}=  rest add ip endpoint  external  E  e1  10.0.4.200
+	Should not be True  ${result}
+	
+verification of logical router show command
+	[Tags]  
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest verify nat profile  A  nat1
+	Should be True  ${result}
+	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+	sleep  5
+	rest verify tenant route nat  A  nat1
+	rest show tenant logical router default route state  A  nat1
+	
+Applying default router using nat next-hop cli test
+	[Tags]  nat        
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest verify nat profile  A  nat1
+	Should be True  ${result}
+	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+	rest delete static routes  A  0.0.0.0/0  nat1
+	rest delete nat profile  A  nat1
+	sleep  5
+	${result}=  rest verify nat profile  A  nat1
+	Should not be True  ${result}
+
+verify connectivity tenant VM - external different rack using nat next-hop
+   [Tags]  nat  feature     
+    rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest verify nat profile  A  nat1
+	Should be True  ${result}
+	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+    ${result}=  rest verify vswitch l3 cidr nat  A  ${hv0_switch}  0.0.0.0
+    Should be True  ${result}
+    ${result}=  rest verify vswitch l3 cidr nat  external  ${hv0_switch}  0.0.0.0
+    Should Not be True  ${result}
+    mininet ping  vm0  ${vm4_ip}
+    ${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    mininet ping  vm1  ${vm4_ip}
+    ${loss}=  mininet ping  vm1  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    mininet ping  vm2  ${vm4_ip}
+    ${loss}=  mininet ping  vm2  ${vm4_ip}
+    Should Be True  ${loss} == 0
+
+verify connectivity vm0-vm4 different rack using fixed nat-switch
+	[Tags]  nat  feature    
+	rest add nat switch  ${hv1_switch}
+	${result}=  rest verify nat switch  ${hv1_switch}
+	Should be True  ${result}
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest verify nat profile  A  nat1
+	Should be True  ${result}
+	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+	sleep  10
+    ${result}=  rest verify nat attachment point  A  nat1  ${hv1_switch}
+	Should be True  ${result}
+    ${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    rest delete nat switch  ${hv1_switch}
+	rest delete static routes  A  0.0.0.0/0  nat1
+    rest delete nat profile  A  nat1
+    
+verify connectivity vm0 - vm4 different rack using changing nat-switch 
+   [Tags]  nat  feature    
+    rest add nat switch  ${hv1_switch}
+	${result}=  rest verify nat switch  ${hv1_switch}
+	Should be True  ${result}
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest verify nat profile  A  nat1
+	Should be True  ${result}
+	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+	sleep  10
+    ${result}=  rest verify nat attachment point  A  nat1  ${hv1_switch}
+	Should be True  ${result}
+    ${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    mininet ping  vm0  ${vm2_ip}
+    ${loss}=  mininet ping  vm0  ${vm2_ip}
+    Should Be True  ${loss} == 0
+    rest delete nat switch  ${hv1_switch}
+    sleep  5
+	${result}=  rest verify nat switch  ${hv1_switch}
+	Should not be True  ${result}
+	rest add nat switch  ${hv3_switch}
+	sleep  10
+	${result}=  rest verify nat switch  ${hv3_switch}
+	Should be True  ${result}
+	${result}=  rest verify nat attachment point  A  nat1  ${hv3_switch}
+	Should be True  ${result}
+	${loss}=  mininet ping  vm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+    rest delete static routes  A  0.0.0.0/0  nat1
+    rest delete nat profile  A  nat1
+   	rest delete nat switch  ${hv3_switch}
+
+verify connectivity bm0 to vm4 different rack
+	[Tags]  
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest verify nat profile  A  nat1
+	Should be True  ${result}
+	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+    mininet ping  bm0  ${vm4_ip}
+    ${loss}=  mininet ping  bm0  ${vm4_ip}
+    Should Be True  ${loss} == 0
+
+* Keywords
+
+T6 base suite setup
+	base suite setup
+    add fabric switch
+    mininet start inband
+    add a tenant  A
+    add a tenant  external 
+    add a tenant  system
+    add a vns  A  A
+    add a vns  A  B
+    add a vns  A  C
+    add a vns  A  D
+    add a vns  external  E
+    add a portgroup  p1 
+    add interface to portgroup  leaf0-a  ${bm0_intf0}  p1
+    add interface to portgroup  leaf0-b  ${bm0_intf1}  p1
+    add a portgroup  p2 
+    add interface to portgroup  leaf1-a  ${bm1_intf0}  p2
+    add interface to portgroup  leaf1-b  ${bm1_intf1}  p2
+    rest add router intf  A  A
+    rest add vns ip  A  A  10.0.0.1  24
+    rest add router intf  A  B
+    rest add vns ip  A  B  10.0.1.1  24
+    rest add router intf  A  C
+    rest add vns ip  A  C  10.0.2.1  24
+    rest add router intf  A  D
+    rest add vns ip  A  D  10.0.3.1  24
+    rest add router intf  external  E
+    rest add vns ip  external  E  10.0.4.1  24
+    rest add portgroup to vns  A  A  p1  -1
+    rest add interface to vns  A  B  ${hv0_switch}  ${hv0_intf0}  -1
+    rest add interface to vns  A  C  ${hv0_switch}  ${hv0_intf1}  -1
+    rest add interface to vns  A  D  ${hv1_switch}  ${hv1_intf0}  -1
+    rest add interface to vns  external  E  ${hv2_switch}  ${hv2_intf0}  -1
+    rest add tenant routers intf to system  A
+    rest add tenant routers intf to system  external
+    rest add system intf to tenant routers  A
+    rest add system intf to tenant routers  external
+    rest add static routes  external  0.0.0.0/0  {"tenant": "system"}
+    mininet host ipcfg  bm0  bm0-bond0  10.0.0.2  24
+	mininet host gw  bm0  10.0.0.1  bm0-bond0
+	mininet host ipcfg  vm0  ${vm0_intf0}  10.0.1.2  24
+	mininet host gw  vm0  10.0.1.1  ${vm0_intf0}
+	mininet host ipcfg  vm1  ${vm1_intf0}  10.0.2.2  24
+	mininet host gw  vm1  10.0.2.1  ${vm1_intf0}
+	mininet host ipcfg  vm2  ${vm2_intf0}  10.0.3.2  24
+	mininet host gw  vm2  10.0.3.1  ${vm2_intf0}
+	mininet host ipcfg  vm4  ${vm4_intf0}  10.0.4.2  24
+	mininet host gw  vm4  10.0.4.1  ${vm4_intf0}
+    sleep  5
+
+Tear down the config
+   delete a tenant  A
+   delete a tenant  external
+   delete a tenant  system
+   delete a portgroup  p1
+   delete a portgroup  p2
+   delete fabric switch
+   base suite teardown
+
+T6 base test setup
+   base test setup
+   
+T6 base test teardown
+	rest delete static routes  A  0.0.0.0/0
+    rest delete nat profile  A  nat1
+    rest delete nat switch  ${hv1_switch}
+    rest delete nat switch  ${hv3_switch}
+    rest delete endpoint  external  E  e1
+    delete a tenant  t1
+   	base test teardown
+  
+         
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
+
+delete a tenant  [Arguments]  ${tenant} 
+  	REST delete tenant  ${tenant}    
+
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
+
+delete a vns  [Arguments]  ${tenant}  ${vns} 
+  	REST delete vns  ${tenant}  ${vns}   
+
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
+
+delete a portgroup  [Arguments]  ${pg}
+  	REST delete portgroup  ${pg}    
+
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
+  	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST add interface to portgroup  ${switch}  ${intf}  ${pg}  
+
+delete interface from portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST delete interface from portgroup  ${switch}  ${intf}  ${pg}  
+
+add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
+  	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
+
+add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+  REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+
+delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
+  REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+  

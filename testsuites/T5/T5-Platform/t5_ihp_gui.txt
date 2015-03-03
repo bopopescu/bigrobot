@@ -19,8 +19,8 @@ T1.1. Verify correct presentation of Logical router state
     Manual Passed
     [Tags]  manual
 T1.2. Verify correct presentation of data in “VRF ID” and “Default route” columns (hidden by default)
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 
 #Interface shutdown
 T2.1. Shut down an active interface and verify correct state (physical, logical)
@@ -67,13 +67,13 @@ T3.3. Verify correctness of “show policy log” output - specific tenant (in l
 
 #Test path
 T4.1. Manual input of endpoints
-    Manual Failed
+    Manual Passed
     [Tags]  manual  BVS-2646
 T4.2. Input one of existing endpoints and verify
-    Manual Failed
+    Manual Passed
     [Tags]  manual  BVS-2646
 T4.3. External IP addresses (e.g. for google.com) as destination endpoint
-    Manual Failed
+    Manual Passed
     [Tags]  manual  BVS-2646
 T4.4. Input one of existing endpoints with modified IP address
     #since only IP address is inputtable, this just creates a new test
@@ -89,39 +89,39 @@ T4.6. Loading existing fabric tests - done passively when user enters the same e
 #AAA configuration (accounting, authentication)
 #T5.1. AAA Accounting
 T5.1.1 Set Accounting to local
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.1.2. Set Accounting to remote
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.1.3. Set Accounting to both local and remote
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.1.4. Edit Accounting configuration
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.1.5. Disable Accounting configuration
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 #T5.2. AAA Authentication
 T5.2.1. Set Authentication to local
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.2.2. Set Authentication to remote
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.2.3. Set Authentication to local then remote
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.2.4. Set Authentication to remote then local
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.2.5. Edit Authentication configuration
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.2.6. Disable Authentication configuration (set back to default)
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T5.2.7. Try doing changes just after they had been done in CLI, verify correct behavior
     Manual Passed
     [Tags]  manual
@@ -243,19 +243,19 @@ T10.2. show switch foo
 
 #Expose toggle for logging to remote servers
 T11.1. Enable logging to remote servers and verify controller logs there
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # hidden
 T11.2. Disable logging to remote servers and verify controller stops logging there
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # hidden
 T11.3. Check behavior when intended change (enable, disable) is done first in CLI, then in GUI
     Manual Passed
     [Tags]  manual
 
 #Reboot all switches
 T12.1. Verify correct power cycling when all configured switches are connected to the controller
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T12.2. Verify correct power cycling when not all configured switches are connected to the controller
     Manual Passed
     [Tags]  manual
@@ -274,11 +274,11 @@ T12.6. Verify button presence/action when there are no switches connected to the
 
 #Tenant visualization (tentative)
 T13.1. Verify visualization
-    #Manual Untested
-    [Tags]  skipped
+    Manual Passed
+    [Tags]  manual
 T13.2. Verify visualization (blank space) when no tenants are configured
-    #Manual Untested
-    [Tags]  skipped
+    Manual Passed
+    [Tags]  manual
 
 #Alerts
 T14.1. Verify alert boxes appear after adding/modifying/deleting entry on a given page
@@ -388,55 +388,55 @@ T21.8. Delete last-but-one NTP server in CLI, then try deleting the final one in
 
 #SNMP
 T22.1. Add/modify/delete SNMP server contact
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.2. Add/modify/delete SNMP server location
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.3. Add/modify/delete SNMP server community
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.4. Add/modify/delete SNMP server trap hosts
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.5. Enable/disable SNMP server traps
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.6. Add/modify/delete switch PSU trap
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.7. Add/modify/delete switch Fan trap
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.8. Add/modify/delete switch Link trap
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.9. Enable/disable switch authentication trap
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.10. Add/modify/delete switch CPU trap
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.11. Add/modify/delete switch MEM trap
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.12. Add/modify/delete switch L2 trap
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T22.13. Add/modify/delete switch TCAM trap
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 
 #TACACS
 T23.1. Add/modify/delete TACACS server default timeout
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T23.2. Add/modify/delete TACACS server default secret
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 T23.3. Add/modify/delete TACACS server host
-    Manual Passed
-    [Tags]  manual
+    [Tags]  skipped
+    # automated
 
 #Test Path
 T24.1. Fabric View

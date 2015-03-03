@@ -2,6 +2,8 @@
 Documentation    Support Test Cases
 Force Tags       T5 
 Suite Setup     T5 support suite setup
+Test Teardown    base test teardown
+Force Tags       T5
 Library		 OperatingSystem
 Library	 	 String
 Library          keywords/BsnCommon.py
@@ -17,7 +19,7 @@ Library		keywords_dev/arun/support.py
 
 *** Test Cases ***
 TC01 Check New Flood light Partitions for Diagnostics
-	${result}=  check partitions for diagnostics  c1
+	${result}=  check partitions for diagnostics  master
 	Should be True  ${result}
 	[Tags]  support
 	
@@ -27,19 +29,20 @@ TC02 Generate Support file and check they are created on diagnostics partitions
 	[Tags]  support
 
 TC03 Check Suport bundle for controllers
-	${support_bundle_name}=  get support bundle name
-	${result}=  check controller folders  /tmp/${support_bundle_name}  c1
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check controller folders  /tmp/${support_bundle_name}  master
 	Should be True  ${result}
 	[Tags]  support
 	
 TC04 Check switch interface hardware counters in support
 	${support_bundle_name}=  get support bundle name
-	${result}=  check switch hardware counters  /tmp/${support_bundle_name}  c1
+	${result}=  check switch hardware counters  /tmp/${support_bundle_name}  master
 	Should be True  ${result}
 	[Tags]  support
+	
 TC05 Check Controller cli show command output are logged
 	${support_bundle_name}=  get support bundle name
-	${result}=  check_controller_cli_cmds  /tmp/${support_bundle_name}  c1
+	${result}=  check_controller_cli_cmds  /tmp/${support_bundle_name}  master
 	Should be True  ${result}
 	[Tags]  support  run
 	
@@ -48,17 +51,85 @@ TC06 Check show dump core are seen after creating core dumps
 	
 TC07 Check Sizes of core dumps
     manual passed
+    
 TC08 Check Endpoints from the Support logs with 4k static endpoints configured
 	manual passed
+	
 TC09 Check Show segments from Support logs with 4k+ segments configured
 	manual passed
+
+TC10 Check Switch Support Log for show version
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  show version  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  run
+	
+TC11 Check Switch Support Log for show log
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  /var/log/syslog  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  run
+
+TC12 Check Switch Support Log for show boot
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  cat /mnt/flash/boot-config  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  run
+
+TC13 Check Switch Support Log for show users
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  ===== w  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  run
+
+TC14 Check Switch Support Log for show environment
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  ofad-ctl environment  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  run
+
+TC15 Check Switch Support Log for show inventory
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  ofad-ctl inventory  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  run
+
+TC16 Check Switch Support Log for debug ofad onlpdump
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  debug ofad onlpdump /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  run
+	
+TC17 Check Switch Support Log for show interface
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  show interface /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  run	
+
+TC18 Check Switch Support Log for show flowtable
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  show flowtable /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  run	
+	
+TC19 Check Switch Support Log for show flowtable summary
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  show flowtable summary /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  run
+
+TC20 check ofad error in Support Log for switch
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  raise error  /tmp/${support_bundle_name}  master
+	Should not be True  ${result}
+	[Tags]  support  run
 * Keywords
 T5 support suite setup
 	delete support bundles
-	${result}=  Generate support  c1
+	${result}=  Generate support  master
 	Log  ${result}
 	${path}=  get support bundle fs path
 	${support_bundle_name}=  get support bundle name
-	${c1_ip}=  get node ip  c1
-	scp get  ${c1_ip}  ${path}  /tmp/.  recovery  bsn
+	${master_ip}=  get node ip  master
+	scp get  ${master_ip}  ${path}  /tmp/.  recovery  bsn
 	run_cmd  cmd=tar -xvf /tmp/${support_bundle_name} -C /tmp

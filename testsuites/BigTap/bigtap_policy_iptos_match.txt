@@ -4,7 +4,7 @@ Suite Setup             iptos suite setup
 Suite Teardown          iptos suite teardown
 Test Setup              iptos test setup
 Test Teardown           iptos test teardown 
-Force Tags              BigTap  ToS  Blackbird
+Force Tags              BigTap  blackbird-300  Quanta-LB9  match-conditions  iptos
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -38,7 +38,7 @@ ${policy_overlap}                           _ZP1_o_P1
 TC001:Verify Configuration
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}    
-    [Tags]  basic
+    [Tags]  feature  full
 
 TC002:Match on packet with TOS Precedence:Routine Binary:000000
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 0, "ether-type": 2048, "sequence": 1}
@@ -52,7 +52,7 @@ TC002:Match on packet with TOS Precedence:Routine Binary:000000
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00000000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-0
+    [Tags]  feature  full
 
 TC003:Match on packet with TOS Precedence:Routine, Reliability:High Binary:000001
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 1, "ether-type": 2048, "sequence": 1}
@@ -66,7 +66,7 @@ TC003:Match on packet with TOS Precedence:Routine, Reliability:High Binary:00000
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00000100.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-1
+    [Tags]  feature  full
 
 TC004:Match on packet with TOS Precedence:Routine, Throughput:High, Reliability:Normal Binary:000010
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 2, "ether-type": 2048, "sequence": 1}
@@ -80,7 +80,7 @@ TC004:Match on packet with TOS Precedence:Routine, Throughput:High, Reliability:
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00001000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-2
+    [Tags]  feature  full
 
 TC005:Match on packet with TOS Precedence:Routine, Throughput:High, Reliability:High Binary:000011
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 3, "ether-type": 2048, "sequence": 1}
@@ -94,7 +94,7 @@ TC005:Match on packet with TOS Precedence:Routine, Throughput:High, Reliability:
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00001100.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-3
+    [Tags]  feature  full
 
 TC006:Match on packet with TOS Precedence:Routine, Throughput:High, Reliability:High Binary:000100
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 4, "ether-type": 2048, "sequence": 1}
@@ -108,7 +108,7 @@ TC006:Match on packet with TOS Precedence:Routine, Throughput:High, Reliability:
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00010000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-4
+    [Tags]  feature  full
 
 TC007:Match on packet with TOS Precedence:Priority, Binary:001000
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 8, "ether-type": 2048, "sequence": 1}
@@ -122,7 +122,7 @@ TC007:Match on packet with TOS Precedence:Priority, Binary:001000
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00100000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-8
+    [Tags]  feature  full
 
 TC008:Match on packet with TOS Precedence:Priority, Throughput:High, Binary:001010
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 10, "ether-type": 2048, "sequence": 1}
@@ -136,7 +136,7 @@ TC008:Match on packet with TOS Precedence:Priority, Throughput:High, Binary:0010
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00101000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-10
+    [Tags]  feature  full
 
 TC009:Match on packet with TOS Precedence:Priority, Delay:Low, Binary:001100
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 12, "ether-type": 2048, "sequence": 1}
@@ -150,7 +150,7 @@ TC009:Match on packet with TOS Precedence:Priority, Delay:Low, Binary:001100
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00110000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-12
+    [Tags]  feature  full
 
 TC010:Match on packet with TOS Precedence:Priority, Delay:Low, Throughput:High, Binary:001110
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 14, "ether-type": 2048, "sequence": 1}
@@ -164,7 +164,7 @@ TC010:Match on packet with TOS Precedence:Priority, Delay:Low, Throughput:High, 
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos00111000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-14    
+    [Tags]  feature  full
 
 TC011:Match on packet with TOS Precedence:Immediate, Binary:010000
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 16, "ether-type": 2048, "sequence": 1}
@@ -178,7 +178,7 @@ TC011:Match on packet with TOS Precedence:Immediate, Binary:010000
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01000000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-16 
+    [Tags]  feature  full
 
 TC012:Match on packet with TOS Precedence:Immediate, Throughput:High, Binary:010010
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 18, "ether-type": 2048, "sequence": 1}
@@ -192,7 +192,7 @@ TC012:Match on packet with TOS Precedence:Immediate, Throughput:High, Binary:010
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01001000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-18
+    [Tags]  feature  full
 
 TC013:Match on packet with TOS Precedence:Immediate, Delay:Low, Binary:010100
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 20, "ether-type": 2048, "sequence": 1}
@@ -206,7 +206,7 @@ TC013:Match on packet with TOS Precedence:Immediate, Delay:Low, Binary:010100
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01010000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-20
+    [Tags]  feature  full
 
 TC014:Match on packet with TOS Precedence:Immediate, Delay:Low, Throughput:High, Binary:010110
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 22, "ether-type": 2048, "sequence": 1}
@@ -220,7 +220,7 @@ TC014:Match on packet with TOS Precedence:Immediate, Delay:Low, Throughput:High,
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01011000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-22
+    [Tags]  feature  full
 
 TC015:Match on packet with TOS Precedence:Flash, Binary:011000
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 24, "ether-type": 2048, "sequence": 1}
@@ -234,7 +234,7 @@ TC015:Match on packet with TOS Precedence:Flash, Binary:011000
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01100000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-24
+    [Tags]  feature  full
 
 TC016:Match on packet with TOS Precedence:Flash, Throughput:High, Binary:011010
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 26, "ether-type": 2048, "sequence": 1}
@@ -248,7 +248,7 @@ TC016:Match on packet with TOS Precedence:Flash, Throughput:High, Binary:011010
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01101000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-26
+    [Tags]  feature  full
 
 TC017:Match on packet with TOS Precedence:Flash, Delay:Low, Binary:011100
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 28, "ether-type": 2048, "sequence": 1}
@@ -262,7 +262,7 @@ TC017:Match on packet with TOS Precedence:Flash, Delay:Low, Binary:011100
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01110000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-28    
+    [Tags]  feature  full
 
 TC018:Match on packet with TOS Precedence:Flash, Delay:Low, Throughput:High, Binary:011110
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 30, "ether-type": 2048, "sequence": 1}
@@ -276,8 +276,7 @@ TC018:Match on packet with TOS Precedence:Flash, Delay:Low, Throughput:High, Bin
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos01111000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-30
-
+    [Tags]  feature  full
 TC019:Match on packet with TOS Precedence:FlashOverride, Binary:100000
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 32, "ether-type": 2048, "sequence": 1}
     Should be true  ${set_policy_match}
@@ -290,7 +289,7 @@ TC019:Match on packet with TOS Precedence:FlashOverride, Binary:100000
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10000000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-32
+    [Tags]  feature  full
 
 TC020:Match on packet with TOS Precedence:FlashOverride, Throughput:High, Binary:100010
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 34, "ether-type": 2048, "sequence": 1}
@@ -304,7 +303,7 @@ TC020:Match on packet with TOS Precedence:FlashOverride, Throughput:High, Binary
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10001000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-34
+    [Tags]  feature  full
 
 TC021:Match on packet with TOS Precedence:FlashOverride, Delay:Low, Binary:100100
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 36, "ether-type": 2048, "sequence": 1}
@@ -318,7 +317,7 @@ TC021:Match on packet with TOS Precedence:FlashOverride, Delay:Low, Binary:10010
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10010000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-36
+    [Tags]  feature  full
 
 TC022:Match on packet with TOS Precedence:FlashOverride, Delay:Low, Throughput:High, Binary:100110
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 38, "ether-type": 2048, "sequence": 1}
@@ -332,7 +331,7 @@ TC022:Match on packet with TOS Precedence:FlashOverride, Delay:Low, Throughput:H
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10011000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-38
+    [Tags]  feature  full
 
 TC023:Match on packet with TOS Precedence:Critical, Binary:101000
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 40, "ether-type": 2048, "sequence": 1}
@@ -346,7 +345,7 @@ TC023:Match on packet with TOS Precedence:Critical, Binary:101000
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10100000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-40
+    [Tags]  feature  full
 
 TC024:Match on packet with TOS Precedence:Critical, Delay:Low, Binary:101100
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 44, "ether-type": 2048, "sequence": 1}
@@ -360,7 +359,7 @@ TC024:Match on packet with TOS Precedence:Critical, Delay:Low, Binary:101100
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10110000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-44
+    [Tags]  feature  full
 
 TC025:Match on packet with TOS Precedence:Critical, Delay:Low, Throughput:High, Binary:101110
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 46, "ether-type": 2048, "sequence": 1}
@@ -374,7 +373,7 @@ TC025:Match on packet with TOS Precedence:Critical, Delay:Low, Throughput:High, 
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos10111000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-46          
+    [Tags]  feature  full
 
 TC026:Match on packet with TOS Precedence:InterNetworkControl, Binary:110000
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 48, "ether-type": 2048, "sequence": 1}
@@ -388,7 +387,7 @@ TC026:Match on packet with TOS Precedence:InterNetworkControl, Binary:110000
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos11000000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-48
+    [Tags]  feature  full
 
 TC027:Match on packet with TOS Precedence:NetworkControl, Binary:111000
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-tos": 56, "ether-type": 2048, "sequence": 1}
@@ -402,8 +401,8 @@ TC027:Match on packet with TOS Precedence:NetworkControl, Binary:111000
     bash  h1  /usr/bin/tcpreplay -tq -L 1000 -i eth3 -l 2 /root/pcaps/tos11100000.pcap
     sleep  30
     verify packet count 
-    [Tags]  tos-value-56
-           
+    [Tags]  feature  full
+
 * Keyword
 
 verify packet count

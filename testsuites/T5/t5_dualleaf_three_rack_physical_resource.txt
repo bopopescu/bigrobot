@@ -1,8 +1,50 @@
 * Setting 
 Library  keywords/BsnCommon.py
+Library	 keywords/T5ZTN.py
+Library	 keywords/T5.py
+Library	 keywords/T5Platform.py
+Library	 String
 
+* Variables
+${long}   5
 * Keywords
 
+fabric infra suite setup	
+	set fabric switches 	
+	sleep   ${long}	
+	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
+
+set fabric switches  
+ 	${switches}=  get_all_switch_nodes  
+	log   switches are ${switches}
+ 	: FOR    ${sw}   IN   @{switches}   
+	\   ${alias}=   get_node_alias   ${sw} 	
+	\	Run Keyword If	'arista' in '${alias}'	Continue For Loop
+	\   ${mac}  params  node=${sw}  key=mac
+	\   ${dpid}=  	Set Variable 	 00:00:${mac}             
+  	\   Run Keyword if   'spine' in '${alias}' 	   add fabric switch spine    ${alias}     ${dpid}
+  	\   sleep    1
+  	\ 	Run Keyword if   'spine' in '${alias}'     rest_verify_fabric_switch_role    ${dpid}   spine
+    \   Run Keyword if   'leaf' in '${alias}' 	   add fabric switch leaf     ${alias}     ${dpid}   rack${alias[4]}
+    \   sleep    1 
+    \   Run Keyword if   'leaf' in '${alias}' 	   rest_verify_fabric_switch_role    ${dpid}   leaf
+    	
+Verify all switches connected back
+ 	${switches}=  rest_get_disconnect_switch
+	log   the disconnected switches are ${switches}  	
+	Should Be Empty   ${switches}
+
+add fabric switch spine   [Arguments]   ${node}   ${dpid}  
+	rest add switch               ${node}
+	rest add dpid                 ${node}          ${dpid}  
+	rest add fabric role          ${node}          spine
+
+add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
+	rest add switch               ${node}
+	rest add dpid                 ${node}         ${dpid} 
+	rest add fabric role          ${node}         leaf
+	rest_add_leaf_group           ${node}         ${leafg} 
+	
 add fabric switch
   rest add switch  spine0
   ${spine0_dpid}=  get_switch_mac_topo  s7  
@@ -42,7 +84,36 @@ add fabric switch
   rest add dpid  leaf2-b  ${leaf2b_dpid}
   rest add fabric role  leaf2-b  leaf
   rest add leaf group  leaf2-b  rack2
-  BuiltIn.Sleep  155
+  sleep  350
+
+add host port groups
+	add a portgroup  p1 
+    add interface to portgroup  leaf0-a  ${h1_intf0}  p1
+    add interface to portgroup  leaf0-b  ${h1_intf1}  p1
+    rest add portgroup lacp  p1
+    add a portgroup  p2 
+    add interface to portgroup  leaf0-a  ${h2_intf0}  p2
+    add interface to portgroup  leaf0-b  ${h2_intf1}  p2
+    rest add portgroup lacp  p2
+    add a portgroup  p3 
+    add interface to portgroup  leaf1-a  ${h3_intf0}  p3
+    add interface to portgroup  leaf1-b  ${h3_intf1}  p3
+    rest add portgroup lacp  p3
+    add a portgroup  p4 
+    add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4
+    add a portgroup  p5 
+    add interface to portgroup  leaf2-a  ${h5_intf0}  p5
+    add interface to portgroup  leaf2-b  ${h5_intf1}  p5
+    rest add portgroup lacp  p5
+    add a portgroup  p6 
+    add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+    add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+    rest add portgroup lacp  p6
+	sleep  5
+
+	    
 delete fabric switch  
   rest delete fabric switch  spine0 
   rest delete fabric switch  spine1 
@@ -52,5 +123,4 @@ delete fabric switch
   rest delete fabric switch  leaf0-b 
   rest delete fabric switch  leaf1-a 
   rest delete fabric switch  leaf1-b 
-
 

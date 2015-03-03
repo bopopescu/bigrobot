@@ -18,48 +18,44 @@ Resource         testsuites/T5/t5_physical_variables.txt
 
 *Test Case
 add Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature  IronHorse  
+	[Tags]  Fabric  feature  IronHorse  daily-sanity
 	base suite setup  
-    add fabric switch
+    fabric infra suite setup
     Set swith int variables
     Set switch dpid variables
-    bring up h1 bond0
-    bring up h2 bond0
-    bring up h3 bond0
-    bring up h4 bond0
-    bring up h5 bond0
-    bring up h6 bond0
+    Set host int variables
     sleep  10
     rest verify fabric switch all
+    Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
     Set switch dpid variables
    
 Verify Fabric Lag formation from leaf node 
-	[Tags]	 Fabric  feature  IronHorse    
+	[Tags]	 Fabric  feature  IronHorse    daily-sanity
 	verify fabric lag   leaf0-a
 	
 verify fabric lag formation from spine node
-	[Tags]	 Fabric  feature  IronHorse    
+	[Tags]	 Fabric  feature  IronHorse    daily-sanity
     verify fabric lag   spine0
 	
 delete the Fabric Role spine and verify the lag from leaf switch 
-	[Tags]	 Fabric  feature  IronHorse    
+	[Tags]	 Fabric  feature  IronHorse    daily-sanity
 	REST delete fabric role  spine0  spine       
     sleep  5 
 	verify fabric lag   leaf0-a
 
 Add the Fabric Role spine back and verify the lag from leaf switch
-	[Tags]	 Fabric  feature  IronHorse    
+	[Tags]	 Fabric  feature  IronHorse    daily-sanity
 	REST add fabric role   spine0   spine      
     sleep  5 
 	verify fabric lag   leaf0-a
 	
 Verify Fabric Lag from spine after adding back spine node 
-	[Tags]	 Fabric  feature  IronHorse
+	[Tags]	 Fabric  feature  IronHorse   daily-sanity
 	sleep  5     
 	verify fabric lag   spine0
 	
 delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
-	[Tags]  Fabric  feature  IronHorse	
+	[Tags]  Fabric  feature  IronHorse	 daily-sanity
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a
 	sleep  3
 	rest delete fabric switch  leaf0-b
@@ -73,7 +69,7 @@ delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a     
 
 port group setting for static lag
-	[Tags]  Fabric  feature  IronHorse    
+	[Tags]  Fabric  feature  IronHorse   daily-sanity 
 	rest add portgroup  p1
 	rest add interface to portgroup  leaf2-a  ${h6_intf0}  p1
 	rest add interface to portgroup  leaf2-b  ${h6_intf1}  p1
@@ -84,7 +80,7 @@ port group setting for static lag
 	# should have the same Group ID on both leaf switches of rack2
 	  
 port group setting test for lacp mode
-	[Tags]  Fabric  feature  IronHorse  
+	[Tags]  Fabric  feature  IronHorse   daily-sanity
 	rest add portgroup  p2
 	rest add interface to portgroup  leaf2-a  ${h5_intf0}  p2
 	rest add interface to portgroup  leaf2-b  ${h5_intf1}  p2
@@ -124,7 +120,7 @@ rack lag detection from rack0 leaf switch using three rack setup (add/delete spi
 Verify broadcast traffic forwarding on the lag
 	[Tags]  Fabric  feature  IronHorse  
 	sleep  15
-	rest verify fabric link common  
+	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -502,29 +498,4 @@ T5 test teardown
 	rest delete tenant  t1
 	rest clean switch interface
 	base test teardown
-	
-bring up h1 bond0
-	bash init intf  h1  bond0.10
-    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
-    bash ifup intf  h1  bond0 
-bring up h2 bond0
-	bash init intf  h2  bond0.10
-    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
-    bash ifup intf  h2  bond0
-bring up h3 bond0
-	bash init intf  h3  bond0.10
-    bash add ip address  h3  ${h3_tag_ip}/24  bond0.10
-    bash ifup intf  h3  bond0 
-bring up h4 bond0
-	bash init intf  h4  bond0
-    bash add ip address  h4  ${h4_ip}/24  bond0
-    bash ifup intf  h4  bond0
-bring up h5 bond0
-	bash init intf  h5  bond0
-    bash add ip address  h5  ${h5_ip}/24  bond0
-    bash ifup intf  h5  bond0
-bring up h6 bond0
-	bash init intf  h6  bond0
-    bash add ip address  h6  ${h6_ip}/24  bond0
-    bash ifup intf  h6  bond0  
 

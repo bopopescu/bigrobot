@@ -42,7 +42,7 @@ Test Cluster formation with a disconnected/invalid NTP server
     Log     Step 2 - Verify that Stby takes the ntp configuration from the active
     Log     Step 3 - Verify that Stby Reject configuration for ntp
     [Tags]  T5  controller  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed  
 
 Test Configuration requests originating from standby
@@ -55,17 +55,17 @@ Test Configuration requests originating from standby
 Test Controller behavior during high cpu spikes
     Log     Step 1 - Test Controller behavior during high cpu spikes   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
 
 Test Simulate with large configs / issuing failover etc
     Log     Step 1 - Test Simulate with large configs / issuing failover etc   
     Log     Step 2 - Configuration - 200 tenants, 200 segments, 4K endpoints 
     [Tags]  T5  controller  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
 
-Test Continuous SNMP Walks
+Test SNMP Walks
     Log     Step 1 - Test Continuous SNMP Walks   
     [Tags]  T5  controller  negative  
     [Tags]  Manual
@@ -73,14 +73,14 @@ Test Continuous SNMP Walks
 
 Test Continuous switch connect/disconnect
     Log     Step 1 - Test Continuous switch connect/disconnect   
-    [Tags]  T5  controller  negative  
+    [Tags]  T5  controller  negative   
     [Tags]  Manual
     Manual Passed
 
 Test Continuous switch connect/disconnect Without removing the stdby controller add another stdby controller
     Log     Step 1 - Test Without removing the stdby controller add another stdby controller   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
 
 Try to add more than 2 controllers in to a cluster
@@ -94,57 +94,57 @@ Test Active & Stdby controller configured in different time zones
     Log     Step 1 - Test Active & Stdby controller configured in different time zones 
     Log     Step 2 - The configuration in stby for NTP is not being accepted. It rejects with proper error message  
     [Tags]  T5  controller  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed 
 
 Killing active deamons (eg: keepalived, ntpd, collectd)
     Log     Step 1 - Killing active deamons (eg: keepalived, ntpd, collectd, rsyslog)   
     [Tags]  T5  controller  negative  
     [Tags]  Manual
-    Manual passed 
+    Manual Passed 
 
 Test continuous floodlight restarts
     Log     Step 1 - Test continuous floodlight restarts   
     [Tags]  T5  controller  negative  
     [Tags]  Manual
-    Manual passed 
+    Manual Passed
 
 Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)
     Log     Step 1 - Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)  
     Log     Step 2 - Verify that the configuration get rejected with proper error message 
     [Tags]  T5  controller  negative  
     [Tags]  Manual
-    Manual passed
+    Manual Passed
 
 Changes in the switch role (leaf to spine / spine to leaf)
     Log     Step 1 - Changes in the switch role (leaf to spine / spine to leaf)   
     [Tags]  T5  controller  negative  
     [Tags]  Manual
-    Manual passed
+    Manual Passed
 
 Misconfiguration in the leaf groups 
     Log     Step 1 - Misconfiguration in the leaf groups   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
     
 Misconfiguration in the port-groups. Configuring disconnected/mismatch links
     Log     Step 1 - Misconfiguration in the port-groups. Configuring disconnected/mismatch links   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
 
 Connect server ports to leaves in 2 different racks
     Log     Step 1 - Connect server ports to leaves in 2 different racks   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed 
     
 Connect server port to leaf in same rack with different port group configuration
     Log     Step 1 - Connect server port to leaf in the same rack with different port group configuration 
     Log     Step 2 -   
     [Tags]  T5  controller  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
     
 # Switch Platform Negative Test Cases 
@@ -152,28 +152,34 @@ Connect server port to leaf in same rack with different port group configuration
 Adding/deleting Controller IP address
     Log     Step 1 - Adding/deleting Controller IP address   
     [Tags]  T5  switch  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
 
 Connecting leaves in between racks
-    Log     Step 1 - Connecting leaves in between racks   
+    Log     Step 1 - Connecting leaves in between racks 
+    Log     Step 2 - show fabric error reported Invalid Link between Leaf groups 
+    Log     Step 3 - 
+    Log     Step 4 - Invalid links Link between Leaf Groups [rack1, rack0 ]
+
     [Tags]  T5  switch  negative  
     [Tags]  Manual
-    Manual passed
+    Manual Passed
 
 Add spine to spine direct links
     Log     Step 1 - Add spine to spine direct links  
     Log     Step 2 - Verify that fabric error reports the error for invalid links
     Log     Step 3 - Verify that the fabric error shows the misconfigured link is displayed in show fabric error  
+    Log     Step 4 - Invalid links Link between Spine switches
+
     [Tags]  T5  switch  negative  
     [Tags]  Manual
-    Manual passed
+    Manual Passed
 
 Try to create external stp loop sending STP bpdu 
     Log     Step 1 - Try to create external stp loop- Bpdu guard is by default enabled and it brings port down 
     Log     Step 2 - Verify that STP Bpdu brings the port down and user need to do shut/noshut of interface to bring back port 
     [Tags]  T5  switch  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed	
     
 Different flavor of traffic types ( CRC, malformed, Invalid protocols)
@@ -189,42 +195,42 @@ IP header with more than 1500 Bytes Invalid header type
     Log     Step 1 - IP header with more than 1500 Bytes or Invalid header type 
     Log     Step 2 - IP packet with invalid header 
     [Tags]  T5  switch  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
 
 Killing OFAD
     Log     Step 1 - Killing OFAD
     [Tags]  T5  switch  negative  
     [Tags]  Manual
-    Manual passed 
+    Manual Passed
 
 Loosely attached SFP<->Fiber connections
     Log     Step 1 - Loosely attached SFP<->Fiber connections
     Log     Step 2 - Difficult to simulate this scenario. 
     Log     Step 3 - Tried taking out slowly and putting it back. 
     [Tags]  T5  switch  negative  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed 
 
 Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff, 00:00:00:00:00:00)
     Log     Step 1 - Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff)
     [Tags]  T5  switch  negative  
     [Tags]  Manual  
-    Manual passed 
+    Manual Passed
 
 Test with traffic invalid src mac and verify that traffic is dropped 
     Log     Step 1 - Test with invalid src mac like 00:00:00:00:00:00 
     Log     Step 2 - Traffic should be dropped and mac should not be learned 
     [Tags]  T5  switch  negative  
-    [Tags]  Manual     
-    Manual passed 
+    [Tags]  Manual    
+    Manual Passed
 
 Test with traffic invalid dst mac and verify that traffic is dropped 
     Log     Step 1 - Test with invalid dst mac like 00:00:00:00:00:00 
     Log     Step 2 - Traffic should be dropped and mac should not be learned 
-    [Tags]  T5  switch  negative  
-    [Tags]  Manual  jira-pan-1162   
-    Manual Failed
+    [Tags]  T5  switch  negative   
+    [Tags]  Manual  
+    Manual Passed
     
 
 * Keywords

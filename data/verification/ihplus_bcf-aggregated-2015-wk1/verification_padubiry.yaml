@@ -1,0 +1,126 @@
+# Verification Template
+#
+# This file contains a list of test cases which have been manually verified.
+# You can find the latest version of this file at
+# bigrobot/templates/verication.<build_name>_debug.yaml
+#
+# * This file must be saved as
+#   bigrobot/data/verification/verification.<build_name>.<user>.yaml
+#   E.g.,
+#     bigrobot/data/verification/verification.bvs_master_beta2_debug.don.yaml
+#
+# * File format:
+#   - name:                the name of the test case (must be exact match)
+#   - product_suite:       the name of the test suite including path (must be
+#                            an exact match)
+#   - status:              the test case status from the verification,
+#                            should be either PASS or FAIL
+#   - build_name_verified: the name of the build which was used to verify
+#                            the test case
+#   - notes:               free form comments
+#
+# * Examples:
+#
+#   - name: Verify L3 traffic honor more specific routes with ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: PASS
+#     build_name_verified: 'bvs master #2794'
+#     jira: 
+#     notes: I manually verified this and it works.
+#
+#   - name: Add and delete all ECMP members in ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: FAIL
+#     build_name_verified: 'bvs master #2806'
+#     jira: BVS-1598
+#     notes: This test case failed continuously in regression. It also fails in my testbed some of the time.
+#
+
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: Verify broadcast traffic forwarding on the lag
+  product_suite: T5/Fabric/t5_fabric_lag_test
+  status: PASS
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: pass on re-run
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: restart ofad to verify the fabric link
+  product_suite: T5/L2/t5_fabric_negative
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: verifying flow reconsilation when new switch is connected to the fabric
+  product_suite: T5/L2/t5_fabric_negative
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T2.8 migrate a VM to different host workflow
+  product_suite: T5/t5_plus_cloudstack_testcase
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T2.13 check the VM connectivity within VPC
+  product_suite: T5/t5_plus_cloudstack_testcase
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T2.14 adding a new pod workflow
+  product_suite: T5/t5_plus_cloudstack_testcase
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: T2.37 restart mysql database service
+  product_suite: T5/t5_plus_cloudstack_testcase
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-110'
+- name: add Single Leaf Three Rack setup
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-110'
+- name: verify interface rx/tx stats different rack
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-110'
+- name: verify interface rx/tx rates different rack
+  product_suite: T5/L2/t5_vns_stats
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-82'
+- name: add/delete 3995 network interfaces
+  product_suite: T5/Openstack/t5_openstack_router_interface_scale
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 

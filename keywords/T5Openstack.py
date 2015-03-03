@@ -115,14 +115,19 @@ class T5Openstack(object):
 		os1 = t.openstack_server('os1')
 		result = os1.bash("nova show %s" % instanceName)
 		output = result["content"]
+		instanceIp = []
 		out_dict = helpers.openstack_convert_table_to_dict(output)
 		if out_dict["status"]["value"] == "ACTIVE":
 			network = netName + " " + "network"
-			instanceIp = out_dict[network]["value"]
+			ip = out_dict[network]["value"]
+			if re.match(r'.+,.+', ip):
+				instanceIp = ip.split(',')  # should have 2 entries
+			else:
+				instanceIp = [ip]
 			return instanceIp
 		else:
 			helpers.log("Instance is not active in nova controller")
-
+		
 	def openstack_show_router(self, routerName):
 		'''Get router id
 			Input:
@@ -267,9 +272,95 @@ class T5Openstack(object):
 			return ''
 		else:
 			out_dict = helpers.openstack_convert_table_to_dict(output)
+			
+			helpers.log(helpers.prettify(out_dict))
+			
 			extId = out_dict["network_id"]["value"]
 			return extId
 	
+	def openstack_nova_floating_ip_pool_list(self):
+		'''
+		get floating ip pool list
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		result = os1.bash("nova floating-ip-pool-list")
+		output = result["content"]
+		out_dict = helpers.openstack_convert_table_to_dict(output)
+		return out_dict
+	
+	def openstack_nova_floating_ip_create(self, external_network_name ):
+		'''function to create a floating ip from given pool for the tenant
+		'''
+		t = test.Test()
+		os1 = t.openstack_server("os1")
+		result = os1.bash("nova floating-ip-create %s" % (external_network_name))
+		output = result["content"]
+		match = re.search(r'ERROR (NotFound): Floating ip pool not found', output)
+		if match:
+			helpers.log("Floating ip pool not found")
+			return ''
+		return True
+	
+	def openstack_nova_floating_ip_list(self):
+		'''Function to list the floating ip created for the tenant
+		'''
+		t = test.Test()
+		os1 = t.openstack_server("os1")
+		result = os1.bash("nova floating-ip-list")
+		output = result["content"]
+		out_dict =  helpers.openstack_convert_table_to_dict(output)
+		helpers.log(helpers.prettify(out_dict))
+		return out_dict
+	
+	def openstack_get_floating_ip(self):
+		'''function to provide floating IP for assignment
+		'''
+		t = test.Test()
+		os1 = t.openstack_server("os1")
+		result = os1.bash("nova floating-ip-list")
+		output = result["content"]
+		out_dict = helpers.openstack_convert_table_to_dict(output)
+		for record in out_dict.values():	
+			if re.match(r'^\d+\.\d+\.\d+\.\d+', record['fixed ip']):
+				continue
+			else:
+				floating_ip = record['ip']
+		return floating_ip
+		
+	def openstack_nova_floating_ip_associate(self, instanceName):
+		''' function to associate floating ip to a given instance
+		'''
+		t = test.Test()
+		os1 = t.openstack_server("os1")
+		floating_ip = self.openstack_get_floating_ip()
+		os1.bash("nova floating-ip-associate %s %s" % (instanceName, floating_ip))
+		return True
+	
+	def openstack_nova_floating_ip_disassociate(self, instanceName, netName):
+		''' function to associate floating ip to a given instance
+		'''
+		t = test.Test()
+		os1 = t.openstack_server("os1")
+		floating_ip = self.openstack_show_instance_ip(instanceName, netName)
+		os1.bash("nova floating-ip-disassociate %s %s" % (instanceName, floating_ip[1]))
+		return True
+	
+	def openstack_nova_floating_ip_delete(self):
+		'''function to delete floating ip assigned for a tenant
+		'''
+		t = test.Test()
+		os1 = t.openstack_server("os1")
+		result = os1.bash("nova floating-ip-list")
+		output = result["content"]
+		out_dict = helpers.openstack_convert_table_to_dict(output)
+		for record in out_dict.values():	
+			if re.match(r'^\d+\.\d+\.\d+\.\d+', record['fixed ip']):
+				continue
+			else:
+				floating_ip = record['ip']
+		os1.bash("nova floating-ip-delete %s" % floating_ip)
+		return True
 	
 	def openstack_source(self, source_name):
 		'''Get image id

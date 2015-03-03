@@ -1,0 +1,1109 @@
+*Settings
+Documentation                           BigChain Span Service Test Suite
+Suite Setup                             span suite setup
+Suite Teardown                          span suite teardown
+Test Setup                              span test setup
+Test Teardown                           span test teardown
+Force Tags                              bigchain  corsair-450  accton-AS5710  span-service
+Library                                 keywords/BsnCommon.py
+Library                                 keywords/AppController.py
+Library                                 keywords/BigTap.py
+Library                                 keywords/BigChain.py
+Library                                 keywords/SwitchLight.py
+Library                                 keywords/Ixia.py
+Library                                 keywords/ThirdParty.py
+Library                                 Collections.py
+Library                                 OperatingSystem.py
+Library                                 String.py
+
+
+* Variable
+${switch1_alias}                        app-ras5710-2
+
+${span_service_name_1}                  SPAN1
+${span_service_interface_1}             ethernet5
+${span_service_name_2}                  SPAN2
+${span_service_interface_2}             ethernet13
+${span_service_interface_3}             ethernet15
+
+${service_name_1}                       SERVICE1
+${service_in_interface1}                ethernet23
+${service_out_interface1}               ethernet24
+
+${chain_name_1}                         CHAIN1
+${chain_name_2}                         CHAIN2
+${chain_interface_1}                    ethernet1
+${chain_interface_2}                    ethernet2
+${chain_interface_3}                    ethernet13
+${chain_interface_4}                    ethernet14
+
+
+${arista_ixia_interface}                Ethernet1
+${arista_span_interface}                Ethernet6
+${s1s2_10g_name_1}                      port-channel1
+${s1s2_10g_port_range_1}                13,15,17,21
+${s1s2_10g_number_1}                    1
+${s1s2_10g_name_2}                      port-channel2
+${s1s2_10g_port_range_2}                14,16,18,22
+${s1s2_10g_number_2}                    2
+${src_mac}                              00:11:00:00:00:01
+${src_mac_other}                        00:11:00:00:01:02
+${dst_mac}                              00:11:00:00:00:02
+${dst_mac_other}                        00:11:00:00:01:01
+
+
+* Test Case
+
+TC001: Verify span interface can be configured via CLI command
+    config  node=master  cmd=bigchain span-service ${span_service_name_1}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=instance 1
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=span-interface switch ${switch1_alias} interface ${span_service_interface_1}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    sleep  5
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${span_service_interface_1}  chain_span_service_instance=1
+    Should be True  ${result1}
+    [Tags]  feature  sanity  
+
+TC002: Verify span interface can be configured via REST command
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${span_service_interface_1}  chain_span_service_instance=1
+    Should be True  ${result1}
+    [Tags]  feature  sanity  
+
+TC003: Verify multiple span instances can be configured
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    ${config2}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=2  span_interface=${span_service_interface_2}
+    Should be True  ${config2}
+    ${config3}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=3  span_interface=${span_service_interface_3}
+    Should be True  ${config3}
+    sleep  5
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${span_service_interface_1}  chain_span_service_instance=1
+    Should be True  ${result1}
+    ${result3}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${span_service_interface_2}  chain_span_service_instance=2
+    Should be True  ${result3}
+    ${result3}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${span_service_interface_3}  chain_span_service_instance=3
+    Should be True  ${result3}
+    [Tags]  feature  sanity  
+
+TC004: Verify port-channel interface can be used as span-interface
+    cli add portchannel  s1  ${s1s2_10g_number_1}  ${s1s2_10g_port_range_1}  L3
+    cli add portchannel  s1  ${s1s2_10g_number_2}  ${s1s2_10g_port_range_2}  L3
+    sleep  5
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${s1s2_10g_name_1}  chain_span_service_instance=1
+    Should be True  ${result1}
+    cli delete portchannel  s1  ${s1s2_10g_number_1}
+    cli delete portchannel  s1  ${s1s2_10g_number_2}
+    [Tags]  feature  sanity  
+    
+TC005: Verify existing service in-interface cannot be used as span interfaces
+    config  node=master  cmd=bigchain service ${service_name_1}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=description TestBigChainService
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=policy
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=1 match tcp dst-port 80
+    ${content6}=  cli_content  node=master
+    Should Not Contain  ${content6}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=exit
+    sleep  10
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${service_in_interface1}
+    Should not be True  ${config1}
+    sleep  10
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${service_in_interface1}  chain_span_service_instance=1
+    Should not be True  ${result1}
+    [Tags]  feature  full  
+    
+TC006: Verify existing service out-interface cannot be used as span interfaces
+    config  node=master  cmd=bigchain service ${service_name_1}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=description TestBigChainService
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=instance 1
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=interface-pair switch ${switch1_alias} in ${service_in_interface1} out ${service_out_interface1}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=policy
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=1 match tcp dst-port 80
+    ${content6}=  cli_content  node=master
+    Should Not Contain  ${content6}  Error
+    config  node=master  cmd=exit
+    config  node=master  cmd=exit
+    sleep  10
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${service_out_interface1}
+    Should not be True  ${config1}
+    sleep  10
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${service_out_interface1}  chain_span_service_instance=1
+    Should not be True  ${result1}
+    [Tags]  feature  full  
+    
+TC007: Verify multiple chains can use the same span instances.
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${result1}=  rest verify bigchain span service  s1  chain_span_service_name=${span_service_name_1}  chain_span_service_interface=${service_out_interface1}  chain_span_service_instance=1
+    Should be True  ${result1}
+    ## Chain 1
+    ${result2}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result2}
+    ${result3}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_3}
+    Should be True  ${result3}
+    ## Chain  2
+    ${result4}=  rest add a chain  chain_name=${chain_name_2}
+    Should be True  ${result4}
+    ${result5}=  rest add chain endpoint  s1  chain_name=${chain_name_2}  interface1=${chain_interface_4}  interface2=${chain_interface_2}
+    Should be True  ${result5}
+    sleep  10
+    ${result6}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result6}
+    ${result7}=  rest add span service to chain  chain_name=${chain_name_2}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result7}
+    sleep  10
+    ${result8}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_3}
+    Should be true  ${result8}
+    ${result9}=  rest verify bigchain chain  s1  chain_name=${chain_name_2}  interface1=${chain_interface_4}  interface2=${chain_interface_2}
+    Should be true  ${result9}
+    [Tags]  feature  full
+
+TC008: Verify two span services cannot use the same switch interface
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add bigchain span service  s1  span_service_name=${span_service_name_2}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should not be True  ${config2}
+    sleep  5
+    [Tags]  feature  full
+
+TC009: Verify two span services instances within the same span service cannot use the same switch interface
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=2  span_interface=${span_service_interface_1}  update=${True}
+    Should not be True  ${config2}
+    [Tags]  feature  full
+
+TC010: Change span-service name and verify behavior
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${result2}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result2}
+    ${result3}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result3}
+    sleep  5
+    ${result4}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result4}
+    sleep  5
+    ${stream_new}=  L3 add  flow=a->b  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_b_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    ${result5}=  rest delete span service  span_service_name=${span_service_name_1}
+    Should be True  ${result5}
+    sleep  5
+    ${config2}=  rest add bigchain span service  s1  span_service_name=${span_service_name_2}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config2}
+    sleep  5
+    ${result2}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result2}
+    ${result3}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result3}
+    sleep  5
+    ${result4}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_2}   span_instance_id=1
+    Should be True  ${result4}
+    sleep  5
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    ${result5}=  rest delete span service  span_service_name=${span_service_name_1}
+    Should be True  ${result5}
+    [Tags]  feature  full
+
+TC011: Change instance number in span-service and verify behavior.
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${result2}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result2}
+    ${result3}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result3}
+    sleep  5
+    ${result4}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result4}
+    sleep  5
+    ${stream_new}=  L3 add  flow=a->b  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_b_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    ${result5}=  rest delete span service  span_service_name=${span_service_name_1}
+    Should be True  ${result5}
+    sleep  5
+    ${config2}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=2  span_interface=${span_service_interface_1}
+    Should be True  ${config2}
+    sleep  5
+    ${result2}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result2}
+    ${result3}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result3}
+    sleep  5
+    ${result4}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=2
+    Should be True  ${result4}
+    sleep  5
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    ${result5}=  rest delete span service  span_service_name=${span_service_name_1}
+    Should be True  ${result5}
+    [Tags]  feature  full
+
+TC012: Verify traffic matching span policy is forwarded
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"src-ip-mask": "255.255.255.255", "ether-type": 2048, "src-ip": "100.1.1.1", "sequence": 1}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream_new}=  L3 add  flow=a->b  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_b_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full
+
+TC013: Verify traffic that does not match span policy is dropped
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"src-ip-mask": "255.255.255.255", "ether-type": 2048, "src-ip": "130.1.1.1", "sequence": 1}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream_new}=  L3 add  flow=a->b  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_b_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    ${report}=  fetch port stats
+    ${rx_value}=  verify dict key  ${report}  c  received_valid_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  0  50
+    Should be true  ${in_range}
+    [Tags]  feature  full
+    
+TC014: Verify multiple match conditions can be configured
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"src-ip-mask": "255.255.255.255", "ether-type": 2048, "src-ip": "100.1.1.1", "sequence": 1}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=2  data={"src-ip-mask": "255.255.255.255", "ether-type": 2048, "src-ip": "101.1.1.1", "sequence": 2}
+    Should be True  ${config3}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream_1}=  L3 add  flow=a->b  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_b_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    ${stream_2}=  L3 add  flow=a->b  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_b_flow  
+    ...     src_mac=00:01:03:04:05:06  dst_mac=00:01:03:04:05:07  no_arp=True
+    ...     src_ip=101.1.1.1  dst_ip=101.1.1.2
+    clear stats    
+    start traffic
+    sleep  10        
+    stop traffic
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full
+
+TC015: Verify on deleting a match condition, traffic matching the deleted condition is dropped
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"src-ip-mask": "255.255.255.255", "ether-type": 2048, "src-ip": "100.1.1.1", "sequence": 1}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=2  data={"src-ip-mask": "255.255.255.255", "ether-type": 2048, "src-ip": "101.1.1.1", "sequence": 2}
+    Should be True  ${config3}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream_1}=  L3 add  flow=a->b  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_b_1_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    ${stream_2}=  L3 add  flow=a->b  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_b_2_flow  
+    ...     src_mac=00:01:03:04:05:06  dst_mac=00:01:03:04:05:07  no_arp=True
+    ...     src_ip=101.1.1.1  dst_ip=101.1.1.2
+    clear stats
+    cli clear interface statistics  s1
+    start traffic
+    sleep  10        
+    stop traffic
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    ${config3}=  rest delete span service policy match  span_service_name=${span_service_name_1}  match_number=2  data={"src-ip-mask": "255.255.255.255", "ether-type": 2048, "src-ip": "101.1.1.1"}
+    Should be True  ${config3}
+    sleep  10
+    cli clear interface statistics  s1
+    clear stats
+    start traffic
+    sleep  10
+    stop traffic
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    ${report}=  fetch port stats
+    ${rx_value}=  verify dict key  ${report}  c  received_valid_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  100000  50
+    Should be true  ${in_range}
+    [Tags]  feature  full  jira-BT-1899
+
+TC016: Verify chain is not affected when span interface goes down.
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"src-ip-mask": "255.255.255.255", "ether-type": 2048, "src-ip": "100.1.1.1", "sequence": 1}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream_new}=  L3 add  flow=a->b  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_b_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    ### Shutdown span interface from remote side
+    ${arista1}=  cli arista enable disable interface  s3  ${arista_span_interface}  disable=${True}
+    Should be True  ${arista1}
+    pause
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    ${report}=  fetch port stats
+    ${rx_value}=  verify dict key  ${report}  c  received_valid_frames
+    ${in_range}=  ixia verify traffic rate  ${rx_value}  0  50
+    Should be true  ${in_range}
+    [Tags]  negative  full  jira-BT-1900
+    
+TC017: Verify span-policy match condition Match on IP
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream_new}=  L3 add  flow=a->b  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_b_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC018: Verify span-policy match condition Match on IP6
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 34525}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC019: Verify span-policy match condition Match on IPV4 SRC-IP
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"src-ip-mask": "255.255.255.255", "src-ip": "100.1.1.1", "sequence": 1}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC020: Verify span-policy match condition Match on IPV6 SRC-IP
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"src-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "src-ip": "2001:2004:0:0:0:0:0:c4", "ether-type": 34525}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC021: Verify span-policy match condition Match on IPV4 DST-IP
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "dst-ip-mask": "255.255.255.255", "dst-ip": "100.1.1.2"}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC022: Verify span-policy match condition Match on IPV6 DST-IP
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"dst-ip": "2001:2004:0:0:0:0:0:c3", "sequence": 1, "dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "ether-type": 34525}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC023: Verify span-policy match condition Match on Protocol (tcp)
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ip-proto": 6, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC024: Verify span-policy match condition Match on Protocol (tcp6)
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ip-proto": 6, "ether-type": 34525}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=53
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC025: Verify span-policy match condition Match on IPV4 UDP Src-Port
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"src-tp-port": 1234, "sequence": 1, "ip-proto": 17, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    pause
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC026: Verify span-policy match condition Match on IPV6 UDP Src-Port
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"src-tp-port": 1234, "sequence": 1, "ip-proto": 17, "ether-type": 34525}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC027: Verify span-policy match condition Match on IPV4 UDP Src-Port-Range
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"src-tp-port-max": 1500, "sequence": 1, "src-tp-port-min": 1000, "ip-proto": 17, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC028: Verify span-policy match condition Match on IPV6 UDP Src-Port-Range
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"src-tp-port-max": 1500, "sequence": 1, "src-tp-port-min": 1000, "ip-proto": 17, "ether-type": 34525}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC029: Verify span-policy match condition Match on IPV4 UDP DST-Port
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "dst-tp-port": 194, "ip-proto": 17, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC030: Verify span-policy match condition Match on IPV6 UDP DST-Port
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "dst-tp-port": 194, "ip-proto": 17, "ether-type": 34525}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+
+TC031: Verify span-policy match condition Match on IPV4 UDP DST-Port Range
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"dst-tp-port-min": 100, "sequence": 1, "dst-tp-port-max": 200, "ip-proto": 17, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC032: Verify span-policy match condition Match on IPV6 UDP DST-Port Range
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"dst-tp-port-min": 100, "sequence": 1, "dst-tp-port-max": 200, "ip-proto": 17, "ether-type": 34525}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC033: Verify span-policy match condition Match on Vlan-ID (IPv4 Traffic)
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"vlan": 1020, "sequence": 1, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=194  vlan_id=1020
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC034: Verify span-policy match condition Match on Vlan-ID (IPv6 Traffic)
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"vlan": 1020, "sequence": 1, "ether-type": 34525}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow  vlan_id=1020
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC035: Verify span-policy match condition Match on Vlan-ID Range (IPv4 Traffic)
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"vlan-max": 1100, "sequence": 1, "vlan-min": 1000, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=194  vlan_id=1020
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+TC036: Verify span-policy match condition Match on Vlan-ID Range (IPv6 Traffic)
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  5
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"vlan-max": 1100, "sequence": 1, "vlan-min": 1000, "ether-type": 34525}
+    Should be True  ${config2}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow  vlan_id=1020
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=194
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    [Tags]  feature  full  match-conditions
+
+
+* Keywords
+span suite setup
+    base suite setup
+    ${result1}=  rest add switch alias  s1  ${switch1_alias}
+    Should be true  ${result1}
+    ${result2}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result2}
+    config  node=s3  cmd=interface ${arista_ixia_interface}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${arista_span_interface}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    
+span test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
+    ixia initialize  tg1  init=true
+
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
+    Should be true  ${in_range}
+
+span test teardown
+    ${result1}=  rest delete bigchain chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest delete bigchain chain  chain_name=${chain_name_2}
+    Should be True  ${result2}
+    ${result3}=  rest delete span service  span_service_name=${span_service_name_1}
+    Should be True  ${result3}
+    ${result4}=  rest delete span service  span_service_name=${span_service_name_2}
+    Should be True  ${result4}
+    ${result4}=  rest delete bigchain service  chain_service_name=${service_name_1}
+    Should be True  ${result4} 
+    delete traffic
+    sleep  2
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+
+span suite teardown
+    config  node=s3  cmd=interface ${arista_ixia_interface}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport mode
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${arista_span_interface}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport mode
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    ${result1}=  rest delete switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result3}=  rest delete switch alias  s1
+    Should be true  ${result3}
+    ${result4}=  rest delete switch  s1
+    Should be true  ${result4}
+    base suite teardown

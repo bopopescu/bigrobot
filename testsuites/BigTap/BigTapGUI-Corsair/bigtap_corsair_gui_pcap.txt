@@ -6,6 +6,7 @@ Suite Teardown  	config suite teardown
 Force Tags      	bigtap  corsair  gui
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
+Library             keywords/AppController.py
 Library        		SeleniumLibrary
 Resource        	bigtap_resource.txt
 Library       		String
@@ -13,47 +14,63 @@ Library       		String
 *Test Case
 
 ##Scheduling									Policy	 		Action		Start Policy	AfterDelayOfTime	Run Policy		Duration		Packets
-TC1 Set Up
+TC1 Setup
 	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rlb9-1		filter			ixia-2-9
 	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rly2-1 		delivery		ixia-2-15
+    [Tags]  sanity  feature  timed-policy  policy
 TC1.1 Create Policy
 	Configure Big Tap Policy					test-policy1		admin-view			Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}		${EMPTY}	 
+    [Tags]  sanity  feature  timed-policy  policy
 T1.2 Schedule policy to start now and run always  
 	Schedule Big Tap Policy					 	test-policy1		Forward		Immediately			${EMPTY}			Always			${EMPTY}		${EMPTY}
+    [Tags]  sanity  feature  timed-policy  policy
 T1.3 Schedule policy to start now and run for 5 minutes
 	Schedule Big Tap Policy				 		test-policy1		Forward		Immediately			${EMPTY}			For Duration	5				${EMPTY}	
+    [Tags]  sanity  feature  timed-policy  policy
 T1.4 Schedule policy to start now, run for 15 minutes or until 5000 packets are delivered
 	Schedule Big Tap Policy					 	test-policy1		Forward		Immediately			${EMPTY}			For Duration	15				5000			
+    [Tags]  sanity  feature  timed-policy  policy
 T1.5 Schedule policy to start after a delay of 5 minutes and run for 5 minutes 
 	Schedule Big Tap Policy					 	test-policy1		Forward		After Delay Of		5					For Duration	5				${EMPTY}				
+    [Tags]  full  feature  timed-policy  policy
 T1.6 Schedule policy to start after a delay of 10 minutes and run for 2 minutes 
 	Schedule Big Tap Policy				 		test-policy1		Forward		After Delay Of		10					For Duration	2				${EMPTY}
+    [Tags]  full  feature  timed-policy  policy
 T1.7 Schedule policy to start after a delay of 15 minutes, run for 10 minute(s) or until 10000 packets are delivered
 	Schedule Big Tap Policy					 	test-policy1		Forward		After Delay Of		15					For Duration	10				10000		
+    [Tags]  sanity  feature  timed-policy  policy
 T1.8 Teardown
 	Delete All Big Tap Resources
-	
+    [Tags]  sanity  feature  timed-policy  policy
 
 ##Packet capture								Policy	 		Action		Start Policy 		AfterDelayOfTime	Run Policy		Duration		Packets
-TC2 Set Up
+TC2 Setup
 	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rlb9-1		filter			ixia-2-9
+    [Tags]  sanity  feature  packet-capture
 T2.1 Create Policy
 	Configure Big Tap Policy					test-policy2		admin-view			Capture			IPv4 - 0x800 (2048)		ixia-2-9		${EMPTY}		${EMPTY}		${EMPTY}		${EMPTY}	 
+    [Tags]  sanity  feature  packet-capture
 T2.2 Schedule policy to start now and run always  
 	Schedule Big Tap Policy					 	test-policy2	Capture		Immediately			${EMPTY}		${EMPTY}		${EMPTY}		${EMPTY}
+    [Tags]  sanity  feature  packet-capture
 T2.3 Schedule policy to start now and run for 1 minutes
 	Schedule Big Tap Policy				 		test-policy2	Capture		Immediately			${EMPTY}		${EMPTY}		1				${EMPTY}	
+    [Tags]  sanity  feature  packet-capture
 T2.4 Schedule policy to start now, run for 15 minutes or until 5000 packets are delivered
 	Schedule Big Tap Policy				 		test-policy2	Capture		Immediately			${EMPTY}		${EMPTY}		15				5000		
+    [Tags]  sanity  feature  packet-capture
 T2.5 Schedule policy to start after a delay of 5 minutes and run for 5 minutes
 	Schedule Big Tap Policy				 		test-policy2	Capture		After Delay Of		5				${EMPTY}		5				${EMPTY}				
+    [Tags]  full  feature  packet-capture
 T2.6 Schedule policy to start after a delay of 10 minutes and run for 2 minutes 
 	Schedule Big Tap Policy				 		test-policy2	Capture		After Delay Of		10				${EMPTY}		2				${EMPTY}
+    [Tags]  full  feature  packet-capture
 T2.7 Schedule policy to start after a delay of 15 minutes, run for 10 minute(s) or until 10000 packets are delivered
 	Schedule Big Tap Policy				 		test-policy2	Capture		After Delay Of		15				${EMPTY}		10				10000		
+    [Tags]  full  feature  packet-capture
 T2.8 Teardown
 	Delete All Big Tap Policies
-	
+    [Tags]  sanity  feature  packet-capture
 
 * Keyword
 config suite setup
@@ -70,8 +87,20 @@ config suite setup
 	Set Switching Mode		L3-L4 Offset Match
 	#Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
  	#Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
- 	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			app-rlb9-1		 							
- 	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			app-rly2-1
+ 	#Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			app-rlb9-1		 							
+ 	#Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			app-rly2-1
+    #Configure Switch Alias    00:00:08:9e:01:b3:0c:0c            app-rlb9-1                                     
+    #Configure Switch Alias    00:00:08:9e:01:f8:6b:8b            app-rly2-1   
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+    ${switch_dpid_s3}=  rest return switch dpid from ip  s3
+    ${switch_dpid_s4}=  rest return switch dpid from ip  s4
+    ${switch_dpid_s5}=  rest return switch dpid from ip  s5
+    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
  	
 config suite teardown
 	Close Browser

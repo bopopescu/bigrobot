@@ -16,22 +16,21 @@ Library       		String
 
 
 *Test Case
-
 ### Valid Login		           	User Name      		Password
 T1.1 Local admin        
 	Valid Login					admin          		adminadmin
 T1.2 Remote admin1  
 	Valid Login                 bt-admin       		adminadmin
-#T1.3 Remote admin2
-#	Valid Login                 admin          		Password1
+T1.3 Remote admin2
+	Valid Login                 admin          		Password1
 T1.4 Local user1 
 	Valid Login                 test           		adminadmin
 T1.5 Local user2      
 	Valid Login                 test-user-local     ,./[]<:{}`~!@#$^&*()_-1234567890
-#T1.6 Remote user1   
-#	Valid Login                 tomasz         		password
-#T1.7 Remote user2    
-#	Valid Login	                test-user-remote   `0-=~!@#$^&*()_+,./;[]<>?:{}|
+T1.6 Remote user1
+	Valid Login                 remote         		remote
+T1.7 Remote user2
+	Valid Login	                test-user-remote   `0-=~!@#$^&*()_+,./;[]<>?:{}|
 
 
 ### Login With Invalid Credentials Should Fail             User Name      		Password
@@ -48,8 +47,41 @@ T2.5 Empty Password
 T2.6 Empty Username And Password
 	Login With Invalid Credentials Should Fail		       ${EMPTY}       		${EMPTY}
 
+### Toggling through Authentication Methods
+T3.1 Local Only
+	Logout
+	Valid Login  admin  adminadmin
+	Configure Authentication  Local  None
+	Login With Invalid Credentials Should Fail  remote  remote
+	Valid Login  admin  adminadmin
+	Login With Invalid Credentials Should Fail  remote  remote
+	Valid Login  admin  adminadmin
 
+T3.2 Remote Only
+	Valid Login  admin  adminadmin
+	Configure Authentication  TACACS  None
+	Logout
+    Run Keyword and Ignore Error
+    ...  Cli Run  master  show tacacs  user=remote  password=remote
+    Sleep  30
+	Login With Invalid Credentials Should Fail  admin  adminadmin
+	Valid Login  remote  remote
+	Logout
+	Valid Login  admin  Password1
+	Configure Authentication  TACACS  Local
+	Valid Login  admin  adminadmin
 
+T3.3 Local Then Remote
+	Valid Login  admin  Password1
+	Configure Authentication  Local  TACACS
+	Valid Login  remote  remote
+	Valid Login  admin  adminadmin
+
+T3.4 Remote Then Local
+	Valid Login  admin  adminadmin
+	Configure Authentication  TACACS  Local
+	Valid Login  remote  remote
+	Valid Login  admin  adminadmin
 
 * Keyword
 config suite setup
@@ -59,10 +91,14 @@ config suite setup
     Set URLs
     Rest Add Tacacs Server  10.2.3.201  secret  10
     Rest Add Tacacs Authentication
-    #Rest Delete Tacacs Authorization
     CLI Configure User    test    adminadmin
     CLI Configure User    test-user-local    ,./[]<:{}`~!@#$^&*()_-1234567890
     CLI Run  master  group admin; associate user tomasz; associate user test-user-local
+    Run Keyword and Ignore Error
+    ...  Cli Run  master  show tacacs  user=remote  password=remote
+    Run Keyword and Ignore Error
+    ...  Cli Run  slave  show tacacs  user=remote  password=remote
+    Sleep  60
     Start Selenium Server  -trustAllSSLCertificates
     Open Browser To Login Page
     Valid Login  admin  adminadmin

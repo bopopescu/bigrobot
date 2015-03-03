@@ -1,0 +1,617 @@
+* Settings
+Documentation     Breakout Cable Test suite - Switch Light platforms
+#Suite Setup      Breakout cable test setup
+#Suite Teardown   Breakout cable test teardown
+#Test Teardown     traffic teardown
+Force Tags        corsair-450   ironhorse-plus
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         String
+
+
+### Link to the Functional spec wiki page
+### https://bigswitch.atlassian.net/wiki/display/BSC/Splitter-Breakout+cable+support+in+BCF+controller
+### Supported Platform - DELL S6000, AS5710, AS6700 
+### Supported cable in HCL: 
+###            S6000 - Dell breakout DAC, 3M breakout AOC
+###            AS5710, AS6700 - Amphenol breakout DAC(same as Dell), 3M breakout AOC     
+### Add specific port test cases for platform specific
+###  
+
+*Test Cases
+
+#For Dell S6000
+
+TC S6000: Verify "show interface" shows breakout capable port 
+    [Tags]  feature  breakout  manual   
+    Log     Step 1 - Without any SFP/QSFP inserted, "show interface" should not show any breakout interface
+    Log     Step 2 - Verify "show interface" shows breakout capable port info (with "B" indication next to port link status)  
+    Manual passed
+
+TC S6000: Verify platform does not exceed chipset maximum breakout port density 
+    [Tags]  feature  breakout  manual    
+    Log     Step 1 - Trident 2 chipset has maximum 104 ports density per chip
+    Log     Step 2 - Verify platform (all interfaces including breakout interface) do not exceed chipset mamxium port density 
+    Manual passed
+    
+TC S6000: Verify breakout cable detection in "show inventory" 
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - Verify breakout cable detection in "show inventory"
+    Log     Step 2 - It should show the correct type, length(DAC), Vendor, Model and Serial number
+    Log     Step 3 - Verify both 40G QSFP connector side and 10G SFP+ connector sides
+    Manual failed
+
+TC S6000: Verify "breakout" command able to save into startup-config 
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - Verify "breakout" command able to save into startup-config
+    Manual passed
+    
+TC S6000: Verify breakout cable detection on breakout capable port with force breakout command
+    [Tags]  feature  breakout  manual   
+    Log     Step 1 - Verify "show interfaces" shows single 40G interfaces
+    Log     Step 2 - Configure "breakout" under interface config
+    Log     Step 3 - Verify "show interfaces" shows breakout interfaces (40G port shows X/1, X/2, X/3, X/4)
+    Log     Step 4 - Un-configure "breakout" under interface config
+    Log     Step 5 - Verify "show interfaces" shows single 40G interfaces
+    Log     Step 6 - "show inventory" should only show 1 item on each 40G breakout cable
+    Manual passed
+
+TC S6000: Verify breakout cable detection on non-breakout capable port
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - Verify "show interfaces" shows single 40G interfaces
+    Log     Step 2 - Configure "breakout" under interface config
+    Log     Step 3 - CLI should reject the command and shows error that port is not breakout capable
+    Log     Step 2 - "show inventory" should only show 1 item on each 40G breakout cable - even when port is not breakout capable
+    Manual passed
+    
+TC S6000: Verify all existing 40G optics/AOC/DAC 
+    [Tags]  feature  breakout  manual-untest     
+    Log     Step 1 - Verify all existing optics/AOC/DAC able to detect and pass traffic without issue
+    Manual untested    
+
+TC S6000: Verify CLI "show interface X/Y" command
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - verify 40G port breakout ports when not all 4 10G links are connected 
+    Log     Step 2 - show inventory  interface output
+    Manual passed
+    
+TC S6000: Verify CLI "show interface X/Y detail" command
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - verify 40G port breakout ports when not all 4 10G links are connected 
+    Log     Step 2 - show inventory interface output
+    Manual passed    
+        
+TC S6000: Verify breakout cable interface shut no shut on SFP+ ports 
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify breakout cable interface shut no shut on SFP+ ports
+     Log     Step 2 - Verify with and without traffic
+    Manual passed   
+
+TC S6000: Verify breakout cable interface shut no shut on QSFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify breakout cable interface shut no shut on QSFP+ ports
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+
+TC S6000: Verify non-breakout cable interface shut no shut on SFP+ ports 
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify non-breakout cable interface shut and no shut on SFP+ ports
+     Log     Step 2 - Verify with and without traffic 
+    Manual passed   
+
+TC S6000: Verify non-breakout cable interface shut no shut on QSFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify non-breakout cable interface shut and no shut on QSFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+
+TC S6000: Verify breakout cable hotswap on SFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify breakout cable interface hotswap on SFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+    
+TC S6000: Verify breakout cable hotswap on QSFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify breakout cable hotswap on QSFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+    
+TC S6000: Verify non-breakout cable interface hotswap on SFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify non-breakout cable interface hotswap on SFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+    
+TC S6000: Verify non-breakout cable interface hotswap on QSFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify non-breakout cable interface hotswap on QSFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+        
+TC S6000: Verify port mappings on all breakout ports on the platform
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify port mappings on all breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed
+
+TC S6000: Verify port mappings on all non-breakout ports on the platform
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify port mappings on all non-breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed
+
+TC S6000: Verify port link/status LEDs on all breakout ports on the platform
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify link/status LEDs on all breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+     Log     Step 3 - Verify with shut/no-shut/hotswap/linkup/linkdown      
+    Manual failed
+
+TC S6000: Verify link/status LEDs on all non-breakout ports on the platform
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify link/status LEDs on all non-breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+     Log     Step 3 - Verify with shut/no-shut/hotswap/linkup/linkdown 
+    Manual passed    
+            
+TC S6000: Verify system reboot with breakout interfaces
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify system reboot with breakout interfaces 
+     Log     Step 2 - Verify with and without traffic
+    Manual failed
+    
+TC S6000: Verify ofad restart with breakout interfaces
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify system reboot with breakout interfaces 
+     Log     Step 2 - Verify with and without traffic
+    Manual failed
+
+
+### Suppported HCL and Non supported HCL breakout cable 
+
+TC S6000: Verify the supported HCL breakout cable - 3M AOC breakout 3, 5, 7, 10M
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - verify the supported HCL breakout cable 
+    Manual untested
+
+TC S6000: Verify the supported HCL breakout cable - Dell/Amphenol 0.5, 1, 3, 5, 7M
+    [Tags]  feature  breakout  manual  
+    Log     Step 1 - verify the supported HCL breakout cable 
+    Manual passed
+
+TC S6000: Verify the non-supported HCL breakout cable/optics 
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - verify the non-supported breakout cable/optics 
+    Manual untested   
+
+TC S6000: Verify the supported HCL breakout cable support auto-breakout
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - Verify the supported HCL breakout cable support auto-breakout 
+    Manual untested 
+    
+### SNMP
+
+TC S6000: Verify ifNumber with and without breakout configured
+    [Tags]  feature  breakout  manual  
+    Log     Step 1 - Verify ifNumber with and without breakout configured
+    Manual failed
+    
+TC S6000: Verify the ifMIB/interfaces MIB ifIndexes, counters with and without breakout configured
+    [Tags]  feature  breakout  manual-untest 
+    Log     Step 1 - Verify the ifMIB/interfaces MIB ifIndexes, stats counters with and without breakout configured
+    Manual untested
+    
+TC S6000: Verify linkup/linkdown traps with and without breakout cable
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - Verify linkup/linkdown traps with and without breakout cable 
+    Manual untested    
+
+TC S6000: Verify mibwalk the whole MIB tree(.1) with and without breakout cable
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - Verify mibwalk the whole MIB tree(.1) with and without breakout cable
+    Manual untested  
+
+
+
+#For Accton AS5710
+
+TC AS5710: Verify "show interface" shows breakout capable port 
+    [Tags]  feature  breakout  manual    
+    Log     Step 1 - Without any SFP/QSFP inserted, "show interface" should not show any breakout interface
+    Log     Step 2 - Verify "show interface" shows breakout capable port info (with "B" indication next to port link status)  
+    Manual passed
+
+TC AS5710: Verify platform does not exceed chipset mamxium breakout port density 
+    [Tags]  feature  breakout  manual    
+    Log     Step 1 - Trident 2 chipset has maximum 104 ports density per chip
+    Log     Step 2 - Verify platform (all interfaces including breakout interface) do not exceed chipset mamxium port density 
+    Manual passed
+    
+TC AS5710: Verify breakout cable detection in "show inventory" 
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - Verify breakout cable detection in "show inventory"
+    Log     Step 2 - It should show the correct type, length(DAC), Vendor, Model and Serial number
+    Log     Step 3 - Verify both 40G QSFP connector side and 10G SFP+ connector sides
+    Manual passed
+
+TC AS5710: Verify "breakout" command able to save into startup-config 
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - Verify "breakout" command able to save into startup-config
+    Manual passed
+    
+TC AS5710: Verify breakout cable detection on breakout capable port with force breakout command
+    [Tags]  feature  breakout  manual   
+    Log     Step 1 - Verify "show interfaces" shows single 40G interfaces
+    Log     Step 2 - Configure "breakout" under interface config
+    Log     Step 3 - Verify "show interfaces" shows breakout interfaces (40G port shows X/1, X/2, X/3, X/4)
+    Log     Step 4 - Un-configure "breakout" under interface config
+    Log     Step 5 - Verify "show interfaces" shows single 40G interfaces
+    Log     Step 6 - "show inventory" should only show 1 item on each 40G breakout cable
+    Manual passed
+
+TC AS5710: Verify breakout cable detection on non-breakout capable port
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - Verify "show interfaces" shows single 40G interfaces
+    Log     Step 2 - Configure "breakout" under interface config
+    Log     Step 3 - CLI should reject the command and shows error that port is not breakout capable
+    Log     Step 2 - "show inventory" should only show 1 item on each 40G breakout cable - even when port is not breakout capable
+    Manual passed
+    
+TC AS5710: Verify all existing 40G optics/AOC/DAC 
+    [Tags]  feature  breakout  manual-untest     
+    Log     Step 1 - Verify all existing optics/AOC/DAC able to detect and pass traffic without issue
+    Manual untested    
+
+TC AS5710: Verify CLI "show interface X/Y" command
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - verify 40G port breakout ports when not all 4 10G links are connected 
+    Log     Step 2 - show inventory  interface output
+    Manual passed
+    
+TC AS5710: Verify CLI "show interface X/Y detail" command
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - verify 40G port breakout ports when not all 4 10G links are connected 
+    Log     Step 2 - show inventory interface output
+    Manual passed    
+        
+TC AS5710: Verify breakout cable interface shut no shut on SFP+ ports 
+    [Tags]  feature  breakout  manual-untest  
+     Log     Step 1 - Verify breakout cable interface shut no shut on SFP+ ports
+     Log     Step 2 - Verify with and without traffic
+    Manual untested   
+
+TC AS5710: Verify breakout cable interface shut no shut on QSFP+ ports  
+    [Tags]  feature  breakout  manual-untest  
+     Log     Step 1 - Verify breakout cable interface shut no shut on QSFP+ ports
+     Log     Step 2 - Verify with and without traffic
+    Manual untested 
+
+TC AS5710: Verify non-breakout cable interface shut no shut on SFP+ ports 
+    [Tags]  feature  breakout  manual-untest  
+     Log     Step 1 - Verify non-breakout cable interface shut and no shut on SFP+ ports
+     Log     Step 2 - Verify with and without traffic 
+    Manual untested   
+
+TC AS5710: Verify non-breakout cable interface shut no shut on QSFP+ ports  
+    [Tags]  feature  breakout  manual-untest  
+     Log     Step 1 - Verify non-breakout cable interface shut and no shut on QSFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual untested 
+
+TC AS5710: Verify breakout cable hotswap on SFP+ ports  
+    [Tags]  feature  breakout  manual-untest  
+     Log     Step 1 - Verify breakout cable interface hotswap on SFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual untested 
+    
+TC AS5710: Verify breakout cable hotswap on QSFP+ ports  
+    [Tags]  feature  breakout  manual-untest  
+     Log     Step 1 - Verify breakout cable hotswap on QSFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual untested 
+    
+TC AS5710: Verify non-breakout cable interface hotswap on SFP+ ports  
+    [Tags]  feature  breakout  manual-untest  
+     Log     Step 1 - Verify non-breakout cable interface hotswap on SFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual untested 
+    
+TC AS5710: Verify non-breakout cable interface hotswap on QSFP+ ports  
+    [Tags]  feature  breakout  manual-untest 
+     Log     Step 1 - Verify non-breakout cable interface hotswap on QSFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual untested 
+        
+TC AS5710: Verify port mappings on all breakout ports on the platform
+    [Tags]  feature  breakout  manual-untest 
+     Log     Step 1 - Verify port mappings on all breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+    Manual untested
+
+TC AS5710: Verify port mappings on all non-breakout ports on the platform
+    [Tags]  feature  breakout  manual-untest 
+     Log     Step 1 - Verify port mappings on all non-breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+    Manual untested
+
+TC AS5710: Verify port link/status LEDs on all breakout ports on the platform
+    [Tags]  feature  breakout  manual 
+     Log     Step 1 - Verify link/status LEDs on all breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+     Log     Step 3 - Verify with shut/no-shut/hotswap/linkup/linkdown      
+    Manual failed
+
+TC AS5710: Verify link/status LEDs on all non-breakout ports on the platform
+    [Tags]  feature  breakout  manual 
+     Log     Step 1 - Verify link/status LEDs on all non-breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+     Log     Step 3 - Verify with shut/no-shut/hotswap/linkup/linkdown 
+    Manual failed    
+            
+TC AS5710: Verify system reboot with breakout interfaces
+    [Tags]  feature  breakout  manual
+     Log     Step 1 - Verify system reboot with breakout interfaces 
+     Log     Step 2 - Verify with and without traffic
+    Manual failed
+    
+TC AS5710: Verify ofad restart with breakout interfaces
+    [Tags]  feature  breakout manual  
+     Log     Step 1 - Verify system reboot with breakout interfaces 
+     Log     Step 2 - Verify with and without traffic
+    Manual failed
+
+
+### Suppported HCL and Non supported HCL breakout cable 
+
+TC AS5710: Verify the supported HCL breakout cable - 3M AOC breakout 3, 5, 7, 10M
+    [Tags]  feature  breakout  manual-untest
+    Log     Step 1 - verify the supported HCL breakout cable 
+    Manual untested
+
+TC AS5710: Verify the supported HCL breakout cable - Dell/Amphenol 0.5, 1, 3, 5, 7M
+    [Tags]  feature  breakout  manual-untest
+    Log     Step 1 - verify the supported HCL breakout cable 
+    Manual untested
+
+TC AS5710: Verify the non-supported HCL breakout cable/optics 
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - verify the non-supported breakout cable/optics 
+    Manual untested   
+    
+TC AS5710: Verify the supported HCL breakout cable support auto-breakout
+    [Tags]  feature  breakout  manual-untest
+    Log     Step 1 - Verify the supported HCL breakout cable support auto-breakout 
+    Manual untested     
+   
+### SNMP
+
+TC AS5710: Verify ifNumber with and without breakout configured
+    [Tags]  feature  breakout  manual-untest
+    Log     Step 1 - Verify ifNumber with and without breakout configured
+    Manual untested
+    
+TC AS5710: Verify the ifMIB/interfaces MIB ifIndexes, counters with and without breakout configured
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - Verify the ifMIB/interfaces MIB ifIndexes, stats counters with and without breakout configured
+    Manual untested
+    
+TC AS5710: Verify linkup/linkdown traps with and without breakout cable
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - Verify linkup/linkdown traps with and without breakout cable 
+    Manual untested    
+
+TC AS5710: Verify mibwalk the whole MIB tree(.1) with and without breakout cable
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - Verify mibwalk the whole MIB tree(.1) with and without breakout cable
+    Manual untested 
+    
+    
+    
+#For Accton AS6700
+
+TC AS6700: Verify "show interface" shows breakout capable port 
+    [Tags]  feature  breakout  manual    
+    Log     Step 1 - Without any SFP/QSFP inserted, "show interface" should not show any breakout interface
+    Log     Step 2 - Verify "show interface" shows breakout capable port info (with "B" indication next to port link status)  
+    Manual passed
+
+TC AS6700: Verify platform does not exceed chipset mamxium breakout port density 
+    [Tags]  feature  breakout  manual    
+    Log     Step 1 - Trident 2 chipset has maximum 104 ports density per chip
+    Log     Step 2 - Verify platform (all interfaces including breakout interface) do not exceed chipset mamxium port density 
+    Manual passed
+    
+TC AS6700: Verify breakout cable detection in "show inventory" 
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - Verify breakout cable detection in "show inventory"
+    Log     Step 2 - It should show the correct type, length(DAC), Vendor, Model and Serial number
+    Log     Step 3 - Verify both 40G QSFP connector side and 10G SFP+ connector sides
+    Manual passed
+
+TC AS6700: Verify "breakout" command able to save into startup-config 
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - Verify "breakout" command able to save into startup-config sides
+    Manual passed
+    
+TC AS6700: Verify breakout cable detection on breakout capable port with force breakout command
+    [Tags]  feature  breakout  manual   
+    Log     Step 1 - Verify "show interfaces" shows single 40G interfaces
+    Log     Step 2 - Configure "breakout" under interface config
+    Log     Step 3 - Verify "show interfaces" shows breakout interfaces (40G port shows X/1, X/2, X/3, X/4)
+    Log     Step 4 - Un-configure "breakout" under interface config
+    Log     Step 5 - Verify "show interfaces" shows single 40G interfaces
+    Log     Step 6 - "show inventory" should only show 1 item on each 40G breakout cable
+    Manual passed
+
+TC AS6700: Verify breakout cable detection on non-breakout capable port
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - Verify "show interfaces" shows single 40G interfaces
+    Log     Step 2 - Configure "breakout" under interface config
+    Log     Step 3 - CLI should reject the command and shows error that port is not breakout capable
+    Log     Step 2 - "show inventory" should only show 1 item on each 40G breakout cable - even when port is not breakout capable
+    Manual passed
+
+TC AS6700: Verify all existing 40G optics/AOC/DAC 
+    [Tags]  feature  breakout  manual-untest     
+    Log     Step 1 - Verify all existing optics/AOC/DAC able to detect and pass traffic without issue
+    Manual untested    
+
+TC AS6700: Verify CLI "show interface X/Y" command
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - verify 40G port breakout ports when not all 4 10G links are connected 
+    Log     Step 2 - show inventory  interface output
+    Manual passed
+    
+TC AS6700: Verify CLI "show interface X/Y detail" command
+    [Tags]  feature  breakout  manual     
+    Log     Step 1 - verify 40G port breakout ports when not all 4 10G links are connected 
+    Log     Step 2 - show inventory interface output
+    Manual passed    
+        
+TC AS6700: Verify breakout cable interface shut no shut on SFP+ ports 
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify breakout cable interface shut no shut on SFP+ ports
+     Log     Step 2 - Verify with and without traffic
+    Manual passed   
+
+TC AS6700: Verify breakout cable interface shut no shut on QSFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify breakout cable interface shut no shut on QSFP+ ports
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+
+TC AS6700: Verify non-breakout cable interface shut no shut on SFP+ ports 
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify non-breakout cable interface shut and no shut on SFP+ ports
+     Log     Step 2 - Verify with and without traffic 
+    Manual passed   
+
+TC AS6700: Verify non-breakout cable interface shut no shut on QSFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify non-breakout cable interface shut and no shut on QSFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+
+TC AS6700: Verify breakout cable hotswap on SFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify breakout cable interface hotswap on SFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+    
+TC AS6700: Verify breakout cable hotswap on QSFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify breakout cable hotswap on QSFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+    
+TC AS6700: Verify non-breakout cable interface hotswap on SFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify non-breakout cable interface hotswap on SFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+    
+TC AS6700: Verify non-breakout cable interface hotswap on QSFP+ ports  
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify non-breakout cable interface hotswap on QSFP+ ports 
+     Log     Step 2 - Verify with and without traffic
+    Manual passed 
+        
+TC AS6700: Verify port mappings on all breakout ports on the platform
+    [Tags]  feature  breakout  manual-untest  
+     Log     Step 1 - Verify port mappings on all breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+    Manual untested
+
+TC AS6700: Verify port mappings on all non-breakout ports on the platform
+    [Tags]  feature  breakout  manual-untest  
+     Log     Step 1 - Verify port mappings on all non-breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+    Manual untested
+
+TC AS6700: Verify port link/status LEDs on all breakout ports on the platform
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify link/status LEDs on all breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+     Log     Step 3 - Verify with shut/no-shut/hotswap/linkup/linkdown      
+    Manual failed
+
+TC AS6700: Verify link/status LEDs on all non-breakout ports on the platform
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify link/status LEDs on all non-breakout ports on the platform 
+     Log     Step 2 - Verify with and without traffic
+     Log     Step 3 - Verify with shut/no-shut/hotswap/linkup/linkdown 
+    Manual failed    
+            
+TC AS6700: Verify system reboot with breakout interfaces
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify system reboot with breakout interfaces 
+     Log     Step 2 - Verify with and without traffic
+    Manual failed
+    
+TC AS6700: Verify ofad restart with breakout interfaces
+    [Tags]  feature  breakout  manual  
+     Log     Step 1 - Verify system reboot with breakout interfaces 
+     Log     Step 2 - Verify with and without traffic
+    Manual failed
+
+
+### Suppported HCL and Non supported HCL breakout cable 
+
+TC AS6700: Verify the supported HCL breakout cable - 3M AOC breakout 3, 5, 7, 10M
+    [Tags]  feature  breakout  manual  
+    Log     Step 1 - verify the supported HCL breakout cable 
+    Manual passed
+
+TC AS6700: Verify the supported HCL breakout cable - Dell/Amphenol 0.5, 1, 3, 5, 7M
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - verify the supported HCL breakout cable 
+    Manual untested
+
+TC AS6700: Verify the non-supported HCL breakout cable/optics 
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - verify the non-supported breakout cable/optics 
+    Manual untested
+    
+TC AS6700: Verify the supported HCL breakout cable support auto-breakout
+    [Tags]  feature  breakout  manual  
+    Log     Step 1 - Verify the supported HCL breakout cable support auto-breakout 
+    Manual failed   
+
+### SNMP
+
+TC AS6700: Verify ifNumber with and without breakout configured
+    [Tags]  feature  breakout  manual  
+    Log     Step 1 - Verify ifNumber with and without breakout configured
+    Manual failed
+    
+TC AS6700: Verify the ifMIB/interfaces MIB ifIndexes, counters with and without breakout configured
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - Verify the ifMIB/interfaces MIB ifIndexes, stats counters with and without breakout configured
+    Manual untested
+    
+TC AS6700: Verify linkup/linkdown traps with and without breakout cable
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - Verify linkup/linkdown traps with and without breakout cable 
+    Manual untested    
+
+TC AS6700: Verify mibwalk the whole MIB tree(.1) with and without breakout cable
+    [Tags]  feature  breakout  manual-untest  
+    Log     Step 1 - Verify mibwalk the whole MIB tree(.1) with and without breakout cable
+    Manual untested 
+
+
+
+     
+
+
+
+
+     
+
+ 

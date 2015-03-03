@@ -1,0 +1,420 @@
+*Settings
+Documentation       Link Aggregation Test Suite
+Suite Setup         lag suite setup
+Suite Teardown      lag suite teardown 
+Test Setup          base test setup
+Test Teardown       base test teardown
+Force Tags          SwitchLight  bigtap 
+Library             keywords/BsnCommon.py
+Library             keywords/AppController.py
+Library             keywords/BigTap.py
+Library             keywords/SwitchLight.py
+Library             keywords/ThirdParty.py
+Library             String
+
+* Variable
+${arista_s4810_10G_port_range}          27 28 29 30 31 32 33 34
+${arista_s4810_10G_pc_number}           1
+${s4810_arista_10G_port_range}          29,30,31,32,33,34,35,36
+${s4810_arista_10G_pc_number}           1
+${s4810_arista_10G_pc_name}             port-channel1
+${s4810_arista_10G_pc_members}          ethernet29 ethernet30 ethernet31 ethernet32 ethernet33 ethernet34 ethernet35 ethernet36  
+
+${s4810_arista_10G_odd_port_range}      29,30,31,32,33,34,35
+${s4810_arista_10G_even_port_range}     29,30,31,32,33,34,35,36
+${s4810_arista_10G_one_member}          29
+
+${arista_s4810_1G_port_range}           35 36 37 38 39 40 41 42
+${arista_s4810_1G_pc_number}            2
+${s4810_arista_1G_port_range}           37,38,39,40,41,42,43,44
+${s4810_arista_1G_pc_number}            2
+${s4810_arista_1G_pc_name}              port-channel2
+${s4810_arista_1G_pc_members}           ethernet37 ethernet38 ethernet39 ethernet40 ethernet41 ethernet42 ethernet43 ethernet44  
+
+${arista_as5610_10G_port_range}         11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26
+${arista_as5610_10G_pc_number}          3
+${as5610_arista_10G_port_range}         11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26
+${as5610_arista_10G_pc_number}          3
+${as5610_arista_10G_pc_name}            port-channel3
+${as5610_arista_10G_pc_members}         ethernet11 ethernet12 ethernet13 ethernet14 ethernet15 ethernet16 ethernet17 ethernet18 ethernet19 ethernet20 ethernet21 ethernet22 ethernet23 ethernet24 ethernet25 ethernet26  
+
+${as6700_40G_port_range}                1,2,3,4
+${as6700_40G_pc_number}                 1
+${as6700_40G_pc_name}                   port-channel1
+${as6700_40G_pc_members}                ethernet1 ethernet2 ethernet3 ethernet4
+
+${s4810_1G10G_mismatch_port_range}      29,37
+${s4810_1G10G_mismatch_pc_number}       1
+${s4810_1G10G_mismatch_pc_name}         port-channel1
+${s4810_1G10G_mismatch_pc_members}      ethernet29 ethernet37
+
+${s4810_10G40G_mismatch_port_range}     29,49
+${s4810_10G40G_mismatch_pc_number}      1
+${s4810_10G40G_mismatch_pc_name}        port-channel1
+${s4810_10G40G_mismatch_pc_members}     ethernet29 ethernet49
+
+*Test Case
+TC1: Verify port-channel (hash-mode:L2) interface (1G links) is up on switch  
+    verify portchannel interface is up  s1  ${s4810_arista_1G_pc_name}
+    [Tags]    portchannel  
+
+TC2: Verify port-channel (hash-mode:L2) interface shows correct 1G member links on switch  
+    verify portchannel correctly reports member name  s1  ${s4810_arista_1G_pc_number}  ${s4810_arista_1G_pc_members}
+    [Tags]    portchannel  
+
+TC3: Verify port-channel (hash-mode:L2) interface 1G member links are up on switch  
+    verify portchannel correctly reports member interfaces  s1  ${s4810_arista_1G_pc_number}  ${s4810_arista_1G_pc_members}
+    [Tags]    portchannel  
+
+TC4: Verify port-channel (hash-mode:L3) interface (1G links) is up on switch  
+    ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L3
+    Should be true  ${s4810_lag_1G}
+    sleep  2
+    verify portchannel interface is up  s1  ${s4810_arista_1G_pc_name}
+    ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L2
+    Should be true  ${s4810_lag_1G}
+    sleep  2
+    [Tags]    portchannel  
+
+TC5: Verify port-channel (hash-mode:L3) interface shows correct 1G member links on switch  
+    ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L3
+    Should be true  ${s4810_lag_1G}
+    sleep  2
+    verify portchannel correctly reports member name  s1  ${s4810_arista_1G_pc_number}  ${s4810_arista_1G_pc_members}
+    ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L2
+    Should be true  ${s4810_lag_1G}
+    sleep  2
+    [Tags]    portchannel  
+
+TC6: Verify port-channel (hash-mode:L3) interface 1G member links are up on switch  
+    ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L3
+    Should be true  ${s4810_lag_1G}
+    sleep  2
+    verify portchannel correctly reports member interfaces  s1  ${s4810_arista_1G_pc_number}  ${s4810_arista_1G_pc_members}
+    ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L2
+    Should be true  ${s4810_lag_1G}
+    sleep  2
+    [Tags]    portchannel  
+ 
+TC7: Verify port-channel (hash-mode:L2) interface (10G links) is up on switch  
+    verify portchannel interface is up  s1  ${s4810_arista_10G_pc_name}
+    [Tags]    portchannel  
+
+TC8: Verify port-channel (hash-mode:L2) interface shows correct 10G member links on switch  
+    verify portchannel correctly reports member name  s1  ${s4810_arista_10G_pc_number}  ${s4810_arista_10G_pc_members}
+    [Tags]    portchannel  
+
+TC9: Verify port-channel (hash-mode:L2) interface 10G member links are up on switch  
+    verify portchannel correctly reports member interfaces  s1  ${s4810_arista_10G_pc_number}  ${s4810_arista_10G_pc_members}
+    [Tags]    portchannel  
+
+TC10: Verify port-channel (hash-mode:L3) interface (10G links) is up on switch  
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L3
+    Should be true  ${s4810_lag_10G}
+    sleep  2
+    verify portchannel interface is up  s1  ${s4810_arista_10G_pc_name}
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    sleep  2
+    [Tags]    portchannel  
+
+TC11: Verify port-channel (hash-mode:L3) interface shows correct 10G member links on switch  
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L3
+    Should be true  ${s4810_lag_10G}
+    sleep  2
+    verify portchannel correctly reports member name  s1  ${s4810_arista_10G_pc_number}  ${s4810_arista_10G_pc_members}
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    sleep  2
+    [Tags]    portchannel  
+
+TC12: Verify port-channel (hash-mode:L3) interface 10G member links are up on switch  
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L3
+    Should be true  ${s4810_lag_10G}
+    sleep  2
+    verify portchannel correctly reports member interfaces  s1  ${s4810_arista_10G_pc_number}  ${s4810_arista_10G_pc_members}
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    sleep  2
+    [Tags]    portchannel  
+
+ 
+TC13: Verify port-channel (hash-mode:L2) interface (40G links) is up on switch  
+    verify portchannel interface is up  s3  ${as6700_40G_pc_name}
+    [Tags]    portchannel  
+
+TC14: Verify port-channel (hash-mode:L2) interface shows correct 40G member links on switch  
+    verify portchannel correctly reports member name  s3  ${as6700_40G_pc_number}  ${as6700_40G_pc_members}
+    [Tags]    portchannel  
+
+TC15: Verify port-channel (hash-mode:L2) interface 40G member links are up on switch  
+    verify portchannel correctly reports member interfaces  s3  ${as6700_40G_pc_number}  ${as6700_40G_pc_members}
+    [Tags]    portchannel  
+
+TC16: Verify port-channel (hash-mode:L3) interface (40G links) is up on switch  
+    ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L3
+    Should be true  ${as6700_lag_40G}
+    sleep  2
+    verify portchannel interface is up  s3  ${as6700_40G_pc_name}
+    ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L2
+    Should be true  ${as6700_lag_40G}
+    sleep  2
+    [Tags]    portchannel  
+
+TC17: Verify port-channel (hash-mode:L3) interface shows correct 40G member links on switch  
+    ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L3
+    Should be true  ${as6700_lag_40G}
+    sleep  2
+    verify portchannel correctly reports member name  s3  ${as6700_40G_pc_number}  ${as6700_40G_pc_members}
+    ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L2
+    Should be true  ${as6700_lag_40G}
+    sleep  2
+    [Tags]    portchannel  
+
+TC18: Verify port-channel (hash-mode:L3) interface 40G member links are up on switch  
+    ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L3
+    Should be true  ${as6700_lag_40G}
+    sleep  2
+    verify portchannel correctly reports member interfaces  s3  ${as6700_40G_pc_number}  ${as6700_40G_pc_members}
+    ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L2
+    Should be true  ${as6700_lag_40G}
+    sleep  2
+    [Tags]    portchannel  
+
+TC19: Verify that when portchannel (hash-mode:L2) interface cannot be formed if member links have mismatched speeds (1G and 10G)
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_1G10G_mismatch_pc_number}   ${s4810_1G10G_mismatch_port_range}  L2
+    Should be true  ${s4810_lag_10G}    
+    sleep  1
+    ${member_isup0}=  cli verify portchannel member state  s1  ${s4810_1G10G_mismatch_pc_number}  ${s4810_1G10G_mismatch_pc_members}
+    Should Not Be True  ${member_isup0}
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    [Tags]    portchannel  
+
+TC20: Verify that when portchannel (hash-mode:L3) interface cannot be formed if member links have mismatched speeds (1G and 10G)
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_1G10G_mismatch_pc_number}   ${s4810_1G10G_mismatch_port_range}  L3
+    Should be true  ${s4810_lag_10G}    
+    sleep  1
+    ${member_isup0}=  cli verify portchannel member state  s1  ${s4810_1G10G_mismatch_pc_number}  ${s4810_1G10G_mismatch_pc_members}
+    Should Not Be True  ${member_isup0}
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    [Tags]    portchannel  
+
+TC21: Verify that when portchannel (hash-mode:L2) interface cannot be formed if member links have mismatched speeds (10G and 40G)
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_10G40G_mismatch_pc_number}   ${s4810_10G40G_mismatch_port_range}  L2
+    Should be true  ${s4810_lag_10G}    
+    sleep  1
+    ${member_isup0}=  cli verify portchannel member state  s1  ${s4810_10G40G_mismatch_pc_number}  ${s4810_10G40G_mismatch_pc_members}
+    Should Not Be True  ${member_isup0}
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    [Tags]    portchannel  
+
+TC22: Verify that when portchannel (hash-mode:L3) interface cannot be formed if member links have mismatched speeds (10G and 40G)
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_10G40G_mismatch_pc_number}   ${s4810_10G40G_mismatch_port_range}  L3
+    Should be true  ${s4810_lag_10G}    
+    sleep  1
+    ${member_isup0}=  cli verify portchannel member state  s1  ${s4810_10G40G_mismatch_pc_number}  ${s4810_10G40G_mismatch_pc_members}
+    Should Not Be True  ${member_isup0}
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    [Tags]    portchannel  
+
+TC23: Disable all member links. Verify that lag interface shows as "down" on both switch and controller
+    cli delete portchannel  s2  ${as5610_arista_10G_pc_number}
+    sleep  1
+    @{lag_member_interfaces}=  Split String  ${as5610_arista_10G_pc_members}  
+    shutdown all interfaces in lag  s2  @{lag_member_interfaces}  
+    sleep  1
+    ${as5610_lag_10G}=  cli add portchannel  s2  ${as5610_arista_10G_pc_number}   ${as5610_arista_10G_port_range}  L2
+    Should be true  ${as5610_lag_10G}
+    ${inft_state}=  cli show interface state  s2  ${as5610_arista_10G_pc_name}
+    Should not Contain  ${inft_state}  up    
+    ${member_isup0}=  cli verify portchannel member state  s2  ${as5610_arista_10G_pc_number}  ${as5610_arista_10G_pc_members}
+    Should Not Be True  ${member_isup0}
+    cli delete portchannel  s2  ${as5610_arista_10G_pc_number}
+    sleep  1
+    bringup all interfaces in lag  s2  @{lag_member_interfaces}
+    ${as5610_lag_10G}=  cli add portchannel  s2  ${as5610_arista_10G_pc_number}   ${as5610_arista_10G_port_range}  L2
+    Should be true  ${as5610_lag_10G}
+    sleep  1
+    verify portchannel interface is up  s2  ${as5610_arista_10G_pc_name}
+    [Tags]    portchannel  
+
+TC24: Verify log messages are generated for link up/link down events for LAG interfaces
+    clear log message  s1
+    shutdown portchannel interface  s1  ${s4810_arista_10G_pc_name}
+    sleep  3
+    verify log message  s1  'Disabling port port-channel1 (61)'
+    clear log message  s1
+    enable portchannel interface  s1  ${s4810_arista_10G_pc_name}  
+    sleep  3
+    verify log message  s1  'Enabling port port-channel1 (61)'
+    [Tags]    portchannel  
+
+TC25: Verify switch CLI does not allow member interfaces to be outside the range (1-54)
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${return_value}   cli add portchannel  s1  ${s4810_arista_10G_pc_number}  49,50,91  L2
+    Should Not Be True  ${return_value}
+    sleep  1
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1    
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    sleep  1
+    [Tags]    portchannel  
+
+TC26: Verify LAG interface can be formed with odd number of member links
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${return_value}   cli add portchannel  s1  ${s4810_arista_10G_pc_number}  ${s4810_arista_10G_odd_port_range}  L2
+    Should Be True  ${return_value}
+    sleep  1
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1    
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    sleep  1
+    [Tags]    portchannel  
+    
+TC27: Verify LAG interface can be formed with even number of member links
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${return_value}   cli add portchannel  s1  ${s4810_arista_10G_pc_number}  ${s4810_arista_10G_even_port_range}  L2
+    Should Be True  ${return_value}
+    sleep  1
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1    
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    sleep  1
+    [Tags]    portchannel  
+    
+TC28: Verify LAG interface can be formed with one member link
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1
+    ${return_value}   cli add portchannel  s1  ${s4810_arista_10G_pc_number}  ${s4810_arista_10G_one_member}  L2
+    Should Be True  ${return_value}
+    sleep  1
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    sleep  1    
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    sleep  1
+    [Tags]    portchannel  
+    
+TC29: Verify LAG interface can be formed with maximum number of links
+    verify portchannel interface is up  s2  ${as5610_arista_10G_pc_name}
+    [Tags]    portchannel  
+
+TC30: Restart process OFAD and verify LAG interface shows up correctly
+    verify portchannel interface is up  s1  ${s4810_arista_10G_pc_name}
+    verify portchannel interface is up  s1  ${s4810_arista_1G_pc_name}
+    bash restart process  s1  ofad
+    Sleep  45
+    verify portchannel interface is up  s1  ${s4810_arista_10G_pc_name}
+    verify portchannel interface is up  s1  ${s4810_arista_1G_pc_name}
+    [Tags]    portchannel  
+       
+
+TC31: Save running-config to startup-config. Reboot switch and verify that LAG interface comes up correctly.
+    ${as5610_lag_10G}=  cli add portchannel  s2  ${as5610_arista_10G_pc_number}   ${as5610_arista_10G_port_range}  L2
+    Should be true  ${as5610_lag_10G}
+    sleep  5
+    verify portchannel interface is up  s2  ${as5610_arista_10G_pc_name}
+    cli execute command  s2  copy running-config startup-config
+    pause
+    cli restart switch  s2
+    Sleep  90
+    verify portchannel interface is up  s2  ${as5610_arista_10G_pc_name}
+    [Tags]    portchannel  
+
+                                               
+* Keywords  
+lag suite setup
+    base suite setup
+    ${arista_lag_10G}=  cli arista add portchannel  s4  ${arista_s4810_10G_pc_number}  ${arista_s4810_10G_port_range}    
+    Should be true  ${arista_lag_10G}
+    ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
+    Should be true  ${s4810_lag_10G}
+    
+    ${arista_lag_1G}=  cli arista add portchannel  s4  ${arista_s4810_1G_pc_number}  ${arista_s4810_1G_port_range}    
+    Should be true  ${arista_lag_1G}
+    ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L2
+    Should be true  ${s4810_lag_1G}
+    
+    ${arista_lag_10G}=  cli arista add portchannel  s4  ${arista_as5610_10G_pc_number}  ${arista_as5610_10G_port_range}    
+    Should be true  ${arista_lag_10G}    
+    ${as5610_lag_10G}=  cli add portchannel  s2  ${as5610_arista_10G_pc_number}   ${as5610_arista_10G_port_range}  L2
+    Should be true  ${as5610_lag_10G}
+
+    ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L2
+    Should be true  ${as6700_lag_40G}
+    Sleep   30
+
+verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
+    ${inft_state}=  cli show interface state  ${switch}  ${interface_name}
+    Should Contain  ${inft_state}  up
+    ${cintf_state}=  rest verify interface is up  ${switch}  ${interface_name}
+    Should Be True  ${cintf_state}
+  
+verify portchannel correctly reports member name  [Arguments]  ${switch}  ${portchannel_number}  ${interface_name_list}
+    ${member_exists0}=  cli verify portchannel members  ${switch}  ${portchannel_number}  ${interface_name_list}
+    Should Be True  ${member_exists0}
+ 
+verify portchannel correctly reports member interfaces  [Arguments]  ${switch}  ${portchannel_number}  ${interface_name_list}
+    ${member_isup0}=  cli verify portchannel member state   ${switch}  ${portchannel_number}  ${interface_name_list}
+    Should Be True  ${member_isup0}
+
+shutdown all interfaces in lag  [Arguments]  ${switch}  @{lag_member_interface}
+    :for  ${interface}  in  @{lag_member_interface}
+    \   ${cintf_state}  cli disable interface  ${switch}  ${interface}
+    \   Should Be True  ${cintf_state}
+
+bringup all interfaces in lag  [Arguments]  ${switch}  @{lag_member_interface}
+    :for  ${interface}  in  @{lag_member_interface}
+    \   ${cintf_state}  cli enable interface  ${switch}  ${interface}
+    \   Should Be True  ${cintf_state}
+
+shutdown portchannel interface  [Arguments]  ${switch}  ${interface}  
+    ${cintf_state}=  cli disable interface  ${switch}  ${interface}
+    Should Be True  ${cintf_state}
+    
+enable portchannel interface  [Arguments]  ${switch}  ${interface}
+    ${cintf_state}=  cli enable interface  ${switch}  ${interface}
+    Should Be True  ${cintf_state}
+
+clear log message  [Arguments]  ${switch}
+    bash execute command  ${switch}  cp /var/log/syslog /var/log/syslog.old
+    bash execute command  ${switch}  echo > /var/log/syslog
+
+verify log message  [Arguments]  ${switch}  ${message}
+    ${bash_content}=  bash execute command  ${switch}  cat /var/log/syslog | grep ${message}
+    @{wmess}=  split string  ${message}  '  
+    Should Contain  ${bash_content}  ${wmess[1]}
+
+                 
+lag suite teardown
+    cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
+    cli delete portchannel  s1  ${s4810_arista_1G_pc_number}
+    cli delete portchannel  s2  ${as5610_arista_10G_pc_number}
+    base suite teardown
+          

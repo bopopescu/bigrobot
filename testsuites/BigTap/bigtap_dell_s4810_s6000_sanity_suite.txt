@@ -4,7 +4,7 @@ Suite Setup             dell suite setup
 Suite Teardown          dell suite teardown
 Test Setup              traffic test setup
 Test Teardown           traffic test teardown 
-Force Tags              platform Sanity
+Force Tags              BigTap  corsair-411  Dell-S4810  Dell-S6000
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -123,7 +123,7 @@ TC1: Verify L2 traffic: frame size 64 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic      
-    [Tags]  l2  fs64 
+    [Tags]  sanity  feature  traffic
      
 TC2: Verify L2 traffic: frame size 128 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -138,7 +138,7 @@ TC2: Verify L2 traffic: frame size 128 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic      
-    [Tags]  l2  fs128
+    [Tags]  sanity  feature  traffic
 
 TC3: Verify L2 traffic: frame size 256 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -153,7 +153,7 @@ TC3: Verify L2 traffic: frame size 256 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic      
-    [Tags]  l2  fs256 
+    [Tags]  sanity  feature  traffic
      
 TC4: Verify L2 traffic: frame size 512 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -168,7 +168,7 @@ TC4: Verify L2 traffic: frame size 512 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic      
-    [Tags]  l2  fs512    
+    [Tags]  sanity  feature  traffic
 
 TC5: Verify L2 traffic: frame size 1024 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -183,7 +183,7 @@ TC5: Verify L2 traffic: frame size 1024 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic      
-    [Tags]  l2  fs1024 
+    [Tags]  sanity  feature  traffic
      
 TC6: Verify L2 traffic: frame size 1280 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -198,7 +198,7 @@ TC6: Verify L2 traffic: frame size 1280 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic      
-    [Tags]  l2  fs1280
+    [Tags]  sanity  feature  traffic
 
 TC7: Verify L2 traffic: frame size 1518 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -213,7 +213,7 @@ TC7: Verify L2 traffic: frame size 1518 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate        
     stop traffic      
-    [Tags]  l2  fs1518 
+    [Tags]  sanity  feature  traffic
      
 TC8: Verify L2 traffic: frame size 9216 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -228,7 +228,7 @@ TC8: Verify L2 traffic: frame size 9216 bytes
     verify results  a  d  transmitted_frame_rate  received_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_frame_rate       
     stop traffic      
-    [Tags]  l2  fs9216  jumbo
+    [Tags]  sanity  feature  traffic
 
 TC9: Verify L2 vlan tagged traffic: frame size 1518 bytes
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -243,7 +243,7 @@ TC9: Verify L2 vlan tagged traffic: frame size 1518 bytes
     verify results  a  d  transmitted_frame_rate  received_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_frame_rate       
     stop traffic      
-    [Tags]  l2  vlantagged 
+    [Tags]  sanity  feature  traffic
 
 ###  L2 Traffic with CRC Errors: Frame Size 1518 Bytes
 
@@ -260,7 +260,7 @@ TC10: Verify L2 Traffic with CRC Errors: frame size 1518 bytes
     verify results  a  d  transmitted_frame_rate  received_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_frame_rate       
     stop traffic      
-    [Tags]  l2  s4810  l2crc  
+    [Tags]  sanity  feature  traffic
 
 ### L2 Traffic :  Spanning Tree Protocol (for bridges) IEEE 802.1D
 TC11: Verify L2 Traffic: Spanning Tree Protocol (for bridges) IEEE 802.1D
@@ -276,7 +276,7 @@ TC11: Verify L2 Traffic: Spanning Tree Protocol (for bridges) IEEE 802.1D
     verify results  a  d  transmitted_frame_rate  received_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_frame_rate       
     stop traffic      
-    [Tags]  l2  s4810  l2stp  
+    [Tags]  sanity  feature  traffic
     
 ### L2 Traffic :  LLDP with ethernet ethertype
 TC12: Verify L2 Traffic: LLDP with ethernet ethertype
@@ -292,7 +292,7 @@ TC12: Verify L2 Traffic: LLDP with ethernet ethertype
     verify results  a  d  transmitted_frame_rate  received_frame_rate    
     verify results  c  b  transmitted_frame_rate  received_frame_rate       
     stop traffic      
-    [Tags]  l2  s4810  lldp 
+    [Tags]  sanity  feature  traffic
 
 ### L3 Traffic    
 #### L3 IPv4 Traffic : Frame Size 68 Bytes
@@ -314,7 +314,7 @@ TC13: Verify L3 IPv4 traffic: frame size 68 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs64  ipv4
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 68 Bytes
         
@@ -335,7 +335,7 @@ TC14: Verify L3 IPv6 traffic: frame size 68 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs64  ipv6
+    [Tags]  sanity  feature  traffic
 
 #### L3 IPv4 Traffic : Frame Size 128 Bytes
         
@@ -356,7 +356,7 @@ TC15: Verify L3 IPv4 traffic: frame size 128 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs128  ipv4
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 128 Bytes
         
@@ -377,7 +377,7 @@ TC16: Verify L3 IPv6 traffic: frame size 128 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs128  ipv6
+    [Tags]  sanity  feature  traffic
 
 #### L3 IPv4 Traffic : Frame Size 256 Bytes
         
@@ -398,7 +398,7 @@ TC17: Verify L3 IPv4 traffic: frame size 256 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs256  ipv4
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 256 Bytes
         
@@ -419,7 +419,7 @@ TC18: Verify L3 IPv6 traffic: frame size 256 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs256  ipv6
+    [Tags]  sanity  feature  traffic
 
 #### L3 IPv4 Traffic : Frame Size 512 Bytes
         
@@ -440,7 +440,7 @@ TC19: Verify L3 IPv4 traffic: frame size 512 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs512  ipv4
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 512 Bytes
         
@@ -461,7 +461,7 @@ TC20: Verify L3 IPv6 traffic: frame size 512 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs512  ipv6
+    [Tags]  sanity  feature  traffic
 
 #### L3 IPv4 Traffic : Frame Size 1024 Bytes
         
@@ -482,7 +482,7 @@ TC21: Verify L3 IPv4 traffic: frame size 1024 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs1024  ipv4
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 1024 Bytes
         
@@ -503,7 +503,7 @@ TC22: Verify L3 IPv6 traffic: frame size 1024 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs1024  ipv6
+    [Tags]  sanity  feature  traffic
 
 #### L3 IPv4 Traffic : Frame Size 1280 Bytes
         
@@ -524,7 +524,7 @@ TC23: Verify L3 IPv4 traffic: frame size 1280 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs1280  ipv4
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 1280 Bytes
         
@@ -545,7 +545,7 @@ TC24: Verify L3 IPv6 traffic: frame size 1280 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs1280  ipv6
+    [Tags]  sanity  feature  traffic
 
 #### L3 IPv4 Traffic : Frame Size 1518 Bytes
         
@@ -566,7 +566,7 @@ TC25: Verify L3 IPv4 traffic: frame size 1518 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs1518  ipv4
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 1518 Bytes
         
@@ -587,7 +587,7 @@ TC26: Verify L3 IPv6 traffic: frame size 1518 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  fs1518  ipv6
+    [Tags]  sanity  feature  traffic
 
 #### L3 IPv4 Traffic : Frame Size 9150 Bytes
         
@@ -608,7 +608,7 @@ TC27: Verify L3 IPv4 traffic: frame size 9150 bytes
     verify results  a  d  transmitted_frame_rate  received_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_frame_rate            
     stop traffic
-    [Tags]  l3  fs9150  ipv4
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 9150 Bytes
         
@@ -629,7 +629,7 @@ TC28: Verify L3 IPv6 traffic: frame size 9150 bytes
     verify results  a  d  transmitted_frame_rate  received_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_frame_rate            
     stop traffic
-    [Tags]  l3  fs9150  ipv6
+    [Tags]  sanity  feature  traffic
 
 #### L3 IPv4 Traffic : Frame Size 1518 Bytes
         
@@ -650,7 +650,7 @@ TC29: Verify L3 Tagged IPv4 traffic: frame size 1518 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  vlantagged  ipv4
+    [Tags]  sanity  feature  traffic
     
 #### L3 IPv6 Traffic : Frame Size 1518 Bytes
         
@@ -671,7 +671,7 @@ TC30: Verify L3 Tagged IPv6 traffic: frame size 1518 bytes
     verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
     verify results  c  b  transmitted_frame_rate  received_valid_frame_rate            
     stop traffic
-    [Tags]  l3  vlantagged  ipv6
+    [Tags]  sanity  feature  traffic
 
      
 TC31: Verify Transmit-Only Tunnel across Dell S6000
@@ -699,7 +699,7 @@ TC31: Verify Transmit-Only Tunnel across Dell S6000
     #cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
     #cli arista delete mtu interface  s4  ${arista_s600_port}  9212
     #sleep  5    
-    [Tags]  bigtap  tunnel  tx  runthis
+    [Tags]  sanity  feature
 
 TC32: Verify Receive-Only Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -726,7 +726,7 @@ TC32: Verify Receive-Only Tunnel across Dell S6000
     #cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
     #cli arista delete mtu interface  s4  ${arista_s600_port}  9212
     #sleep  5    
-    [Tags]  bigtap  tunnel  rx   
+    [Tags]  sanity  feature
 
 TC33: Verify Bidirectional Tunnel across Dell S6000
     rest enable feature  tunneling
@@ -753,21 +753,21 @@ TC33: Verify Bidirectional Tunnel across Dell S6000
     #cli arista delete ip address     s4  ${arista_s6000_ip_address}  ${arista_s6000_ip_netmask}  ${arista_s600_port}  speed=forced 40gfull
     #cli arista delete mtu interface  s4  ${arista_s600_port}  9212
     #sleep  5    
-    [Tags]  bigtap  tunnel  bidir
+    [Tags]  sanity  feature
 
 TC34: Verify ntp configuration on Dell S4810
     configure ntp server  s1  time-c.nist.gov
     Sleep  5
     verify ntp server  s1  time-c.nist.gov
     delete ntp  s1  time-c.nist.gov
-    [Tags]  switch-platform  ntp 
+    [Tags]  sanity  feature
 
 TC35: Verify ntp configuration on Dell S6000
     configure ntp server  s2  time-c.nist.gov
     Sleep  5
     verify ntp server  s2  time-c.nist.gov
     delete ntp  s2  time-c.nist.gov
-    [Tags]  switch-platform  ntp 
+    [Tags]  sanity  feature
 
 TC36: Verify ntp server on Dell S4810 after process ntp restart
     configure ntp server  s1  time-c.nist.gov
@@ -776,7 +776,7 @@ TC36: Verify ntp server on Dell S4810 after process ntp restart
     bash restart process  s1  ntpd
     Sleep  5
     verify ntp server  s1  time-c.nist.gov
-    [Tags]  switch-platform  ntp
+    [Tags]  sanity  feature
         
 TC37: Verify ntp server on Dell S6000 after process ntp restart
     configure ntp server  s2  time-c.nist.gov
@@ -785,43 +785,43 @@ TC37: Verify ntp server on Dell S6000 after process ntp restart
     bash restart process  s2  ntpd
     Sleep  5
     verify ntp server  s2  time-c.nist.gov 
-    [Tags]  switch-platform  ntp
+    [Tags]  sanity  feature
     
 TC38: Verify openflow controller on Dell S4810  
     ${ret_value_1}=  cli verify controller  s1  c1
     Should Be True  ${ret_value_1}
     ${ret_value_1}=  cli verify controller  s1  c2
     Should Be True  ${ret_value_1}    
-    [Tags]  switch-platform
+    [Tags]  sanity  feature
 
 TC39: Verify openflow controller on Dell S6000  
     ${ret_value_1}=  cli verify controller  s2  c1
     Should Be True  ${ret_value_1}
     ${ret_value_1}=  cli verify controller  s2  c2
     Should Be True  ${ret_value_1}    
-    [Tags]  switch-platform                   
+    [Tags]  sanity  feature
 
 TC40: Verify DPID on Dell S4810 is same as being reported to Controller
     ${controller_dpid}=  rest return switch dpid from ip  s1
     ${switch_dpid}=      cli show switch dpid  s1
     Should be equal as strings  ${controller_dpid}  ${switch_dpid}   
-    [Tags]  switch-platform  dpid
+    [Tags]  sanity  feature
 
 TC41: Verify DPID on Dell S6000 is same as being reported to Controller
     ${controller_dpid}=  rest return switch dpid from ip  s2
     ${switch_dpid}=      cli show switch dpid  s2
     Should be equal as strings  ${controller_dpid}  ${switch_dpid}   
-    [Tags]  switch-platform  dpid
+    [Tags]  sanity  feature
 
 TC42: Verify you can ping remote site from Dell S4810
     ${ret_value_1}=  cli ping from switch  s1  www.bigswitch.com
     Should Be True  ${ret_value_1}  
-    [Tags]  switch-platform
+    [Tags]  sanity  feature
 
 TC43: Verify you can ping remote site from Dell S6000
     ${ret_value_1}=  cli ping from switch  s2  www.bigswitch.com
     Should Be True  ${ret_value_1}  
-    [Tags]  switch-platform 
+    [Tags]  sanity  feature
 
 TC44: Verify port-channel interface between S4810 and S6000 with hash mode L2
     lag setup  L2
@@ -830,7 +830,7 @@ TC44: Verify port-channel interface between S4810 and S6000 with hash mode L2
     cli delete portchannel  s1  ${pc_number_s1s2}
     cli delete portchannel  s2  ${pc_number_s2s1}
     sleep  5     
-    [Tags]  switch-platform  lag
+    [Tags]  sanity  feature
     
 TC45: Verify port-channel interface between S4810 and S6000 with hash mode L3
     lag setup  L3
@@ -839,7 +839,7 @@ TC45: Verify port-channel interface between S4810 and S6000 with hash mode L3
     cli delete portchannel  s1  ${pc_number_s1s2}
     cli delete portchannel  s2  ${pc_number_s2s1} 
     sleep  5
-    [Tags]  switch-platform  lag
+    [Tags]  sanity  feature
 
 TC46: Dell S4810 - Verify port-channel (hash-mode:L2) interface shows correct 40G member links
     lag setup  L2
@@ -848,7 +848,7 @@ TC46: Dell S4810 - Verify port-channel (hash-mode:L2) interface shows correct 40
     cli delete portchannel  s1  ${pc_number_s1s2}
     cli delete portchannel  s2  ${pc_number_s2s1} 
     sleep  5    
-    [Tags]  switch-platform  lag
+    [Tags]  sanity  feature
 
 TC47: Dell S6000 - Verify port-channel (hash-mode:L2) interface shows correct 40G member links
     lag setup  L2
@@ -857,95 +857,10 @@ TC47: Dell S6000 - Verify port-channel (hash-mode:L2) interface shows correct 40
     cli delete portchannel  s1  ${pc_number_s1s2}
     cli delete portchannel  s2  ${pc_number_s2s1}
     sleep  5       
-    [Tags]  switch-platform  lag
+    [Tags]  sanity  feature
 
-#### Process Restart
 
-TC48: Restart process OFAD on switch S1
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
-    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
-    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
-    clear stats  
-    start traffic
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
-    bash restart process  s1  ofad
-    Sleep  90
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
-    stop traffic
-    [Tags]  bigtap  ha  ofad
-        
-TC49: Restart process OFAD on switch S2
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
-    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
-    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
-    clear stats  
-    start traffic
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
-    bash restart process  s2  ofad
-    Sleep  90
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
-    stop traffic
-    [Tags]  bigtap  ha  ofad
-    
-TC50: Restart process OFAD on switch S3
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
-    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
-    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
-    clear stats  
-    start traffic
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
-    bash restart process  s3  ofad
-    Sleep  120
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy2} 
-    sleep  10
-    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
-    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
-    stop traffic
-    [Tags]  bigtap  ha  ofad
-
-TC51: Verify interface statistics on switch
+TC48: Verify interface statistics on switch
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream_1}=  L2 add  flow=a->d  frame_rate=10000  frame_cnt=100000  frame_size=64  no_arp=True  name=a_d_flow
@@ -973,10 +888,9 @@ TC51: Verify interface statistics on switch
     Should be true  ${in_range_3} 
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  runthis
+    [Tags]  sanity  feature  traffic
 
-
-TC52: SNMP: Verify interface statistics and match with SNMP
+TC49: SNMP: Verify interface statistics and match with SNMP
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream_1}=  L2 add  flow=a->d  frame_rate=10000  frame_cnt=100000  frame_size=64  no_arp=True  name=a_d_flow
@@ -1036,7 +950,93 @@ TC52: SNMP: Verify interface statistics and match with SNMP
     Should be true  ${in_range_5}           
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  snmp  runthis
+    [Tags]  sanity  feature  traffic
+
+#### Process Restart
+
+TC50: Restart process OFAD on switch S1
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
+    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
+    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
+    clear stats  
+    start traffic
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
+    bash restart process  s1  ofad
+    Sleep  90
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
+    stop traffic
+    [Tags]  ha  robustness  traffic  full
+        
+TC51: Restart process OFAD on switch S2
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
+    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
+    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
+    clear stats  
+    start traffic
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
+    bash restart process  s2  ofad
+    Sleep  90
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
+    stop traffic
+    [Tags]  ha  robustness  traffic  full
+    
+TC52: Restart process OFAD on switch S3
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    ${stream_1}=  L3 add  flow=a->d  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_d_flow    
+    ${stream_2}=  L3 add  flow=c->b  frame_rate=10000  frame_size=1518  
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  no_arp=True
+    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:2  ethertype=86dd  name=c_b_flow    
+    clear stats  
+    start traffic
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate
+    bash restart process  s3  ofad
+    Sleep  120
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2} 
+    sleep  10
+    verify results  a  d  transmitted_frame_rate  received_valid_frame_rate        
+    verify results  c  b  transmitted_frame_rate  received_valid_frame_rate                    
+    stop traffic
+    [Tags]  ha  robustness  traffic  full
 
 * Keywords
 

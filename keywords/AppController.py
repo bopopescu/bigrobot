@@ -433,9 +433,9 @@ class AppController(object):
                     return False
                 content = c.rest.content()
                 if (content[0]['interface'][0]['state-flags'] == 0):
-                        return True
+                    return True
                 else:
-                        return False
+                    return False
 
 # #SYSLOG
 ############### SYSLOG SHOW COMMANDS ########################
@@ -973,8 +973,11 @@ class AppController(object):
                 # if (re.match("^d", c2_pid)):
                 c2.sudo('kill -9 %s' % (c2_pid))
             # Add rm of the file if file already exist in case of a new test
-            c1.bash("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c1_syslog_dump.txt")
-            c2.bash("tail -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c2_syslog_dump.txt")
+            # for i in range(1, 21):
+            #    c1.bash("sudo sed -i -e '$G' /var/log/syslog")
+            #    c2.bash("sudo sed -i -e '$G' /var/log/syslog")
+            c1.bash("tail -n 0 -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c1_syslog_dump.txt")
+            c2.bash("tail -n 0 -f /var/log/syslog | grep --line-buffered '#011' > %s &" % "c2_syslog_dump.txt")
             syslogMonitorFlag = True
             return True
         except:
@@ -1295,9 +1298,6 @@ class AppController(object):
         t = test.Test()
         n = t.node(node)
         if helpers.is_bigtap(n.platform()):
-            '''
-                BigTap Controller
-            '''
             c = t.controller('master')
             url = '/rest/v1/system/version'
             if user == "admin":
@@ -1325,4 +1325,3 @@ class AppController(object):
                     if local is True:
                         t.node_reconnect(node='master', user=str(user), password=password)
                     return output_string[3]
-

@@ -197,7 +197,7 @@ class BsnCommon(object):
         support = T5Support.T5Support()
         helpers.log("Deleting old Support Bundles from the BCF Controller: %s" % node)
         support.delete_support_bundles(node)
-        result = support.generate_support(node)
+        result = support.cli_generate_support(node)
         helpers.log("Support File : %s" % str(result))
         support_file = support.get_support_bundle_fs_path(node)
         Host().bash_scp(node,
@@ -1499,6 +1499,39 @@ class BsnCommon(object):
         temp_array[array_length - int(offset)] = temp_array[array_length - int(offset)].strip('"')
         return temp_array[array_length - int(offset)]
 
+# ## Author: Sahaja
+    def rest_verify_snmp_controller(self, node, val, param):
+        '''
+        Verify if the value is correct
+        Input: Value from snmp walk and which type(ex: CPU temperature, Fan, etc)
+        Output : True or False
+        '''
+        # helpers.test_log("Arguments got are 1: {} 2: {} 3: {}".format(node, val, param))
+        try:
+            t = test.Test()
+            n = t.node(node)
+        except:
+            return False
+        else:
+            try:
+                url = "/rest/v1/environment/data/default/controller/localhost/summary"
+                n.rest.get(url)
+                out = n.rest.content()
+                snmp_dic = dict(zip(map(lambda x: x.lower(), out.keys()), out.values()))
+                # helpers.test_log("Here is the hash we got {} and value is {}".format(out, snmp_dic[param.lower()]))
+                diff = int(val) - int(snmp_dic[param.lower()].split()[0])
+            except:
+                return False
+            else:
+                if abs(diff) < 3:
+                    helpers.log("Values are almost the same for module{} observed value is {} expected value is {}".format(param, int(snmp_dic[param.lower()].split()[0]), val))
+                    return True
+                else:
+                    helpers.log("Values are not almost same for module{} observed value is {} expected value is {}".format(param, int(snmp_dic[param.lower()].split()[0]), val))
+                    return False
+
+# ## Author: Sahaja
+
     def rest_add_firewall_rule(self, service="snmp", protocol="udp", proto_port="162", node="master"):
         '''
             Objective:
@@ -1604,39 +1637,38 @@ class BsnCommon(object):
         if helpers.is_controller(node):
             helpers.log("The node is a controller")
             if helpers.is_bigtap(n.platform()):
-                '''
-                BigTap SNMP Configuration goes here
-                '''
                 helpers.log("The node is a BigTap Controller")
-                c1 = t.controller('master')
-                c2 = t.controller('slave')
+                controller1 = t.controller('master')
+                controller2 = t.controller('slave')
                 try:
                     # Get Cluster Names:
                     url1 = "/rest/v1/system/ha/role reply"
-                    c1.rest.get(url1)
-                    master_output = c1.rest.content()
-                    c2.rest.get(url1)
-                    slave_output = c2.rest.content()
+
+                    controller1.rest.get(url1)
+                    master_output = controller1.rest.content()
                     master_clustername = master_output['clustername']
-                    slave_clustername = slave_output['clustername']
-                    # Open Firewall
                     interface_master = master_clustername + "|Ethernet|0"
-                    interface_slave = slave_clustername + "|Ethernet|0"
                     urlmaster_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_master + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
-                    urlslave_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_slave + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
-                    c1.rest.put(interface_slave, {})
-                    c2.rest.put(urlslave_delete, {})
+                    # controller1.rest.put(interface_slave, {})
+                    controller1.rest.put(urlmaster_delete, {})
                 except:
-                    helpers.log(c1.rest.error())
-                    helpers.log(c2.rest.error())
-                    return False
+                    helpers.log(controller1.rest.error())
                 else:
-                    return True
+                    try:
+                        controller2.rest.get(url1)
+                        slave_output = controller2.rest.content()
+                        slave_clustername = slave_output['clustername']
+                        interface_slave = slave_clustername + "|Ethernet|0"
+                        urlslave_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_slave + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                        controller2.rest.put(urlslave_delete, {})
+                    except:
+                        helpers.log(controller2.rest.error())
+                        return False
+                    else:
+                        return True
+
             elif helpers.is_bigwire(n.platform()):
-                '''
-                BigWire SNMP Configuration goes here
-                '''
-                helpers.log("The node is a BigTap Controller")
+                helpers.log("The node is a BigWire Controller")
                 c1 = t.controller('master')
                 c2 = t.controller('slave')
                 try:
@@ -1653,7 +1685,8 @@ class BsnCommon(object):
                     interface_slave = slave_clustername + "|Ethernet|0"
                     urlmaster_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_master + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
                     urlslave_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_slave + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
-                    c1.rest.put(interface_slave, {})
+                    # c1.rest.put(interface_slave, {})
+                    c1.rest.put(urlmaster_delete, {})
                     c2.rest.put(urlslave_delete, {})
                 except:
                     helpers.log(c1.rest.error())
@@ -1662,9 +1695,6 @@ class BsnCommon(object):
                 else:
                     return True
             elif helpers.is_t5(n.platform()):
-                '''
-                    T5 Controller
-                '''
                 helpers.log("The node is a T5 Controller")
                 c1 = t.controller('master')
                 c2 = t.controller('slave')
@@ -2090,8 +2120,9 @@ class BsnCommon(object):
                 return interfaces[int_key]
             else:
                 helpers.log("No Interfaces with key: %s defined for node: %s in topo file" % (int_key, node))
-                helpers.log("Exiting ..to resolve above issue..")
-                helpers.exit_robot_immediately("Please fix above issue")
+                return False
+                # helpers.log("Exiting ..to resolve above issue..")
+                # helpers.exit_robot_immediately("Please fix above issue")
         else:
             helpers.log("No Node: %s  Defined in Topo File.." % str(node))
             return False
@@ -2208,3 +2239,32 @@ class BsnCommon(object):
         else:
             t.setup_ztn_phase2(node)
         return True
+
+    def get_snmp_id(self, interface=None):
+        '''
+            This function is use to convert given interface to snmp id to check on data traps
+            To FIX:   support Breakout cables
+            -Arun mallina
+        '''
+        if interface is None:
+            helpers.log("Please interface name like: ethernet45, ethernet47")
+            helpers.exit_robot_immediately("Exiting to fix passing interface ..")
+        match = re.match(r"ethernet(.*)", interface)
+        if match:
+            id_string = match.group(1)
+        if len(id_string) == 1:
+            return "100" + id_string
+        else:
+            return "10" + id_string
+
+    def pretty_log(self, *args, **kwargs):
+        """
+        To print out a Python data structure, consider using this keyword.
+        It formats the object to make it more readable. By default, it will
+        also convert the \n found in the string into newline.
+
+        Examples:
+        | pretty log | ${data} |  | Pretty print data structure, converting \n to newline |
+        | pretty log | ${data} | format_newline=${false} | Pretty print data structure, preserve \n in result |
+        """
+        helpers.pretty_log(*args, **kwargs)

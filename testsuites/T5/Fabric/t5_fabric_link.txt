@@ -17,32 +17,33 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature  IronHorse
+	[Tags]  Fabric  feature  IronHorse  daily-sanity
 	bigrobot test ztn  False
 	base suite setup    
-    add fabric switch
+    fabric infra suite setup
     Set swith int variables
     Set switch dpid variables
-    sleep  155
+    Set host int variables
+    sleep  30
     rest verify fabric switch all
-    rest verify fabric link common
+    Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
    
 verify interface cli 
-	[Tags]  Fabric  feature  IronHorse
+	[Tags]  Fabric  feature  IronHorse  daily-sanity
 	${result}=  cli  c1   show interface  
 	Should Not be Empty  ${result}
 	${result}=  cli  c1  show interface ${leaf0a_spine0_intf0}
 	Should Not be Empty  ${result}
 		
 verify lag cli
-	[Tags]  Fabric  feature  IronHorse
+	[Tags]  Fabric  feature  IronHorse  daily-sanity
 	${result}=  cli  c1  show lag  
 	Should Not be Empty  ${result}
     ${result}=  cli  c1   show lag switch leaf0-a  
 	Should Not be Empty  ${result}	
 
 verify switch cli
-	[Tags]  Fabric  feature  IronHorse
+	[Tags]  Fabric  feature  IronHorse  daily-sanity
 	${result}=  cli  c1  show switch  
 	Should Not be Empty  ${result}
 	${result}=  cli  c1  show switch leaf0-a
@@ -51,7 +52,7 @@ verify switch cli
 	Should Not be Empty  ${result}
 	
 verify lacp cli
-	[Tags]  Fabric  feature  IronHorse
+	[Tags]  Fabric  feature  IronHorse  daily-sanity
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -67,7 +68,7 @@ verify lacp cli
 	Should Not be Empty  ${result}
 	
 verify link cli
-	[Tags]  Fabric  feature  IronHorse
+	[Tags]  Fabric  feature  IronHorse  daily-sanity
 	${result}=  cli  c1  show link  
 	Should Not be Empty  ${result}
 
@@ -77,7 +78,7 @@ verify lag any_leaf cli
 	Should Not be Empty  ${result}
 
 Verify fabric feature link formation
-	[Tags]  Fabric  feature  IronHorse  
+	[Tags]  Fabric  feature  IronHorse  daily-sanity
 	REST verify fabric link 	
 
 delete/add one of the spine Fabric Role and verify the link
@@ -98,7 +99,7 @@ delete one of the leaf in Dual Leaf setup and verify the link
     sleep  125
     rest add fabric role  leaf0-a  leaf
     rest add leaf group  leaf0-a  rack0
-    sleep  125
+    Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-a
     rest verify fabric link
     
 Reboot spine switch spine1 and verify the fabric link
@@ -147,13 +148,13 @@ Delete and Readd the Rack2
 	rest add dpid  leaf2-a  ${leaf2a_dpid}
 	rest add fabric role  leaf2-a  leaf
 	rest add leaf group  leaf2-a  rack2
-	sleep  125
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf2-a
 	rest verify fabric link
 	rest add switch  leaf2-b
 	rest add dpid  leaf2-b  ${leaf2b_dpid}
 	rest add fabric role  leaf2-b  leaf
 	rest add leaf group  leaf2-b  rack2
-	sleep  125
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf2-b
 	rest verify fabric link
 
 add portgroup lacp to 2 different rack
@@ -164,11 +165,12 @@ add portgroup lacp to 2 different rack
 	rest add dpid  leaf0-a  ${leaf0a_dpid}
 	rest add fabric role  leaf0-a  leaf
 	rest add leaf group  leaf0-a  rack5
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-a
 	rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
 	rest add leaf group  leaf0-b  rack6
-	sleep  125
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-b
 	rest add portgroup  p1
 	rest add portgroup lacp  p1
 	rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1

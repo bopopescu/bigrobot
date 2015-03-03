@@ -1,0 +1,28 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+    ip: 10.9.18.7
+
+c2:
+    ip: 10.9.18.8
+
+### APP-AC5710-1
+s1:
+    ip: 10.9.19.7
+  
+### APP-AC6700-1
+s2:
+    ip: 10.9.19.8
+
+## APP-ARISTA-1
+s3:
+    ip: 10.9.19.3
+    console_ip: 10.1.8.97
+    console_port: 6003
+    user: admin
+    password: arastra

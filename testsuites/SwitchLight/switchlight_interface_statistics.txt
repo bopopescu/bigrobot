@@ -1,10 +1,10 @@
 *Settings
-Documentation  BigTap Rewrite Vlan Test Suite
-Suite Setup  bigtap suite setup
-Suite Teardown   base suite teardown
-Test Setup   bigtap test setup
-Test Teardown  bigtap test teardown 
-Force Tags  BigTap  SwitchLight
+Documentation           BigTap Rewrite Vlan Test Suite
+Suite Setup             bigtap suite setup
+Suite Teardown          base suite teardown
+Test Setup              bigtap test setup
+Test Teardown           bigtap test teardown 
+Force Tags              BigTap  SwitchLight  switch-platform
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
@@ -61,24 +61,28 @@ ${delivery_3_nick}  STATS-D3
 
 * Test Case
 
-Verify initial configuration
+TC001: Verify initial configuration
     REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
-
-Verify all filter interface states are shown as up
+    [Tags]  full  feature
+    
+TC002: Verify all filter interface states are shown as up
     verify interface state  s1  ${filter_1}  up
     verify interface state  s2  ${filter_2}  up     
-
-Verify delivery interface state is up
+    [Tags]  full  feature
+    
+TC003: Verify delivery interface state is up
     verify interface state  s1  ${delivery_1}  up
     verify interface state  s2  ${delivery_2}  up 
-
-Verify filter and delivery interfaces on LB9 show speed as 1G
+    [Tags]  full  feature
+    
+TC004: Verify filter and delivery interfaces on LB9 show speed as 1G
     verify interface speed  s1  ${filter_1}  1G
     verify interface speed  s2  ${filter_2}  1G
     verify interface speed  s1  ${delivery_1}  1G
     verify interface speed  s2  ${delivery_2}  1G              
-
-With both filter and delivery on same switch (LB9), send 50K packets and verify TX and RX values
+    [Tags]  full  feature  quanta-lb9  quanta-ly2
+    
+TC005: With both filter and delivery on same switch (LB9), send 50K packets and verify TX and RX values
     ${stream1}=  L3 add  flow=a->b  frame_rate=10000  frame_cnt=50000   
     ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
     ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
@@ -98,10 +102,10 @@ With both filter and delivery on same switch (LB9), send 50K packets and verify 
     ${myouput1}=  cli return interface counter brief  s1  ${filter_1}  rx
     ${in_range1}=  ixia verify traffic rate  ${rx_value}  ${myouput1}  rangev=10
     Should be true  ${in_range1} 
-    [Tags]  portchannel  bigtap  lb9
+    [Tags]  full  feature  portchannel  quanta-lb9
 
 
-With both filter and delivery on same switch (LY2), send 50K packets and verify TX and RX values
+TC006: With both filter and delivery on same switch (LY2), send 50K packets and verify TX and RX values
     ${stream1}=  L3 add  flow=e->f  frame_rate=10000  frame_cnt=50000   
     ...     src_mac=00:13:01:01:01:01  dst_mac=00:13:01:01:01:02  no_arp=True
     ...     src_ip=10.2.101.1  dst_ip=10.2.101.2  name=a_c_flow
@@ -121,7 +125,7 @@ With both filter and delivery on same switch (LY2), send 50K packets and verify 
     Should be true  ${in_range1} 
     [Tags]  portchannel  bigtap  ly2
     
-With filter and delivery on LB9 switch and core as LY2, send 50K packets and verify TX and RX values
+TC007: With filter and delivery on LB9 switch and core as LY2, send 50K packets and verify TX and RX values
     rest update policy action  admin-view  ${policy_name_1}  inactive
     rest update policy action  admin-view  ${policy_name_2}  forward
     sleep  5    
@@ -159,6 +163,7 @@ With filter and delivery on LB9 switch and core as LY2, send 50K packets and ver
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${myouput}  rangev=10
     Should be true  ${in_range}
     [Tags]  portchannel  bigtap  lb9ly2
+    
 * Keywords
 
 bigtap suite setup

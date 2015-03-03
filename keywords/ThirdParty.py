@@ -1,15 +1,15 @@
-''' 
+'''
 ###  WARNING !!!!!!!
-###  
+###
 ###  This is where common code for all third party switch will go in.
-###  
-###  To commit new code, please contact the Library Owner: 
+###
+###  To commit new code, please contact the Library Owner:
 ###  Animesh Patcha (animesh.patcha@bigswitch.com)
 ###
 ###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
-###  
+###
 ###  Last Updated: 02/08/2014
-###  
+###
 ###  WARNING !!!!!!!
 '''
 
@@ -18,6 +18,8 @@ import autobot.helpers as helpers
 import autobot.test as test
 import subprocess
 import re
+import os
+
 
 class ThirdParty(object):
 
@@ -30,11 +32,11 @@ class ThirdParty(object):
 
     def cli_arista_add_portchannel(self, node, pc_number, pc_list, pc_mode="active", pc_priority=15000, pc_timeout=5):
         '''Configure Port Channel
-        
-            Input: 
+
+            Input:
                 `pc_number`        Port Channel to be configured
                 `pc_list`          List of port channel interfaces seperated by single space
-            
+
             Return Value:  True on Success
         '''
         try:
@@ -62,11 +64,11 @@ class ThirdParty(object):
 
     def cli_arista_delete_portchannel(self, node, pc_number, pc_list, pc_mode="active", pc_priority=15000):
         '''Configure Port Channel
-        
-            Input: 
+
+            Input:
                 `pc_number`        Port Channel to be configured
                 `pc_list`          List of port channel interfaces seperated by single space
-            
+
             Return Value:  True on Success
         '''
         try:
@@ -91,11 +93,11 @@ class ThirdParty(object):
 
     def cli_arista_add_mtu_interface(self, node, interface_name, mtu_size):
         '''Configure MTU
-        
-            Input: 
+
+            Input:
                 `interface_name`        Name of Interface
                 `mtu_size`          MTU size
-            
+
             Return Value:  True on Success
         '''
         try:
@@ -112,11 +114,11 @@ class ThirdParty(object):
 
     def cli_arista_delete_mtu_interface(self, node, interface_name, mtu_size):
         '''Configure MTU
-        
-            Input: 
+
+            Input:
                 `interface_name`        Name of Interface
                 `mtu_size`          MTU size
-            
+
             Return Value:  True on Success
         '''
         try:
@@ -201,7 +203,10 @@ class ThirdParty(object):
             switch.config(cli_input_3)
             if speed is not None:
                 cli_input_4 = "speed " + str(speed)
-                switch.config(cli_input_4)
+                switch.config("")
+                switch.send(cli_input_4)
+                switch.expect(r'[\r\n]*.*proceed with this command')
+                switch.send("yes")
             return True
 
     def cli_arista_delete_ip_address(self, node, ip_address, mask, interface_name, speed=None):
@@ -217,7 +222,14 @@ class ThirdParty(object):
             switch.config(cli_input_2)
             if speed is not None:
                 cli_input_3 = "no speed " + str(speed)
-                switch.config(cli_input_3)
+                switch.config("")
+                switch.send(cli_input_3)
+                # os.system("pause")
+                switch.expect(r'[\r\n]*.*proceed with this command')
+                # switch.expect(r'[\r\n.]*')
+
+                # switch.expect(r'\w+[\r\n]![\r\n\s\x!]+\w+![\r\n][\w\[\]]+[#>] ')
+                switch.send("yes")
             return True
 
     def cli_arista_enable_disable_interface(self, node, interface_name, disable=True):
@@ -255,3 +267,103 @@ class ThirdParty(object):
         else:
             switch.config(command)
             return switch.cli_content()
+
+    def cli_arista_add_route(self, node, route, nexthop):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            switch.config("ip route %s %s" % (route, nexthop))
+            return True
+
+    def cli_arista_delete_route(self, node, route, nexthop):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            switch.config("no ip route %s %s" % (route, nexthop))
+            return True
+
+    def cli_arista_add_vlan_ip_address(self, node, ip_address, mask, vlan_intf):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            cli_input_1 = "interface " + str(vlan_intf)
+            switch.config(cli_input_1)
+            cli_input_3 = "ip address " + str(ip_address) + "/" + str(mask)
+            switch.config(cli_input_3)
+            return True
+
+
+    def cli_arista_delete_vlan_ip_address(self, node, ip_address, mask, vlan_intf):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            cli_input_1 = "interface " + str(vlan_intf)
+            switch.config(cli_input_1)
+            cli_input_3 = "no ip address " + str(ip_address) + "/" + str(mask)
+            switch.config(cli_input_3)
+            return True
+
+    def cli_arista_add_vrrp(self, node, interface, gp, vip):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            switch.config("interface %s" % interface)
+            switch.config("vrrp %s ip %s" % (gp, vip))
+            return True
+
+    def cli_arista_delete_vrrp(self, node, interface, gp, vip):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            switch.config("interface %s" % interface)
+            switch.config("no vrrp %s ip %s " % (gp, vip))
+            return True
+
+    def cli_arista_change_vrrp_priority(self, node, interface, gp, priority):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            switch.config("interface %s" % interface)
+            switch.config("vrrp %s priority %s" % (gp, priority))
+            return True
+
+    def cli_arista_enable_ip_routing(self, node):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            switch.config("ip routing")
+            return True
+
+    def cli_arista_disable_ip_routing(self, node):
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            switch.config("no ip routing")
+            return True

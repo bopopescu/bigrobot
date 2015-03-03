@@ -1,0 +1,74 @@
+* Keywords
+add fabric switch
+  rest add switch  spine0  
+  rest add dpid  spine0  00:00:00:00:00:01:00:01
+  rest add fabric role  spine0  spine 
+  rest add switch  spine1 
+  rest add dpid  spine1  00:00:00:00:00:01:00:02
+  rest add fabric role  spine1  spine
+  rest add switch  leaf0-a 
+  rest add dpid  leaf0-a  00:00:00:00:00:02:00:01
+  rest add fabric role  leaf0-a  leaf
+  rest add leaf group  leaf0-a  rack0
+  rest add switch  leaf0-b 
+  rest add dpid  leaf0-b  00:00:00:00:00:02:00:02
+  rest add fabric role  leaf0-b  leaf
+  rest add leaf group  leaf0-b  rack0
+  rest add switch  leaf1-a 
+  rest add dpid  leaf1-a  00:00:00:00:00:02:00:03
+  rest add fabric role  leaf1-a  leaf
+  rest add leaf group  leaf1-a  rack1
+  rest add switch  leaf1-b 
+  rest add dpid  leaf1-b  00:00:00:00:00:02:00:04
+  rest add fabric role  leaf1-b  leaf
+  rest add leaf group  leaf1-b  rack1
+  
+delete fabric switch  
+  rest delete fabric switch  spine0 
+  rest delete fabric switch  spine1 
+  rest delete fabric switch  leaf0-a 
+  rest delete fabric switch  leaf0-b 
+  rest delete fabric switch  leaf1-a 
+  rest delete fabric switch  leaf1-b 
+
+add fabric 3rack switch
+  rest add switch  spine0  
+  rest add dpid  spine0  00:00:00:00:00:01:00:01
+  rest add fabric role  spine0  spine 
+  rest add switch  spine1 
+  rest add dpid  spine1  00:00:00:00:00:01:00:02
+  rest add fabric role  spine1  spine
+  rest add switch  leaf0-a 
+  rest add dpid  leaf0-a  00:00:00:00:00:02:00:01
+  rest add fabric role  leaf0-a  leaf
+  rest add leaf group  leaf0-a  rack0
+  rest add switch  leaf0-b 
+  rest add dpid  leaf0-b  00:00:00:00:00:02:00:02
+  rest add fabric role  leaf0-b  leaf
+  rest add leaf group  leaf0-b  rack0
+  rest add switch  leaf1-a 
+  rest add dpid  leaf1-a  00:00:00:00:00:02:00:03
+  rest add fabric role  leaf1-a  leaf
+  rest add leaf group  leaf1-a  rack1
+  rest add switch  leaf1-b 
+  rest add dpid  leaf1-b  00:00:00:00:00:02:00:04
+  rest add fabric role  leaf1-b  leaf
+  rest add leaf group  leaf1-b  rack1
+  rest add switch  leaf2-a
+  rest add dpid  leaf2-a  00:00:00:00:00:02:00:05
+  rest add fabric role  leaf2-a  leaf
+  rest add leaf group  leaf2-a  rack2
+  rest add switch  leaf2-b 
+  rest add dpid  leaf2-b  00:00:00:00:00:02:00:06
+  rest add fabric role  leaf2-b  leaf
+  rest add leaf group  leaf2-b  rack2
+  
+delete fabric 3rack switch  
+  rest delete fabric switch  spine0 
+  rest delete fabric switch  spine1 
+  rest delete fabric switch  leaf0-a 
+  rest delete fabric switch  leaf0-b 
+  rest delete fabric switch  leaf1-a 
+  rest delete fabric switch  leaf1-b 
+  rest delete fabric switch  leaf2-a 
+  rest delete fabric switch  leaf2-b

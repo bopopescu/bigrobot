@@ -17,11 +17,16 @@ if [ "$BUILD_NAME"x = x ]; then
     usage
 fi
 
-ts=`date "+%Y-%m-%d_%H%M%S"`
-outfile=raw_data.`basename $0`_output.$ts.log
-errfile=raw_data.`basename $0`_errors.$ts.log
+if [ "$TEST_CATALOG_LOG_DIR"x = x ]; then
+    echo "Error: Env var TEST_CATALOG_LOG_DIR is not defined."
+    exit 1
+fi
 
-./mv_logs.sh
+ts=`date "+%Y-%m-%d_%H%M%S"`
+outfile=${TEST_CATALOG_LOG_DIR}/raw_data.`basename $0`_output.$ts.log
+errfile=${TEST_CATALOG_LOG_DIR}/raw_data.`basename $0`_errors.$ts.log
+
+#./mv_logs.sh
 ./db_chk_and_add_build_name.py
 ./_doit.sh > $outfile 2>&1
 

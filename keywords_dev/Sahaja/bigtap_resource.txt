@@ -1,0 +1,3480 @@
+-*** Settings ***
+Documentation  A resource file containing the application specific keywords
+...            that create our own domain specific language. This resource
+...            implements keywords for testing HTML version of the test
+...            application.
+Library       	String
+Library        	SeleniumLibrary
+Library         keywords/BsnCommon.py
+Library         keywords_dev/vui/MyTest.py
+Library         keywords/Ixia.py
+
+
+*** Variables ***
+${BROWSER}       				GoogleChrome
+${DELAY}         				0
+${VALID USER}    				admin
+${VALID PASSWD}  				adminadmin
+
+${DASHBOARD TITLE}  		Big Tap Dashboard
+${SWITCHES TITLE}    		Big Tap Fabric - Switches
+${INTERFACES TITLE}			Big Tap Fabric - Interfaces
+${BIGTAP TITLE}				Big Tap
+${POLICIES TITLE}			Big Tap Policies
+${SERVICES TITLE}			Big Tap Services
+${BT INTERFACES TITLE}		Big Tap Interfaces
+${BT FILTER INTERFACES TITLE}	 Big Tap Interfaces
+${BT DELIVERY INTERFACES TITLE}  Big Tap Interfaces
+${BT SERVICE INTERFACES TITLE}	 Big Tap Interfaces
+${BT HOST TRACKER TITLE}    Big Tap Host Tracker
+${BT OBSERVED IP TITLE}     Big Tap Observed IP Addresses
+${IP ADDRESS GROUPS TITLE}  Big Tap IP Address Groups
+${BT INTERFACE GROUPS TITLE}	Big Tap Interface Groups
+${BT USER DEFINED OFFSETS TITLE}  Big Tap User Defined Offsets
+${TOPOLOGY TITLE}			Big Tap Topology
+${LOG IN TITLE}    			Big Tap Login
+${BT SIGNOUT TITLE}  		Big Tap Login
+${USERS TITLE}				Big Tap Security - Users
+${GROUPS TITLE}				Big Tap Security - Groups
+${RBAC TITLE}				Big Tap Security - RBAC Permissions
+${SFLOW TITLE}              Big Tap sFlow
+
+${SHOW ALL BUTTON}  			xpath=//div[contains(@class, 'item') and contains(text(), 'All')]
+${MAIN MINUS BUTTON}			xpath=//div[@class='icon_node minus']
+${CONFIRM DELETION POPUP}		xpath=//div[@title='Confirm Deletion']
+#${PROCEED DELTE BUTTON}		xpath=//span[@id='dijit_form_Button_4']
+${PROCEED DELTE BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Proceed')]
+${CHECKBOX ALL}					xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']
+${CHECKBOX ALL SELECTED}		xpath=//div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
+
+
+${FILTER INTERFACES STEP BUTTON}		xpath=//div[@class='step_text' and contains(text(), 'Filter Interfaces')]
+${DELIVERY INTERFACES STEP BUTTON}		xpath=//div[@class='step_text' and contains(text(), 'Delivery Interfaces')]
+${SERVICES STEP BUTTON}					xpath=//div[@class='step_text' and contains(text(), 'Services')]
+#${RULES STEP BUTTON}					xpath=//div[@class='step_text' and contains(text(), 'Rule Groups & Rules')]
+
+
+
+${TIMEOUT}						10 sec
+${PERIOD}						3 sec
+
+### Menu
+${FABRIC MENU}		  			xpath=//a[@class='nav' and contains(text(), 'Fabric')]
+${BIG TAP MENU}			  		xpath=//a[@class='nav' and contains(text(), 'Big Tap')]
+${SECURITY MENU}		  		xpath=//a[@class='nav' and contains(text(), 'Security')]
+${ADMIN MENU}			  		xpath=//div[@class='nav' and contains(text(), 'Default admin')]
+${SWITCHES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Switches')]
+${INTERFACES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Interfaces')]
+${POLICIES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Policies')]
+${IP LISTS LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'IP Address Groups')]
+${SERVICES LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Services')]
+${BT INTERFACES LABEL}			xpath=//a[@class='nav_menu_link' and @href='/bigtap/interfaces']
+${USERS LABEL}					xpath=//div[@class='nav_menu_item' and contains(text(), 'Users')]
+${GROUPS LABEL}					xpath=//a[@class='nav_menu_link' and @href='/controller/security/groups']
+${RBAC LABEL}					xpath=//div[@class='nav_menu_item' and contains(text(), 'RBAC Permissions')]
+${SIGN OUT LABEL}		  		xpath=//div[@class='nav_menu_item' and contains(text(), 'Sign Out')]
+${SFLOW SETTINGS MENU}   		xpath=//div[@class='nav' and contains(text(), 'Settings')]
+
+
+
+### Main Landing Page
+${CONTROLLER INFO PANE}  		xpath=//div[@id='system_properties_pane']
+${CONTROLLER BAR PANE}			xpath=//div[@id='system_bar_charts_pane']
+${CONTROLLER PIE PANE}			xpath=//div[@id='system_pie_charts_pane']
+${CONTROLLER SUMMARY PANE}  	xpath=//div[@id='application_summary_pane']
+${CONTROLLER CONFIG PANE}		xpath=//div[@id='application_configuration_pane']
+${TOPOLOGY VIEW PANE}			xpath=//div[@id='application_visual_pane']
+${CONFIGURE SWITCHING MODE BUTTON}					xpath=//td[@data-dojo-attach-point='knobCell']/descendant::div[@class='icon_node configure']
+${MATCH MODE EDIT POPUP}							xpath=//div[@title='Configure Switching Mode']/span[1]
+${SWITCHING MODE L3-L4 OFFSET MATCH RADIO BUTTON}		xpath=//div[@id='bsn_widgets_form_RadioButton_0']/input
+${SWITCHING MODE L3-L4 MATCH RADIO BUTTON} 			xpath=//div[@id='bsn_widgets_form_RadioButton_1']/input
+${SWITCHING MODE FULL MATCH RADIO BUTTON}			xpath=//div[@id='bsn_widgets_form_RadioButton_2']/input
+${SWITCHING MODE SUBMIT BUTTON}						xpath=//span[@id='dijit_form_Button_4_label']
+${LIST TYPE KNOB POLICY OVERLAP}					xpath=//tbody[@id='bigtap_widgets_PolicyOverlap_0']/descendant::div[@class='knob_icon']
+${LIST TYPE KNOB INPORT MASK}						xpath=//tbody[@id='bigtap_widgets_InportMask_0']/descendant::div[@class='knob_icon']
+${LIST TYPE KNOB CRC CHECK}							xpath=//tbody[@id='bigtap_widgets_CRCChecking_0']/descendant::div[@class='knob_icon']
+${LIST TYPE KNOB TUNNELING}							xpath=//tbody[@id='bigtap_widgets_Tunneling_0']/descendant::div[@class='knob_icon']
+${LIST TYPE KNOB PATCH MODE}						xpath=//tbody[@id='bigtap_widgets_PatchMode_0']/descendant::div[@class='knob_icon']
+${CONFIRM ENABLE POLICY OVERLAP POPUP}				xpath=//descendant::div[contains(text(), 'Enable Policy Overlap')]
+${CONFIRM DISABLE POLICY OVERLAP POPUP}				xpath=//descendant::div[contains(text(), 'Disable Policy Overlap')]
+${CONFIRM ENABLE INPORT MASK POPUP}					xpath=//descendant::div[contains(text(), 'Enable Inport Masking')]
+${CONFIRM DISABLE INPORT MASK POPUP}				xpath=//descendant::div[contains(text(), 'Disable Inport Masking')]
+${CONFIRM ENABLE CRC CHECK POPUP}					xpath=//descendant::div[contains(text(), 'Enable CRC Check and Generation?')]
+${CONFIRM DISABLE CRC CHECK POPUP}					xpath=//descendant::div[contains(text(), 'Disable CRC Check and Generation?')]
+${CONFIRM ENABLE TUNNELING POPUP}					xpath=//descendant::div[contains(text(), 'Enable Tunneling')]
+${CONFIRM DISABLE TUNNELING POPUP}					xpath=//descendant::div[contains(text(), 'Disable Tunneling')]
+${CONFIRM ENABLE PATCH MODE POPUP}					xpath=//descendant::div[contains(text(), 'Enable Patch Mode')]
+${CONFIRM DISABLE PATCH MODE POPUP}					xpath=//descendant::div[contains(text(), 'Disable Patch Mode')]
+${ENABLE POLICY OVERLAP SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Enable Policy Overlap')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${ENABLE INPORT MASK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable Inport Masking')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${ENABLE CRC CHECK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable CRC Check and Generation')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${ENABLE TUNNELING SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable Tunneling')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${ENABLE PATCH MODE SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Enable Patch Mode')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE POLICY OVERLAP SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Disable Policy Overlap')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE INPORT MASK SUBMIT BUTTON}				xpath=//descendant::div[contains(text(), 'Disable Inport Masking')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE CRC CHECK SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Disable CRC Check and Generation')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE TUNNELING SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Disable Tunneling')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+${DISABLE PATCH MODE SUBMIT BUTTON}					xpath=//descendant::div[contains(text(), 'Disable Patch Mode')]/ancestor::div[@data-dojo-attach-point='containerNode']/descendant::span[(text()='Proceed')]
+
+
+
+
+###  Groups Page
+${MAIN PLUS BUTTON}				xpath=//div[@class='icon_node plus']
+#${GROUPNAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
+${GROUPNAME FIELD}				xpath=//input[@id="big_console_widgets_core_form_BsnIdentifierTextBox_0"]
+#${PASSWORD FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_1']
+${PASSWORD FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+#${CONFIRM PASSWORD FIELD}		xpath=//input[@id='dijit_form_ValidationTextBox_2']
+#${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
+${CONFIRM PASSWORD FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Confirm Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${FULL NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Full Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_color']
+${INCORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_gray']
+${ERROR DUPE NAME}				xpath=//div[@class='input_error']
+#${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_4']
+${ERROR BACKEND}				xpath=//div[@class='errors']
+${INFO BUTTON}					xpath=//div[@class='step_text' and contains(text(), '1. Info')]
+${USERS BUTTON}					xpath=//div[@class='step_text' and contains(text(), '2. Users')]
+${RBAC BUTTON}					xpath=//div[@class='step_text' and contains(text(), '3. RBAC Permissions')]
+${USER ASSOCIATE BUTTON}		xpath=//div[@data-dojo-attach-point='usersNode']/descendant::div[@class='icon_node plus']
+${RBAC ASSOCIATE BUTTON}		xpath=//div[@data-dojo-attach-point='rbacPermissionsNode']/descendant::div[@class='icon_node plus']
+${APPEND SELECTED BUTTON}		xpath=//span[@id='dijit_form_Button_9']
+${APPEND SELECTED RBAC BUTTON}	xpath=//span[@id='dijit_form_Button_14']
+${CREATE GROUP POPUP}			xpath=//div[@title='Create Group']
+${ADD USERS POPUP}				xpath=//div[@title='Add Users']
+${ASSOCIATE RBAC POPUP}			xpath=//div[@title='Associate RBAC Permissions']
+
+
+
+### Users Page
+#${USERNAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
+#${USERNAME FIELD}				xpath=//input[@id='big_console_widgets_core_form_BsnIdentifierTextBox_0']
+#${PASSWORD FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
+#${CONFIRM PASSWORD FIELD}		xpath=//input[@id='dijit_form_ValidationTextBox_1']
+#${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
+${USERNAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Username')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${PASSWORD FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${CONFIRM PASSWORD FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Confirm Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${FULL NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Full Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_color']
+${INCORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_gray']
+${ERROR DUPE USERNAME}			xpath=//div[@class='input_error']
+#${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_4']
+${SAVE BUTTON}					xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+${ERROR BACKEND}				xpath=//div[@class='errors']
+${GROUPS BUTTON}				xpath=//div[@class='step_text' and contains(text(), '2. Groups')]
+${GROUP ASSOCIATE BUTTON}		xpath=//div[@data-dojo-attach-point='groupNode']/descendant::div[@class='icon_node plus']
+#${APPEND GROUP BUTTON}			xpath=//span[@id='dijit_form_Button_9']
+${APPEND GROUP BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
+${MAIN PLUS BUTTON}				xpath=//div[@class='icon_node plus']
+${CREATE USER POPUP}			xpath=//div[@title='Create User']
+${MANAGE GROUPS POPUP}			xpath=//div[@title='Manage Groups']
+
+
+
+### RBAC Page
+${CREATE RBAC POPUP}					xpath=//div[@title='Create RBAC Permission']
+${RBACNAME FIELD}						xpath=//input[@id="big_console_widgets_core_form_BsnIdentifierTextBox_0"]
+${GROUP FIELD}							xpath=//input[@id='dijit_form_FilteringSelect_0']
+#${EXPAND GROUP LIST BUTTON TEMP}		xpath=//div[@class='dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer']
+#${EXPAND GROUP LIST BUTTON HOVER}		xpath=//div[@class='dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer dijitDownArrowButtonHover']
+${EXPAND GROUP LIST BUTTON}				xpath=//div[contains(@class, 'dijitReset dijitRight dijitButtonNode')]
+${GROUP LIST DROPDOWN}					xpath=//div[@id='widget_dijit_form_FilteringSelect_0_dropdown']
+${RBAC MATCHES BUTTON}					xpath=//div[@class='step_text' and contains(text(), '5. Matches')]
+${RBAC FILTER INTERFACES NODE}									xpath=//div[@data-dojo-attach-point='filterInterfaceNode']
+${RBAC FILTER INTERFACES PLUS BUTTON}							xpath=//div[@data-dojo-attach-point='filterInterfaceManager']/descendant::div[@class='icon_node plus']
+#${RBAC FILTER INTERFACES PLUS BUTTON}							xpath=//div[@id="bsn_widgets_ControlButton_8"]/div[1]
+${RBAC INCLUDE FILTER INTERFACES POPUP}   						xpath=//div[@title='Include Filter Interfaces']
+#${RBAC INCLUDE FILTER INTERFACES POPUP}   						xpath=//span[@id="bsn_widgets_Dialog_2_title"]
+${RBAC APPEND SELECTED FILTER INTERFACES BUTTON}   				xpath=//span[@id='dijit_form_Button_9_label']
+${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX SELECTED}    		xpath=//div[@data-dojo-attach-point='filterInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
+${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX UNSELECTED}   	 	xpath=//div[@data-dojo-attach-point='filterInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${RBAC DELIVERY INTERFACES NODE}								xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']
+${RBAC DELIVERY INTERFACES PLUS BUTTON}							xpath=//div[@data-dojo-attach-point='deliveryInterfaceManager']/descendant::div[@class='icon_node plus']
+${RBAC INCLUDE DELIVERY INTERFACES POPUP}   					xpath=//div[@title='Include Delivery Interfaces']
+${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_14_label']
+${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}    		xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
+${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}    	xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${RBAC SERVICES NODE}											xpath=//div[@data-dojo-attach-point='serviceNode']
+${RBAC SERVICES PLUS BUTTON}									xpath=//div[@data-dojo-attach-point='serviceManager']/descendant::div[@class='icon_node plus']
+${RBAC INCLUDE SERVICES POPUP}   								xpath=//div[@title='Include Services']
+${RBAC APPEND SELECTED SERVICES BUTTON}   						xpath=//span[@id='dijit_form_Button_24_label']
+${RBAC ALLOW ALL SERVICES CHECKBOX SELECTED}    				xpath=//div[@data-dojo-attach-point='serviceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
+${RBAC ALLOW ALL SERVICES CHECKBOX UNSELECTED}    				xpath=//div[@data-dojo-attach-point='serviceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${RBAC MATCHES NODE}											xpath=//div[@data-dojo-attach-point='matchNode']
+${RBAC MATCHES PLUS BUTTON}										xpath=//div[@data-dojo-attach-point='matchNode']/descendant::div[@class='icon_node plus']
+${RBAC INCLUDE MATCHES POPUP}   								xpath=//div[@title='Configure Subnet Match Rule']
+${RBAC APPEND SELECTED MATCHES BUTTON}   						xpath=//span[@id='dijit_form_Button_11_label']
+${RBAC ALLOW ALL MATCHES CHECKBOX SELECTED}  				  	xpath=//div[@data-dojo-attach-point='matchNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
+${RBAC ALLOW ALL MATCHES CHECKBOX UNSELECTED}   			 	xpath=//div[@data-dojo-attach-point='matchNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${RBAC ETHERTYPE DROPDOWN BUTTON}								xpath=//div[@id='widget_dijit_form_FilteringSelect_1']/descendant::div
+${RBAC ETHERTYPE FIELD}											xpath=//input[@id='dijit_form_FilteringSelect_1']
+${RBAC ETHERTYPE LIST}											xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
+${RBAC MATCH VLAN CHECKBOX SELECTED}		xpath=//div[@data-dojo-attach-point='trafficInputsNode']/descendant::div[@data-dojo-attach-point='blockVlan']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
+${RBAC MATCH VLAN CHECKBOX UNSELECTED}	  	xpath=//div[@data-dojo-attach-point='trafficInputsNode']/descendant::div[@data-dojo-attach-point='blockVlan']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${RBAC MATCH VLAN CHECKBOX}					xpath=//div[@data-dojo-attach-point='trafficInputsNode']/descendant::div[@data-dojo-attach-point='blockVlan']/descendant::input[@role='checkbox']
+${RBAC MATCH VLAN FROM FIELD}				xpath=//input[@id='dijit_form_NumberSpinner_8']
+${RBAC MATCH VLAN TO FIELD}					xpath=//input[@id='dijit_form_NumberSpinner_9']
+${RBAC MATCH TCP FIN CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_0']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
+${RBAC MATCH TCP SYN CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_1']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
+${RBAC MATCH TCP RST CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_2']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
+${RBAC MATCH TCP PSH CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_3']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
+${RBAC MATCH TCP ACK CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_4']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
+${RBAC MATCH TCP URG CHECKBOX}		xpath=//div[@data-dojo-attach-point='trafficNode']/descendant::div[@id='bsn_widgets_form___TcpFlagsBit_5']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/input
+${RBAC MATCH SOURCE BUTTON}				xpath=//div[@class='step_text' and contains(text(), '2. Source')]
+${RBAC MATCH DESTINATION BUTTON}		xpath=//div[@class='step_text' and contains(text(), '3. Destination')]
+${RBAC MATCH OFFSET MATCH BUTTON}		xpath=//div[@class='step_text' and contains(text(), '4. Offset Match')]
+${RBAC MATCH SOURCE NODE}				xpath=//div[@data-dojo-attach-point='sourceNode']
+${RBAC MATCH DESTINATION NODE}			xpath=//div[@data-dojo-attach-point='destinationNode']
+${RBAC MATCH SOURCE IP FIELD}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='nodeSingleNetwork']/descendant::div[@class='dijitReset dijitInputField dijitInputContainer']/input[@id='bsn_widgets_form_IpAddressTextBox_0']
+${RBAC MATCH SOURCE TO PORT}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='blockPort']/descendant::label[contains(text(), 'From:')]/parent::div[@class='controls']/div[1]/div[3]/input[1]
+${RBAC MATCH SOURCE DST PORT}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='blockPort']/descendant::label[contains(text(), 'From:')]/parent::div[@class='controls']/div[2]/div[3]/input[1]
+${RBAC MATCH SOURCE PORT CHECKBOX}		xpath=//div[@id='bsn_widgets_form_CheckBox_20']/input
+${RBAC MATCH DESTINATION PORT CHECKBOX}	  xpath=//div[@id='bsn_widgets_form_CheckBox_21']/input
+${RBAC MATCH SOURCE PORT CHECKBOX SELECTED}				xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
+${RBAC MATCH SOURCE PORT CHECKBOX UNSELECTED}	  		xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${RBAC MATCH DESTINATION PORT CHECKBOX SELECTED}		xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
+${RBAC MATCH DESTINATION PORT CHECKBOX UNSELECTED}	  	xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${RBAC MATCH DESTINATION TO PORT}			xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='blockPort']/descendant::label[contains(text(), 'From:')]/parent::div[@class='controls']/div[1]/div[3]/input[1]
+${RBAC MATCH DESTINATION DST PORT}			xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='blockPort']/descendant::label[contains(text(), 'From:')]/parent::div[@class='controls']/div[2]/div[3]/input[1]
+${RBAC MATCH DESTINATION IP FIELD}		xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='nodeSingleNetwork']/descendant::div[@class='dijitReset dijitInputField dijitInputContainer']/input[@id='bsn_widgets_form_IpAddressTextBox_1']
+${RBAC MATCH SOURCE IP MASK FIELD}		  xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::input[@id='bsn_widgets_form_NetworkMaskTextBox_0']
+${RBAC MATCH DESTINATION IP MASK FIELD}	  xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::input[@id='bsn_widgets_form_NetworkMaskTextBox_1']
+${RBAC MATCH OFFSET MATCH NODE}			  xpath=//div[@data-dojo-attach-point='offsetMatchNode']
+${OFFSET MATCH DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='offsetMatchNode']/descendant::div[@class= 'inline_block']/child::div[2]/child::div[1]/child::input
+${OFFSET MATCH TYPE LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_5_popup']
+${OFFSET MATCH TYPE FIELD}				xpath=//div[@data-dojo-attach-point='offsetMatchNode']/descendant::div[@class= 'inline_block']/descendant::input[@id='dijit_form_FilteringSelect_5']
+${GTP VERSION DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='gtpBlock']/descendant::div[@class= 'inline_block']/child::div[@id='widget_dijit_form_FilteringSelect_6']/child::div[1]/child::input
+${GTP VERSION LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_6_popup']
+${GTP VERSION FIELD}					xpath=//div[@data-dojo-attach-point='gtpBlock']/descendant::div[@class= 'inline_block']/descendant::input[@id='dijit_form_FilteringSelect_6']
+${GTP TEID v1 FIELD}					xpath=//input[@id='dijit_form_NumberSpinner_13']
+${GTP TEID v2 FIELD} 					xpath=//input[@id='dijit_form_NumberSpinner_14']
+${GTP PROTOCOL TYPE DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='gtpBlock']/child::div[4]/descendant::input[@class='dijitReset dijitInputField dijitArrowButtonInner']
+${GTP PROTOCOL TYPE LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_7_popup']
+${GTP PROTOCOL TYPE FIELD}					xpath=//div[@data-dojo-attach-point='gtpBlock']/descendant::div[@class= 'inline_block']/descendant::input[@id='dijit_form_FilteringSelect_7']
+
+
+
+
+### Switches Page
+${CONFIGURE SWITCH ALIAS POPUP}			xpath=//div[@title='Configure Switch Alias']
+${SET ALIAS MENU POPUP}					xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr
+${SWITCH ALIAS FIELD}					xpath=//input[@id='dijit_form_ValidationTextBox_0']
+${SUBMIT SWITCH ALIAS BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+
+
+
+### Controller Interfaces Page
+${CONFIGURE INTERFACE POPUP}			xpath=//div[@title='Configure Big Tap Interface']
+#${CONFIGURE INTERFACE MENU POPUP}		xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr
+${CONFIGURE INTERFACE MENU POPUP}		xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Set Big Tap Configuration')]
+${MODIFY INTERFACE MENU POPUP}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Modify Big Tap Configuration')]
+${NONE INTERFACE RADIO BUTTON}			xpath=//div[@data-dojo-attach-point='nodeTypeNone']/descendant::input
+${FILTER INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeFilter']/descendant::input
+${DELIVERY INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeDelivery']/descendant::input
+${SERVICE INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeService']/descendant::input
+${INTERFACE NAME FIELD}					xpath=//input[@id='dijit_form_ValidationTextBox_0']
+${SUBMIT INTERFACE NAME BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
+
+
+#### Controller Interfaces Tunnel Page
+${TUNNEL TABLE BUTTON}				xpath=//div[@class='name' and (text()='Tunnel')]
+${CREATE TUNNEL MENU ITEM}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Create Tunnel')]
+${CONFIGURE GRE TUNNEL POPUP}		xpath=//div[@title='Configure GRE Tunnel']/child::span[@data-dojo-attach-point='titleNode']	
+${TUNNEL NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${TUNNEL RATE LIMIT CHECKBOX}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Rate Limit')]/parent::h2/parent::div/following-sibling::div/child::div/child::div/input
+${TUNNEL RATE LIMIT FIELD}			xpath=//input[@id='dijit_form_NumberSpinner_0']
+${LIST TYPE KNOB RECEIVE}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Receive')]/parent::h2/parent::div/parent::div/preceding-sibling::div[@class='inline_block bottom']/descendant::div[@class='knob_icon']
+${LIST TYPE KNOB TRANSMIT}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Transmit')]/parent::h2/parent::div/parent::div/preceding-sibling::div[@class='inline_block bottom']/descendant::div[@class='knob_icon']
+${TUNNEL SOURCE IP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Source IP')]/parent::h2/parent::div/following-sibling::div/div/div/div[2]/span[text()='- IPv4 Address -']/preceding-sibling::input		
+${TUNNEL SOURCE PREFIX FIELD}		xpath=//input[@id='dijit_form_NumberSpinner_1']
+${TUNNEL GATEWAY IP FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Gateway IP')]/parent::h2/parent::div/following-sibling::div/div[2]/span[text()='- IPv4 Address -']/preceding-sibling::input
+${TUNNEL DESTINATION IP FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Destination IP')]/parent::h2/parent::div/following-sibling::div/div[2]/span[text()='- IPv4 Address -']/preceding-sibling::input
+${TUNNEL SWITCH DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch')]/parent::h2/parent::div/following-sibling::div/div[1]/input	
+${TUNNEL SWITCH LIST}				xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
+${TUNNEL SWITCH FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]		
+${TUNNEL PARENT INTERFACE DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Parent Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[1]/input
+${TUNNEL PARENT INTERFACE LIST}  	xpath=//div[@id='dijit_form_FilteringSelect_2_popup']
+${TUNNEL PARENT INTERFACE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Parent Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
+${TUNNEL LOOPBACK INTERFACE DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Loopback Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[1]/input
+${TUNNEL LOOPBACK INTERFACE LIST}  	xpath=//div[@id='dijit_form_FilteringSelect_3_popup']
+${TUNNEL LOOPBACK INTERFACE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Loopback Interface')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
+${SUBMIT BUTTON}					xpath=//span[@id='dijit_form_Button_4_label']
+${CONFIRM DELETE POPUP}				xpath=//div[@title='Confirm']
+${DELETE TUNNEL MENU POPUP}			xpath=//td[@data-dojo-attach-point='containerNode' and contains(text(), 'Delete Tunnel')]		
+
+### Big Tap Policies Page
+${CREATE POLICY POPUP}					xpath=//div[@title='Create Policy']
+#${POLICYNAME FIELD}					xpath=//input[@id='dijit_form_ValidationTextBox_0']
+${POLICYNAME FIELD}						xpath=//input[@id="big_console_widgets_core_form_BsnIdentifierTextBox_0"]
+${EXPAND RBAC LIST BUTTON}  			xpath=//div[contains(@class, 'dijitReset dijitRight dijitButtonNode')]
+${RBAC LIST DROPDOWN}  					xpath=//div[@id='widget_dijit_form_FilteringSelect_0_dropdown']
+${RBAC FIELD}							xpath=//input[@id='dijit_form_FilteringSelect_0']
+${BIGTAP POLICY FILTER INTERFACES NODE}									xpath=//div[@data-dojo-attach-point='filterNode']
+${BIGTAP POLICY FILTER INTERFACES PLUS BUTTON}							xpath=//div[@data-dojo-attach-point='filterTableNode']/descendant::div[@class='icon_node plus']
+#${BIGTAP POLICY FILTER INTERFACES PLUS BUTTON}							xpath=//div[@id="bsn_widgets_ControlButton_8"]/div[1]
+${BIGTAP POLICY INCLUDE FILTER INTERFACES POPUP}   						xpath=//div[@title='Add Filter Interfaces']
+#${BIGTAP POLICY APPEND SELECTED FILTER INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_17_label']
+${BIGTAP POLICY APPEND SELECTED FILTER INTERFACES BUTTON}   			xpath=//span[@data-dojo-attach-point='containerNode' and contains(text(), 'Append Selected')]
+${BIGTAP POLICY ALLOW ALL FILTER INTERFACES CHECKBOX}    				xpath=//div[@data-dojo-attach-point='filterNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/descendant::input
+${BIGTAP POLICY ALLOW ALL FILTER INTERFACES CHECKBOX SELECTED}    		xpath=//div[@data-dojo-attach-point='filterNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
+${BIGTAP POLICY ALLOW ALL FILTER INTERFACES CHECKBOX UNSELECTED}   	 	xpath=//div[@data-dojo-attach-point='filterNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${BIGTAP POLICY DELIVERY INTERFACES NODE}								xpath=//div[@data-dojo-attach-point='deliveryNode']
+#${BIGTAP POLICY DELIVERY INTERFACES PLUS BUTTON}						xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[@class='icon_node plus']  //*[@id="bsn_widgets_ControlButton_13"]/div[1]
+${BIGTAP POLICY DELIVERY INTERFACES PLUS BUTTON}						xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[@class='icon_node plus']
+${BIGTAP POLICY INCLUDE DELIVERY INTERFACES POPUP}   					xpath=//div[@title='Add Delivery Interfaces']
+#${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@class='dijitReset dijitInline dijitButtonText' and contains(text(), 'Append Selected')]
+${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_24_label']
+${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX}    				xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_')]/descendant::input
+${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}    	xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
+${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}    	xpath=//div[@data-dojo-attach-point='deliveryNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${BIGTAP POLICY SERVICES NODE}											xpath=//div[@data-dojo-attach-point='serviceNode']
+${BIGTAP POLICY SERVICES PLUS BUTTON}									xpath=//div[@data-dojo-attach-point='serviceNode']/descendant::div[@class='icon_node plus']
+${BIGTAP POLICY INCLUDE SERVICES POPUP}   								xpath=//div[@title='Assign Service With Sequence']
+${BIGTAP POLICY APPEND SELECTED SERVICES BUTTON}   						xpath=//span[@id='dijit_form_Button_19']
+${BIGTAP POLICY ALLOW ALL SERVICES CHECKBOX SELECTED}    				xpath=//div[@data-dojo-attach-point='serviceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
+${BIGTAP POLICY ALLOW ALL SERVICES CHECKBOX UNSELECTED}    				xpath=//div[@data-dojo-attach-point='serviceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${BIGTAP POLICY MATCHES NODE}											xpath=//div[@data-dojo-attach-point='ruleNode']
+${BIGTAP POLICY MATCHES PLUS BUTTON}									xpath=//div[@data-dojo-attach-point='ruleHandlerNode']/descendant::div[@class='icon_node plus']
+${RBAC MATCHES PLUS BUTTON}												xpath=//div[@data-dojo-attach-point='matchRuleNode']/descendant::div[@class='icon_node plus']
+${BIGTAP POLICY INCLUDE MATCHES POPUP}   								xpath=//div[@title='Configure Policy Match Rule']
+${BIGTAP POLICY APPEND SELECTED MATCHES BUTTON}   						xpath=//span[@id='dijit_form_Button_24']
+${BIGTAP POLICY ALLOW ALL MATCHES CHECKBOX SELECTED}  				  	xpath=//div[@data-dojo-attach-point='ruleNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
+${BIGTAP POLICY ALLOW ALL MATCHES CHECKBOX UNSELECTED}   			 	xpath=//div[@data-dojo-attach-point='ruleNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+#${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}								xpath=//div[@data-dojo-attach-point='blockEthertype']/descendant::div[@class='inline_block']/descendant::input[@class='dijitReset dijitInputField dijitArrowButtonInner']
+${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}								xpath=//div[@data-dojo-attach-point='blockEthertype']/descendant::div[@class='inline_block top']/descendant::input[@role='button presentation']
+${BIGTAP POLICY ETHERTYPE FIELD}										xpath=//div[@data-dojo-attach-point='blockEthertype']/descendant::div[@class='inline_block top']/descendant::input[@role='textbox']
+#${BIGTAP POLICY ETHERTYPE FIELD}										xpath=//div[@class='nowrap']/child::div[@class='inline_block top']/descendant::input[@role='textbox']
+${BIGTAP POLICY ETHERTYPE LIST}											xpath=//div[@id='dijit_form_FilteringSelect_7_popup']
+${BIGTAP POLICY ETHERTYPE NUMBER FIELD}									xpath=//input[@id='dijit_form_NumberSpinner_2']
+${BIGTAP POLICY IP PROTOCOL NUMBER FIELD}								xpath=//input[@id='dijit_form_NumberSpinner_3']
+${BIGTAP POLICY IP PROTOCOL DROPDOWN BUTTON}							xpath=//div[@data-dojo-attach-point='blockIpProtocol']/descendant::div[@class='inline_block top']/descendant::input[@role='button presentation']
+#${BIGTAP POLICY IP PROTOCOL FIELD}										xpath=//div[@class='inline_block top']/child::div[1]/child::div[3]/child::input[@id='dijit_form_FilteringSelect_2']
+${BIGTAP POLICY IP PROTOCOL FIELD}										xpath=//div[@data-dojo-attach-point='blockIpProtocol']/descendant::div[@class='inline_block top']/descendant::input[@role='textbox']
+${BIGTAP POLICY IP PROTOCOL LIST}										xpath=//div[@id='dijit_form_FilteringSelect_8_popup']
+${BIGTAP POLICY SERVICES DROPDOWN BUTTON}  						xpath=//div[@title='Assign Service With Sequence']/following-sibling::div/descendant::div[contains(@class, 'dijitReset dijitRight dijitButtonNode')]
+${BIGTAP POLICY SERVICES LIST}  								xpath=//div[@id='widget_dijit_form_FilteringSelect_1_dropdown']
+${BIGTAP POLICY SERVICES FIELD}									xpath=//input[@id='dijit_form_FilteringSelect_1']
+${BIGTAP POLICY SERVICES SEQUENCE NUMBER}						xpath=//input[@id='dijit_form_NumberSpinner_1']
+${BIGTAP POLICY SERVICES SEQUENCE NUMBER UP}  						xpath=//div[@title='Assign Service With Sequence']/following-sibling::div/descendant::div[contains(@class, 'dijitUpArrowButton')]
+${BIGTAP POLICY SERVICES SEQUENCE NUMBER DOWN} 						xpath=//div[@title='Assign Service With Sequence']/following-sibling::div/descendant::div[@class='dijitReset dijitButtonNode dijitSpinnerButtonContainer']/descendant::div[contains(@class, 'dijitDownArrowButton')]
+${BIGTAP POLICY MATCHES BUTTON}									xpath=//div[@class='step_text' and contains(text(), '2. Rules')]
+${RBAC MATCHES BUTTON}											xpath=//div[@class='step_text' and contains(text(), '5. Matches')]
+${FILTER CHECKB}													xpath=//div[@class='bsn_ellipsis' and contains(text(), 'ixia-2-4')]
+${fc}   														xpath=//div[text()='ixia-2-4']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
+${dc}   														xpath=//div[text()='ixia-2-3']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
+${matchall_checkbox_unselected}												xpath=//div[@data-dojo-attach-point='trafficNode']/div[2]/div[1]/input[@aria-checked='false']
+${matchall_checkbox_selected}												xpath=//div[@data-dojo-attach-point='trafficNode']/div[2]/div[1]/input[@aria-checked='true']
+${BIG TAP POLICY EDIT POPUP}									xpath=//div[@title='Edit Policy']
+${action_menu_policy}											xpath=//div[text()='test-policy']/parent::div/parent::td/preceding-sibling::td/preceding-sibling::td[@id='bsn_widgets_FunctionalTableBodyCell_1']/child::div/child::div
+${action_menu_match}											xpath=//div[@data-dojo-attach-point='ruleHandlerNode']/descendant::table[@data-dojo-attach-point='tableNode']/descendant::div[@class='action_menu']
+#text()='Policy77227']/parent::div/parent::td/preceding-sibling::td/preceding-sibling::td[@id='bsn_widgets_FunctionalTableBodyCell_40']/child::div/child::div
+${BIGTAP POLICY FILTER INTERFACE GROUP PLUS BUTTON}						xpath=//div[@data-dojo-attach-point='filterGroupTableNode']/descendant::div[@class='icon_node plus']
+${BIGTAP POLICY INCLUDE FILTER INTERFACE GROUP POPUP}					xpath=//div[@title='Add Filter Interface Group']/span[1]
+${BIGTAP POLICY APPEND SELECTED FILTER INTERFACE GROUP BUTTON}			xpath=//span[@id='dijit_form_Button_24_label']
+${BIGTAP POLICY DELIVERY INTERFACE GROUP PLUS BUTTON}					xpath=//div[@data-dojo-attach-point='deliveryGroupTableNode']/descendant::div[@class='icon_node plus']
+${BIGTAP POLICY INCLUDE DELIVERY INTERFACE GROUP POPUP}					xpath=//div[@title='Add Delivery Interface Group']/span[1]
+${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACE GROUP BUTTON}		xpath=//span[@id='dijit_form_Button_29_label']
+${filter_group_checkbox}												xpath=//div[text()='filter-group']/parent::td/preceding-sibling::td/child::div/child::div/input
+${delivery_group_checkbox}												xpath=//div[text()='delivery-group']/parent::td/preceding-sibling::td/child::div/child::div/input
+${VXLAN VNI FIELD}														xpath=//input[@id='dijit_form_NumberSpinner_15']
+### Big Tap Interfaces Page
+${BIG TAP INTERFACES PLUS BUTTON}						xpath=//div[@class='icon_node plus']
+${BIG TAP INTERFACES CONFIGURE POPUP}					xpath=//div[@title='Create Interface']
+${BIG TAP INTERFACES SWITCHES DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch')]/parent::h2/parent::div/following-sibling::div/descendant::input[@class='dijitReset dijitInputField dijitArrowButtonInner']
+${BIG TAP INTERFACES SWITCHES FIELD}					xpath=//input[@id='dijit_form_FilteringSelect_0']
+${BIG TAP INTERFACES SWITCHES LIST}						xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
+${BIG TAP INTERFACES INTERFACES DROPDOWN BUTTON}		xpath=//div[@id='widget_dijit_form_FilteringSelect_1']/descendant::div
+${BIG TAP INTERFACES INTERFACES FIELD}					xpath=//input[@id='dijit_form_FilteringSelect_1']
+${BIG TAP INTERFACES INTERFACES LIST}					xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
+${BIG TAP INTERFACES CONFIGURE BUTTON}					xpath=//div[@class='step_text' and contains(text(), '2. Configure')]
+${BIG TAP INTERFACES FILTER INTERFACE RADIO BUTTON}		xpath=//div[@data-dojo-attach-point='nodeTypeFilter']/descendant::input
+${BIG TAP INTERFACES DELIVERY INTERFACE RADIO BUTTON}	xpath=//div[@data-dojo-attach-point='nodeTypeDelivery']/descendant::input
+${BIG TAP INTERFACES SERVICE INTERFACE RADIO BUTTON}	xpath=//div[@data-dojo-attach-point='nodeTypeService']/descendant::input
+${BIG TAP INTERFACES SUBMIT INTERFACE NAME BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+${BIG TAP INTERFACES NAME FIELD}						xpath=//input[@id='dijit_form_ValidationTextBox_0']
+${BIG TAP INTERFACES EDIT MENU ITEM}					xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${BIG TAP MATCH EDIT MENU ITEM}							xpath=//td[contains(@id, 'dijit_MenuItem_11') and contains(text(), 'Edit')]
+${BIG TAP INTERFACES DELETE MENU ITEM}					xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${BIG TAP INTERFACES EDIT POPUP}						xpath=//div[@title='Edit Interface']
+${BIG TAP INTERFACES CONFIRM POPUP}						xpath=//div[@title='Confirm']
+${SUMMARY BUTTON}										xpath=//div[@class='step_text' and contains(text(), '6. Summary')]
+${BIGTAP POLICY OFFSET MATCH PLUS MATCHES BUTTON}		xpath=//div[@data-dojo-attach-point='offsetMatchNode']/descendant::div[@class='icon_node plus']
+
+${BIG TAP CONFIGURE OFFSET MATCH POPUP}  	xpath=//div[@title='Configure Offset Match']/child::span[1]
+${ANCHOR OFFSET DROPDOWN BUTTON}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor/Offset')]/parent::h2/parent::div/following-sibling::div/div[1]/input		
+${ANCHOR OFFSET TYPE LIST} 					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Anchor:')]/parent::div
+${ANCHOR OFFSET TYPE FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor/Offset')]/parent::h2/parent::div/following-sibling::div/div[3]
+${OFFSET MATCH VALUE FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Value')]/parent::h2/parent::div/following-sibling::div[2]/descendant::input[2]
+${OFFSET MATCH MASK FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Mask')]/parent::h2/parent::div/following-sibling::div[2]/descendant::input[2]		
+#${APPEND OFFSET MATCH BUTTON}		xpath=//span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
+${APPEND OFFSET MATCH BUTTON}		xpath=//span[@id='dijit_form_Button_14_label']
+#${RBAC APPEND SELECTED MATCHES BUTTON}
+
+${BIGTAP POLICY ACTION DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Action')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
+${BIGTAP POLICY ACTION LIST}  			xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Forward')]/parent::div
+${BIGTAP POLICY ACTION FIELD}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Action')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
+
+${BIGTAP POLICY START DROPDOWN BUTTON} 		 	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Start Policy')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
+${BIGTAP POLICY START LIST}						xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Immediately')]/parent::div
+${BIGTAP POLICY START FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Start Policy')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
+${BIGTAP POLICY AFTER DELAY TIME}  				xpath=//div[(@class='input_description') and contains(text(), 'Delay starts when policy is saved')]/parent::div/div[1]/div[2]/div[1]/div[1]/div[3]/input[1]	
+${BIGTAP POLICY DURATION DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Run Policy')]/parent::h2/parent::div/following-sibling::div/div[1]/div/div[1]/input
+
+${BIGTAP POLICY DURATION LIST}					xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'Always')]/parent::div
+
+${BIGTAP POLICY DURATION FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Run Policy')]/parent::h2/parent::div/following-sibling::div/div/div/div[3]/input[1]
+${BIGTAP POLICY DURATION TIME}					xpath=//*[@id='dijit_form_NumberSpinner_2']	
+${BIGTAP POLICY PACKETS DELIVERED CHECKBOX SELECTED}	xpath=//div[@data-dojo-attach-point='blockDuration']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input 
+#${BIGTAP POLICY DELIVERED CHECKBOX UNSELECTED}  xpath=//div[@data-dojo-attach-point='ruleNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${BIGTAP POLICY DELIVERED CHECKBOX UNSELECTED}   xpath=//div[@data-dojo-attach-point='infoNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '... or until')]/parent::h2/parent::div/preceding-sibling::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
+${BIGTAP POLICY PACKETS DELIVERED FIELD}  		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'packets are delivered')]/parent::h2/parent::div/preceding-sibling::div/div[3]/input[1]
+
+${BIGTAP POLICY RULE1 CHECKBOX}					xpath=//div[@data-dojo-attach-point='ruleHandlerNode']/descendant::div[@class='content' and contains(text(), '1')]/parent::td/preceding-sibling::td/preceding-sibling::td/descendant::input
+${BIGTAP POLICY DELETE RULE MINUS SIGN}			xpath=//div[@data-dojo-attach-point='ruleHandlerNode']/descendant::div[@class='icon_node minus']
+${BIGTAP POLICY DELETE FILTER INTERFACE MINUS SIGN}  	xpath=//div[@data-dojo-attach-point='filterInterfacesNode']/descendant::div[@class='icon_node minus']
+${BIGTAP POLICY DELETE DELIVERY INTERFACE MINUS SIGN}	xpath=//div[@data-dojo-attach-point='deliveryInterfacesNode']/descendant::div[@class='icon_node minus']
+
+#### Big Tap Interface Groups Page
+
+${BIG TAP INTERFACE GROUP PLUS BUTTON}			xpath=//div[@id='interface_groups_table']/descendant::div[@class='icon_node plus']
+${BIG TAP INTERFACE GROUP CONFIGURE POPUP}		xpath=//div[@title='Create Interface Group']/child::span[@data-dojo-attach-point='titleNode']
+${BIG TAP INTERFACE GROUP VIEW DROPDOWN BUTTON}	xpath=//div[@role='combobox']/child::div[1]/input
+${BIG TAP INTERFACE GROUP VIEW DROPDOWN LIST}	xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
+${BIG TAP INTERFACE GROUP VIEW FIELD}			xpath=//input[@id='dijit_form_FilteringSelect_0']
+${BIG TAP INTERFACE GROUP NAME FIELD}			xpath=//input[@id='dijit_form_ValidationTextBox_0']
+${BIG TAP INTERFACE GROUP INTERFACE BUTTON}		xpath=//div[@class='step_text' and contains(text(), '2. Interfaces')]
+${BIG TAP ADD FILTER INTERFACE PLUS BUTTON}			xpath=//div[@data-dojo-attach-point='filterInterfacesNode']/descendant::div[@class='icon_node plus']
+${BIG TAP ADD DELIVERY INTERFACE PLUS BUTTON}			xpath=//div[@data-dojo-attach-point='deliveryInterfacesNode']/descendant::div[@class='icon_node plus']
+${BIGTAP ADD FILTER INTERFACE POPUP}			xpath=//div[@title='Add Filter Interfaces']/child::span[@data-dojo-attach-point='titleNode']			
+${BIGTAP ADD DELIVERY INTERFACE POPUP}			xpath=//div[@title='Add Delivery Interfaces']/child::span[@data-dojo-attach-point='titleNode']	
+${FILTER CHECKBOX}								xpath=//div[text()='ixia-2-4']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
+${DELIVERY CHECKBOX}							xpath=//div[text()='ixia-2-3']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
+${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
+${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
+${INTERFACE SAVE BUTTON}						xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+${BIG TAP INTERFACE GROUP KNOB BUTTON}  		xpath=//div[@class='knob_icon']
+${BIG TAP INTERFACE GROUP KNOB LOCK BUTTON}  		xpath=//div[@class='knob_icon lock']
+#xpath=//div[@id='bsn_widgets_ToggleSwitch_0']
+${BIG TAP INTERFACE GROUPS DELETE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${BIG TAP EDIT MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${BIG TAP INTERFACE REMOVE MENU ITEM}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Remove')]
+${BIG TAP INTERFACE GROUPS CONFIRM POPUP}			xpath=//div[@title='Confirm']
+
+
+### Big Tap Services Page
+${SERVICE MAIN PLUS BUTTON}								xpath=//div[@class='icon_node plus']
+${CREATE SERVICE POPUP}									xpath=//div[@title='Create Service']
+#${SERVICE NAME FIELD}									xpath=//input[@id='dijit_form_ValidationTextBox_0']
+${SERVICE NAME FIELD}									xpath=//input[@id="big_console_widgets_core_form_BsnIdentifierTextBox_0"]
+${PRE SERVICE INTERFACES BUTTON}						xpath=//div[@class='step_text' and contains(text(), '2. Pre-Service Interfaces')]
+${POST SERVICE INTERFACES BUTTON}						xpath=//div[@class='step_text' and contains(text(), '3. Post-Service Interfaces')]
+${ERROR DUPE SERVICE NAME}								xpath=//div[@class='input_error']
+${SERVICE SAVE BUTTON}									xpath=//span[@id='dijit_form_Button_4']
+${ADD PRE SERVICE INTEFACE BUTTON}						xpath=//div[@data-dojo-attach-point='preInterfacesNode']/descendant::div[@class='icon_node plus']
+${ADD POST SERVICE INTEFACE BUTTON}						xpath=//div[@data-dojo-attach-point='postInterfacesTableNode']/descendant::div[@class='icon_node plus']
+${ADD PRE SERVICE INTERFACE POPUP}						xpath=//div[@title='Select Pre-Service Interfaces']
+${ADD POST SERVICE INTERFACE POPUP}						xpath=//div[@title='Select Post-Service Interfaces']
+${APPEND PRE SERVICE INTERFACE BUTTON}					xpath=//span[@id='dijit_form_Button_9']
+${APPEND POST SERVICE INTERFACE BUTTON}					xpath=//span[@id='dijit_form_Button_14']
+${PRE SERVICE INTERFACES ATTACHMENT POINT}				div[@title='Select Pre-Service Interfaces']/parent::div/
+${POST SERVICE INTERFACES ATTACHMENT POINT}				div[@title='Select Post-Service Interfaces']/parent::div/
+
+### Big Tap User Defined Offsets Page
+
+${BIGTAP UDF ANCHOR DROPDOWN BUTTON}  	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${BIGTAP UDF ANCHOR LIST}  				xpath=//div[contains(@id, 'dijit_form_FilteringSelect') and contains(text(), 'L4 Start')]/parent::div
+${BIGTAP UDF FIELD}   				 	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Anchor')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${BIGTAP OFFSET FIELD}    				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Offset')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+
+### Big Tap IP Lists Page
+${LIST MAIN PLUS BUTTON}								xpath=//div[@class='icon_node plus']
+${CREATE IP ADDRESS LIST POPUP}							xpath=//div[@title='Create IP Address List']
+${LIST NAME FIELD}										xpath=//input[@id='dijit_form_ValidationTextBox_0']
+${ADD IP ADDRESS LIST BUTTON}							xpath=//div[@data-dojo-attach-point='addressesTableView']/descendant::div[@class='icon_node plus']
+${LIST TYPE KNOB}										xpath=//div[@class='knob_icon']
+${LIST TYPE KNOB DOWN}									xpath=//div[@class='knob dojoMoveItem']
+${ENTER IPV4 LIST POPUP}								xpath=//div[@title='Enter IPv4 Address/Mask Pair(s)']
+${ENTER IPV6 LIST POPUP}								xpath=//div[@title='Enter IPv6 Address/Mask Pair(s)']
+${UPLOAD IP LIST BUTTON}								xpath=//span[@id='dijit_form_Button_5']
+${UPLOAD IP ADDRESS LIST POPUP}							xpath=//div[@title='Upload Address/Mask File']
+${BROWSE IP LIST FILE FIELD}							xpath=//div[@id='bsn_widgets_formDialog_FileRead_0']/form/input[2]
+${READ IP LIST FILE BUTTON}								xpath=//span[@id='dijit_form_Button_15']
+${APPEND IP LIST BUTTON}								xpath=//span[@id='dijit_form_Button_10']
+${SAVE IP LIST BUTTON}									xpath=//span[@id='dijit_form_Button_4']
+
+
+### Statistics
+
+${BIGTAP FILTER BANDWIDTH}								xpath=//td[@class='label' and contains(text(), 'Max Filter Bandwidth')]/following-sibling::td
+${BIGTAP DELIVERY BANDWIDTH}							xpath=//td[@class='label' and contains(text(), 'Max Delivery Bandwidth')]/following-sibling::td
+${BIGTAP SERVICE BANDWIDTH}								xpath=//td[@class='label' and contains(text(), 'Max Pre-Service Bandwidth')]/following-sibling::td
+${BIGTAP FILTER INTERFACE NUMBER}						xpath=//td[@class='label' and contains(text(), 'Filter Interfaces')]/following-sibling::td
+${BIGTAP DELIVERY INTERFACE NUMBER}						xpath=//td[@class='label' and contains(text(), 'Delivery Interfaces')]/following-sibling::td
+${BIGTAP SERVICE INTERFACE NUMBER}						xpath=//td[@class='label' and contains(text(), 'Service Interfaces')]/following-sibling::td
+${BIGTAP POLICY NUMBER}									xpath=//td[@class='label' and text()='Policies']/following-sibling::td
+${BIGTAP FILTER SWITCH NUMBER}							xpath=//td[@class='label' and contains(text(), 'Filter Switches')]/following-sibling::td
+${BIGTAP DELIVERY SWITCH NUMBER}						xpath=//td[@class='label' and contains(text(), 'Delivery Switches')]/following-sibling::td
+${BIGTAP SERVICE SWITCH NUMBER}							xpath=//td[@class='label' and contains(text(), 'Service Switches')]/following-sibling::td
+${BIGTAP TOTAL SWITCH NUMBER}							xpath=//td[@class='label' and contains(text(), 'Total Switches')]/following-sibling::td
+${BIGTAP INFO REFRESH BUTTON}							xpath=//div[@id='global_info']/descendant::div[@class='icon_node refresh']
+${BIGTAP INTERFACE STATISTICS REFRESH BUTTON}			xpath=//div[@id='global_stats']/descendant::span[contains(text(), 'Interface Statistics')]/parent::h1/descendant::div[@class='icon_node refresh']
+${BIGTAP POLICY MAIN REFRESH BUTTON}					xpath=//div[@id='console_main_content']/descendant::div[@class='icon_node refresh']
+${BIGTAP POLICY OPERATIONAL STATS REFRESH BUTTON}		xpath=//h2[contains(text(), 'Operational State')]/descendant::div[@class='icon_node refresh']
+${BIGTAP TOTAL INGRESS TRAFFIC RATE}					xpath=//td[@class='label' and contains(text(), 'Total Ingress Traffic')]/following-sibling::td
+${BIGTAP TOTAL DELIVERY TRAFFIC RATE}					xpath=//td[@class='label' and contains(text(), 'Total Delivery Traffic')]/following-sibling::td
+${BIGTAP POLICY EXPAND MENU OPS FILTER INTERFACE}		xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), 'Filter Interface')]/preceding-sibling::div[@class='icon']
+${BIGTAP POLICY EXPAND MENU OPS DELIVERY INTERFACE}		xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), 'Delivery Interface')]/preceding-sibling::div[@class='icon']
+${BIGTAP POLICY EXPAND MENU OPS SERVICE INTERFACE}		xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), 'Service Interface')]/preceding-sibling::div[@class='icon']
+${BIGTAP POLICY EXPAND MENU OPS CORE INTERFACE}			xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), 'Core Interface')]/preceding-sibling::div[@class='icon']
+${BIGTAP POLICY EXPAND MENU OPS FLOW INFO} 				xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), 'Core Interface')]/preceding-sibling::div[@class='icon']
+${BIGTAP POLICY EXPAND MENU OPS CAPACITY}				xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), 'Capacity')]/preceding-sibling::div[@class='icon']
+${BIGTAP POLICY FILTER BANDWIDTH}						xpath=//td[@class='label' and contains(text(), 'Filter Bandwidth')]/following-sibling::td
+${BIGTAP POLICY DELIVERY BANDWIDTH}						xpath=//td[@class='label' and contains(text(), 'Delivery Bandwidth')]/following-sibling::td
+${BIG TAP INTERFACES GLOBAL MENU BUTTON}				xpath=//div[@id='interfaces_table']/descendant::div[@class='icon_node menu']
+${BIG TAP INTERFACE STATS SHOW HIDE BUTTON}				xpath=//td[contains(@id, dijit_MenuItem) and contains(text(), 'Show/Hide Columns')]
+${SHOW HIDE SELECT ALL STATS BUTTON}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Check Columns to Show')]/following-sibling::div/span[contains(text(), 'all')]
+${SHOW HIDE RESTORE DEFAULTS BUTTON}					xpath=//span[contains(text(), 'Restore Defaults')]
+${SHOW HIDE SAVE PREFERENCES BUTTON}					xpath=//span[contains(text(), 'Save Preferences')]
+
+
+
+
+#### Big Tap Interface Lock
+
+${BIGTAP INTERFACE LOCK}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Lock')]
+${CONFIRM LOCK POPUP}			xpath=//div[@title='Confirm Lock']
+${CONFIRM OK BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'OK')]
+${BIGTAP INTERFACE UNLOCK}		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Unlock')]
+${CONFIRM UNLOCK POPUP}			xpath=//div[@title='Confirm Unlock']
+
+
+#### sFlow Page
+${SFLOW GOTO HOME PAGE} 			 xpath=//div[@class='console_header_segment nav_segment']/descendant::div[@class='nav_menu']/descendant::div[@class='nav_menu_item' and contains(text(), 'sFlow')]
+${BIGTAP SFLOW SETTINGS BUTTON}      xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node configure']
+${ADD SFLOW COLLECTOR}               xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node plus']
+${SFLOW COLLECTOR POPUP}             xpath=//div[@data-dojo-attach-point='titleBar' and @class='dijitDialogTitleBar']
+${SFLOW COLLECTOR IP}     			 xpath=//div[@data-dojo-attach-point='titleBar' and @title='Create sFlow Collector']/following-sibling::div[@data-dojo-attach-point='containerNode']/descendant::span[@class='dijitPlaceHolder dijitInputField' and (text()='- IPv4 Address -') ]/preceding-sibling::input
+${SFLOW COLLECTOR UDP PORT}			 xpath=//div[@data-dojo-attach-point='titleBar' and @title='Create sFlow Collector']/following-sibling::div[@data-dojo-attach-point='containerNode']/descendant::input[@id='dijit_form_NumberSpinner_3']
+${SFLOW COLLECTOR SAVE} 			 xpath=//div[@data-dojo-attach-point='titleBar' and @title='Create sFlow Collector']/following-sibling::div[@data-dojo-attach-point='containerNode']/descendant::span[@class='dijitReset dijitInline dijitButtonText' and @id='dijit_form_Button_5_label']
+${SFLOW SAMPLE RATE}				 xpath=//div[@data-dojo-attach-point='titleBar' and @title='Configure sFlow Settings']/following-sibling::div[@data-dojo-attach-point='containerNode']/descendant::input[ @id='dijit_form_NumberSpinner_0']
+${SFLOW HEADER SIZE}				 xpath=//div[@data-dojo-attach-point='titleBar' and @title='Configure sFlow Settings']/following-sibling::div[@data-dojo-attach-point='containerNode']/descendant::input[ @id='dijit_form_NumberSpinner_1']
+${SFLOW COUNTER INTERVAL}			 xpath=//div[@data-dojo-attach-point='titleBar' and @title='Configure sFlow Settings']/following-sibling::div[@data-dojo-attach-point='containerNode']/descendant::input[ @id='dijit_form_NumberSpinner_2']
+${SFLOW COUNTER MIN SEC} 			 xpath=//div[@data-dojo-attach-point='titleBar' and @title='Configure sFlow Settings']/following-sibling::div[@data-dojo-attach-point='containerNode']/descendant::input[ @id='dijit_form_FilteringSelect_0']
+
+*** Keywords ***
+Set URLs
+	Set Suite Variable     	${LOGIN URL}     				https://${SERVER}/login
+	Set Suite Variable		${BT SIGNOUT URL}				https://${SERVER}/logout
+	Set Suite Variable     	${WELCOME URL}  				https://${SERVER}/
+	Set Suite Variable     	${ERROR URL}     				https://${SERVER}/login
+	Set Suite Variable     	${BIGTAP URL}    				https://${SERVER}/bigtap/main
+	Set Suite Variable     	${TOPOLOGY URL}  				https://${SERVER}/bigtap/topology
+	Set Suite Variable     	${POLICIES URL}  				https://${SERVER}/bigtap/policies
+	Set Suite Variable     	${IP ADDRESS GROUPS URL}  		https://${SERVER}/bigtap/ip_address_sets
+	Set Suite Variable     	${SERVICES URL}  				https://${SERVER}/bigtap/services
+	Set Suite Variable     	${BT INTERFACES URL} 			https://${SERVER}/bigtap/interfaces
+	Set Suite Variable     	${BT FILTER INTERFACES URL} 		https://${SERVER}/bigtap/interfaces#type=filter
+	Set Suite Variable     	${BT DELIVERY INTERFACES URL} 		https://${SERVER}/bigtap/interfaces#type=delivery
+	Set Suite Variable     	${BT SERVICE INTERFACES URL} 		https://${SERVER}/bigtap/interfaces#type=service
+	Set Suite Variable     	${BT INTERFACE GROUPS URL} 		https://${SERVER}/bigtap/interface_groups
+	Set Suite Variable     	${SWITCHES URL}   				https://${SERVER}/controller/switches
+	Set Suite Variable     	${INTERFACES URL} 				https://${SERVER}/controller/interfaces
+	Set Suite Variable     	${USERS URL}    				https://${SERVER}/controller/security/users
+	Set Suite Variable     	${GROUPS URL}   				https://${SERVER}/controller/security/groups
+	Set Suite Variable     	${RBAC URL}    					https://${SERVER}/controller/security/rbac_permissions
+	Set Suite Variable     	${HOST TRACKER URL}   			https://${SERVER}/bigtap/host_tracker
+	Set Suite Variable     	${OBSERVED IP URL}    			https://${SERVER}/bigtap/observed_ip
+	Set Suite Variable 		${USER DEFINED OFFSETS URL}  	https://${SERVER}/bigtap/user_defined_offsets
+	Set Suite Variable      ${SFLOW_URL}                    https://${SERVER}/bigtap/sflow
+
+
+Valid Login
+    [Arguments]  ${username}  ${password}
+    Go To Login Page
+    Input Username    ${username}
+    Input Password    ${password}
+    Submit Credentials
+    Welcome Page Should Be Open
+
+Login With Invalid Credentials Should Fail
+    [Arguments]  ${username}  ${password}
+    Go To Login Page
+    Input Username  ${username}
+    Input Password  ${password}
+    Submit Credentials
+    Login Should Have Failed
+
+Open Browser To Login Page
+    Open Browser  ${LOGIN URL}  ${BROWSER}
+    Maximize Browser Window
+    Set Selenium Speed  ${DELAY}
+    Title Should Contain  ${LOG IN TITLE}
+    Sleep  1
+
+Go To Login Page
+    Go To  ${LOGIN URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${LOG IN TITLE}
+	Sleep  1
+	
+Go To Big Tap Page
+    Go To  ${BIGTAP URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BIGTAP TITLE}
+    Sleep  1
+
+Go To Big Tap Topology Page
+    Go To  ${TOPOLOGY URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${TOPOLOGY TITLE}
+    Sleep  1
+
+Go To Big Tap Policies Page
+    Go To  ${POLICIES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${POLICIES TITLE}
+    Sleep  1
+
+Go To Big Tap IP Lists Page
+    Go To  ${IP ADDRESS GROUPS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${IP ADDRESS GROUPS TITLE}
+    Sleep  1
+
+Go To Big Tap Services Page
+    Go To  ${SERVICES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SERVICES TITLE}
+    Sleep  1
+
+Go To Big Tap Interfaces Page
+    Go To  ${BT INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT INTERFACES TITLE}
+    Sleep  1
+    
+Go To Big Tap Filter Interfaces Page
+    Go To  ${BT FILTER INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT FILTER INTERFACES TITLE}
+    Sleep  1
+    
+Go To Big Tap Delivery Interfaces Page
+    Go To  ${BT DELIVERY INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT DELIVERY INTERFACES TITLE}
+    Sleep  1
+    
+Go To Big Tap Service Interfaces Page
+    Go To  ${BT SERVICE INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT SERVICE INTERFACES TITLE}
+    Sleep  1
+   
+Go To Big Tap Host Tracker Page
+	Go To  ${HOST TRACKER URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT HOST TRACKER TITLE}
+    Sleep  1
+    
+Go To Big Tap Observed IP Addresses Page
+	Go To  ${OBSERVED IP URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT OBSERVED IP TITLE}
+    Sleep  1
+    
+Go To Big Tap User Defined Offsets Page
+	Go To  ${USER DEFINED OFFSETS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT USER DEFINED OFFSETS TITLE}
+    Sleep  1
+    
+Go To Signout Page
+	Go To  ${BT SIGNOUT URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT SIGNOUT TITLE}
+    Sleep  1
+    
+Go To Big Tap Interface Groups Page
+	Go To  ${BT INTERFACE GROUPS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BT INTERFACE GROUPS TITLE}
+    Sleep  1
+
+Go To Controller Switches Page
+    Go To  ${SWITCHES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${SWITCHES TITLE}
+    Sleep  1
+
+Go To Controller Interfaces Page
+    Go To  ${INTERFACES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${INTERFACES TITLE}
+    Sleep  1
+
+Go To Security Users Page
+    Go To  ${USERS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${USERS TITLE}
+    Sleep  1
+
+Go To Security Groups Page
+    Go To  ${GROUPS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${GROUPS TITLE}
+    Sleep  1
+
+Go To Security RBAC Page
+    Go To  ${RBAC URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${RBAC TITLE}
+    Sleep  1
+
+Go To Landing Page
+    Go To  ${WELCOME URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${DASHBOARD TITLE}
+    Sleep  1
+
+Go To Big Tap sFlow page
+    Go To  ${SFLOW_URL}
+    Wait Until Page Loaded
+    Title Should Contain  ${SFLOW TITLE}
+    Sleep  1        
+
+Select Checkbox
+	[Arguments]  ${selected}  ${unselected}
+	${selected count}  Get Matching Xpath Count Tokenize   ${selected}
+	Run Keyword If  '${selected count}' == '0'
+	...  Click Element  ${unselected}  and don't wait
+	Verify Checkbox Selected  ${selected}
+
+
+Unselect Checkbox
+	[Arguments]  ${selected}  ${unselected}
+	${unselected count}  Get Matching Xpath Count Tokenize   ${unselected}
+	Run Keyword If  '${unselected count}' == '0'
+	...  Click Element  ${selected}  and don't wait
+	Verify Checkbox Unselected  ${unselected}
+
+
+Verify Checkbox Selected
+	[Arguments]  ${selected}
+	Verify Element Visible  ${selected}
+	${selected count}  Get Matching Xpath Count Tokenize  ${selected}
+	Run Keyword If  '${selected count}' == '0'  Fail
+
+
+Verify Checkbox Unselected
+	[Arguments]  ${unselected}
+	Verify Element Visible  ${unselected}
+	${unselected count}  Get Matching Xpath Count Tokenize  ${unselected}
+	Run Keyword If  '${unselected count}' == '0'	Fail
+
+
+Get Matching Xpath Count Tokenize 
+	[Arguments]  ${string}
+	${string xpath}  Fetch From Right  ${string}  xpath=
+	${string count}  Get Matching Xpath Count  ${string xpath}
+	[Return]   ${string count}
+
+
+Show All
+	Verify Element Visible  ${SHOW ALL BUTTON}
+	Click Element  ${SHOW ALL BUTTON}  and don't wait
+
+
+Delete All
+	Verify Element Visible  ${CHECKBOX ALL}
+	Click Element  ${CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
+	Return From Keyword If  '${selected checkbox}' == '0' 
+	#Show All
+	#Click Element  ${CHECKBOX ALL}  and don't wait  #unselecting
+	#Click Element  ${CHECKBOX ALL}  and don't wait  #selecting again
+	Verify Element Visible  ${CHECKBOX ALL SELECTED}
+	Verify Element Visible  ${MAIN MINUS BUTTON}
+	Click Element  ${MAIN MINUS BUTTON}  and don't wait
+	Verify Element Visible  ${CONFIRM DELETION POPUP}
+	Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+
+
+Input Username  [Arguments]  ${username}
+    Input Text  username  ${username}
+
+
+Input Password  [Arguments]  ${password}
+    Input Text  password  ${password}
+
+
+Submit Credentials
+	Mouse Over  xpath=//span[@id='submit_button']
+    Click Element   xpath=//span[@id='submit_button_label']
+
+
+Welcome Page Should Be Open
+    Location Should Be  ${WELCOME URL}
+    Title Should Contain  ${DASHBOARD TITLE}
+
+
+Login Should Have Failed
+    Location Should Be  ${ERROR URL}
+    Title Should Contain  ${LOG IN TITLE}
+
+
+Generate Random Name
+	[Arguments]  ${prefix}  ${suffix_len}
+    ${regex}  Generate Random String  ${suffix_len}  [NUMBERS]
+    ${name}  Catenate  SEPARATOR=  ${prefix}  ${regex}
+    [Return]  ${name}
+
+#xpath=//div[text()='delivery-group']/parent::td/preceding-sibling::td/child::div/child::div/input
+Generate Checkbox Xpath IGroup
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  and contains(text(), '  ${text}  ')]/parent::td/preceding-sibling::td/child::div/child::div/input
+   #${xpath}   Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='bsn_ellipsis']
+    [Return]  ${xpath}
+    
+#Generate Checkbox Xpath
+#	[Arguments]  ${attachment_point}  ${text}
+#    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::input
+    #${xpath}   Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='bsn_ellipsis']
+#    [Return]  ${xpath}
+    
+Generate Checkbox Xpath
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::input
+    #${xpath}   Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='bsn_ellipsis']
+    [Return]  ${xpath}
+
+
+Generate Checkbox Xpath Nowrap
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::input
+    [Return]  ${xpath}
+
+
+Generate Action Menu Xpath
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
+    
+Generate Action Menu Xpath Switch
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
+
+Generate Action Menu Xpath Policy
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::a/parent::div/parent::a/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
+    
+Generate Overlapping Policy Xpath  
+	[Arguments]  ${attachment_point}  ${policy1}  ${policy2}
+	${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}   and contains(text(), '_${policy2}_o_${policy1}')]
+	[Return]  ${xpath}
+	
+Generate Action Menu Xpath Interfaces
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
+
+Generate Action Menu Xpath Interfaces Tunnels
+	[Arguments]  ${attachment_point}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='actions']/descendant::div[@class='icon_node menu']
+    [Return]  ${xpath}
+        
+Generate Action Menu Xpath Interface Controller
+	[Arguments]  ${attachment_point}  ${id}  ${switch}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${id}  ')]/parent::td/preceding-sibling::td/preceding-sibling::td/div/div[@class='bsn_ellipsis' and (text()='  ${switch}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
+   
+    
+Generate Action Menu Xpath Interface Lock
+ 	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
+    [Return]  ${xpath}
+    
+Generate Expand Menu Policy Xpath
+	[Arguments]  ${attachment_point}  ${text}
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::a/parent::div/parent::a/parent::td/preceding-sibling::td/descendant::div[@class='aux_row_control']
+    [Return]  ${xpath}	
+    
+Generate Packet Count Policy IF Xpath  
+	[Arguments]  ${interface-name}   ${role}
+ 	${xpath}  Catenate  SEPARATOR=  xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), '  ${role}  ')]/parent::div/parent::div/descendant::div[@class='bsn_ellipsis' and contains(text(), '${interface-name}')]/parent::div/parent::td/following-sibling::td[7]/div
+    [Return]  ${xpath}
+ 
+Generate Packet Rate Policy IF Xpath  
+	[Arguments]  ${interface-name}   ${role}
+ 	${xpath}  Catenate  SEPARATOR=  xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), '  ${role}  ')]/parent::div/parent::div/descendant::div[@class='bsn_ellipsis' and contains(text(), '${interface-name}')]/parent::div/parent::td/following-sibling::td[6]/div
+    [Return]  ${xpath}
+ 
+Generate Bit Rate Policy IF Xpath  
+	[Arguments]  ${interface-name}   ${role}
+ 	${xpath}  Catenate  SEPARATOR=  xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), '  ${role}  ')]/parent::div/parent::div/descendant::div[@class='bsn_ellipsis' and contains(text(), '${interface-name}')]/parent::div/parent::td/following-sibling::td[5]/div/div[1]
+    [Return]  ${xpath}
+          
+Generate Packet Count Policy Core IF Xpath   
+	[Arguments]  ${switch-alias}   ${interface}  ${role}
+ 	${xpath}  Catenate  SEPARATOR=  xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), '  ${role}  ')]/parent::div/parent::div/descendant::div[@class='bsn_ellipsis' and contains(text(), '${switch-alias}')]/parent::div/parent::td/following-sibling::td/div[@class='content' and contains(text(), '${interface}')]/parent::td/following-sibling::td[7]/div
+    [Return]  ${xpath}
+    
+Generate Packet Rate Policy Core IF Xpath   
+	[Arguments]  ${switch-alias}   ${interface}  ${role}
+ 	${xpath}  Catenate  SEPARATOR=  xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), '  ${role}  ')]/parent::div/parent::div/descendant::div[@class='bsn_ellipsis' and contains(text(), '${switch-alias}')]/parent::div/parent::td/following-sibling::td/div[@class='content' and contains(text(), '${interface}')]/parent::td/following-sibling::td[6]/div
+    [Return]  ${xpath}
+    
+Generate Bit Rate Policy Core IF Xpath   
+	[Arguments]  ${switch-alias}   ${interface}  ${role}
+ 	${xpath}  Catenate  SEPARATOR=  xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), '  ${role}  ')]/parent::div/parent::div/descendant::div[@class='bsn_ellipsis' and contains(text(), '${switch-alias}')]/parent::div/parent::td/following-sibling::td/div[@class='content' and contains(text(), '${interface}')]/parent::td/following-sibling::td[5]/div/div/div[1]
+    [Return]  ${xpath}
+
+Generate Packet Count Policy Flow Info Xpath
+	[Arguments]  ${switch-alias}   ${role}
+ 	${xpath}  Catenate  SEPARATOR=  xpath=//div[@data-dojo-attach-point='opsContainerNode']/descendant::div[@class='title' and contains(text(), '  ${role}  ')]/parent::div/parent::div/descendant::div[@class='bsn_ellipsis' and contains(text(), '${switch-alias}')]/parent::div/parent::td/following-sibling::td[5]/div/div/div[1]
+    [Return]  ${xpath}
+
+Generate Packet Count Interface Xpath   
+	[Arguments]	 ${interface-name}
+	${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='interfaces_table']/descendant::div[@class='bsn_ellipsis' and contains(text(), '${interface-name}')]/parent::div/parent::td/following-sibling::td[15]/div/div
+    [Return]  ${xpath}
+ 
+Generate Packet Rate Interface Xpath   
+	[Arguments]	 ${interface-name}
+	${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='interfaces_table']/descendant::div[@class='bsn_ellipsis' and contains(text(), '${interface-name}')]/parent::div/parent::td/following-sibling::td[14]/div/div
+    [Return]  ${xpath}
+
+Generate Bit Rate Interface Xpath   
+	[Arguments]	 ${interface-name}
+	${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='interfaces_table']/descendant::div[@class='bsn_ellipsis' and contains(text(), '${interface-name}')]/parent::div/parent::td/following-sibling::td[13]/div/div
+    [Return]  ${xpath}
+
+Generate Dropped Packet Count tx Interface Xpath   
+	[Arguments]	 ${interface-name}
+	${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='interfaces_table']/descendant::div[@class='bsn_ellipsis' and contains(text(), '${interface-name}')]/parent::div/parent::td/following-sibling::td[16]/div/div
+    [Return]  ${xpath}
+
+Generate Packet Drop Rate tx Interface Xpath   
+	[Arguments]	 ${interface-name}
+	${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='interfaces_table']/descendant::div[@class='bsn_ellipsis' and contains(text(), '${interface-name}')]/parent::div/parent::td/following-sibling::td[17]/div/div
+    [Return]  ${xpath}
+ 
+Generate Dropped Packet Count rx Interface Xpath   
+	[Arguments]	 ${interface-name}
+	${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='interfaces_table']/descendant::div[@class='bsn_ellipsis' and contains(text(), '${interface-name}')]/parent::div/parent::td/following-sibling::td[18]/div/div
+    [Return]  ${xpath}
+
+Generate Packet Drop Rate rx Interface Xpath   
+	[Arguments]	 ${interface-name}
+	${xpath}  Catenate  SEPARATOR=  xpath=//div[@id='interfaces_table']/descendant::div[@class='bsn_ellipsis' and contains(text(), '${interface-name}')]/parent::div/parent::td/following-sibling::td[19]/div/div
+    [Return]  ${xpath}
+          
+Input Text And Verify
+	[Arguments]  ${field}  ${text}
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${field}
+	Input Text  ${field}  ${text}
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Textfield Should Contain  ${field}  ${text}
+
+
+Select From List And Verify
+	[Arguments]  ${button}  ${list}  ${field}  ${text}
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${button}
+	Verify Page Contains Element  ${button}
+	Mouse Down  ${button}
+	Mouse Up  ${button} 
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${list}
+	Verify Page Contains Element  ${list}
+	${element}  Catenate  SEPARATOR=  ${list}  /descendant::div[contains(text(), '  ${text}  ')]
+	Mouse Down  ${element}
+	Mouse Up  ${element}
+	#Mouse Down  ${list}
+	#Mouse Up  ${list}
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Textfield Should Contain  ${field}  ${text}
+
+
+Select Checkbox And Verify
+	[Arguments]  ${attachment_point}  ${text}
+    ${checkbox}  Generate Checkbox Xpath  ${attachment_point}  ${text}
+    Verify Page Contains Element  ${checkbox}
+	Click Element  ${checkbox}  and don't wait  Click Element  ${checkbox}  and don't wait  $x("//div[@data-dojo-attach-point='tableNode']/div[2]/div[1]/input")
+	Checkbox Should Be Selected	  ${checkbox}
+
+
+Verify Element Visible
+	[Arguments]  ${element}
+	Sleep  2 sec
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Be Visible  ${element}
+
+
+Verify Element Invisible
+	[Arguments]  ${element}
+	Sleep  2 sec
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Element Should Not Be Visible  ${element}
+
+
+Verify Page Contains Text
+	[Arguments]  ${text}
+	#Sleep  1 sec
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Page Should Contain  ${text}
+	Wait Until Page Contains  ${text}  ${TIMEOUT}
+
+
+Verify Page Contains Element
+	[Arguments]  ${element}
+	#Sleep  1 sec
+	#Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Page Should Contain Element  ${element}
+	Wait Until Page Contains Element  ${element}  ${TIMEOUT}
+
+
+Verify Page Does Not Contain Element
+	[Arguments]  ${element}
+	Sleep  2 sec
+	Wait Until Keyword Succeeds  ${TIMEOUT}  ${PERIOD}  Page Should Not Contain Element  ${element}
+
+
+Check Element
+    [Arguments]  ${element}
+    Wait Until Page Contains Element  ${element}
+	Highlight Element  ${element}
+	Get Text  ${element}
+
+
+Check Hover
+    [Arguments]  ${menu}  ${label}  ${dst}  ${title}
+    Wait Until Page Contains Element  ${menu}
+	Highlight Element  ${menu}
+	Mouse Over  ${menu}
+	#Mouse Down On Link  ${menu}
+	#Mouse Up 	${menu}
+	Wait Until Page Contains Element   ${label}
+	#Wait Until Keyword Succeeds  1 min  1 sec  Element Should Be Visible   ${label}
+	Click Element  ${label}
+	Location Should Be  ${dst}
+	Title Should Contain  ${title}
+
+
+Delete All Big Tap Policies
+    Go To Big Tap Policies Page
+    Delete All
+
+
+Delete All Big Tap IP Lists
+    Go To Big Tap IP Lists Page
+    Delete All
+
+
+Delete All Big Tap Services
+    Go To Big Tap Services Page
+    Delete All
+
+
+Delete All Big Tap Interfaces
+    Go To Big Tap Interfaces Page
+    Delete All
+
+Delete All Big Tap Interface Groups
+    Go To Big Tap Interface Groups Page
+    Delete All
+    
+Delete All Security Users
+    Go To Security Users Page
+    Delete All
+
+
+Delete All Security Groups
+    Go To Security Groups Page
+    Delete All
+
+
+Delete All Security RBAC
+    Go To Security RBAC Page
+    Delete All
+    
+Delete All Big Tap Match Rules
+	[Arguments]  ${policy}
+	Go To Big Tap Policies Page
+	
+    #${action_menu}  Generate Action Menu Xpath  div[@id='policies_table']  ${id}
+    
+    ${action_menu_policy}  Generate Action Menu Xpath Policy  div[@id='policies_table']  ${policy}
+    Verify Element Visible  ${action_menu_policy}
+    Click Element  ${action_menu_policy}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACES EDIT MENU ITEM}
+    Click Element  ${BIG TAP INTERFACES EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP POLICY EDIT POPUP}
+
+	Verify Page Contains Element  ${BIGTAP POLICY MATCHES BUTTON}
+	Click Element  ${BIGTAP POLICY MATCHES BUTTON}  and don't wait
+	
+    Verify Element Visible  ${BIGTAP POLICY RULE1 CHECKBOX}		
+	Click Element  ${BIGTAP POLICY RULE1 CHECKBOX}  and don't wait
+	Verify Element Visible  ${BIGTAP POLICY DELETE RULE MINUS SIGN}	
+    Click Element  ${BIGTAP POLICY DELETE RULE MINUS SIGN}  and don't wait
+    
+
+
+Delete All Big Tap Resources
+	Delete All Big Tap Policies
+	Delete All Security RBAC
+	Delete All Security Groups
+	Delete All Security Users
+	Delete All Big Tap Services
+	Delete All Big Tap IP Lists
+	Delete All Big Tap Interfaces
+	Delete All Big Tap Interface Groups
+
+
+Configure User
+	[Arguments]  ${username}  ${password}  ${conf_password}  ${full_name}  ${group}
+	#${random_groupname}  Generate Random Name  Group  5 
+	#Run Keyword If  '${group}'=='__new__'  
+    #...		Configure Group  ${random_groupname}  ${EMPTY}  ${EMPTY}
+    #${group}  Set Variable If  '${group}'=='__new__'  ${random_groupname}  ${group} 
+
+    Go To Security Users Page
+    Verify Element Visible  ${MAIN PLUS BUTTON}
+    Click Element  ${MAIN PLUS BUTTON}   and don't wait
+    Verify Element Visible  ${CREATE USER POPUP}
+
+    #${random_username}  Generate Random Name  User  5
+    #${username}  Set Variable If  '${user}'=='__random__'  ${random_username}  ${user} 
+
+    Input Text And Verify  ${USERNAME FIELD}  ${username}
+    Click Element  ${CREATE USER POPUP}   and don't wait    
+    Input Text And Verify  ${PASSWORD FIELD}  ${password}  
+    Click Element  ${CREATE USER POPUP}   and don't wait  
+    Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${conf_password} 
+    Click Element  ${CREATE USER POPUP}   and don't wait   
+    Input Text And Verify  ${FULL NAME FIELD}  ${full_name}
+    Click Element  ${CREATE USER POPUP}   and don't wait
+
+ 	#Run Keyword Unless  '${password}'=='${conf_password}'  
+    #...		Verify Element Visible  ${INCORRECT PASSWORD ICON} 
+    #Run Keyword Unless  '${password}'=='${conf_password}'
+    #...		Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${password}   
+
+    #Run Keyword Unless  '${password}'=='${EMPTY}'  
+    #...  	Verify Element Visible  ${CORRECT PASSWORD ICON}
+
+    #Element Text Should Be  ${ERROR DUPE USERNAME}  ${EMPTY}  Username already exists
+
+    Run Keyword Unless  '${group}'=='${EMPTY}'  
+    ...		Associate Group  ${group}
+
+    Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CREATE USER POPUP}
+    Verify Page Contains Text   ${username}
+
+
+Associate Group
+	[Arguments]  ${group}
+	Click Element  ${GROUPS BUTTON}  and don't wait
+	Verify Page Contains Element  ${GROUP ASSOCIATE BUTTON}
+
+	Click Element  ${GROUP ASSOCIATE BUTTON}  and don't wait
+	Verify Page Contains Element  ${MANAGE GROUPS POPUP} 
+
+	#${checkbox}  Generate Checkbox Xpath  div[@id='big_console_widgets_Dialog_1']  ${group}
+	${checkbox}  Generate Checkbox Xpath  div[@id='big_console_widgets_core_form_MultiModelSelect_0']  ${group}
+	#${checkbox}  div[@id="bsn_widgets_form_CheckBox_4"]
+	Verify Page Contains Element  ${checkbox}
+	Click Element  ${checkbox}  and don't wait
+	Checkbox Should Be Selected	  ${checkbox}
+
+	Click Element  ${APPEND GROUP BUTTON}  and don't wait
+	Verify Element Invisible  ${MANAGE GROUPS POPUP}
+
+
+Configure Group
+	[Arguments]  ${group_name}  ${user}  ${rbac}
+	${random_rbacname}  Generate Random Name  Rbac  5
+    Run Keyword IF  '${rbac}'=='__new__'  
+    ...		Configure RBAC  ${random_rbacname}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
+    ${rbac}  Set Variable If  '${rbac}'=='__new__'  ${random_rbacname}  ${rbac} 
+
+    ${random_username}  Generate Random Name  User  5
+    Run Keyword IF  '${user}'=='__new__'  
+    ...		Configure User  ${random_username}  adminadmin  adminadmin  ${EMPTY}  ${EMPTY}
+    ${user}  Set Variable If  '${user}'=='__new__'  ${random_username}  ${user} 
+
+	
+    Go To Security Groups Page
+    Verify Element Visible  ${MAIN PLUS BUTTON}
+    Click Element  ${MAIN PLUS BUTTON}   and don't wait
+    Verify Element Visible  ${CREATE GROUP POPUP}
+
+    ${random_group_name}  Generate Random Name  Group  5
+    ${group}  Set Variable If  '${group_name}'=='__random__'  ${random_group_name}  ${group_name} 
+
+    Input Text And Verify  ${GROUPNAME FIELD}  ${group}
+    Click Element  ${INFO BUTTON}   and don't wait
+
+    Element Text Should Be  ${ERROR DUPE NAME}  ${EMPTY}  Name already exists
+
+    Run Keyword Unless  '${user}'=='${EMPTY}'  
+    ...		Associate User  ${user}
+
+    Run Keyword Unless  '${rbac}'=='${EMPTY}'  
+    ...		Associate RBAC  ${rbac}
+
+    Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CREATE GROUP POPUP}
+    Verify Page Contains Text   ${group} 
+
+
+Associate User
+	[Arguments]  ${user}
+	Click Element  ${USERS BUTTON}  and don't wait
+	#Verify Page Contains Element  ${GROUP ASSOCIATE BUTTON}
+
+	Click Element  ${USER ASSOCIATE BUTTON}  and don't wait
+	Verify Page Contains Element  ${ADD USERS POPUP} 
+
+	${checkbox}  Generate Checkbox Xpath  div[@id='big_console_widgets_core_form_MultiModelSelect_0']  ${user}
+	Verify Page Contains Element  ${checkbox}
+	Click Element  ${checkbox}  and don't wait
+	Checkbox Should Be Selected	  ${checkbox}
+
+	Click Element  ${APPEND SELECTED BUTTON}  and don't wait
+	Verify Element Invisible  ${ADD USERS POPUP}
+
+
+Associate RBAC
+	[Arguments]  ${user}
+	Click Element  ${RBAC BUTTON}  and don't wait
+	#Verify Page Contains Element  ${GROUP ASSOCIATE BUTTON}
+
+	Click Element  ${RBAC ASSOCIATE BUTTON}  and don't wait
+	Verify Page Contains Element  ${ASSOCIATE RBAC POPUP} 
+	${checkbox}  Generate Checkbox Xpath Nowrap  div[@id='big_console_widgets_core_form_MultiModelSelect_0']  ${rbac}
+	Verify Page Contains Element  ${checkbox}
+	Click Element  ${checkbox}  and don't wait
+	Checkbox Should Be Selected	  ${checkbox}
+
+	Click Element  ${APPEND SELECTED RBAC BUTTON}  and don't wait
+	Verify Element Invisible  ${ASSOCIATE RBAC POPUP}
+
+
+Configure RBAC
+	[Arguments]  ${rbac}  ${group}  ${filter}  ${delivery}  ${service}  ${ipprotocol}  ${src-ip}  ${dst-ip}
+	${random_groupname}  Generate Random Name  Group  5
+    Run Keyword If  '${group}'=='__new__'  
+    ...		Configure Group  ${random_groupname}  ${EMPTY}  ${EMPTY}
+    ${group}  Set Variable If  '${group}'=='__new__'  ${random_groupname}  ${group} 
+
+    ${random_rbacname}  Generate Random Name  Rbac  5
+    ${rbac}  Set Variable If  '${rbac}'=='__random__'  ${random_rbacname}  ${rbac} 
+
+    Go To Security RBAC Page
+    Verify Element Visible  ${MAIN PLUS BUTTON}
+    Click Element  ${MAIN PLUS BUTTON}   and don't wait
+    Verify Element Visible  ${CREATE RBAC POPUP}
+
+    Input Text And Verify  ${RBACNAME FIELD}  ${rbac}
+
+    Run Keyword Unless  '${group}'=='${EMPTY}'  
+    ...		Select From List And Verify  ${EXPAND GROUP LIST BUTTON}  ${GROUP LIST DROPDOWN}  ${GROUP FIELD}  ${group}
+
+    Element Text Should Be  ${ERROR DUPE NAME}  ${EMPTY}  Name already exists
+
+    Click Element  ${INFO BUTTON}  and don't wait
+
+    Run Keyword Unless  '${filter}'=='${EMPTY}'  
+    ...		Associate Filter Interface  ${filter}
+
+    Run Keyword Unless  '${delivery}'=='${EMPTY}'  
+    ...		Associate Delivery Interface  ${delivery}
+
+    #Run Keyword Unless  '${service}'=='${EMPTY}'  
+    #...		Associate Service  ${service}
+
+    Run Keyword Unless  '${ipprotocol}'=='${EMPTY}'  
+    ...		Associate Match Rule  ${ipprotocol}  ${src-ip}  ${dst-ip}
+
+    Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CREATE RBAC POPUP}
+    Verify Page Contains Text   ${rbac} 
+
+Configure sflow
+	[Arguments]  ${collector_ip}  
+	Go To Big Tap sFlow page
+	Verify Element Visible  ${ADD SFLOW COLLECTOR} 
+	Click Element   ${ADD SFLOW COLLECTOR}    and don't wait
+	Verify Element Visible   ${SFLOW COLLECTOR POPUP}
+	Input Text And Verify   ${SFLOW COLLECTOR IP}   ${collector_ip}
+	Element Should Be Visible   ${SFLOW COLLECTOR SAVE}   
+	Click Element    ${SFLOW COLLECTOR SAVE}    
+    #Verify Element Invisible  ${SFLOW COLLECTOR POPUP}
+    Page Should Not Contain Element   ${SFLOW COLLECTOR POPUP}
+    Verify Page Contains Text   ${collector_ip}
+
+Associate Filter Interface 
+	[Arguments]  ${filter}
+	Verify Page Contains Element  ${FILTER INTERFACES STEP BUTTON}
+	Click Element  ${FILTER INTERFACES STEP BUTTON}  and don't wait
+	Verify Element Visible  ${RBAC FILTER INTERFACES NODE}
+	Unselect Checkbox  ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX SELECTED}  ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX UNSELECTED}
+
+	Verify Element Visible  ${RBAC FILTER INTERFACES PLUS BUTTON}
+	Click Element  ${RBAC FILTER INTERFACES PLUS BUTTON}  and don't wait
+
+	Verify Element Visible  ${RBAC INCLUDE FILTER INTERFACES POPUP}
+
+	${filter_checkbox}  Generate Checkbox Xpath  div[@title='Include Filter Interfaces']/following-sibling::div  ${filter}
+	Verify Page Contains Element  ${filter_checkbox}
+
+	Click Element  ${filter_checkbox}  and don't wait
+	Checkbox Should Be Selected  ${filter_checkbox}
+
+	Verify Page Contains Element  ${RBAC APPEND SELECTED FILTER INTERFACES BUTTON}
+	Click Element  ${RBAC APPEND SELECTED FILTER INTERFACES BUTTON}  and don't wait
+
+	Verify Element Invisible  ${RBAC INCLUDE FILTER INTERFACES POPUP}
+	Verify Page Contains Text  ${filter}
+
+
+Associate Delivery Interface 
+	[Arguments]  ${delivery}
+	Verify Page Contains Element  ${DELIVERY INTERFACES STEP BUTTON}
+	Click Element  ${DELIVERY INTERFACES STEP BUTTON}  and don't wait
+	Verify Element Visible  ${RBAC DELIVERY INTERFACES NODE}
+	Unselect Checkbox  ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}  ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}
+
+	Verify Element Visible  ${RBAC DELIVERY INTERFACES PLUS BUTTON}
+	Click Element  ${RBAC DELIVERY INTERFACES PLUS BUTTON}  and don't wait
+
+	Verify Element Visible  ${RBAC INCLUDE DELIVERY INTERFACES POPUP}
+
+	${delivery_checkbox}  Generate Checkbox Xpath  div[@title='Include Delivery Interfaces']/following-sibling::div  ${delivery}
+	Verify Page Contains Element  ${delivery_checkbox}
+
+	Click Element  ${delivery_checkbox}  and don't wait
+	Checkbox Should Be Selected  ${delivery_checkbox}
+
+	Verify Page Contains Element  ${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}
+	Click Element  ${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}  and don't wait
+
+	Verify Element Invisible  ${RBAC INCLUDE DELIVERY INTERFACES POPUP}
+	Verify Page Contains Text  ${delivery}
+
+
+Associate Service 
+	[Arguments]  ${service}
+	Verify Page Contains Element  ${SERVICES STEP BUTTON}
+	Click Element  ${SERVICES STEP BUTTON}  and don't wait
+	Verify Element Visible  ${RBAC SERVICES NODE}
+	Unselect Checkbox  ${RBAC ALLOW ALL SERVICES CHECKBOX SELECTED}  ${RBAC ALLOW ALL SERVICES CHECKBOX UNSELECTED}
+
+	Verify Element Visible  ${RBAC SERVICES PLUS BUTTON}
+	Click Element  ${RBAC SERVICES PLUS BUTTON}  and don't wait
+
+	Verify Element Visible  ${RBAC INCLUDE SERVICES POPUP}
+
+	${service_checkbox}  Generate Checkbox Xpath  div[@title='Include Services']/following-sibling::div  ${service}
+	Verify Page Contains Element  ${service_checkbox}
+
+	Click Element  ${service_checkbox}  and don't wait
+	Checkbox Should Be Selected  ${service_checkbox}
+
+	Verify Page Contains Element  ${RBAC APPEND SELECTED SERVICES BUTTON}
+	Click Element  ${RBAC APPEND SELECTED SERVICES BUTTON}  and don't wait
+
+	Verify Element Invisible  ${RBAC INCLUDE SERVICES POPUP}
+	Verify Page Contains Text  ${service}	
+
+Match All Rule  
+	[Arguments]  ${ethertype}
+	Verify Page Contains Element  ${BIGTAP POLICY MATCHES BUTTON}
+	Click Element  ${BIGTAP POLICY MATCHES BUTTON}  and don't wait
+
+	Verify Element Visible  ${BIGTAP POLICY MATCHES NODE}
+
+	Verify Element Visible  ${BIGTAP POLICY MATCHES PLUS BUTTON}
+	Click Element  ${BIGTAP POLICY MATCHES PLUS BUTTON}  and don't wait
+	
+	Click Element  ${BIGTAP POLICY ETHERTYPE FIELD}  and don't wait
+
+    Select From List And Verify  
+    ... 	${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY ETHERTYPE LIST}  
+    ... 	${BIGTAP POLICY ETHERTYPE FIELD}
+    ... 	${ethertype}
+    
+    Click Element  ${BIGTAP POLICY INCLUDE MATCHES POPUP}  and don't wait
+	
+	#Verify Page Contains Element   ${matchall_checkbox_unselected}
+	#Click Element   ${matchall_checkbox_unselected}  and don't wait
+	
+	#Select Checkbox   ${matchall_checkbox_selected}   ${matchall_checkbox_unselected}
+
+	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
+
+Associate Match Rule
+	[Arguments]  ${ipprotocol}  ${src-ip}  ${dst-ip}
+	Verify Page Contains Element  ${RBAC MATCHES BUTTON}
+	Click Element  ${RBAC MATCHES BUTTON}  and don't wait
+
+	#Verify Element Visible  ${BIGTAP POLICY MATCHES NODE}
+	Unselect Checkbox  ${RBAC ALLOW ALL MATCHES CHECKBOX SELECTED}  ${RBAC ALLOW ALL MATCHES CHECKBOX UNSELECTED}
+	
+	Verify Element Visible  ${RBAC MATCHES PLUS BUTTON}
+	Click Element  ${RBAC MATCHES PLUS BUTTON}  and don't wait
+	
+	Click Element  ${RBAC ETHERTYPE FIELD}  and don't wait
+
+    Select From List And Verify  
+    ... 	${RBAC ETHERTYPE DROPDOWN BUTTON}
+    ...		${RBAC ETHERTYPE LIST}  
+    ... 	${RBAC ETHERTYPE FIELD}
+    ... 	${ipprotocol}
+	Verify Page Contains Element  ${RBAC MATCH SOURCE BUTTON}
+	Click Element  ${RBAC MATCH SOURCE BUTTON}  and don't wait
+	
+	Verify Page Contains Element  ${RBAC MATCH SOURCE NODE}	
+	Run Keyword Unless  '${src-ip}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH SOURCE IP FIELD}  ${src-ip}
+	#Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
+	#Verify Page Contains Element  ${src-ip}
+	
+	Verify Page Contains Element  ${RBAC MATCH DESTINATION BUTTON}
+	Click Element  ${RBAC MATCH DESTINATION BUTTON}  and don't wait
+	
+	Verify Page Contains Element  ${RBAC MATCH DESTINATION NODE}
+		Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  ${dst-ip}
+	Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
+	#Verify Page Contains Element  ${dst-ip}
+
+	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
+
+
+Configure Big Tap Policy
+	[Arguments]  ${policy}  ${rbac}  ${action}  ${ethertype}	${filter}  ${delivery}  ${service}  ${filter-group}  ${delivery-group}
+	${random_rbacname}  Generate Random Name  Rbac  5
+    Run Keyword If  '${rbac}'=='__new__'  
+    ...		Configure RBAC   	${random_rbacname}			admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}
+    ${rbac}  Set Variable If  '${rbac}'=='__new__'  ${random_rbacname}  ${rbac} 
+
+    ${random_policyname}  Generate Random Name  Policy  5
+    ${policy}  Set Variable If  '${policy}'=='__random__'  ${random_policyname}  ${policy}
+
+    Go To Big Tap Policies Page
+    Verify Element Visible  ${MAIN PLUS BUTTON}
+    Click Element  ${MAIN PLUS BUTTON}   and don't wait
+    Verify Element Visible  ${CREATE POLICY POPUP}
+
+    Input Text And Verify  ${POLICYNAME FIELD}  ${policy}
+
+    Run Keyword Unless  '${rbac}'=='${EMPTY}'  
+    ...		Select From List And Verify  ${EXPAND RBAC LIST BUTTON}  ${RBAC LIST DROPDOWN}  ${RBAC FIELD}  ${rbac}
+
+    Element Text Should Be  ${ERROR DUPE NAME}  ${EMPTY}  Name already exists
+    
+    
+    Select From List And Verify  
+    ... 	${BIGTAP POLICY ACTION DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY ACTION LIST}  
+    ... 	${BIGTAP POLICY ACTION FIELD}
+    ... 	${action}
+
+    Click Element  ${INFO BUTTON}  and don't wait
+    
+    Match All Rule  ${ethertype}
+    
+    Run Keyword Unless  '${filter}'=='${EMPTY}'  
+    ...		Associate Policy Filter Interface  ${filter}
+
+    Run Keyword Unless  '${delivery}'=='${EMPTY}'  
+    ...		Associate Policy Delivery Interface  ${delivery}
+    
+    Run Keyword Unless  '${filter-group}'=='${EMPTY}'  
+    ...		Associate Policy Filter Group Interface  ${filter-group}
+    
+    Run Keyword Unless  '${delivery-group}'=='${EMPTY}'  
+    ...		Associate Policy Delivery Group Interface  ${delivery-group}
+
+    Run Keyword Unless  '${service}'=='${EMPTY}'  
+    ...		Associate Policy Service  ${service}
+    Click Element  ${SUMMARY BUTTON}  and don't wait
+    Sleep  10
+    
+    Highlight Element  ${SAVE BUTTON}
+    
+    Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CREATE POLICY POPUP}
+    Verify Page Contains Text   ${policy}
+    Sleep  15
+    
+Change Policy Action
+	[Arguments]  ${policy}  ${action}
+	Go To Big Tap Policies Page
+    
+    ${action_menu_policy}  Generate Action Menu Xpath Policy  div[@id='policies_table']  ${policy}
+    Verify Element Visible  ${action_menu_policy}
+    Click Element  ${action_menu_policy}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACES EDIT MENU ITEM}
+    Click Element  ${BIG TAP INTERFACES EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP POLICY EDIT POPUP}
+    
+    Select From List And Verify  
+    ... 	${BIGTAP POLICY ACTION DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY ACTION LIST}  
+    ... 	${BIGTAP POLICY ACTION FIELD}
+    ... 	${action}
+    
+    Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${BIG TAP POLICY EDIT POPUP}
+    Verify Page Contains Text   ${policy}
+    Sleep  2
+    
+Schedule Big Tap Policy	
+	[Arguments]  ${policy}   ${action}  ${start-policy}  ${afterDelayOfTime}  ${run-policy}	${duration}		${packets}
+    
+    Go To Big Tap Policies Page
+    
+    ${action_menu_policy}  Generate Action Menu Xpath Policy  div[@id='policies_table']  ${policy}
+    Verify Element Visible  ${action_menu_policy}
+    Click Element  ${action_menu_policy}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACES EDIT MENU ITEM}
+    Click Element  ${BIG TAP INTERFACES EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP POLICY EDIT POPUP}
+    
+    Select From List And Verify  
+    ... 	${BIGTAP POLICY ACTION DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY ACTION LIST}  
+    ... 	${BIGTAP POLICY ACTION FIELD}
+    ... 	${action}
+    
+    Run Keyword Unless  '${start-policy}'=='${EMPTY}'  
+    ...		Select From List And Verify  ${BIGTAP POLICY START DROPDOWN BUTTON}  ${BIGTAP POLICY START LIST}  ${BIGTAP POLICY START FIELD}  ${start-policy}
+    Run Keyword Unless  '${afterDelayOfTime}'=='${EMPTY}'  
+    ...	    Input Text And Verify  ${BIGTAP POLICY AFTER DELAY TIME}  ${afterDelayOfTime}  
+    
+    Run Keyword Unless  '${action}'=='Capture'  
+    ...		Select From List And Verify  ${BIGTAP POLICY DURATION DROPDOWN BUTTON}  ${BIGTAP POLICY DURATION LIST}  ${BIGTAP POLICY DURATION FIELD}  ${run-policy}
+    Run Keyword Unless  '${duration}'=='${EMPTY}'  
+    ...	    Input Text And Verify  ${BIGTAP POLICY DURATION TIME}  ${duration}  
+    
+    Run Keyword Unless  '${packets}'=='${EMPTY}'  
+    #...		Unselect Checkbox  ${BIGTAP POLICY PACKETS DELIVERED CHECKBOX SELECTED}  ${BIGTAP POLICY DELIVERED CHECKBOX UNSELECTED}
+	...         Click Element  ${BIGTAP POLICY DELIVERED CHECKBOX UNSELECTED}  and don't wait
+	Run Keyword Unless  '${packets}'=='${EMPTY}'  
+    ...		 Input Text And Verify  ${BIGTAP POLICY PACKETS DELIVERED FIELD}  ${packets} 
+    
+    Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+
+   # Verify Element Invisible  ${BIG TAP POLICY EDIT POPUP}
+   # Verify Page Contains Text   ${policy}
+    
+Edit Big Tap Policy
+	[Arguments]  ${policy}  ${rbac}  ${action}  ${filter}  ${delivery}  ${filter-group}  ${delivery-group}
+	
+	${random_rbacname}  Generate Random Name  Rbac  5
+    Run Keyword If  '${rbac}'=='__new__'  
+    ...		Configure RBAC   	${random_rbacname}			admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}
+    ${rbac}  Set Variable If  '${rbac}'=='__new__'  ${random_rbacname}  ${rbac}
+    
+    Go To Big Tap Policies Page
+    
+    ${action_menu_policy}  Generate Action Menu Xpath Policy  div[@id='policies_table']  ${policy}
+    Verify Element Visible  ${action_menu_policy}
+    Click Element  ${action_menu_policy}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACES EDIT MENU ITEM}
+    Click Element  ${BIG TAP INTERFACES EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP POLICY EDIT POPUP}
+    
+    Select From List And Verify  
+    ... 	${BIGTAP POLICY ACTION DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY ACTION LIST}  
+    ... 	${BIGTAP POLICY ACTION FIELD}
+    ... 	${action}
+    
+    Run Keyword Unless  '${filter}'=='${EMPTY}'  
+    ...		Associate Policy Filter Interface  ${filter}
+
+    Run Keyword Unless  '${delivery}'=='${EMPTY}'  
+    ...		Associate Policy Delivery Interface  ${delivery}
+    
+    Run Keyword Unless  '${filter-group}'=='${EMPTY}'  
+    ...		Associate Policy Filter Group Interface  ${filter-group}
+    
+    Run Keyword Unless  '${delivery-group}'=='${EMPTY}'  
+    ...		Associate Policy Delivery Group Interface  ${delivery-group}
+
+    #Run Keyword Unless  '${service}'=='${EMPTY}'  
+    #...		Associate Policy Service  ${service}
+    
+    Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CREATE POLICY POPUP}
+    Verify Page Contains Text   ${policy}
+    
+
+Associate Policy Filter Interface 
+	[Arguments]  ${filter}
+	Verify Page Contains Element  ${FILTER INTERFACES STEP BUTTON}
+	Click Element  ${FILTER INTERFACES STEP BUTTON}  and don't wait
+
+	Verify Element Visible  ${BIGTAP POLICY FILTER INTERFACES NODE}
+
+	Unselect Checkbox  ${BIGTAP POLICY ALLOW ALL FILTER INTERFACES CHECKBOX SELECTED}  ${BIGTAP POLICY ALLOW ALL FILTER INTERFACES CHECKBOX UNSELECTED}
+
+	Verify Element Visible  ${BIGTAP POLICY FILTER INTERFACES PLUS BUTTON}
+	Click Element  ${BIGTAP POLICY FILTER INTERFACES PLUS BUTTON}  and don't wait
+
+	Verify Element Visible  ${BIGTAP POLICY INCLUDE FILTER INTERFACES POPUP}
+
+	${filter_checkbox}    Generate Checkbox Xpath  div[@title='Add Filter Interfaces']/following-sibling::div  ${filter}
+	#${filter_checkbox}   Generate Checkbox Xpath  div[@id="bsn_widgets_form_CheckBox_12"]/input[@type="checkbox"]  ${filter}
+	#${filter_checkbox}   Generate Checkbox Xpath  div[text()=$text]    ${filter}
+	#${filter_checkbox}   Generate Checkbox Xpath  div[@id="big_console_widgets_core_form_MultiModelSelect_0"]/div[2]  ${filter}
+	#${filter_checkbox}   xpath=$x("//div[text()='ixia-2-4']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input")
+	#xpath=//div[text()='ixia-2-4']/parent::div/parent::td/preceding-sibling::td/child::div/descendant::div[1]/descendant::input
+	#Highlight Element  ${filter_checkbox}
+	
+	Verify Page Contains Element  ${filter_checkbox}
+	#Verify Page Contains Element  ${fc}
+	Sleep  1
+
+	Click Element  ${filter_checkbox}   and don't wait
+	Checkbox Should Be Selected  ${filter_checkbox} 
+
+	Verify Page Contains Element  ${BIGTAP POLICY APPEND SELECTED FILTER INTERFACES BUTTON}
+	Click Element  ${BIGTAP POLICY APPEND SELECTED FILTER INTERFACES BUTTON}  and don't wait
+
+
+	Verify Element Invisible  ${BIGTAP POLICY INCLUDE FILTER INTERFACES POPUP}
+	Verify Page Contains Text  ${filter}
+
+
+Associate Policy Delivery Interface 
+	[Arguments]  ${delivery}
+	Verify Page Contains Element  ${DELIVERY INTERFACES STEP BUTTON}
+	Click Element  ${DELIVERY INTERFACES STEP BUTTON}  and don't wait
+
+	Verify Element Visible  ${BIGTAP POLICY DELIVERY INTERFACES NODE}
+
+	Unselect Checkbox  ${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}  ${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}
+
+	Verify Element Visible  ${BIGTAP POLICY DELIVERY INTERFACES PLUS BUTTON}
+	Click Element  ${BIGTAP POLICY DELIVERY INTERFACES PLUS BUTTON}  and don't wait
+
+	Verify Element Visible  ${BIGTAP POLICY INCLUDE DELIVERY INTERFACES POPUP}
+
+	${delivery_checkbox}  Generate Checkbox Xpath  div[@title='Add Delivery Interfaces']/following-sibling::div  ${delivery}
+	Verify Page Contains Element  ${delivery_checkbox}
+	Sleep  1
+
+	Click Element  ${delivery_checkbox}  and don't wait
+	Checkbox Should Be Selected  ${delivery_checkbox}
+	
+	Verify Page Contains Element  ${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}
+	Click Element  ${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACES BUTTON}  and don't wait
+	
+
+	Verify Element Invisible  ${BIGTAP POLICY INCLUDE DELIVERY INTERFACES POPUP}
+	Verify Page Contains Text  ${delivery}
+
+
+Associate Policy Service 
+	[Arguments]  ${service}
+	Verify Page Contains Element  ${SERVICES STEP BUTTON}
+	Click Element  ${SERVICES STEP BUTTON}  and don't wait
+	Verify Element Visible  ${BIGTAP POLICY SERVICES NODE}
+
+	Verify Element Visible  ${BIGTAP POLICY SERVICES PLUS BUTTON}
+	Click Element  ${BIGTAP POLICY SERVICES PLUS BUTTON}  and don't wait
+
+	Verify Element Visible  ${BIGTAP POLICY INCLUDE SERVICES POPUP}
+
+    Select From List And Verify  
+    ... 	${BIGTAP POLICY SERVICES DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY SERVICES LIST}  
+    ... 	${BIGTAP POLICY SERVICES FIELD}
+    ... 	${service}
+
+	Verify Page Contains Element  ${BIGTAP POLICY SERVICES SEQUENCE NUMBER}  
+	Input Text And Verify  ${BIGTAP POLICY SERVICES SEQUENCE NUMBER}  1
+
+	Mouse Down  ${BIGTAP POLICY SERVICES SEQUENCE NUMBER UP}
+	Mouse Up  ${BIGTAP POLICY SERVICES SEQUENCE NUMBER UP}
+	Textfield Should Contain  ${BIGTAP POLICY SERVICES SEQUENCE NUMBER}   2
+
+	Mouse Down  ${BIGTAP POLICY SERVICES SEQUENCE NUMBER DOWN}
+	Mouse Up  ${BIGTAP POLICY SERVICES SEQUENCE NUMBER DOWN}
+	Textfield Should Contain  ${BIGTAP POLICY SERVICES SEQUENCE NUMBER}   1
+
+	Verify Page Contains Element  ${BIGTAP POLICY APPEND SELECTED SERVICES BUTTON}
+	Click Element  ${BIGTAP POLICY APPEND SELECTED SERVICES BUTTON}  and don't wait
+
+	Verify Element Invisible  ${BIGTAP POLICY INCLUDE SERVICES POPUP}
+	Verify Page Contains Text  ${service}
+	
+Associate Policy Filter Group Interface
+	[Arguments]		${filter-group}
+	Verify Page Contains Element  ${FILTER INTERFACES STEP BUTTON}
+	Click Element  ${FILTER INTERFACES STEP BUTTON}  and don't wait
+
+	Verify Element Visible  ${BIGTAP POLICY FILTER INTERFACES NODE}
+
+	Unselect Checkbox  ${BIGTAP POLICY ALLOW ALL FILTER INTERFACES CHECKBOX SELECTED}  ${BIGTAP POLICY ALLOW ALL FILTER INTERFACES CHECKBOX UNSELECTED}
+
+	Verify Element Visible  ${BIGTAP POLICY FILTER INTERFACE GROUP PLUS BUTTON}
+	Click Element  ${BIGTAP POLICY FILTER INTERFACE GROUP PLUS BUTTON}  and don't wait
+
+	Verify Element Visible  ${BIGTAP POLICY INCLUDE FILTER INTERFACE GROUP POPUP}
+	
+	${filter_group_checkbox}   Generate Checkbox Xpath IGroup  div[@class='content'    ${filter-group}
+
+	
+	#${filter_group_checkbox}  Generate Checkbox Xpath  div[@title='Add Delivery Interfaces']/following-sibling::div  ${filter-group}
+	Verify Page Contains Element  ${filter_group_checkbox}
+	#Verify Page Contains Element  ${fc}
+	Sleep  1
+
+	Click Element  ${filter_group_checkbox}   and don't wait
+	Checkbox Should Be Selected  ${filter_group_checkbox} 
+
+	Verify Page Contains Element  ${BIGTAP POLICY APPEND SELECTED FILTER INTERFACE GROUP BUTTON}
+	Click Element  ${BIGTAP POLICY APPEND SELECTED FILTER INTERFACE GROUP BUTTON}  and don't wait
+
+
+	Verify Element Invisible  ${BIGTAP POLICY INCLUDE FILTER INTERFACE GROUP POPUP}
+	Verify Page Contains Text  ${filter-group}
+
+Associate Policy Delivery Group Interface  
+	[Arguments]		${delivery-group}
+	Verify Page Contains Element  ${DELIVERY INTERFACES STEP BUTTON}
+	Click Element  ${DELIVERY INTERFACES STEP BUTTON}  and don't wait
+
+	Verify Element Visible  ${BIGTAP POLICY DELIVERY INTERFACES NODE}
+
+	Unselect Checkbox  ${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}  ${BIGTAP POLICY ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}
+
+	Verify Element Visible  ${BIGTAP POLICY DELIVERY INTERFACE GROUP PLUS BUTTON}
+	Click Element  ${BIGTAP POLICY DELIVERY INTERFACE GROUP PLUS BUTTON}  and don't wait
+
+	Verify Element Visible  ${BIGTAP POLICY INCLUDE DELIVERY INTERFACE GROUP POPUP}
+	
+	${delivery_group_checkbox}   Generate Checkbox Xpath IGroup  div[@class='content'   ${delivery-group}
+
+	#${delivery_group_checkbox}  Generate Checkbox Xpath  div[@title='Add Delivery Interfaces']/following-sibling::div  ${delivery-group}
+	Verify Page Contains Element  ${delivery_group_checkbox}
+	Sleep  1
+
+	Click Element  ${delivery_group_checkbox}  and don't wait
+	Checkbox Should Be Selected  ${delivery_group_checkbox}
+
+	Verify Page Contains Element  ${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACE GROUP BUTTON}
+	Click Element  ${BIGTAP POLICY APPEND SELECTED DELIVERY INTERFACE GROUP BUTTON}  and don't wait
+	
+
+	Verify Element Invisible  ${BIGTAP POLICY INCLUDE DELIVERY INTERFACE GROUP POPUP}
+	Verify Page Contains Text  ${delivery} 
+	
+Edit Big Tap Policy for TCP Flags
+	[Arguments]   ${policy}  ${ethertype}	${fin}  ${syn}  ${rst}  ${psh}   ${ack}  ${urg}
+	
+	Go To Big Tap Policies Page
+	Sleep   5
+	Go To Big Tap Policies Page
+    #${action_menu}  Generate Action Menu Xpath  div[@id='policies_table']  ${id}
+    
+	${action_menu_policy}  Generate Action Menu Xpath Policy  div[@id='policies_table']  ${policy}
+    Verify Element Visible  ${action_menu_policy}
+    Click Element  ${action_menu_policy}  and don't wait
+    
+    Verify Element Visible  ${BIG TAP INTERFACES EDIT MENU ITEM}
+    Click Element  ${BIG TAP INTERFACES EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP POLICY EDIT POPUP}
+
+	Verify Page Contains Element  ${BIGTAP POLICY MATCHES BUTTON}
+	Click Element  ${BIGTAP POLICY MATCHES BUTTON}  and don't wait
+
+
+	#Verify Element Visible  ${BIGTAP POLICY MATCHES NODE}
+	
+	#Verify Element Visible  ${action_menu_match}
+    #Click Element  ${action_menu_match}  and don't wait
+    
+    #Verify Element Visible  ${BIG TAP MATCH EDIT MENU ITEM}
+    #Click Element  ${BIG TAP MATCH EDIT MENU ITEM}  and don't wait
+
+	Verify Element Visible  ${BIGTAP POLICY MATCHES PLUS BUTTON}
+	Click Element  ${BIGTAP POLICY MATCHES PLUS BUTTON}  and don't wait
+
+	Click Element  ${BIGTAP POLICY ETHERTYPE FIELD}  and don't wait
+
+    Select From List And Verify  
+    ... 	${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY ETHERTYPE LIST}  
+    ... 	${BIGTAP POLICY ETHERTYPE FIELD}
+    ... 	${ethertype}
+    
+    Sleep  1
+    
+    Click Element  ${BIGTAP POLICY IP PROTOCOL FIELD}  and don't wait
+    Select From List And Verify  
+    ... 	${BIGTAP POLICY IP PROTOCOL DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY IP PROTOCOL LIST} 
+    ... 	${BIGTAP POLICY IP PROTOCOL FIELD}	
+    ... 	TCP (6)
+    
+    #Sleep  2
+    
+	Run Keyword If  '${fin}' == 'FIN'
+	...		 Click Element  ${RBAC MATCH TCP FIN CHECKBOX}  and don't wait
+	Run Keyword If  '${fin}' == 'FIN'
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'FIN')]  SET_FIN
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_23']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_FIN
+	Run Keyword If  '${fin}' == 'FIN'
+	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_FIN	
+	
+	
+    #Verify Element Visible  ${RBAC MATCH TCP FIN CHECKBOX}
+    Run Keyword If  '${fin}' == '!FIN'
+	...		 Click Element  ${RBAC MATCH TCP FIN CHECKBOX}  and don't wait
+	#Sleep  2
+	
+	Run Keyword If  '${syn}' == 'SYN'
+	...		 Click Element  ${RBAC MATCH TCP SYN CHECKBOX}  and don't wait
+	Run Keyword If  '${syn}' == 'SYN'
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'SYN')]  SET_SYN
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_26']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_SYN
+	Run Keyword If  '${syn}' == 'SYN'
+	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_SYN	
+	
+	
+	#Verify Element Visible  ${RBAC MATCH TCP SYN CHECKBOX}
+	Run Keyword If  '${syn}' == '!SYN'
+	...		 Click Element  ${RBAC MATCH TCP SYN CHECKBOX}  and don't wait
+	#Sleep  2
+	
+	Run Keyword If  '${rst}' == 'RST'
+	...		 Click Element  ${RBAC MATCH TCP RST CHECKBOX}  and don't wait
+	Run Keyword If  '${rst}' == 'RST'
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'RST')]  SET_RST
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_29']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_RST
+	Run Keyword If  '${rst}' == 'RST'
+	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_RST
+	
+	
+	#Verify Element Visible  ${RBAC MATCH TCP RST CHECKBOX}
+	Run Keyword If  '${rst}' == '!RST'
+	...		 Click Element  ${RBAC MATCH TCP RST CHECKBOX}  and don't wait
+	#Sleep  2
+	
+	Run Keyword If  '${psh}' == 'PSH'
+	...		 Click Element  ${RBAC MATCH TCP PSH CHECKBOX}  and don't wait
+	Run Keyword If  '${psh}' == 'PSH'
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'PSH')]  SET_PSH
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_32']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_PSH
+	Run Keyword If  '${psh}' == 'PSH'
+	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_PSH
+	
+	
+	#Verify Element Visible  ${RBAC MATCH TCP PSH CHECKBOX}
+	Run Keyword If  '${psh}' == '!PSH'
+	...		 Click Element  ${RBAC MATCH TCP PSH CHECKBOX}  and don't wait
+	#Sleep  2
+	
+	Run Keyword If  '${ack}' == 'ACK'
+	...		 Click Element  ${RBAC MATCH TCP ACK CHECKBOX}  and don't wait
+	Run Keyword If  '${ack}' == 'ACK'
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'ACK')]  SET_ACK
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_35']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_ACK
+	Run Keyword If  '${ack}' == 'ACK'
+	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_ACK
+	
+	
+	#Verify Element Visible  ${RBAC MATCH TCP ACK CHECKBOX}
+	Run Keyword If  '${ack}' == '!ACK'
+	...		 Click Element  ${RBAC MATCH TCP ACK CHECKBOX}  and don't wait
+	#Sleep  2
+	
+	Run Keyword If  '${urg}' == 'URG'
+	...		 Click Element  ${RBAC MATCH TCP URG CHECKBOX}  and don't wait
+	Run Keyword If  '${urg}' == 'URG'
+    #... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'URG')]  SET_URG
+    ... 	Assign ID to Element   xpath=//div[@class='label_wrapper']/descendant::div[@id='bsn_widgets_InputLabel_38']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      SET_URG
+	Run Keyword If  '${urg}' == 'URG'
+	...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=SET_URG
+	
+	
+	#Verify Element Visible  ${RBAC MATCH TCP URG CHECKBOX}
+	Run Keyword If  '${urg}' == '!URG'
+	...		 Click Element  ${RBAC MATCH TCP URG CHECKBOX}  and don't wait
+	#Sleep  2
+	
+	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
+	
+	Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${BIG TAP POLICY EDIT POPUP}
+    #Verify Page Contains Text   ${policy}
+    Sleep   2
+	
+Associate DPM Rule 
+	[Arguments]   ${policy}  ${ethertype}	${ipprotocol}  ${udf0}  ${value0}  ${mask0}  ${udf1}  ${value1}  ${mask1}  ${udf2}  ${value2}  ${mask2}  ${src-port}   ${dst-port}   ${vlan-header} 
+	
+	Go To Big Tap Policies Page
+	Sleep   5
+	Go To Big Tap Policies Page
+    #${action_menu}  Generate Action Menu Xpath  div[@id='policies_table']  ${id}
+    
+    ${action_menu_policy}  Generate Action Menu Xpath Policy  div[@id='policies_table']  ${policy}
+    Verify Element Visible  ${action_menu_policy}
+    Click Element  ${action_menu_policy}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACES EDIT MENU ITEM}
+    Click Element  ${BIG TAP INTERFACES EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP POLICY EDIT POPUP}
+
+	Verify Page Contains Element  ${BIGTAP POLICY MATCHES BUTTON}
+	Click Element  ${BIGTAP POLICY MATCHES BUTTON}  and don't wait
+	
+	Verify Element Visible  ${BIGTAP POLICY MATCHES PLUS BUTTON}
+	Click Element  ${BIGTAP POLICY MATCHES PLUS BUTTON}  and don't wait
+	
+	Sleep  1
+
+	#Click Element  ${RBAC ETHERTYPE FIELD}  and don't wait
+	
+	Select From List And Verify  
+    ... 	${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY ETHERTYPE LIST}  
+    ... 	${BIGTAP POLICY ETHERTYPE FIELD}
+    ... 	${ethertype}
+       	  
+    Sleep  1
+    
+    Click Element  ${BIGTAP POLICY IP PROTOCOL FIELD}  and don't wait
+    Select From List And Verify  
+    ... 	${BIGTAP POLICY IP PROTOCOL DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY IP PROTOCOL LIST} 
+    ... 	${BIGTAP POLICY IP PROTOCOL FIELD}	
+    ... 	${ipprotocol}
+    
+    Sleep  1
+    Verify Page Contains Element  ${RBAC MATCH VLAN CHECKBOX}
+    Run Keyword Unless  '${vlan-header}' == '${EMPTY}'
+	...     Unselect Checkbox  ${RBAC MATCH VLAN CHECKBOX SELECTED}  ${RBAC MATCH VLAN CHECKBOX UNSELECTED}
+	
+	Verify Element Visible  ${RBAC MATCH VLAN FROM FIELD}
+	Click Element  ${RBAC MATCH VLAN FROM FIELD}  and don't wait
+	Click Element  ${RBAC MATCH VLAN FROM FIELD}  and don't wait
+	Run Keyword Unless  '${vlan-header}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH VLAN FROM FIELD}  ${vlan-header}
+	
+	Verify Element Visible  ${RBAC MATCH VLAN TO FIELD}
+	Click Element  ${RBAC MATCH VLAN TO FIELD}  and don't wait
+	Click Element  ${RBAC MATCH VLAN TO FIELD}  and don't wait
+	Run Keyword Unless  '${vlan-header}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH VLAN TO FIELD}  ${vlan-header}
+    
+        
+	Verify Page Contains Element  ${RBAC MATCH SOURCE BUTTON}
+	Click Element  ${RBAC MATCH SOURCE BUTTON}  and don't wait
+	Verify Page Contains Element  ${RBAC MATCH SOURCE NODE}	
+	#Run Keyword Unless  '${src-ip}' == '${EMPTY}'
+	#...		Input Text And Verify  ${RBAC MATCH SOURCE IP FIELD}  ${src-ip}
+	#Click Element  ${RBAC MATCH SOURCE IP MASK FIELD}  and don't wait
+	#Run Keyword Unless  '${src-ip}' == '${EMPTY}'
+	#...		Input Text And Verify  ${RBAC MATCH SOURCE IP MASK FIELD}  255.255.255.0
+	
+	
+	Verify Page Contains Element  ${RBAC MATCH SOURCE PORT CHECKBOX}
+	Run Keyword Unless  '${src-port}' == '${EMPTY}'
+	...     Unselect Checkbox  ${RBAC MATCH SOURCE PORT CHECKBOX SELECTED}  ${RBAC MATCH SOURCE PORT CHECKBOX UNSELECTED}
+	#...    Click Element  ${RBAC MATCH SOURCE PORT CHECKBOX}  and don't wait
+	Sleep  2
+	Run Keyword Unless  '${src-port}' == '${EMPTY}'
+	...		Verify Checkbox Unselected  ${RBAC MATCH SOURCE PORT CHECKBOX UNSELECTED}
+	Click Element  ${RBAC MATCH SOURCE TO PORT}  and don't wait
+	Click Element  ${RBAC MATCH SOURCE TO PORT}  and don't wait
+	Run Keyword Unless  '${src-port}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH SOURCE TO PORT}  ${src-port}
+	
+	Click Element  ${RBAC MATCH SOURCE DST PORT}  and don't wait
+	Click Element  ${RBAC MATCH SOURCE DST PORT}  and don't wait
+	Run Keyword Unless  '${src-port}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH SOURCE DST PORT}  ${src-port}
+	
+	Verify Page Contains Element  ${RBAC MATCH DESTINATION BUTTON}
+	Click Element  ${RBAC MATCH DESTINATION BUTTON}  and don't wait
+	
+	Verify Page Contains Element  ${RBAC MATCH DESTINATION NODE}
+	#	Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
+	#...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  ${dst-ip}
+	#Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
+	#	Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
+	#...		Input Text And Verify  ${RBAC MATCH DESTINATION IP MASK FIELD}  255.255.255.0
+	
+	
+	Verify Page Contains Element  ${RBAC MATCH DESTINATION PORT CHECKBOX}
+	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
+	...     Unselect Checkbox  ${RBAC MATCH DESTINATION PORT CHECKBOX SELECTED}  ${RBAC MATCH DESTINATION PORT CHECKBOX UNSELECTED}
+	#...    Click Element  ${RBAC MATCH DESTINATION PORT CHECKBOX}  and don't wait
+	Sleep  2
+	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
+	...		Verify Checkbox Unselected  ${RBAC MATCH DESTINATION PORT CHECKBOX UNSELECTED}
+	Click Element  ${RBAC MATCH DESTINATION TO PORT}  and don't wait
+	Click Element  ${RBAC MATCH DESTINATION TO PORT}  and don't wait
+	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH DESTINATION TO PORT}  ${dst-port}
+	
+	Click Element  ${RBAC MATCH DESTINATION DST PORT}  and don't wait
+	Click Element  ${RBAC MATCH DESTINATION DST PORT}  and don't wait
+	Run Keyword Unless  '${dst-port}' == '${EMPTY}'
+	...		Input Text And Verify  ${RBAC MATCH DESTINATION DST PORT}  ${dst-port}
+	  
+	
+	Verify Page Contains Element  ${RBAC MATCH OFFSET MATCH BUTTON}
+	Click Element  ${RBAC MATCH OFFSET MATCH BUTTON}  and don't wait
+
+	#Verify Page Contains Element  ${RBAC MATCH OFFSET MATCH NODE}
+	
+	Run Keyword Unless  '${udf0}' == '${EMPTY}'
+	...		Associate Offset Match1  ${udf0}  ${value0}  ${mask0} 
+	Run Keyword Unless  '${udf1}' == '${EMPTY}'
+	...		Associate Offset Match2  ${udf1}  ${value1}  ${mask1} 
+	Run Keyword Unless  '${udf2}' == '${EMPTY}'
+	...		Associate Offset Match3  ${udf2}  ${value2}  ${mask2} 
+	
+	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+	#Sleep  20
+	Highlight Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
+	
+	
+	Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+    
+    Verify Element Invisible  ${BIG TAP POLICY EDIT POPUP}
+    #Verify Page Contains Text   ${policy}
+    Sleep   2
+    
+Associate Offset Match1  
+	[Arguments]   ${udf0}  ${value0}  ${mask0} 
+	
+	Verify Page Contains Element  ${BIGTAP POLICY OFFSET MATCH PLUS MATCHES BUTTON}
+	Click Element  ${BIGTAP POLICY OFFSET MATCH PLUS MATCHES BUTTON}  and don't wait
+	
+	Verify Element Visible  ${BIG TAP CONFIGURE OFFSET MATCH POPUP}
+	
+	Verify Page Contains Element   ${ANCHOR OFFSET DROPDOWN BUTTON}
+	Run Keyword Unless  '${udf0}'=='${EMPTY}'
+    ...		Select From List And Verify  
+    ... 	${ANCHOR OFFSET DROPDOWN BUTTON}
+    ...		${ANCHOR OFFSET TYPE LIST}  
+    ... 	${ANCHOR OFFSET TYPE FIELD}
+    ...		${udf0}
+    
+    Click Element  ${OFFSET MATCH VALUE FIELD}  and don't wait
+		Run Keyword Unless  '${value0}'=='${EMPTY}'
+	...		Input Text And Verify  ${OFFSET MATCH VALUE FIELD}  ${value0}
+	  
+	Click Element  ${OFFSET MATCH MASK FIELD}  and don't wait
+		Run Keyword Unless  '${mask0}'=='${EMPTY}'
+	...		Input Text And Verify  ${OFFSET MATCH MASK FIELD}  ${mask0}
+	
+	Click Element  ${OFFSET MATCH VALUE FIELD}  and don't wait
+	Verify Page Contains Element  ${APPEND OFFSET MATCH BUTTON}
+	Highlight Element  ${APPEND OFFSET MATCH BUTTON}
+	Click Element  ${APPEND OFFSET MATCH BUTTON}  and don't wait
+	
+Associate Offset Match2 
+	[Arguments]   ${udf1}  ${value1}  ${mask1} 
+	
+	Verify Page Contains Element  ${BIGTAP POLICY OFFSET MATCH PLUS MATCHES BUTTON}
+	Click Element  ${BIGTAP POLICY OFFSET MATCH PLUS MATCHES BUTTON}  and don't wait
+	
+	Verify Element Visible  ${BIG TAP CONFIGURE OFFSET MATCH POPUP}
+	
+	Verify Page Contains Element   ${ANCHOR OFFSET DROPDOWN BUTTON}
+	Run Keyword Unless  '${udf1}'=='${EMPTY}'
+    ...		Select From List And Verify  
+    ... 	${ANCHOR OFFSET DROPDOWN BUTTON}
+    ...		${ANCHOR OFFSET TYPE LIST}  
+    ... 	${ANCHOR OFFSET TYPE FIELD}
+    ...		${udf1}
+    
+    Click Element  ${OFFSET MATCH VALUE FIELD}  and don't wait
+		Run Keyword Unless  '${value1}'=='${EMPTY}'
+	...		Input Text And Verify  ${OFFSET MATCH VALUE FIELD}  ${value1}
+	   
+	Click Element  ${OFFSET MATCH MASK FIELD}  and don't wait
+		Run Keyword Unless  '${mask1}'=='${EMPTY}'
+	...		Input Text And Verify  ${OFFSET MATCH MASK FIELD}  ${mask1}
+	
+	Click Element  ${OFFSET MATCH VALUE FIELD}  and don't wait
+	Verify Page Contains Element  ${APPEND OFFSET MATCH BUTTON}
+	Highlight Element  ${APPEND OFFSET MATCH BUTTON}
+	Click Element  ${APPEND OFFSET MATCH BUTTON}  and don't wait
+	
+Associate Offset Match3 
+	[Arguments]   ${udf2}  ${value2}  ${mask2} 
+	
+	Verify Page Contains Element  ${BIGTAP POLICY OFFSET MATCH PLUS MATCHES BUTTON}
+	Click Element  ${BIGTAP POLICY OFFSET MATCH PLUS MATCHES BUTTON}  and don't wait
+	
+	Verify Element Visible  ${BIG TAP CONFIGURE OFFSET MATCH POPUP}
+	
+	Verify Page Contains Element   ${ANCHOR OFFSET DROPDOWN BUTTON}
+	Run Keyword Unless  '${udf2}'=='${EMPTY}'
+    ...		Select From List And Verify  
+    ... 	${ANCHOR OFFSET DROPDOWN BUTTON}
+    ...		${ANCHOR OFFSET TYPE LIST}  
+    ... 	${ANCHOR OFFSET TYPE FIELD}
+    ...		${udf2}
+    
+    Click Element  ${OFFSET MATCH VALUE FIELD}  and don't wait
+		Run Keyword Unless  '${value1}'=='${EMPTY}'
+	...		Input Text And Verify  ${OFFSET MATCH VALUE FIELD}  ${value2}
+	   
+	Click Element  ${OFFSET MATCH MASK FIELD}  and don't wait
+		Run Keyword Unless  '${mask1}'=='${EMPTY}'
+	...		Input Text And Verify  ${OFFSET MATCH MASK FIELD}  ${mask2}
+	
+	Click Element  ${OFFSET MATCH VALUE FIELD}  and don't wait
+	Verify Page Contains Element  ${APPEND OFFSET MATCH BUTTON}
+	Highlight Element  ${APPEND OFFSET MATCH BUTTON}
+	Click Element  ${APPEND OFFSET MATCH BUTTON}  and don't wait
+
+Check Overlapping		
+	 [Arguments]   ${policy1}  ${policy2} 
+	Go To Big Tap Policies Page
+	
+    ${olap-policy}  Generate Overlapping Policy Xpath  div[@class='bsn_ellipsis'  ${policy1}  ${policy2} 
+    Verify Element Visible   ${olap-policy}
+    Delete All Big Tap Policies
+    	
+Associate Policy Match Rule 
+	[Arguments]   ${policy}  ${ethertype}  ${ipprotocol} 
+	
+	Go To Big Tap Policies Page
+	Sleep   5
+	Go To Big Tap Policies Page
+    
+    ${action_menu_policy}  Generate Action Menu Xpath Policy  div[@id='policies_table']  ${policy}
+    Verify Element Visible  ${action_menu_policy}
+    Click Element  ${action_menu_policy}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACES EDIT MENU ITEM}
+    Click Element  ${BIG TAP INTERFACES EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP POLICY EDIT POPUP}
+
+	Verify Page Contains Element  ${BIGTAP POLICY MATCHES BUTTON}
+	Click Element  ${BIGTAP POLICY MATCHES BUTTON}  and don't wait
+	
+	Verify Element Visible  ${BIGTAP POLICY MATCHES PLUS BUTTON}
+	Click Element  ${BIGTAP POLICY MATCHES PLUS BUTTON}  and don't wait
+
+	#Click Element  ${RBAC ETHERTYPE FIELD}  and don't wait
+	
+	Select From List And Verify  
+    ... 	${BIGTAP POLICY ETHERTYPE DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY ETHERTYPE LIST}  
+    ... 	${BIGTAP POLICY ETHERTYPE FIELD}
+    ... 	${ethertype}
+       	  
+    Sleep  1
+    
+    Click Element  ${BIGTAP POLICY IP PROTOCOL FIELD}  and don't wait
+    Select From List And Verify  
+    ... 	${BIGTAP POLICY IP PROTOCOL DROPDOWN BUTTON}
+    ...		${BIGTAP POLICY IP PROTOCOL LIST} 
+    ... 	${BIGTAP POLICY IP PROTOCOL FIELD}	
+    ... 	${ipprotocol}
+    
+    Sleep  1
+    
+    Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+	#Sleep  20
+	Highlight Element  ${RBAC APPEND SELECTED MATCHES BUTTON}
+	Click Element  ${RBAC APPEND SELECTED MATCHES BUTTON}  and don't wait
+	
+	
+	Element Should Be Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}   and don't wait
+    
+    Verify Element Invisible  ${BIG TAP POLICY EDIT POPUP}
+    #Verify Page Contains Text   ${policy}
+    Sleep   2
+    
+Configure VXLAN Match
+	[Arguments]   ${ipprotocol} 
+    Click Element  ${VXLAN VNI FIELD}  and don't wait
+	Input Text And Verify  ${VXLAN VNI FIELD}  100
+	Sleep  1
+
+Configure Switch Alias
+	[Arguments]  ${dpid}  ${alias}
+    Go To Controller Switches Page
+    Verify Page Contains Text  ${dpid}
+    ${action_menu}  Generate Action Menu Xpath  div[@id='switches_table']  ${dpid}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait]
+    Verify Element Visible  ${SET ALIAS MENU POPUP}
+    Click Element  ${SET ALIAS MENU POPUP}  and don't wait
+    Verify Element Visible  ${CONFIGURE SWITCH ALIAS POPUP}
+
+    Input Text And Verify  ${SWITCH ALIAS FIELD}  ${EMPTY}
+    Input Text And Verify  ${SWITCH ALIAS FIELD}  ${alias}
+
+    Element Should Be Visible  ${SUBMIT SWITCH ALIAS BUTTON}
+    Click Element  ${SUBMIT SWITCH ALIAS BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CONFIGURE SWITCH ALIAS POPUP}
+    Verify Page Contains Text   ${alias}
+
+
+Configure Big Tap Interface from Controller Menu
+	[Arguments]  ${id}  ${switch}  ${role}  ${name}
+    Go To Controller Interfaces Page
+    Show All
+    Verify Page Contains Text  ${id}
+    ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  ${id}  ${switch}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+    Verify Element Visible  ${CONFIGURE INTERFACE MENU POPUP}
+    Click Element  ${CONFIGURE INTERFACE MENU POPUP}  and don't wait
+    Verify Element Visible  ${CONFIGURE INTERFACE POPUP}
+
+    Verify Element Visible  ${FILTER INTERFACE RADIO BUTTON}
+
+    ${radio_button}  Set Variable  ${NONE INTERFACE RADIO BUTTON}
+
+    ${radio_button}  Set Variable If  '${role}'=='filter'  ${FILTER INTERFACE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='delivery'  ${DELIVERY INTERFACE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='service'  ${SERVICE INTERFACE RADIO BUTTON}  ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+
+    #Input Text And Verify  ${INTERFACE NAME FIELD}  ${EMPTY}
+    Run Keyword Unless  '${role}'=='${EMPTY}'
+    ...		Input Text And Verify  ${INTERFACE NAME FIELD}  ${name}
+
+    Click Element  ${radio_button}  and don't wait
+    Verify Element Visible  ${SUBMIT INTERFACE NAME BUTTON}
+    Click Element  ${SUBMIT INTERFACE NAME BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CONFIGURE INTERFACE POPUP}
+    Verify Page Contains Text   ${name}
+
+Edit Big Tap Interface from Controller Menu
+	[Arguments]  ${id}  ${switch}  ${role}  ${name}
+    Go To Controller Interfaces Page
+    Show All
+    Verify Page Contains Text  ${id}
+    ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  ${id}  ${switch}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+    Verify Element Visible  ${MODIFY INTERFACE MENU POPUP}
+    Click Element  ${MODIFY INTERFACE MENU POPUP}  and don't wait
+    Verify Element Visible  ${CONFIGURE INTERFACE POPUP}
+
+    Verify Element Visible  ${FILTER INTERFACE RADIO BUTTON}
+
+    ${radio_button}  Set Variable  ${NONE INTERFACE RADIO BUTTON}
+
+    ${radio_button}  Set Variable If  '${role}'=='filter'  ${FILTER INTERFACE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='delivery'  ${DELIVERY INTERFACE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='service'  ${SERVICE INTERFACE RADIO BUTTON}  ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+
+    #Input Text And Verify  ${INTERFACE NAME FIELD}  ${EMPTY}
+    Run Keyword Unless  '${role}'=='${EMPTY}'
+    ...		Input Text And Verify  ${INTERFACE NAME FIELD}  ${name}
+
+    Click Element  ${radio_button}  and don't wait
+    Verify Element Visible  ${SUBMIT INTERFACE NAME BUTTON}
+    Click Element  ${SUBMIT INTERFACE NAME BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CONFIGURE INTERFACE POPUP}
+    Verify Page Contains Text   ${name}
+    
+    
+Configure Big Tap Interface from Big Tap Menu
+	[Arguments]  ${id}  ${switch}  ${role}  ${name}
+    Go To Big Tap Interfaces Page
+    Verify Element Visible  ${BIG TAP INTERFACES PLUS BUTTON}
+    Click Element  ${BIG TAP INTERFACES PLUS BUTTON}  and don't wait
+    Verify Element Visible  ${BIG TAP INTERFACES CONFIGURE POPUP}
+
+    Verify Page Contains Element  ${BIG TAP INTERFACES SWITCHES DROPDOWN BUTTON}
+    Verify Page Contains Element  ${BIG TAP INTERFACES INTERFACES DROPDOWN BUTTON}
+
+    Run Keyword Unless  '${switch}'=='${EMPTY}'
+    ...		Select From List And Verify  
+    ... 	${BIG TAP INTERFACES SWITCHES DROPDOWN BUTTON}
+    ...		${BIG TAP INTERFACES SWITCHES LIST}  
+    ... 	${BIG TAP INTERFACES SWITCHES FIELD}
+    ... 	${switch}
+
+
+    Run Keyword Unless  '${id}'=='${EMPTY}'
+    ...		Select From List And Verify  
+    ... 	${BIG TAP INTERFACES INTERFACES DROPDOWN BUTTON}
+    ...		${BIG TAP INTERFACES INTERFACES LIST}  
+    ... 	${BIG TAP INTERFACES INTERFACES FIELD}
+    ... 	${id}
+
+    Click Element  ${BIG TAP INTERFACES CONFIGURE BUTTON}  and don't wait
+
+    Verify Page Contains Element  ${FILTER INTERFACE RADIO BUTTON}
+
+    ${radio_button}  Set Variable  ${EMPTY}
+
+    ${radio_button}  Set Variable If  '${role}'=='filter'  ${BIG TAP INTERFACES FILTER INTERFACE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='delivery'  ${BIG TAP INTERFACES DELIVERY INTERFACE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='service'  ${BIG TAP INTERFACES SERVICE INTERFACE RADIO BUTTON}  ${radio_button}
+    Click Element  ${radio_button}  and don't wait
+
+    Input Text And Verify  ${BIG TAP INTERFACES NAME FIELD}  ${name}
+    Click Element  ${BIG TAP INTERFACES CONFIGURE BUTTON}  and don't wait
+
+    Verify Page Contains Element  ${BIG TAP INTERFACES SUBMIT INTERFACE NAME BUTTON}
+    Click Element  ${BIG TAP INTERFACES SUBMIT INTERFACE NAME BUTTON}   and don't wait
+
+    Verify Element Invisible  ${BIG TAP INTERFACES CONFIGURE POPUP}
+    Verify Page Contains Text   ${name} 
+    
+    
+Configure Big Tap Interface Group from Big Tap Menu
+	[Arguments]  ${role}  ${name}  ${interface-name}
+    Go To Big Tap Interface Groups Page
+    Verify Element Visible  ${BIG TAP INTERFACE GROUP PLUS BUTTON}
+    Click Element  ${BIG TAP INTERFACE GROUP PLUS BUTTON}  and don't wait
+    Verify Element Visible  ${BIG TAP INTERFACE GROUP CONFIGURE POPUP}
+
+    Verify Page Contains Element  ${BIG TAP INTERFACE GROUP VIEW DROPDOWN BUTTON}
+    Verify Page Contains Element  ${BIG TAP INTERFACE GROUP NAME FIELD}
+
+    Run Keyword Unless  '${name}'=='${EMPTY}'
+    ...		Select From List And Verify  
+    ... 	${BIG TAP INTERFACE GROUP VIEW DROPDOWN BUTTON}
+    ...		${BIG TAP INTERFACE GROUP VIEW DROPDOWN LIST} 
+    ... 	${BIG TAP INTERFACE GROUP VIEW FIELD}
+    ... 	admin-view
+
+
+    Run Keyword Unless  '${name}'=='${EMPTY}'
+    ...		 Input Text And Verify  ${BIG TAP INTERFACE GROUP NAME FIELD}  ${name}
+
+    
+    #Verify Element Visible  ${BIG TAP ADD FILTER INTERFACE PLUS BUTTON}
+    #Click Element  ${BIG TAP ADD FILTER INTERFACE PLUS BUTTON}  and don't wait
+    #Verify Element Visible  ${BIG TAP ADD INTERFACE POPUP}
+    
+    Run Keyword If  '${role}'=='filter'
+    ...		 Add Filter Interface to Group   ${interface-name} 
+    
+    Run Keyword If  '${role}'=='delivery'
+    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Delivery')]  Delivery
+    
+    Run Keyword If  '${role}'=='delivery'
+    ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=Delivery
+    Sleep  1
+    
+    Run Keyword If  '${role}'=='delivery'
+    ...   	 Add Delivery Interface to Group   ${interface-name}
+    
+    Element Should Be Visible  ${INTERFACE SAVE BUTTON}
+    Click Element  ${INTERFACE SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${BIG TAP INTERFACE GROUP CONFIGURE POPUP}
+    Verify Page Contains Text   ${name}
+
+  
+Add Filter Interface to Group 
+	[Arguments]    ${interface-name}
+	
+	Click Element  ${BIG TAP INTERFACE GROUP INTERFACE BUTTON}  and don't wait
+	Verify Element Visible  ${BIG TAP ADD FILTER INTERFACE PLUS BUTTON}
+    Click Element  ${BIG TAP ADD FILTER INTERFACE PLUS BUTTON}  and don't wait
+    Verify Element Visible  ${BIGTAP ADD FILTER INTERFACE POPUP}
+    ${filter_checkbox}    Generate Checkbox Xpath  div[@title='Add Filter Interfaces']/following-sibling::div   ${interface-name}
+    #Verify Page Contains Element  ${FILTER CHECKBOX}
+	#Click Element  ${FILTER CHECKBOX}  and don't wait
+	#Checkbox Should Be Selected  ${FILTER CHECKBOX}
+	
+	Verify Page Contains Element  ${filter_checkbox}
+	Click Element  ${filter_checkbox}  and don't wait
+	Checkbox Should Be Selected  ${filter_checkbox}
+	
+
+	Verify Page Contains Element  ${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}
+	Click Element  ${BIGTAP IG APPEND SELECTED FILTER INTERFACES BUTTON}  and don't wait
+	
+
+	Verify Element Invisible  ${BIGTAP ADD FILTER INTERFACE POPUP}
+	Verify Page Contains Text  ${interface-name}
+	
+Add Delivery Interface to Group 
+	[Arguments]    ${interface-name}
+	
+	Click Element  ${BIG TAP INTERFACE GROUP INTERFACE BUTTON}  and don't wait
+	Verify Element Visible  ${BIG TAP ADD DELIVERY INTERFACE PLUS BUTTON}
+    Click Element  ${BIG TAP ADD DELIVERY INTERFACE PLUS BUTTON}  and don't wait
+    Verify Element Visible  ${BIGTAP ADD DELIVERY INTERFACE POPUP}
+    ${delivery_checkbox}    Generate Checkbox Xpath  div[@title='Add Delivery Interfaces']/following-sibling::div   ${interface-name}
+    #Verify Page Contains Element  ${DELIVERY CHECKBOX}
+
+	#Click Element  ${DELIVERY CHECKBOX}  and don't wait
+	#Checkbox Should Be Selected  ${DELIVERY CHECKBOX}
+	
+	Verify Page Contains Element  ${delivery_checkbox}
+	Click Element  ${delivery_checkbox}  and don't wait
+	Checkbox Should Be Selected  ${delivery_checkbox}
+	
+
+	Verify Page Contains Element  ${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}
+	Click Element  ${BIGTAP IG APPEND SELECTED DELIVERY INTERFACES BUTTON}  and don't wait
+	
+
+	Verify Element Invisible  ${BIGTAP ADD DELIVERY INTERFACE POPUP}
+	Verify Page Contains Text  ${interface-name}
+
+
+Edit Big Tap Interface from Big Tap Menu
+	[Arguments]  ${id}  ${switch}  ${role}  ${name}
+    Go To Big Tap Interfaces Page
+    ${action_menu}  Generate Action Menu Xpath  div[@id='interfaces_table']  ${id}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACES EDIT MENU ITEM}
+    Click Element  ${BIG TAP INTERFACES EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACES EDIT POPUP}
+
+    Click Element  ${BIG TAP INTERFACES CONFIGURE BUTTON}  and don't wait
+
+    Verify Element Visible  ${FILTER INTERFACE RADIO BUTTON}
+
+    ${radio_button}  Set Variable  ${EMPTY}
+
+    ${radio_button}  Set Variable If  '${role}'=='filter'  ${BIG TAP INTERFACES FILTER INTERFACE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='delivery'  ${BIG TAP INTERFACES DELIVERY INTERFACE RADIO BUTTON}  ${radio_button}
+    ${radio_button}  Set Variable If  '${role}'=='service'  ${BIG TAP INTERFACES SERVICE INTERFACE RADIO BUTTON}  ${radio_button}
+
+    Click Element  ${radio_button}  and don't wait
+
+    Input Text And Verify  ${BIG TAP INTERFACES NAME FIELD}  ${name}
+    Click Element  ${BIG TAP INTERFACES CONFIGURE BUTTON}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACES SUBMIT INTERFACE NAME BUTTON}
+    Click Element  ${BIG TAP INTERFACES SUBMIT INTERFACE NAME BUTTON}   and don't wait
+
+    Verify Element Invisible  ${BIG TAP INTERFACES EDIT POPUP}
+    Verify Page Contains Text   ${name}
+    
+    
+Edit Big Tap Interface Group from Big Tap Menu
+	[Arguments]  ${role}  ${name}  ${interface-name}
+    Go To Big Tap Interface Groups Page
+    ${action_menu}  Generate Action Menu Xpath  div[@id='interface_groups_table']  ${id}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACE GROUP EDIT MENU ITEM}
+    Click Element  ${BIG TAP INTERFACE GROUP EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACE GROUP EDIT POPUP}
+
+    Click Element  ${BIG TAP INTERFACE GROUP CONFIGURE BUTTON}  and don't wait
+
+    Verify Page Contains Element  ${BIG TAP INTERFACE GROUP NAME FIELD}
+
+    Run Keyword Unless  '${name}'=='${EMPTY}'
+    ...		 Input Text And Verify  ${BIG TAP INTERFACE GROUP NAME FIELD}  ${name}
+    
+    #Verify Element Visible  ${BIG TAP ADD FILTER INTERFACE PLUS BUTTON}
+    #Click Element  ${BIG TAP ADD FILTER INTERFACE PLUS BUTTON}  and don't wait
+    #Verify Element Visible  ${BIG TAP ADD INTERFACE POPUP}
+    
+    Run Keyword If  '${role}'=='filter'
+    ...		 Add Filter Interface to Group   ${interface-name} 
+    
+    Run Keyword If  '${role}'=='delivery'
+    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Delivery')]  Delivery
+    
+    Run Keyword If  '${role}'=='delivery'
+    ...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB BUTTON}  target=Delivery
+    Sleep  1
+    
+    Run Keyword If  '${role}'=='delivery'
+    ...   	 Add Delivery Interface to Group   ${interface-name}
+    
+    Element Should Be Visible  ${INTERFACE SAVE BUTTON}
+    Click Element  ${INTERFACE SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${BIG TAP INTERFACE GROUP CONFIGURE POPUP}
+    Verify Page Contains Text   ${name}
+
+
+Delete Big Tap Interface from Big Tap Menu
+	[Arguments]  ${name}
+    Go To Big Tap Interfaces Page
+    ${action_menu}  Generate Action Menu Xpath Interfaces  div[@id='interfaces_table']  ${name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACES DELETE MENU ITEM}
+    Click Element  ${BIG TAP INTERFACES DELETE MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACES CONFIRM POPUP}	
+	Verify Element Visible  ${PROCEED DELTE BUTTON}	
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+
+	#Verify Page Does Not Contain Element   ${BIG TAP INTERFACES CONFIRM POPUP}	
+	Verify Page Does Not Contain Element  ${name}
+
+Delete Big Tap Interface Group
+	[Arguments]  ${id}
+    Go To Big Tap Interface Groups Page
+    ${action_menu}  Generate Action Menu Xpath  div[@id='interface_groups_table']  ${id}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACE GROUPS DELETE MENU ITEM}
+    Click Element  ${BIG TAP INTERFACE GROUPS DELETE MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${BIG TAP INTERFACE GROUPS CONFIRM POPUP}	
+	Verify Element Visible  ${PROCEED DELTE BUTTON}	
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+
+	#Verify Page Does Not Contain Element   ${BIG TAP INTERFACE GROUP CONFIRM POPUP}	
+	Verify Page Does Not Contain Element  ${id}
+	
+Delete Big Tap Interface from Interface Group
+	[Arguments]  ${role}  ${ig-name}  ${if-name}
+    Go To Big Tap Interface Groups Page
+    ${action_menu}  Generate Action Menu Xpath  div[@id='interface_groups_table']  ${ig-name}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${BIG TAP EDIT MENU ITEM}
+    Click Element  ${BIG TAP EDIT MENU ITEM}  and don't wait
+    
+    Run Keyword If  '${role}'=='filter'
+    ...		 Delete Filter Interface from Group   ${if-name} 
+    
+    Run Keyword If  '${role}'=='delivery'
+    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Delivery')]  Delivery
+    
+    #Run Keyword If  '${role}'=='delivery'
+    #...		 Drag And Drop   ${BIG TAP INTERFACE GROUP KNOB LOCK BUTTON}  target=Delivery
+    #Sleep  1
+    
+    Run Keyword If  '${role}'=='delivery'
+    ...   	 Delete Delivery Interface from Group   ${if-name}
+    
+    Verify Element Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
+    
+    
+Delete Filter Interface from Group
+	[Arguments]  ${if-name}
+	Verify Element Visible  ${BIG TAP INTERFACE GROUP INTERFACE BUTTON}    
+    Click Element  ${BIG TAP INTERFACE GROUP INTERFACE BUTTON}  and don't wait
+    ${action_menu1}  Generate Checkbox Xpath  div[@data-dojo-attach-point='filterInterfacesNode']  ${if-name}
+    Verify Element Visible  ${action_menu1}
+    Click Element  ${action_menu1}  and don't wait
+
+    Verify Element Visible  ${BIGTAP POLICY DELETE FILTER INTERFACE MINUS SIGN}
+    Click Element  ${BIGTAP POLICY DELETE FILTER INTERFACE MINUS SIGN}  and don't wait
+    Verify Page Does Not Contain Element  ${if-name}
+
+Delete Delivery Interface from Group   
+	[Arguments]  ${if-name}
+	
+	Verify Element Visible  ${BIG TAP INTERFACE GROUP INTERFACE BUTTON}    
+    Click Element  ${BIG TAP INTERFACE GROUP INTERFACE BUTTON}  and don't wait
+    ${action_menu1}  Generate Checkbox Xpath  div[@data-dojo-attach-point='deliveryInterfacesNode']  ${if-name}
+    Verify Element Visible  ${action_menu1}
+    Click Element  ${action_menu1}  and don't wait
+
+    Verify Element Visible  ${BIGTAP POLICY DELETE DELIVERY INTERFACE MINUS SIGN}
+    Click Element  ${BIGTAP POLICY DELETE DELIVERY INTERFACE MINUS SIGN}  and don't wait
+    Verify Page Does Not Contain Element  ${if-name}
+	
+	
+Configure Big Tap Service
+	[Arguments]  ${service}  ${pre-service}  ${post-service}
+	Run Keyword Unless  '${pre-service}'=='${EMPTY}'
+	...  Configure Big Tap Interface from Controller Menu		ethernet5	00:00:5c:16:c7:1e:f3:95	 service  ${pre-service}
+	Run Keyword Unless  '${post-service}'=='${EMPTY}'  
+	...  Configure Big Tap Interface from Controller Menu		ethernet6	00:00:5c:16:c7:1e:f3:95	 service  ${post-service}
+	${random_servicename}  Generate Random String  5  [LOWER] 
+    ${service}  Set Variable If  '${service}'=='__new__'  ${random_servicename}  ${service} 
+
+    Go To Big Tap Services Page
+    Verify Element Visible  ${SERVICE MAIN PLUS BUTTON}
+    Click Element  ${SERVICE MAIN PLUS BUTTON}   and don't wait
+    Verify Element Visible  ${CREATE SERVICE POPUP}
+
+    Input Text And Verify  ${SERVICE NAME FIELD}  ${service}
+    Click Element  ${PRE SERVICE INTERFACES BUTTON}  and don't wait
+    Verify Element Visible  ${ADD PRE SERVICE INTEFACE BUTTON}
+    Click Element  ${ADD PRE SERVICE INTEFACE BUTTON}  and don't wait
+    Verify Element Visible  ${ADD PRE SERVICE INTERFACE POPUP}
+    Run Keyword Unless  '${pre-service}'=='${EMPTY}'
+    ...		Select Checkbox And Verify  ${PRE SERVICE INTERFACES ATTACHMENT POINT}  ${pre-service}
+	Click Element  ${APPEND PRE SERVICE INTERFACE BUTTON}  and don't wait
+	Verify Element Invisible  ${ADD PRE SERVICE INTERFACE POPUP}
+
+    Click Element  ${POST SERVICE INTERFACES BUTTON}  and don't wait
+    Verify Element Visible  ${ADD POST SERVICE INTEFACE BUTTON}
+    Click Element  ${ADD POST SERVICE INTEFACE BUTTON}  and don't wait
+    Verify Element Visible  ${ADD POST SERVICE INTERFACE POPUP}
+    Run Keyword Unless  '${post-service}'=='${EMPTY}'
+    ...		Select Checkbox And Verify  ${POST SERVICE INTERFACES ATTACHMENT POINT}  ${post-service}
+	Click Element  ${APPEND POST SERVICE INTERFACE BUTTON}  and don't wait	
+    Verify Element Invisible  ${ADD POST SERVICE INTERFACE POPUP}
+
+    Element Text Should Be  ${ERROR DUPE SERVICE NAME}  ${EMPTY}  Service name already exists
+
+    Element Should Be Visible  ${SERVICE SAVE BUTTON}
+    Click Element  ${SERVICE SAVE BUTTON}   and don't wait
+
+    Verify Element Invisible  ${CREATE SERVICE POPUP}
+    Verify Page Contains Text   ${service} 
+
+
+Upload IP Address List
+	[Arguments]  ${name}  ${type}  ${file}
+	${random_listname}  Generate Random Name  List  5 
+    ${name}  Set Variable If  '${name}'=='__new__'  ${random_listname}  ${name}
+
+    Go To Big Tap IP Lists Page
+    Verify Element Visible  ${LIST MAIN PLUS BUTTON}
+    Click Element  ${LIST MAIN PLUS BUTTON}   and don't wait
+    Verify Element Visible  ${CREATE IP ADDRESS LIST POPUP}
+
+    Input Text And Verify  ${LIST NAME FIELD}  ${name}
+
+    Run Keyword If  '${type}'=='ipv6'
+    ... 	Assign ID to Element   xpath=//div[@data-dojo-attach-point="titleNode" and contains(text(), 'IPv6')]  IPv6
+
+    Run Keyword If  '${type}'=='ipv6'
+    ... 	Drag And Drop   ${LIST TYPE KNOB}  target=IPv6
+
+    Click Element  ${ADD IP ADDRESS LIST BUTTON}  and don't wait
+
+    ${list_popup}  Set Variable If  '${type}'=='ipv4'  ${ENTER IPV4 LIST POPUP}  ${ENTER IPV6 LIST POPUP}
+    Verify Element Visible  ${list_popup}
+
+    Verify Element Visible  ${UPLOAD IP LIST BUTTON}
+    Click Element  ${UPLOAD IP LIST BUTTON}	 and don't wait	
+    Verify Element Visible  ${UPLOAD IP ADDRESS LIST POPUP}
+
+    Verify Element Visible  ${BROWSE IP LIST FILE FIELD}
+    Highlight Element  ${BROWSE IP LIST FILE FIELD}
+
+    ${TIMEOUT}  Set Variable  1 min
+
+    Choose File  ${BROWSE IP LIST FILE FIELD}  ${file}
+
+    Verify Element Visible  ${READ IP LIST FILE BUTTON}
+    Click Element  ${READ IP LIST FILE BUTTON}  and don't wait
+    Verify Element Invisible  ${UPLOAD IP ADDRESS LIST POPUP}
+
+    Verify Element Visible  ${APPEND IP LIST BUTTON}
+    Click Element  ${APPEND IP LIST BUTTON}  and don't wait
+    Verify Element Invisible  ${list_popup}
+
+    Verify Element Visible  ${SAVE IP LIST BUTTON}
+    Click Element  ${SAVE IP LIST BUTTON}  and don't wait
+    Verify Element Invisible  ${CREATE IP ADDRESS LIST POPUP}
+    Verify Page Contains Text   ${name} 
+
+
+Configure Switch Alias Should Fail
+	[Arguments]  ${dpid}  ${alias}
+  	Run Keyword And Expect Error  *  Configure Switch Alias  ${dpid}  ${alias}
+  	
+Set Switching Mode
+	[Arguments]  ${match-mode}
+	Go To Landing Page
+	Verify Page Contains Element  ${CONFIGURE SWITCHING MODE BUTTON}
+	Click Element  ${CONFIGURE SWITCHING MODE BUTTON}  and don't wait
+	Verify Element Visible  ${MATCH MODE EDIT POPUP}
+	${radio_button}  Set Variable  ${EMPTY}
+	
+	${radio_button}  Set Variable If  '${match-mode}'=='L3-L4 Offset Match'  ${SWITCHING MODE L3-L4 OFFSET MATCH RADIO BUTTON}  ${radio_button} 
+	Run Keyword If  '${match-mode}'=='L3-L4 Offset Match'  
+    ...		Click Element  ${radio_button}  and don't wait
+    
+    ${radio_button}  Set Variable If  '${match-mode}'=='L3-L4 Match'  ${SWITCHING MODE L3-L4 MATCH RADIO BUTTON}  ${radio_button}
+    Run Keyword If  '${match-mode}'=='L3-L4 Match'  
+    ...		Click Element  ${radio_button}  and don't wait
+    
+    ${radio_button}  Set Variable If  '${match-mode}'=='Full Match'  ${SWITCHING MODE FULL MATCH RADIO BUTTON}  ${radio_button}
+    Run Keyword If  '${match-mode}'=='Full Match'  
+    ...		Click Element  ${radio_button}  and don't wait
+    
+    Verify Element Visible  ${SWITCHING MODE SUBMIT BUTTON}
+    Click Element  ${SWITCHING MODE SUBMIT BUTTON}  and don't wait
+    Sleep  1
+    	
+  	
+Configure Match Mode
+	[Arguments]  ${match-mode}
+	Go To Landing Page
+	#Sleep  1
+	Run Keyword If  '${match-mode}'=='Policy Overlap'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PolicyOverlap_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Policy_Overlap_Enabled
+	Run Keyword If  '${match-mode}'=='!Policy Overlap'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PolicyOverlap_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]	 Policy_Overlap_Disabled
+
+    Run Keyword If  '${match-mode}'=='Policy Overlap'
+    ... 	Drag And Drop   ${LIST TYPE KNOB POLICY OVERLAP}  target=Policy_Overlap_Enabled
+    
+    Run Keyword If  '${match-mode}'=='Policy Overlap'
+    ... 	Verify Element Visible  ${CONFIRM ENABLE POLICY OVERLAP POPUP}
+    
+    Run Keyword If  '${match-mode}'=='Policy Overlap'
+    ...		Click Element  ${ENABLE POLICY OVERLAP SUBMIT BUTTON}  and don't wait    
+    
+    Run Keyword If  '${match-mode}'=='!Policy Overlap'
+    ... 	Drag And Drop   ${LIST TYPE KNOB POLICY OVERLAP}  target=Policy_Overlap_Disabled
+    
+    Run Keyword If  '${match-mode}'=='!Policy Overlap'
+    ... 	Verify Element Visible  ${CONFIRM DISABLE POLICY OVERLAP POPUP}
+    
+    Run Keyword If  '${match-mode}'=='!Policy Overlap'
+    ...		Click Element  ${DISABLE POLICY OVERLAP SUBMIT BUTTON}  and don't wait
+    
+    #Sleep  2
+    
+    Run Keyword If  '${match-mode}'=='Inport Mask'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_InportMask_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Inport_Mask_Enabled
+	Run Keyword If  '${match-mode}'=='!Inport Mask'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_InportMask_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]	  Inport_Mask_Disabled
+
+    Run Keyword If  '${match-mode}'=='Inport Mask'
+    ... 	Drag And Drop   ${LIST TYPE KNOB INPORT MASK}  target=Inport_Mask_Enabled
+    
+    Run Keyword If  '${match-mode}'=='Inport Mask'
+    ... 	Verify Element Visible  ${CONFIRM ENABLE INPORT MASK POPUP}
+    
+    Run Keyword If  '${match-mode}'=='Inport Mask'
+    ...		Click Element  ${ENABLE INPORT MASK SUBMIT BUTTON}  and don't wait  
+    
+    Run Keyword If  '${match-mode}'=='!Inport Mask'
+    ... 	Drag And Drop   ${LIST TYPE KNOB INPORT MASK}  target=Inport_Mask_Disabled
+    
+    Run Keyword If  '${match-mode}'=='!Inport Mask'
+    ... 	Verify Element Visible  ${CONFIRM DISABLE INPORT MASK POPUP}
+    
+    Run Keyword If  '${match-mode}'=='!Inport Mask'
+    ...		Click Element  ${DISABLE INPORT MASK SUBMIT BUTTON}  and don't wait
+    
+    #Sleep  2
+    
+    
+   Run Keyword If  '${match-mode}'=='CRC Check'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_CRCChecking_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      CRC_Check_Enabled
+	Run Keyword If  '${match-mode}'=='!CRC Check'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_CRCChecking_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]	 CRC_Check_Disabled
+
+    Run Keyword If  '${match-mode}'=='CRC Check'
+    ... 	Drag And Drop   ${LIST TYPE KNOB CRC CHECK}  target=CRC_Check_Enabled
+    
+     Run Keyword If  '${match-mode}'=='CRC Check'
+    ... 	Verify Element Visible  ${CONFIRM ENABLE CRC CHECK POPUP}
+    
+    Run Keyword If  '${match-mode}'=='CRC Check'
+    ...		Click Element  ${ENABLE CRC CHECK SUBMIT BUTTON}  and don't wait
+    
+    Run Keyword If  '${match-mode}'=='!CRC Check'
+    ... 	Drag And Drop   ${LIST TYPE KNOB CRC CHECK}  target=CRC_Check_Disabled
+    
+    Run Keyword If  '${match-mode}'=='!CRC Check'
+    ... 	Verify Element Visible  ${CONFIRM DISABLE CRC CHECK POPUP}
+    
+    Run Keyword If  '${match-mode}'=='!CRC Check'
+    ...		Click Element  ${DISABLE CRC CHECK SUBMIT BUTTON}  and don't wait
+    
+    #Sleep  2
+    
+    Run Keyword If  '${match-mode}'=='Tunneling'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_Tunneling_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Tunneling_Enabled
+	Run Keyword If  '${match-mode}'=='!Tunneling'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_Tunneling_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]	  Tunneling_Disabled
+
+    Run Keyword If  '${match-mode}'=='Tunneling'
+    ... 	Drag And Drop   ${LIST TYPE KNOB TUNNELING}  target=Tunneling_Enabled
+    
+     Run Keyword If  '${match-mode}'=='Tunneling'
+    ... 	Verify Element Visible  ${CONFIRM ENABLE TUNNELING POPUP}
+    
+    Run Keyword If  '${match-mode}'=='Tunneling'
+    ...		Click Element  ${ENABLE TUNNELING SUBMIT BUTTON}  and don't wait
+    
+    Run Keyword If  '${match-mode}'=='!Tunneling'
+    ... 	Drag And Drop   ${LIST TYPE KNOB TUNNELING}  target=Tunneling_Disabled
+    
+    Run Keyword If  '${match-mode}'=='!Tunneling'
+    ... 	Verify Element Visible  ${CONFIRM DISABLE TUNNELING POPUP}
+    
+    Run Keyword If  '${match-mode}'=='!Tunneling'
+    ...		Click Element  ${DISABLE TUNNELING SUBMIT BUTTON}  and don't wait
+    
+    #Sleep  2
+    
+    Run Keyword If  '${match-mode}'=='Patch Mode'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PatchMode_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      PatchMode_Enabled
+	Run Keyword If  '${match-mode}'=='!Patch Mode'
+	...			Assign ID to Element   xpath=//tbody[@id='bigtap_widgets_PatchMode_0']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Disabled')]	 PatchMode_Disabled
+
+    Run Keyword If  '${match-mode}'=='Patch Mode'
+    ... 	Drag And Drop   ${LIST TYPE KNOB PATCH MODE}  target=PatchMode_Enabled
+    
+     Run Keyword If  '${match-mode}'=='Patch Mode'
+    ... 	Verify Element Visible  ${CONFIRM ENABLE PATCH MODE POPUP}
+    
+    Run Keyword If  '${match-mode}'=='Patch Mode'
+    ...		Click Element  ${ENABLE PATCH MODE SUBMIT BUTTON}  and don't wait
+    
+    Run Keyword If  '${match-mode}'=='!Patch Mode'
+    ... 	Drag And Drop   ${LIST TYPE KNOB PATCH MODE}  target=PatchMode_Disabled
+    
+    Run Keyword If  '${match-mode}'=='!Patch Mode'
+    ... 	Verify Element Visible  ${CONFIRM DISABLE PATCH MODE POPUP}
+    
+    Run Keyword If  '${match-mode}'=='!Patch Mode'
+    ...		Click Element  ${DISABLE PATCH MODE SUBMIT BUTTON}  and don't wait
+    
+	
+Configure Big Tap User Defined Offsets
+	[Arguments]  ${udf}  ${anchor}  ${offset}
+	
+	Go to Big Tap User Defined Offsets Page
+	Sleep  1
+	
+	${action_menu}  Generate Action Menu Xpath Interfaces  div[@id='user_defined_offsets_table']  ${udf}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+
+    Verify Element Visible  ${BIG TAP EDIT MENU ITEM}
+    Click Element  ${BIG TAP EDIT MENU ITEM}  and don't wait
+    
+    Run Keyword Unless  '${anchor}'=='${EMPTY}'
+    ...		Select From List And Verify  
+    ... 	${BIGTAP UDF ANCHOR DROPDOWN BUTTON}
+    ...		${BIGTAP UDF ANCHOR LIST}  
+    ... 	${BIGTAP UDF FIELD}
+    ... 	${anchor}
+    
+    
+    Click Element  ${BIGTAP OFFSET FIELD}  and don't wait
+		Run Keyword Unless  '${offset}' == '${EMPTY}'
+	...		Input Text And Verify  ${BIGTAP OFFSET FIELD}  ${offset}
+	  Sleep  1
+	  
+   Verify Element Visible  ${SAVE BUTTON}
+   Click Element  ${SAVE BUTTON}  and don't wait 
+    
+ 
+Configure Big Tap Tunnels
+	[Arguments]  ${name}  ${rate-limit}  ${direction}  ${src-ip}  ${prefix}  ${gateway}  ${dst-ip}  ${switch}  ${parent-if}  ${loopback-if}
+	
+	Go to Controller Interfaces Page
+	#Sleep  20
+	Click Element  ${TUNNEL TABLE BUTTON}  and don't wait
+	${action_menu}  Generate Action Menu Xpath Interfaces Tunnels  div[@id='interfaces_table']
+    Verify Element Visible  ${action_menu}
+    Highlight Element   ${action_menu}
+    Sleep  1
+    #Click Element  ${action_menu}  and don't wait
+    Mouse Down  ${action_menu}
+    Mouse Up  ${action_menu}
+    #Click Element  ${action_menu}  and don't wait
+	Sleep  2
+    #Verify Element Visible  ${CREATE TUNNEL MENU ITEM}
+    Click Element  ${CREATE TUNNEL MENU ITEM}  and don't wait
+    
+    Verify Element Visible  ${CONFIGURE GRE TUNNEL POPUP}
+    
+    Click Element  ${TUNNEL NAME FIELD}  and don't wait
+	Input Text And Verify  ${TUNNEL NAME FIELD}  ${name}
+	
+	Run Keyword Unless  '${rate-limit}' == '${EMPTY}'
+	...		Click Element  ${TUNNEL RATE LIMIT CHECKBOX}  and don't wait
+	 
+	Click Element  ${TUNNEL RATE LIMIT FIELD}  and don't wait
+	Click Element  ${TUNNEL RATE LIMIT FIELD}  and don't wait
+	Run Keyword Unless  '${rate-limit}' == '${EMPTY}'
+	...		Input Text And Verify  ${TUNNEL RATE LIMIT FIELD}  ${rate-limit}
+	
+	Run Keyword If  '${direction}'=='Receive'
+	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Receive')]      Receive_Only
+	Run Keyword If  '${direction}'=='Receive'
+	...			Assign ID to Element   xpath=//div[@class='nowrap']/descendant::div[@id='bsn_widgets_InputLabel_6']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]      Not_Transmit
+	Run Keyword If  '${direction}'=='Transmit'
+	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Transmit')]	 Transmit_Only
+	Run Keyword If  '${direction}'=='Transmit'
+	...			Assign ID to Element   xpath=//div[@class='nowrap']/descendant::div[@id='bsn_widgets_InputLabel_4']/h2/div[@data-dojo-attach-point='titleNode' and contains(text(), '')]	 Not_Receive
+	Run Keyword If  '${direction}'=='Bidirectional'
+	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Receive')]      Receive_Only
+	Run Keyword If  '${direction}'=='Bidirectional'
+	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Transmit')]	 Transmit_Only
+	
+    Run Keyword If  '${direction}'=='Receive'
+    ... 	Drag And Drop   ${LIST TYPE KNOB RECEIVE}  target=Receive_Only
+    
+    Run Keyword If  '${direction}'=='Receive'
+    ... 	Drag And Drop   ${LIST TYPE KNOB TRANSMIT}  target=Not_Transmit
+    
+    Run Keyword If  '${direction}'=='Transmit'
+    ... 	Drag And Drop   ${LIST TYPE KNOB TRANSMIT}  target=Transmit_Only
+    
+    Run Keyword If  '${direction}'=='Transmit'
+    ... 	Drag And Drop   ${LIST TYPE KNOB RECEIVE}  target=Not_Receive
+    
+    Run Keyword If  '${direction}'=='Bidirectional'
+    ... 	Drag And Drop   ${LIST TYPE KNOB RECEIVE}  target=Receive_Only
+    
+    Run Keyword If  '${direction}'=='Bidirectional'
+    ... 	Drag And Drop   ${LIST TYPE KNOB TRANSMIT}  target=Transmit_Only
+    
+    Click Element  ${TUNNEL SOURCE IP FIELD}  and don't wait
+	Input Text And Verify  ${TUNNEL SOURCE IP FIELD}  ${src-ip}
+	
+	Click Element  ${TUNNEL SOURCE PREFIX FIELD}  and don't wait
+	Input Text And Verify  ${TUNNEL SOURCE PREFIX FIELD}  ${prefix}
+	
+	Click Element  ${TUNNEL GATEWAY IP FIELD}  and don't wait
+	Input Text And Verify  ${TUNNEL GATEWAY IP FIELD}  ${gateway}
+	
+	Click Element  ${TUNNEL DESTINATION IP FIELD}  and don't wait
+	Input Text And Verify  ${TUNNEL DESTINATION IP FIELD}  ${dst-ip}
+	  
+	Run Keyword Unless  '${switch}'=='${EMPTY}'
+	...		Select From List And Verify  
+	... 	${TUNNEL SWITCH DROPDOWN BUTTON}
+	...		${TUNNEL SWITCH LIST}  
+	... 	${TUNNEL SWITCH FIELD}
+	... 	${switch}
+	
+	Sleep  1
+	
+	Run Keyword Unless  '${parent-if}'=='${EMPTY}'
+	...		Select From List And Verify  
+	... 	${TUNNEL PARENT INTERFACE DROPDOWN BUTTON}
+	...		${TUNNEL PARENT INTERFACE LIST}  
+	... 	${TUNNEL PARENT INTERFACE FIELD}
+	... 	${parent-if}
+	
+	Run Keyword Unless  '${loopback-if}'=='${EMPTY}'
+	...		Select From List And Verify  
+	... 	${TUNNEL LOOPBACK INTERFACE DROPDOWN BUTTON}
+	...		${TUNNEL LOOPBACK INTERFACE LIST}  
+	... 	${TUNNEL LOOPBACK INTERFACE FIELD}
+	... 	${loopback-if}
+	  
+   Verify Element Visible  ${SUBMIT BUTTON}
+   Click Element  ${SUBMIT BUTTON}  and don't wait
+   Verify Element Invisible  ${CONFIGURE GRE TUNNEL POPUP} 
+   Sleep   1
+   
+Delete Tunnel
+	[Arguments]  ${interface}  ${switch}
+	
+	Go To Controller Interfaces Page
+    Show All
+    Verify Page Contains Text  ${interface}
+    ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  ${interface}  ${switch}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait
+    Verify Element Visible  ${DELETE TUNNEL MENU POPUP}
+    Click Element  ${DELETE TUNNEL MENU POPUP}  and don't wait
+    Verify Element Visible  ${CONFIRM DELETE POPUP}
+	
+  	Verify Element Visible  ${PROCEED DELTE BUTTON}
+    Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+    Sleep   1
+ 
+
+Verify Stats on Big Tap Interfaces Page
+	[Arguments]  ${interface-name}  ${role}  ${stats}  ${value}
+	
+	Go To Big Tap Interfaces Page
+	Verify Show Hide Button works  True
+	${BIGTAP POLICY INTERFACE STATS} =    Run Keyword If    '${stats}'=='packet-count'
+    ...    Generate Packet Count Interface Xpath   ${interface-name}
+    ...    ELSE IF    '${stats}'=='packet-rate'
+    ...    Generate Packet Rate Interface Xpath   ${interface-name}
+    ...    ELSE IF    '${stats}'=='bit-rate'
+    ...    Generate Bit Rate Interface Xpath   ${interface-name}
+    ...    ELSE
+    ...    Return From Keyword If  '${interface-name}'=='${EMPTY}'
+    [Return]    ${BIGTAP POLICY INTERFACE STATS}
+	
+    
+	${ret_val} =  Get Text  ${BIGTAP POLICY INTERFACE STATS}
+	#${policy_stats} =  Split String  ${ret_val}  ,
+	${bigtap_interface_stats} =  Replace String  ${ret_val}  ,   ${EMPTY}
+	${if_stats_ret} =  Convert To Number  ${bigtap_interface_stats}
+	${return_value}=  ixia verify traffic rate   ${value}  ${if_stats_ret}  50
+	Should be True  ${return_value} 
+	#var e = document.getElementById("ddlViewBy");
+	#var strUser = e.options[e.selectedIndex].text;
+	#${BIGTAP POLICY INTERFACE PACKET COUNT} =  Generate Packet Count Policy Xpath   ${interface-name}  ${role}
+	#${bigtap_packet_count} =  Get Text  ${BIGTAP POLICY INTERFACE PACKET COUNT}
+	#${return_value}=  ixia verify traffic rate   ${packet-count}  ${bigtap_packet_count}  rangev=50
+	#Should be True  ${return_value} 
+    
+Verify Interface Bandwidth on Big Tap Policy Page
+	[Arguments]  ${policy-name}  ${role}  ${value}	
+	Go To Big Tap Policies Page
+	${expand_menu_policy}  Generate Expand Menu Policy Xpath  div[@id='policies_table']  ${policy-name}
+    Verify Element Visible  ${expand_menu_policy}
+    Click Element  ${expand_menu_policy}  and don't wait
+    
+    Verify Element Visible  ${BIGTAP POLICY OPERATIONAL STATS REFRESH BUTTON}
+    Click Element  ${BIGTAP POLICY OPERATIONAL STATS REFRESH BUTTON}  and don't wait
+        
+    Click Element  ${BIGTAP POLICY EXPAND MENU OPS CAPACITY}  and don't wait
+    
+	${bigtap_policy_filter_bandwidth} =  Get Text  ${BIGTAP POLICY FILTER BANDWIDTH}
+    ${bigtap_policy_delivery_bandwidth} =  Get Text  ${BIGTAP POLICY DELIVERY BANDWIDTH}
+       
+    ${bandwidth} =  Run Keyword If  '${role}'=='Filter'
+    ...		Replace String   ${bigtap_policy_filter_bandwidth}   'Gbit/s'   ${EMPTY}
+    ...		ELSE IF    	   '${role}'=='Delivery'
+    ...		Replace String   ${bigtap_policy_delivery_bandwidth}  'Gbit/s'   ${EMPTY}
+    ...		ELSE
+    ...     Return From Keyword If  '${role}'=='${EMPTY}'
+    [Return]    ${bandwidth}
+    
+    Should be equal as integers  ${bandwidth}  ${value}
+	
+Verify No Drop Stats on Big Tap Interfaces Page
+	[Arguments]  ${interface-name}  ${role}  ${stats}
+	
+	Go To Big Tap Interfaces Page
+	${BIGTAP INTERFACE DROP STATS} =    Run Keyword If    '${stats}'=='packets-dropped-tx'
+    ...    Generate Dropped Packet Count tx Interface Xpath    ${interface-name}
+    ...    ELSE IF    '${stats}'=='packet-drop-rate-tx'
+    ...    Generate Packet Drop Rate tx Interface Xpath   ${interface-name}
+    ...    ELSE IF    '${stats}'=='packets-dropped-rx'
+    ...    Generate Dropped Packet Count rx Interface Xpath   ${interface-name}
+    ...    ELSE IF    '${stats}'=='packets-drop-rate-rx'
+    ...    Generate Packet Drop Rate rx Interface Xpath  ${interface-name}
+    ...    ELSE
+    ...    Return From Keyword If  '${stats}'=='${EMPTY}'
+    [Return]    ${BIGTAP INTERFACE DROP STATS}
+	
+	${ret_val} =  Get Text  ${BIGTAP INTERFACE DROP STATS}
+	#${policy_stats} =  Split String  ${ret_val}  ,
+	${bigtap_interface_drop_stats} =  Replace String  ${ret_val}  ,   ${EMPTY}
+	#${if_stats_ret} =  Convert To Number  ${bigtap_interface_stats}
+	
+	Should Be Equal As Integers   ${bigtap_interface_drop_stats}  0
+    
+    #Run Keyword If    '${pol_filter_bdw}'>'${pol_delivery_bdw}' and '${role}'=='Filter'
+    #...    Should Be Equal As Integers   ${bigtap_interface_drop_stats}  0
+    
+    #Run Keyword If    '${pol_filter_bdw}'>'${pol_delivery_bdw}' and '${role}'=='Delivery' and '${stats}'=='packets-dropped-tx'
+    #...    Should Be Equal As Integers   ${bigtap_interface_drop_stats}  0
+    #Run Keyword If    '${pol_filter_bdw}'>'${pol_delivery_bdw}' and '${role}'=='Delivery' and '${stats}'=='packet-drop-rate-tx'
+    #...    Should Be Equal As Integers   ${bigtap_interface_drop_stats}  0
+    
+    #${in_range_1}=	Run Keyword If    '${pol_filter_bdw}'>'${pol_delivery_bdw}' and '${role}'=='Delivery' and '${stats}'=='packets-dropped-rx'
+    #...          ixia verify traffic rate  ${bigtap_interface_drop_stats}  ${rx_10g_1}  500
+    #...			 Should be true  ${in_range_1}
+    #Run Keyword If    '${pol_filter_bdw}'>'${pol_delivery_bdw}' and '${role}'=='Delivery' and '${stats}'=='packet-drop-rate-rx'
+    #...    Should Be Equal As Integers   ${bigtap_interface_drop_stats}  0
+    
+    
+    #...    Generate Packet Count Interface Xpath   ${interface-name}  ${role}
+    #...    ELSE IF    '${stats}'=='packet-drop-rate-tx'
+    #...    Generate Packet Rate Interface Xpath   ${interface-name}  ${role}
+    #...    ELSE IF    '${stats}'=='packets-dropped-rx'
+    #...    Generate Bit Rate Interface Xpath   ${interface-name}  ${role}
+    #...    ELSE IF    '${stats}'=='packets-drop-rate-rx'
+    #...    Generate Bit Rate Interface Xpath   ${interface-name}  ${role}
+    #...    ELSE
+    #...    Return From Keyword If  '${stats}'=='${EMPTY}'
+    #[Return]    ${BIGTAP POLICY DROP STATS}
+	
+
+Verify Show Hide Button works  
+	[Arguments]  ${state}	
+	Go To Big Tap Interfaces Page
+	Verify Element Visible  ${BIG TAP INTERFACES GLOBAL MENU BUTTON}
+    Click Element  ${BIG TAP INTERFACES GLOBAL MENU BUTTON}  and don't wait 
+    
+    Click Element  ${BIG TAP INTERFACE STATS SHOW HIDE BUTTON}  and don't wait
+    Verify Element Visible  ${BIG TAP INTERFACE STATS SHOW HIDE MENU POPUP}
+     
+	Run Keyword If    '${state}'=='True'
+    ...    Click Element  ${SHOW HIDE SELECT ALL STATS BUTTON}  and don't wait
+    ...    ELSE IF 	  '${state}'=='False'
+    ...    Click Element  ${SHOW HIDE RESTORE DEFAULTS BUTTON}  and don't wait
+    
+    Click Element  ${SHOW HIDE SAVE PREFERENCES BUTTON}  and don't wait
+	
+Verify Stats on Big Tap Policy Page 
+	[Arguments]  ${policy-name}  ${interface-name}  ${role}  ${stats}  ${value}
+	
+	Go To Big Tap Policies Page
+    
+    ${expand_menu_policy}  Generate Expand Menu Policy Xpath  div[@id='policies_table']  ${policy-name}
+    Verify Element Visible  ${expand_menu_policy}
+    Click Element  ${expand_menu_policy}  and don't wait
+    
+    Sleep  5
+    
+    Verify Element Visible  ${BIGTAP POLICY OPERATIONAL STATS REFRESH BUTTON}
+    Click Element  ${BIGTAP POLICY OPERATIONAL STATS REFRESH BUTTON}  and don't wait
+        
+    Run Keyword If  '${role}'=='Filter'
+    ...		Click Element  ${BIGTAP POLICY EXPAND MENU OPS FILTER INTERFACE}  and don't wait
+    
+    #Run Keyword If  '${role}'=='Filter'
+    #...		Verify Stats Policy-Interfaces  ${interface-name}  ${role}  ${stats}  ${value}
+    
+    Run Keyword If  '${role}'=='Delivery'
+    ...		Click Element  ${BIGTAP POLICY EXPAND MENU OPS DELIVERY INTERFACE}  and don't wait
+    
+    #Run Keyword If  '${role}'=='Delivery'
+    #... 	Verify Stats Policy-Interfaces  ${interface-name}  ${role}  ${stats}  ${value}
+    Return From Keyword If  '${interface-name}'=='${EMPTY}'
+    Run Keyword If  '${role}'=='Service'  
+    ...		Click Element  ${BIGTAP POLICY EXPAND MENU OPS SERVICE INTERFACE}  and don't wait
+    
+    Run Keyword If  '${role}'=='Filter' or '${role}'=='Delivery' or '${role}'=='Service'
+    ... 	Verify Stats Policy-Interfaces  ${interface-name}  ${role}  ${stats}  ${value}
+    
+
+Verify Stats Policy-Interfaces
+	[Arguments]  ${interface-name}  ${role}  ${stats}  ${value}
+	
+    ${BIGTAP POLICY INTERFACE STATS} =    Run Keyword If    '${stats}'=='packet-count'
+    ...    Generate Packet Count Policy IF Xpath   ${interface-name}  ${role}
+    ...    ELSE IF    '${stats}'=='packet-rate'
+    ...    Generate Packet Rate Policy IF Xpath   ${interface-name}  ${role}
+    ...    ELSE IF    '${stats}'=='bit-rate'
+    ...    Generate Bit Rate Policy IF Xpath   ${interface-name}  ${role}
+    ...    ELSE
+    ...    Return From Keyword If  '${interface-name}'=='${EMPTY}'
+    [Return]    ${BIGTAP POLICY INTERFACE STATS}
+	
+	#Return From Keyword If  '${interface-name}'=='${EMPTY}'
+	
+	#Run Keyword And Return If  '${stats}'=='packet-count'
+    #... 	${BIGTAP POLICY INTERFACE STATS}  Generate Packet Count Policy IF Xpath   ${interface-name}  ${role}
+    #Run Keyword If  '${stats}'=='packet-rate'
+    #... 	${BIGTAP POLICY INTERFACE STATS}  Generate Packet Rate Policy IF Xpath   ${interface-name}  ${role}
+    #Run Keyword If  '${stats}'=='bit-rate'
+    #... 	${BIGTAP POLICY INTERFACE STATS}  Generate Bit Rate Policy IF Xpath   ${interface-name}  ${role}
+    
+	${ret_val} =  Get Text  ${BIGTAP POLICY INTERFACE STATS}
+	#${policy_stats} =  Split String  ${ret_val}  ,
+	${policy_stats} =  Replace String  ${ret_val}  ,   ${EMPTY}
+	${policy_if_stats} =  Convert To Number  ${policy_stats}
+	${return_value}=  ixia verify traffic rate   ${value}  ${policy_if_stats}  50
+	Should be True  ${return_value} 
+	#var e = document.getElementById("ddlViewBy");
+	#var strUser = e.options[e.selectedIndex].text;
+	#${BIGTAP POLICY INTERFACE PACKET COUNT} =  Generate Packet Count Policy Xpath   ${interface-name}  ${role}
+	#${bigtap_packet_count} =  Get Text  ${BIGTAP POLICY INTERFACE PACKET COUNT}
+	#${return_value}=  ixia verify traffic rate   ${packet-count}  ${bigtap_packet_count}  rangev=50
+	#Should be True  ${return_value} 
+    
+Verify Policy Stats for Core Interface
+	[Arguments]  ${policy-name}  ${switch-alias}  ${interface}   ${role}  ${stats}   ${value}
+	
+	Go To Big Tap Policies Page
+    
+    ${expand_menu_policy}  Generate Expand Menu Policy Xpath  div[@id='policies_table']  ${policy-name}
+    Verify Element Visible  ${expand_menu_policy}
+    Click Element  ${expand_menu_policy}  and don't wait
+    
+    Sleep  5
+    
+    Verify Element Visible  ${BIGTAP POLICY OPERATIONAL STATS REFRESH BUTTON}
+    Click Element  ${BIGTAP POLICY OPERATIONAL STATS REFRESH BUTTON}  and don't wait   
+    
+    Click Element  ${BIGTAP POLICY EXPAND MENU OPS CORE INTERFACE}  and don't wait
+    
+    ${BIGTAP POLICY INTERFACE STATS} =    Run Keyword If    '${stats}'=='packet-count'
+    ...    Generate Packet Count Policy Core IF Xpath   ${switch-alias}  ${interface}  ${role}
+    ...    ELSE IF    '${stats}'=='packet-rate'
+    ...    Generate Packet Rate Policy Core IF Xpath   ${switch-alias}  ${interface}  ${role}
+    ...    ELSE IF    '${stats}'=='bit-rate'
+    ...    Generate Bit Rate Policy Core IF Xpath   ${switch-alias}  ${interface}  ${role}
+    ...    ELSE
+    ...    Return From Keyword If  '${interface-name}'=='${EMPTY}'
+    [Return]    ${BIGTAP POLICY INTERFACE STATS}
+	
+	#Return From Keyword If  '${interface-name}'=='${EMPTY}'
+	
+	#Run Keyword And Return If  '${stats}'=='packet-count'
+    #... 	${BIGTAP POLICY INTERFACE STATS}  Generate Packet Count Policy IF Xpath   ${interface-name}  ${role}
+    #Run Keyword If  '${stats}'=='packet-rate'
+    #... 	${BIGTAP POLICY INTERFACE STATS}  Generate Packet Rate Policy IF Xpath   ${interface-name}  ${role}
+    #Run Keyword If  '${stats}'=='bit-rate'
+    #... 	${BIGTAP POLICY INTERFACE STATS}  Generate Bit Rate Policy IF Xpath   ${interface-name}  ${role}
+    
+	${ret_val} =  Get Text  ${BIGTAP POLICY INTERFACE STATS}
+	#${policy_stats} =  Split String  ${ret_val}  ,
+	${policy_stats} =  Replace String  ${ret_val}  ,   ${EMPTY}
+	${policy_if_stats} =  Convert To Number  ${policy_stats}
+	${return_value}=  ixia verify traffic rate   ${value}  ${policy_if_stats}  50
+	Should be True  ${return_value} 
+    #Run Keyword If  '${stats}'=='packet-count'
+    #... 	${BIGTAP POLICY CORE INTERFACE STATS} =  Generate Packet Count Policy Core IF Xpath   ${switch-alias}  ${interface}  ${role}
+    #Run Keyword If  '${stats}'=='packet-rate'
+    #... 	${BIGTAP POLICY CORE INTERFACE STATS} =  Generate Packet Rate Policy Core IF Xpath   ${switch-alias}  ${interface}  ${role}
+    #Run Keyword If  '${stats}'=='bit-rate'
+    #... 	${BIGTAP POLICY CORE INTERFACE STATS} =  Generate Bit Rate Policy Core IF Xpath   ${switch-alias}  ${interface}  ${role}
+    
+	#${core_stats} =  Get Text  ${BIGTAP POLICY CORE INTERFACE STATS}
+	#${return_value}=  ixia verify traffic rate   ${value}  ${core_stats}  rangev=500
+	#Should be True  ${return_value} 
+	
+Verify Policy Stats for Flow Info
+	[Arguments]  ${policy-name}  ${switch-alias}  ${page}   ${role}  ${stats}   ${value}
+	
+	Go To Big Tap Policies Page
+    
+    ${expand_menu_policy}  Generate Expand Menu Policy Xpath  div[@id='policies_table']  ${policy-name}
+    Verify Element Visible  ${expand_menu_policy}
+    Click Element  ${expand_menu_policy}  and don't wait
+    
+    Sleep  5
+    
+    Verify Element Visible  ${BIGTAP POLICY OPERATIONAL STATS REFRESH BUTTON}
+    Click Element  ${BIGTAP POLICY OPERATIONAL STATS REFRESH BUTTON}  and don't wait
+    
+    Sleep  5
+    Click Element  ${BIGTAP POLICY OPERATIONAL STATS REFRESH BUTTON}  and don't wait
+    
+    Click Element  ${BIGTAP POLICY EXPAND MENU OPS FLOW INFO}  and don't wait
+    
+    Run Keyword If  '${stats}'=='packet-count'
+    ... 	${BIGTAP POLICY FLOW INFO STATS} =  Generate Packet Count Flow Info Xpath   ${switch-alias}  ${role}
+    Run Keyword If  '${stats}'=='packet-rate'
+    ... 	${BIGTAP POLICY FLOW INFO STATS} =  Generate Packet Rate Flow Info Xpath   ${switch-alias}  ${role}
+    Run Keyword If  '${stats}'=='bit-rate'
+    ... 	${BIGTAP POLICY FLOW INFO STATS} =  Generate Bit Rate Flow Info Xpath   ${switch-alias}  ${role}
+    
+    Run Keyword If  '${match}'=='IPv6'
+    ... 	${BIGTAP POLICY FLOW INFO STATS} =  Generate Bit Rate Flow Info Xpath   ${switch-alias}  ${role}
+    
+	${flow_info_stats} =  Get Text  ${BIGTAP POLICY FLOW INFO STATS}
+	${return_value}=  ixia verify traffic rate   ${value}  ${flow_info_stats}  rangev=500
+	Should be True  ${return_value} 
+	
+Verify Bandwidth on Big Tap page
+	[Arguments]  ${role}  ${bandwidth}
+	Go To Big Tap Page
+   
+    ${bigtap_filter_bandwidth} =  Get Text  ${BIGTAP FILTER BANDWIDTH}
+    ${bigtap_delivery_bandwidth} =  Get Text  ${BIGTAP DELIVERY BANDWIDTH}
+    ${bigtap_service_bandwidth} =  Get Text  ${BIGTAP SERVICE BANDWIDTH}
+    
+    Run Keyword If  '${role}'=='Filter'
+    ...		Should Contain   ${bigtap_filter_bandwidth}  ${bandwidth}
+    
+    Run Keyword If  '${role}'=='Delivery'
+    ... 	Should Contain   ${bigtap_delivery_bandwidth}  ${bandwidth}
+    
+    Run Keyword If  '${role}'=='Service'
+    ... 	Should Contain   ${bigtap_service_bandwidth}  ${bandwidth}  
+
+Verify Number of Switches
+	[Arguments]  ${role}  ${num-switch}
+	
+	Go To Big Tap Page
+	
+	${bigtap_filter_switch} =  Get Text  ${BIGTAP FILTER SWITCH NUMBER}
+    ${bigtap_delivery_switch} =  Get Text  ${BIGTAP DELIVERY SWITCH NUMBER}
+    ${bigtap_service_switch} =  Get Text  ${BIGTAP SERVICE SWITCH NUMBER}
+    ${bigtap_total_switch} =  Get Text  ${BIGTAP TOTAL SWITCH NUMBER}
+    
+    Run Keyword If  '${role}'=='Filter'
+    ...		Should Be Equal As Strings   ${bigtap_filter_switch}  ${num-switch}
+    
+    Run Keyword If  '${role}'=='Delivery'
+    ... 	Should Be Equal As Strings   ${bigtap_delivery_switch}  ${num-switch}
+    
+    Run Keyword If  '${role}'=='Service'
+    ... 	Should Be Equal As Strings   ${bigtap_service_switch}  ${num-switch}
+    
+    Run Keyword If  '${role}'=='Total'
+    ... 	Should Be Equal As Strings   ${bigtap_total_switch}  ${num-switch} 
+    
+Verify Number of Filter Interfaces
+	Go To Big Tap Page
+	${bigtap_filter_interface_number} =  Get Text  ${BIGTAP FILTER INTERFACE NUMBER}
+	Go To Big Tap Filter Interfaces Page
+	Verify Element Visible  ${CHECKBOX ALL}
+	Click Element  ${CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
+	Should Be Equal As Strings   ${bigtap_filter_interface_number}  ${selected checkbox}
+
+Verify Number of Delivery Interfaces
+	Go To Big Tap Page
+	${bigtap_delivery_interface_number} =  Get Text  ${BIGTAP DELIVERY INTERFACE NUMBER}
+	Go To Big Tap Delivery Interfaces Page
+	Verify Element Visible  ${CHECKBOX ALL}
+	Click Element  ${CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
+	Should Be Equal As Strings   ${bigtap_delivery_interface_number}  ${selected checkbox}
+
+Verify Number of Service Interfaces
+	Go To Big Tap Page
+	${bigtap_service_interface_number} =  Get Text  ${BIGTAP SERVICE INTERFACE NUMBER}
+	Go To Big Tap Service Interfaces Page
+	Verify Element Visible  ${CHECKBOX ALL}
+	Click Element  ${CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
+	Should Be Equal As Strings   ${bigtap_service_interface_number}  ${selected checkbox}
+
+Verify Number of Big Tap Policies
+	Go To Big Tap Page
+	${bigtap_total_policy_number} =  Get Text  ${BIGTAP POLICY NUMBER}
+	Go To Big Tap Policies Page 
+	Verify Element Visible  ${CHECKBOX ALL}
+	Click Element  ${CHECKBOX ALL}  and don't wait
+	${selected checkbox}  Get Matching Xpath Count  //div[@id='bsn_widgets_form_TriStateCheckBox_0']/descendant::div[@aria-checked='true']
+	Should Be Equal As Strings   ${bigtap_total_policy_number}  ${selected checkbox}
+
+
+Verify Refresh Button on BigTap page
+	[Arguments]  ${field}
+	
+	Go To Big Tap Page
+    
+    Run Keyword If  '${field}'=='Info' 
+    ...		Click Element   ${BIGTAP INFO REFRESH BUTTON}  and don't wait
+    
+    Run Keyword If  '${field}'=='Interface Statistics' 
+    ...		Click Element   ${BIGTAP INTERFACE STATISTICS REFRESH BUTTON}  and don't wait 
+    
+Verify Refresh Button on BigTap Policies page
+	[Arguments]  ${field}  ${policy-name}
+	
+	Go To Big Tap Policies Page
+     
+    Run Keyword If  '${field}'=='Main' 
+    ...		Click Element   ${BIGTAP POLICY MAIN REFRESH BUTTON}  and don't wait
+    Return From Keyword If  '${policy-name}'=='${EMPTY}'
+    ${expand_menu_policy}  Generate Expand Menu Policy Xpath  div[@id='policies_table']  ${policy-name}
+    
+    Run Keyword If  '${field}'=='Operational State' 
+    ...		Click Element   ${expand_menu_policy}  and don't wait   
+    
+    Run Keyword If  '${field}'=='Operational State' 
+    ...		Click Element   ${BIGTAP POLICY OPERATIONAL STATS REFRESH BUTTON}  and don't wait 
+    
+Verify Total Traffic
+	[Arguments]  ${page}   ${role}  ${traffic}
+	
+	Run Keyword If  '${page}'=='BigTap' 
+    ...		Go To Big Tap Page
+    
+    ${bigtap_total_ingress_traffic} =  Get Text  ${BIGTAP TOTAL INGRESS TRAFFIC RATE}
+    ${bigtap_total_delivery_traffic} =  Get Text  ${BIGTAP TOTAL DELIVERY TRAFFIC RATE}
+    
+    Run Keyword If  '${role}'=='Ingress' 
+    ...		Should Contain   ${bigtap_total_ingress_traffic}  ${traffic}
+    
+    Run Keyword If  '${role}'=='Delivery' 
+    ...		Should Contain   ${bigtap_total_delivery_traffic}  ${traffic}
+    
+Configure Lock on BigTap Interface
+	[Arguments]  ${role}  ${if-name}
+	
+	Go To Big Tap Interfaces Page
+	
+	${get_lock_status}  Get Interface Lock Status div[@id='interfaces_table']  ${if-name}
+    Verify Element Visible  ${action_menu_if}
+    Click Element  ${action_menu_if}  and don't wait
+    	
+	${action_menu_if}  Generate Action Menu Xpath Interface Lock  div[@id='interfaces_table']  ${if-name}
+    Verify Element Visible  ${action_menu_if}
+    Click Element  ${action_menu_if}  and don't wait
+    
+    
+	Verify Element Visible  ${BIGTAP INTERFACE LOCK}
+    Click Element  ${BIGTAP INTERFACE LOCK}  and don't wait 
+    
+    Verify Element Visible  ${CONFIRM LOCK POPUP}
+	
+  	Verify Element Visible  ${CONFIRM OK BUTTON}
+    Click Element  ${CONFIRM OK BUTTON}  and don't wait
+    
+    
+Unlock the BigTap Interface
+	[Arguments]  ${role}  ${if-name}
+	
+	Go To Big Tap Interfaces Page
+    	
+	${action_menu_if}  Generate Action Menu Xpath Interface Lock  div[@id='interfaces_table']  ${if-name}
+    Verify Element Visible  ${action_menu_if}
+    Click Element  ${action_menu_if}  and don't wait
+    
+    ${action_menu_if}  Generate Action Menu Xpath Interface Lock  div[@id='interfaces_table']  ${if-name}
+    Verify Element Visible  ${action_menu_if}
+    Click Element  ${action_menu_if}  and don't wait
+    
+	Verify Element Visible  ${BIGTAP INTERFACE UNLOCK}
+    Click Element  ${BIGTAP INTERFACE UNLOCK}  and don't wait 
+    
+    Verify Element Visible  ${CONFIRM UNLOCK POPUP}
+	
+  	Verify Element Visible  ${CONFIRM OK BUTTON}
+    Click Element  ${CONFIRM OK BUTTON}  and don't wait
+    
+	
+
+    
+    
+    
+       
+
+	
+	
+	  

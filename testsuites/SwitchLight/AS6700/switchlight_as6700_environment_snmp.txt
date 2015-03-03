@@ -4,7 +4,7 @@ Suite Setup         environment suite setup
 Suite Teardown      base suite teardown
 Test Setup          environment test setup
 Test Teardown       environment test teardown 
-Force Tags          SwitchLight  switch-platform  BigTap  as6700
+Force Tags          SwitchLight  SNMP  accton-as6700   BigTap  switch-platform  environment
 Library             keywords/BsnCommon.py
 Library             keywords/AppController.py
 Library             keywords/BigTap.py
@@ -36,7 +36,7 @@ TC1: Verify Fan 1 description is reported correctly in CLI and in SNMP Walk Outp
     ${match_value_0}=  Catenate  ${compare_value_2}  ${compare_value_1}
     ${match_value_1}=  Catenate  ${compare_value_3}  ${match_value_0}              
     Should be equal as strings  ${match_value_1}  ${fan1_value}
-    [Tags]    fan      
+    [Tags]  full  feature  fan      
 
 TC2: Verify Fan 2 description is reported correctly in CLI and in SNMP Walk Output
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=2  element_name=Description
@@ -47,7 +47,7 @@ TC2: Verify Fan 2 description is reported correctly in CLI and in SNMP Walk Outp
     ${match_value_0}=  Catenate  ${compare_value_2}  ${compare_value_1}
     ${match_value_1}=  Catenate  ${compare_value_3}  ${match_value_0}              
     Should be equal as strings  ${match_value_1}  ${fan1_value}
-    [Tags]    fan         
+    [Tags]  full  feature  fan         
 
 TC3: Verify Fan 3 description is reported correctly in CLI and in SNMP Walk Output
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=3  element_name=Description
@@ -58,7 +58,7 @@ TC3: Verify Fan 3 description is reported correctly in CLI and in SNMP Walk Outp
     ${match_value_0}=  Catenate  ${compare_value_2}  ${compare_value_1}
     ${match_value_1}=  Catenate  ${compare_value_3}  ${match_value_0}              
     Should be equal as strings  ${match_value_1}  ${fan1_value}
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
 
 TC4: Verify Fan 4 description is reported correctly in CLI and in SNMP Walk Output
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=4  element_name=Description
@@ -69,7 +69,7 @@ TC4: Verify Fan 4 description is reported correctly in CLI and in SNMP Walk Outp
     ${match_value_0}=  Catenate  ${compare_value_2}  ${compare_value_1}
     ${match_value_1}=  Catenate  ${compare_value_3}  ${match_value_0}              
     Should be equal as strings  ${match_value_1}  ${fan1_value}
-    [Tags]    fan      
+    [Tags]  full  feature  fan      
     
 TC5: Verify Fan 4 description is reported correctly in CLI and in SNMP Walk Output
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=5  element_name=Description
@@ -80,97 +80,97 @@ TC5: Verify Fan 4 description is reported correctly in CLI and in SNMP Walk Outp
     ${match_value_0}=  Catenate  ${compare_value_2}  ${compare_value_1}
     ${match_value_1}=  Catenate  ${compare_value_3}  ${match_value_0}              
     Should be equal as strings  ${match_value_1}  ${fan1_value}
-    [Tags]    fan        
+    [Tags]  full  feature  fan        
     
 TC6: Verify Fan 1 State is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=1  element_name=State
     Should be equal as strings  ${fan1_value}  Present 
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
 
 TC7: Verify Fan 2 State is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=2  element_name=State
     Should be equal as strings  ${fan1_value}  Present
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC8: Verify Fan 3 State is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=3  element_name=State
     Should be equal as strings  ${fan1_value}  Present     
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC9: Verify Fan 4 State is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=4  element_name=State
     Should be equal as strings  ${fan1_value}  Present
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
         
 TC10: Verify Fan 5 State is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=5  element_name=State
     Should be equal as strings  ${fan1_value}  Present
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
 
 TC11: Verify Fan 1 Status is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=1  element_name=Status
     Should be equal as strings  ${fan1_value}  Running   
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC12: Verify Fan 2 Status is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=2  element_name=Status
     Should be equal as strings  ${fan1_value}  Running
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC13: Verify Fan 3 Status is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=3  element_name=Status
     Should be equal as strings  ${fan1_value}  Running     
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC14: Verify Fan 4 Status is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=4  element_name=Status
     Should be equal as strings  ${fan1_value}  Running
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC15: Verify Fan 5 Status is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=5  element_name=Status
     Should be equal as strings  ${fan1_value}  Running
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
 
 TC16: Verify Fan 1 RPM is reported correctly in CLI and in SNMP Walk Output
     Verify Fan Status  s1  Fan  1  RPM   public   .1.3.6.1.4.1.37538.2.3.2.1.5.1  5
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC17: Verify Fan 2 RPM is reported correctly in CLI and in SNMP Walk Output
     Verify Fan Status  s1  Fan  2  RPM   public   .1.3.6.1.4.1.37538.2.3.2.1.5.2  5
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC18: Verify Fan 3 RPM is reported correctly in CLI and in SNMP Walk Output
     Verify Fan Status  s1  Fan  3  RPM   public   .1.3.6.1.4.1.37538.2.3.2.1.5.3  5
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC19: Verify Fan 4 RPM is reported correctly in CLI and in SNMP Walk Output
     Verify Fan Status  s1  Fan  4  RPM   public   .1.3.6.1.4.1.37538.2.3.2.1.5.4  5
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC20: Verify Fan 5 RPM is reported correctly in CLI and in SNMP Walk Output
     Verify Fan Status  s1  Fan  5  RPM   public   .1.3.6.1.4.1.37538.2.3.2.1.5.5  5
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
 
 TC21: Verify Fan 1 Speed is reported correctly in CLI and in SNMP Walk Output
     Verify Fan Status  s1  Fan  1  Speed   public   .1.3.6.1.4.1.37538.2.3.2.1.6.1  5
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC22: Verify Fan 2 Speed is reported correctly in CLI and in SNMP Walk Output
     Verify Fan Status  s1  Fan  2  Speed   public   .1.3.6.1.4.1.37538.2.3.2.1.6.2  5
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC23: Verify Fan 3 Speed is reported correctly in CLI and in SNMP Walk Output
     Verify Fan Status  s1  Fan  3  Speed   public   .1.3.6.1.4.1.37538.2.3.2.1.6.3  5
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC24: Verify Fan 4 Speed is reported correctly in CLI and in SNMP Walk Output
     Verify Fan Status  s1  Fan  4  Speed   public   .1.3.6.1.4.1.37538.2.3.2.1.6.4  5
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
 TC25: Verify Fan 5 Speed is reported correctly in CLI and in SNMP Walk Output
     Verify Fan Status  s1  Fan  5  Speed   public   .1.3.6.1.4.1.37538.2.3.2.1.6.5  5
-    [Tags]    fan    
+    [Tags]  full  feature  fan    
     
     
 TC26: Verify Fan 1 Airflow direction is reported correctly in CLI and in SNMP Walk Output
@@ -178,35 +178,35 @@ TC26: Verify Fan 1 Airflow direction is reported correctly in CLI and in SNMP Wa
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.1
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${fan1_value}
-    [Tags]    fan  airflow    
+    [Tags]  full  feature  fan      
     
 TC27: Verify Fan 2 Airflow direction is reported correctly in CLI and in SNMP Walk Output
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=2  element_name=Airflow
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.2
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${fan1_value}
-    [Tags]    fan  airflow    
+    [Tags]  full  feature  fan      
     
 TC28: Verify Fan 3 Airflow direction is reported correctly in CLI and in SNMP Walk Output
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=3  element_name=Airflow
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.3
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${fan1_value}
-    [Tags]    fan  airflow    
+    [Tags]  full  feature  fan      
     
 TC29: Verify Fan 4 Airflow direction is reported correctly in CLI and in SNMP Walk Output
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=4  element_name=Airflow
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.4
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${fan1_value}
-    [Tags]    fan  airflow    
+    [Tags]  full  feature  fan      
     
 TC30: Verify Fan 5 Airflow direction is reported correctly in CLI and in SNMP Walk Output
     ${fan1_value}=  cli show environment  s1  hardware_element=Fan  hardware_element_number=5  element_name=Airflow
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.5
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${fan1_value}
-    [Tags]    fan  airflow    
+    [Tags]  full  feature  fan      
 
 TC31: Verify Description for Thermal Sensor 1 is reported correctly in CLI in SNMP Walk Output
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=1  element_name=Description
@@ -221,7 +221,7 @@ TC31: Verify Description for Thermal Sensor 1 is reported correctly in CLI in SN
     ${comp_value_3}=  Catenate  ${compare_value_4}  ${comp_value_2}
     ${comp_value_4}=  Catenate  ${compare_value_5}  ${comp_value_3}      
     Should contain  ${thermal_value}   ${comp_value_4}    
-    [Tags]    thermal  description    
+    [Tags]  full  feature  thermal     
 
 TC32: Verify Description for Thermal Sensor 2 is reported correctly in CLI in SNMP Walk Output
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=2  element_name=Description
@@ -238,7 +238,7 @@ TC32: Verify Description for Thermal Sensor 2 is reported correctly in CLI in SN
     ${comp_value_4}=  Catenate  ${compare_value_5}  ${comp_value_3}      
     ${comp_value_5}=  Catenate  ${compare_value_6}  ${comp_value_4}
     Should contain  ${thermal_value}   ${comp_value_5}    
-    [Tags]    thermal  description    
+    [Tags]  full  feature  thermal      
 
 TC33: Verify Description for Thermal Sensor 3 is reported correctly in CLI in SNMP Walk Output
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=3  element_name=Description
@@ -255,7 +255,7 @@ TC33: Verify Description for Thermal Sensor 3 is reported correctly in CLI in SN
     ${comp_value_4}=  Catenate  ${compare_value_5}  ${comp_value_3}      
     ${comp_value_5}=  Catenate  ${compare_value_6}  ${comp_value_4}
     Should contain  ${thermal_value}   ${comp_value_5}    
-    [Tags]    thermal  description            
+    [Tags]  full  feature  thermal              
 
 TC34: Verify Description for Thermal Sensor 4 is reported correctly in CLI in SNMP Walk Output
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=4  element_name=Description
@@ -272,7 +272,7 @@ TC34: Verify Description for Thermal Sensor 4 is reported correctly in CLI in SN
     ${comp_value_4}=  Catenate  ${compare_value_5}  ${comp_value_3}      
     ${comp_value_5}=  Catenate  ${compare_value_6}  ${comp_value_4}
     Should contain  ${thermal_value}   ${comp_value_5}    
-    [Tags]    thermal  description      
+    [Tags]  full  feature  thermal        
 
 TC35: Verify Description for Thermal Sensor 5 is reported correctly in CLI in SNMP Walk Output
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=5  element_name=Description
@@ -289,7 +289,7 @@ TC35: Verify Description for Thermal Sensor 5 is reported correctly in CLI in SN
     ${comp_value_4}=  Catenate  ${compare_value_5}  ${comp_value_3}      
     ${comp_value_5}=  Catenate  ${compare_value_6}  ${comp_value_4}
     Should contain  ${thermal_value}   ${comp_value_5}    
-    [Tags]    thermal  description  
+    [Tags]  full  feature  thermal    
 
 TC36: Verify Description for Thermal Sensor 6 is reported correctly in CLI in SNMP Walk Output
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=6  element_name=Description
@@ -306,7 +306,7 @@ TC36: Verify Description for Thermal Sensor 6 is reported correctly in CLI in SN
     ${comp_value_4}=  Catenate  ${compare_value_5}  ${comp_value_3}      
     ${comp_value_5}=  Catenate  ${compare_value_6}  ${comp_value_4}
     Should contain  ${thermal_value}   ${comp_value_5}    
-    [Tags]    thermal  description      
+    [Tags]  full  feature  thermal        
 
 TC37: Verify Description for Thermal Sensor 7 is reported correctly in CLI in SNMP Walk Output
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=7  element_name=Description
@@ -325,7 +325,7 @@ TC37: Verify Description for Thermal Sensor 7 is reported correctly in CLI in SN
     ${comp_value_5}=  Catenate  ${compare_value_6}  ${comp_value_4}
     ${comp_value_6}=  Catenate  ${compare_value_7}  ${comp_value_5}    
     Should contain  ${thermal_value}   ${comp_value_6}    
-    [Tags]    thermal  description       
+    [Tags]  full  feature  thermal         
 
 TC38: Verify Description for Thermal Sensor 8 is reported correctly in CLI in SNMP Walk Output
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=8  element_name=Description
@@ -346,47 +346,47 @@ TC38: Verify Description for Thermal Sensor 8 is reported correctly in CLI in SN
     ${comp_value_6}=  Catenate  ${compare_value_7}  ${comp_value_5}    
     ${comp_value_7}=  Catenate  ${compare_value_8}  ${comp_value_6}    
     Should contain  ${thermal_value}   ${comp_value_7}    
-    [Tags]    thermal  description       
+    [Tags]  full  feature  thermal         
     
 TC39: Verify Status for Thermal Sensor 1 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=1  element_name=Status
     Should be equal as strings  ${thermal_value}  Sensor Functional    
-    [Tags]    thermal  status  
-    
+    [Tags]  full  feature  thermal    
+   
 TC40: Verify Status for Thermal Sensor 2 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=2  element_name=Status
     Should be equal as strings  ${thermal_value}  Sensor Functional    
-    [Tags]    thermal  status  
+    [Tags]  full  feature  thermal    
     
 TC41: Verify Status for Thermal Sensor 3 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=3  element_name=Status
     Should be equal as strings  ${thermal_value}  Sensor Functional    
-    [Tags]    thermal  status  
+    [Tags]  full  feature  thermal    
     
 TC42: Verify Status for Thermal Sensor 4 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=4  element_name=Status
     Should be equal as strings  ${thermal_value}  Sensor Functional    
-    [Tags]    thermal  status  
+    [Tags]  full  feature  thermal    
     
 TC43: Verify Status for Thermal Sensor 5 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=5  element_name=Status
     Should be equal as strings  ${thermal_value}  Sensor Functional    
-    [Tags]    thermal  status  
+    [Tags]  full  feature  thermal    
     
 TC44: Verify Status for Thermal Sensor 6 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=6  element_name=Status
     Should be equal as strings  ${thermal_value}  Sensor Functional    
-    [Tags]    thermal  status  
+    [Tags]  full  feature  thermal    
     
 TC45: Verify Status for Thermal Sensor 7 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=7  element_name=Status
     Should be equal as strings  ${thermal_value}  Sensor Functional    
-    [Tags]    thermal  status  
+    [Tags]  full  feature  thermal    
     
 TC46: Verify Status for Thermal Sensor 8 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=8  element_name=Status
     Should be equal as strings  ${thermal_value}  Sensor Functional    
-    [Tags]    thermal  status      
+    [Tags]  full  feature  thermal        
     
 TC47: Verify temperature reading from thermal sensor 1 is same in CLI and in SNMP walk output        
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=1  element_name=Temperature
@@ -401,7 +401,7 @@ TC47: Verify temperature reading from thermal sensor 1 is same in CLI and in SNM
     Should be true  ${in_range_value_1}   
     ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
     Should be true  ${in_range_value_2}        
-    [Tags]    thermal  temperature  
+    [Tags]  full  feature  thermal    
 
 TC48: Verify temperature reading from thermal sensor 2 is same in CLI and in SNMP walk output        
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=2  element_name=Temperature
@@ -416,7 +416,7 @@ TC48: Verify temperature reading from thermal sensor 2 is same in CLI and in SNM
     Should be true  ${in_range_value_1}   
     ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
     Should be true  ${in_range_value_2}    
-    [Tags]    thermal  temperature  
+    [Tags]  full  feature  thermal    
 
 TC49: Verify temperature reading from thermal sensor 3 is same in CLI and in SNMP walk output        
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=3  element_name=Temperature
@@ -431,7 +431,7 @@ TC49: Verify temperature reading from thermal sensor 3 is same in CLI and in SNM
     Should be true  ${in_range_value_1}   
     ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
     Should be true  ${in_range_value_2}    
-    [Tags]    thermal  temperature  
+    [Tags]  full  feature  thermal    
 
 TC50: Verify temperature reading from thermal sensor 4 is same in CLI and in SNMP walk output        
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=4  element_name=Temperature
@@ -446,7 +446,7 @@ TC50: Verify temperature reading from thermal sensor 4 is same in CLI and in SNM
     Should be true  ${in_range_value_1}   
     ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
     Should be true  ${in_range_value_2}    
-    [Tags]    thermal  temperature  
+    [Tags]  full  feature  thermal    
 
 TC51: Verify temperature reading from thermal sensor 5 is same in CLI and in SNMP walk output        
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=5  element_name=Temperature
@@ -461,7 +461,7 @@ TC51: Verify temperature reading from thermal sensor 5 is same in CLI and in SNM
     Should be true  ${in_range_value_1}   
     ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
     Should be true  ${in_range_value_2}    
-    [Tags]    thermal  temperature  
+    [Tags]  full  feature  thermal    
 
 TC52: Verify temperature reading from thermal sensor 6 is same in CLI and in SNMP walk output        
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=6  element_name=Temperature
@@ -476,7 +476,7 @@ TC52: Verify temperature reading from thermal sensor 6 is same in CLI and in SNM
     Should be true  ${in_range_value_1}   
     ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
     Should be true  ${in_range_value_2}    
-    [Tags]    thermal  temperature  
+    [Tags]  full  feature  thermal    
 
 TC53: Verify temperature reading from thermal sensor 7 is same in CLI and in SNMP walk output        
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=7  element_name=Temperature
@@ -491,7 +491,7 @@ TC53: Verify temperature reading from thermal sensor 7 is same in CLI and in SNM
     Should be true  ${in_range_value_1}   
     ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
     Should be true  ${in_range_value_2}    
-    [Tags]    thermal  temperature  
+    [Tags]  full  feature  thermal    
 
 TC54: Verify temperature reading from thermal sensor 8 is same in CLI and in SNMP walk output        
     ${thermal_value}=  cli show environment  s1  hardware_element=Thermal  hardware_element_number=8  element_name=Temperature
@@ -506,69 +506,69 @@ TC54: Verify temperature reading from thermal sensor 8 is same in CLI and in SNM
     Should be true  ${in_range_value_1}   
     ${in_range_value_2}=  verify value is in range  ${snmp_value}  range1=0  range2=55     
     Should be true  ${in_range_value_2}    
-    [Tags]    thermal  temperature      
+    [Tags]  full  feature  thermal        
     
 TC55: Verify description for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Description
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.2.1
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${psu_value}
-    [Tags]    psu  description  
+    [Tags]  full  feature  psu    
 
 TC56: Verify description for PSU 2 is reported correctly in CLI and in SNMP Walk Output
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Description
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.2.2
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${psu_value}
-    [Tags]    psu  description      
+    [Tags]  full  feature  psu        
 
 TC57: Verify State for PSU 1 is reported correctly in CLI
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=State
     Should be equal as strings  ${psu_value}  Present 
-    [Tags]    psu  state   
+    [Tags]  full  feature  psu     
 
 TC58: Verify State for PSU 2 is reported correctly in CLI
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=State
     Should be equal as strings  ${psu_value}  Present 
-    [Tags]    psu  state       
+    [Tags]  full  feature  psu         
 
 TC59: Verify Status for PSU 1 is reported correctly in CLI
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Status
     Should be equal as strings  ${psu_value}  Running 
-    [Tags]    psu  status   
+    [Tags]  full  feature  psu     
 
 TC60: Verify Status for PSU 2 is reported correctly in CLI
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Status
     Should be equal as strings  ${psu_value}  Running 
-    [Tags]    psu  status       
+    [Tags]  full  feature  psu         
 
 TC61: Verify model name for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Model
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.5.1
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${psu_value}
-    [Tags]    psu  model  
+    [Tags]  full  feature  psu    
 
 TC62: Verify model name for PSU 2 is reported correctly in CLI and in SNMP Walk Output
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Model
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.5.2
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${psu_value}
-    [Tags]    psu  model    
+    [Tags]  full  feature  psu      
 
 TC63: Verify type for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Type
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.4.1
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${psu_value}
-    [Tags]    psu  description      
+    [Tags]  full  feature  psu        
 
 TC64: Verify type for PSU 2 is reported correctly in CLI and in SNMP Walk Output
     ${psu_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Type
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.3.1.4.2
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${psu_value}
-    [Tags]    psu  description    
+    [Tags]  full  feature  psu      
     
 TC65: Verify Voltage-In for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${voltage_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Vin
@@ -579,7 +579,7 @@ TC65: Verify Voltage-In for PSU 1 is reported correctly in CLI and in SNMP Walk 
     ${cli_value}=    Convert to Number  ${voltage_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  vin    
+    [Tags]  full  feature  psu      
     
 TC66: Verify Voltage-In for PSU 2 is reported correctly in CLI and in SNMP Walk Output            
     ${voltage_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Vin
@@ -590,7 +590,7 @@ TC66: Verify Voltage-In for PSU 2 is reported correctly in CLI and in SNMP Walk 
     ${cli_value}=    Convert to Number  ${voltage_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  vin    
+    [Tags]  full  feature  psu      
     
 TC67: Verify Voltage-Out for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${voltage_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Vout
@@ -601,7 +601,7 @@ TC67: Verify Voltage-Out for PSU 1 is reported correctly in CLI and in SNMP Walk
     ${cli_value}=    Convert to Number  ${voltage_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  vout    
+    [Tags]  full  feature  psu      
     
 TC68: Verify Voltage-Out for PSU 2 is reported correctly in CLI and in SNMP Walk Output 
     ${voltage_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Vout
@@ -612,7 +612,7 @@ TC68: Verify Voltage-Out for PSU 2 is reported correctly in CLI and in SNMP Walk
     ${cli_value}=    Convert to Number  ${voltage_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  vout    
+    [Tags]  full  feature  psu      
     
 TC69: Verify Current-In for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${current_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Iin
@@ -623,7 +623,7 @@ TC69: Verify Current-In for PSU 1 is reported correctly in CLI and in SNMP Walk 
     ${cli_value}=    Convert to Number  ${current_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  iin    
+    [Tags]  full  feature  psu      
     
 TC70: Verify Current-In for PSU 2 is reported correctly in CLI and in SNMP Walk Output            
     ${current_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Iin
@@ -634,7 +634,7 @@ TC70: Verify Current-In for PSU 2 is reported correctly in CLI and in SNMP Walk 
     ${cli_value}=    Convert to Number  ${current_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  iin    
+    [Tags]  full  feature  psu      
     
 TC71: Verify Current-Out for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${current_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Iout
@@ -645,7 +645,7 @@ TC71: Verify Current-Out for PSU 1 is reported correctly in CLI and in SNMP Walk
     ${cli_value}=    Convert to Number  ${current_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  iout    
+    [Tags]  full  feature  psu      
     
 TC72: Verify Current-Out for PSU 2 is reported correctly in CLI and in SNMP Walk Output
     ${current_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Iout
@@ -656,7 +656,7 @@ TC72: Verify Current-Out for PSU 2 is reported correctly in CLI and in SNMP Walk
     ${cli_value}=    Convert to Number  ${current_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  iout    
+    [Tags]  full  feature  psu      
     
 TC73: Verify Power-In for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${power_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Pin
@@ -667,7 +667,7 @@ TC73: Verify Power-In for PSU 1 is reported correctly in CLI and in SNMP Walk Ou
     ${cli_value}=    Convert to Number  ${power_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  pin    
+    [Tags]  full  feature  psu      
     
 TC74: Verify Power-In for PSU 2 is reported correctly in CLI and in SNMP Walk Output            
     ${power_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Pin
@@ -678,7 +678,7 @@ TC74: Verify Power-In for PSU 2 is reported correctly in CLI and in SNMP Walk Ou
     ${cli_value}=    Convert to Number  ${power_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  pin    
+    [Tags]  full  feature  psu      
     
 TC75: Verify Power-Out for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${power_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Pout
@@ -689,7 +689,7 @@ TC75: Verify Power-Out for PSU 1 is reported correctly in CLI and in SNMP Walk O
     ${cli_value}=    Convert to Number  ${power_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  pout    
+    [Tags]  full  feature  psu      
     
 TC76: Verify Power-Out for PSU 2 is reported correctly in CLI and in SNMP Walk Output
     ${power_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Pout
@@ -700,7 +700,7 @@ TC76: Verify Power-Out for PSU 2 is reported correctly in CLI and in SNMP Walk O
     ${cli_value}=    Convert to Number  ${power_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu  pout    
+    [Tags]  full  feature  psu      
 
 TC78: Verify Fan Description for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${fan5_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=6  sub_element=Description
@@ -714,7 +714,7 @@ TC78: Verify Fan Description for PSU 1 is reported correctly in CLI and in SNMP 
     ${compvalue_3}=  Catenate  ${compare_value_4}  ${compvalue_2}  
     ${fan_value}=  Convert To String  ${fan5_value}
     Should be equal as strings  ${compvalue_3}  ${fan5_value}
-    [Tags]    psu  fan  description    
+    [Tags]  full  feature  psu  fan      
 
 TC79: Verify Fan Description for PSU 2 is reported correctly in CLI and in SNMP Walk Output
     ${fan5_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=7  sub_element=Description
@@ -728,31 +728,31 @@ TC79: Verify Fan Description for PSU 2 is reported correctly in CLI and in SNMP 
     ${compvalue_3}=  Catenate  ${compare_value_4}  ${compvalue_2}  
     ${fan_value}=  Convert To String  ${fan5_value}
     Should be equal as strings  ${compvalue_3}  ${fan5_value}
-    [Tags]    psu  fan  description  
+    [Tags]  full  feature  psu  fan    
 
 TC80: Verify Fan State for PSU 1 is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=6  sub_element=State
     ${compare_value}=  Convert To String  ${fan1_value}
     Should be equal as strings  ${compare_value}  Present 
-    [Tags]    psu  fan  state          
+    [Tags]  full  feature  psu  fan            
 
 TC81: Verify Fan State for PSU 2 is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=7  sub_element=State
     ${compare_value}=  Convert To String  ${fan1_value}
     Should be equal as strings  ${compare_value}  Present 
-    [Tags]    psu  fan  state    
+    [Tags]  full  feature  psu  fan      
 
 TC82: Verify Fan Status for PSU 1 is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=6  sub_element=Status
     ${compare_value}=  Convert To String  ${fan1_value}
     Should be equal as strings  ${compare_value}  Running
-    [Tags]    psu  fan  status        
+    [Tags]  full  feature  psu  fan          
 
 TC83: Verify Fan Status for PSU 2 is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=7  sub_element=Status
     ${compare_value}=  Convert To String  ${fan1_value}
     Should be equal as strings  ${compare_value}  Running 
-    [Tags]    psu  fan  status  
+    [Tags]  full  feature  psu  fan    
 
 TC84: Verify Fan RPM for PSU 1 is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=6  sub_element=RPM  
@@ -760,7 +760,7 @@ TC84: Verify Fan RPM for PSU 1 is reported correctly in CLI
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     ${in_range}=  ixia_verify_traffic_rate  ${compare_value_1}   ${fan1_value}  5
     Should be true  ${in_range} 
-    [Tags]    psu  fan  rpm  
+    [Tags]  full  feature  psu  fan    
 
 TC85: Verify Fan RPM for PSU 2 is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=7  sub_element=RPM  
@@ -768,7 +768,7 @@ TC85: Verify Fan RPM for PSU 2 is reported correctly in CLI
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     ${in_range}=  ixia_verify_traffic_rate  ${compare_value_1}   ${fan1_value}  5
     Should be true  ${in_range} 
-    [Tags]    psu  fan  rpm      
+    [Tags]  full  feature  psu  fan        
 
 TC86: Verify Fan Speed for PSU 1 is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=6  sub_element=Speed  
@@ -776,7 +776,7 @@ TC86: Verify Fan Speed for PSU 1 is reported correctly in CLI
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     ${in_range}=  ixia_verify_traffic_rate  ${compare_value_1}   ${fan1_value}  5
     Should be true  ${in_range} 
-    [Tags]    psu  fan  rpm  
+    [Tags]  full  feature  psu  fan    
 
 TC87: Verify Fan Speed for PSU 2 is reported correctly in CLI
     ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=7  sub_element=Speed  
@@ -784,21 +784,21 @@ TC87: Verify Fan Speed for PSU 2 is reported correctly in CLI
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     ${in_range}=  ixia_verify_traffic_rate  ${compare_value_1}   ${fan1_value}  5
     Should be true  ${in_range} 
-    [Tags]    psu  fan  rpm    
+    [Tags]  full  feature  psu  fan      
 
 TC88: Verify Fan 1 Airflow direction is reported correctly in CLI and in SNMP Walk Output
     ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Fan  element_number=6  sub_element=Airflow
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.6
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${fan1_value}
-    [Tags]    psu  fan  airflow  
+    [Tags]  full  feature  psu  fan    
 
 TC89: Verify Fan 2 Airflow direction is reported correctly in CLI and in SNMP Walk Output
     ${fan1_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Fan  element_number=7  sub_element=Airflow
     ${snmp_value1} =     snmp cmd   s1   snmpget    public   .1.3.6.1.4.1.37538.2.3.2.1.4.7
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should be equal as strings  ${compare_value_1}  ${fan1_value}
-    [Tags]    psu  fan  airflow  
+    [Tags]  full  feature  psu  fan    
 
 TC90: Verify First Thermal Sensor Description for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${psu_thermal_1}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=9  sub_element=Description
@@ -812,7 +812,7 @@ TC90: Verify First Thermal Sensor Description for PSU 1 is reported correctly in
     ${compare_value}=  Catenate  ${compare_value_4}  ${comp_value_1}    
     ${psu_thermal}=  Convert To String  ${psu_thermal_1}
     Should be equal as strings  ${compare_value}  ${psu_thermal}
-    [Tags]    psu  thermal  description  
+    [Tags]  full  feature  psu  thermal    
 
 TC91: Verify First Thermal Sensor Description for PSU 1 is reported correctly in CLI and in SNMP Walk Output
     ${psu_thermal_1}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=10  sub_element=Description
@@ -826,17 +826,17 @@ TC91: Verify First Thermal Sensor Description for PSU 1 is reported correctly in
     ${compare_value}=  Catenate  ${compare_value_4}  ${comp_value_1}    
     ${psu_thermal}=  Convert To String  ${psu_thermal_1}
     Should be equal as strings  ${compare_value}  ${psu_thermal}
-    [Tags]    psu  thermal  description  
+    [Tags]  full  feature  psu  thermal    
 
 TC92: Verify Status for First Thermal Sensor on PSU 1 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=9  sub_element=Status
     Should be equal as strings  ${thermal_value}  Sensor Functional    
-    [Tags]    psu thermal  status  
+    [Tags]  full  feature  psu  thermal    
 
 TC93: Verify Status for Second Thermal Sensor on PSU 2 is reported correctly in CLI
     ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=10  sub_element=Status
     Should be equal as strings  ${thermal_value}  Sensor Functional    
-    [Tags]    psu thermal  status  
+    [Tags]  full  feature  psu  thermal    
 
 TC94: Verify Temperature is correctly reported by both CLI and SNMP Walk for the First Thermal Sensor on PSU 1
     ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=1  element_name=Thermal  element_number=9  sub_element=Temperature
@@ -847,7 +847,7 @@ TC94: Verify Temperature is correctly reported by both CLI and SNMP Walk for the
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu thermal  temperature   
+    [Tags]  full  feature  psu  thermal     
     
 TC95: Verify Temperature is correctly reported by both CLI and SNMP Walk for the Second Thermal Sensor on PSU 1
     ${thermal_value}=  cli show environment  s1  hardware_element=PSU  hardware_element_number=2  element_name=Thermal  element_number=10  sub_element=Temperature
@@ -858,7 +858,7 @@ TC95: Verify Temperature is correctly reported by both CLI and SNMP Walk for the
     ${cli_value}=    Convert to Number  ${thermal_value}  2
     ${in_range}=  ixia_verify_traffic_rate  ${snmp_value}   ${cli_value}  1
     Should be true  ${in_range}   
-    [Tags]    psu thermal  temperature
+    [Tags]  full  feature  psu  thermal  
 
         
 *Keywords
@@ -882,8 +882,11 @@ environment suite setup
     Sleep   30            
 
 environment test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
     
 environment test teardown
-    stop syslog monitor  
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}

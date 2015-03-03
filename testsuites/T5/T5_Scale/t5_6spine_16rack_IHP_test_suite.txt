@@ -395,7 +395,7 @@ T1 Verify L2 Traffic Convergence with scale configuration first time
     Log    Measure traffic convergence time for L2 
     #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	Manual failed
+	Manual passed
 	
 
 T2 Verify L3 Traffic Convergence with scale configuration first time
@@ -406,7 +406,7 @@ T2 Verify L3 Traffic Convergence with scale configuration first time
     Log    Measure traffic convergence time for L3
     #Manual untested
 	[Tags] 	sanity    Manual  scaling
-    Manual failed
+    Manual passed
      
 T3 Verify L2/L3 Traffic Convergence with scale configuration first time
     Log    Build scale configuration with Scale Config
@@ -416,13 +416,13 @@ T3 Verify L2/L3 Traffic Convergence with scale configuration first time
     Log    Measure traffic convergence time for L2/L3 mixed
     #manual untested
 	[Tags] 	sanity    Manual   scaling
-    Manual failed
+    Manual passed
     
 T4 Verify L2 traffic drop time after deleting the scale config
     Log    Repeat T1
     Log    Delete scale configuration under Master controller
     Log    Measure complete traffic drop time
-    Manual untested
+    Manual passed
 	[Tags] 	sanity    Manual  scaling
 	#Manual passed
 
@@ -462,7 +462,7 @@ T8 Generate ARP requests from all L3 hosts
     Log    Repeat T8 for 16k/32k/48k L3 hosts
     #manual untested
 	[Tags] 	sanity    Manual  scaling
-    manual failed
+    manual passed
     
 T9 Controller HA fail-over via CLI
     Log    Repeat T3
@@ -577,7 +577,7 @@ T19 Power off one spine
     Log   Measure traffic loss/Convergence time
     #Manual untested
 	[Tags] 	sanity    Manual  scaling
-	Manual failed
+	Manual passed
 	
 T20 Power on one spine    
     Log   Repeat T3    
@@ -588,7 +588,7 @@ T20 Power on one spine
     Log   Measure traffic loss/Convergence time
     #manual untested
 	[Tags] 	sanity    Manual  scaling
-	Manual failed
+	Manual passed
 	
 T21 Power off/on spine    
     Log   Repeat T19/T20 for multiple spines    
@@ -599,7 +599,7 @@ T21 Power off/on spine
     Log   Measure traffic loss/Convergence time
     #manual untested
 	[Tags] 	sanity    Manual  scaling
-	Manual failed
+	Manual passed
 	
 T22 Power off one leaf
     Log   Repeat T3    
@@ -610,7 +610,7 @@ T22 Power off one leaf
     Log   Measure traffic loss/Convergence time
     #manual untested
 	[Tags] 	sanity    Manual  scaling
-	manual failed
+	manual passed
 	
 T23 Power on one leaf    
     Log   Repeat T3    
@@ -621,7 +621,7 @@ T23 Power on one leaf
     Log   Measure traffic loss/Convergence time
     #manual untested
 	[Tags] 	sanity    Manual  scaling
-	manual failed
+	manual passed
 	
 	
 T24 Power off/on leaf    
@@ -633,7 +633,7 @@ T24 Power off/on leaf
     Log   Measure traffic loss/Convergence time
     #manual untested
 	[Tags] 	sanity    Manual  scaling
-	manual failed
+	manual passed
 	
 T25 Power down 16th rack
     Log   Repeat T3
@@ -644,7 +644,7 @@ T25 Power down 16th rack
     Log   Measure traffic convergence/loss    
     #manual untested
 	[Tags] 	sanity    Manual  scaling
-	Manual failed
+	Manual passed
 	    
 T26 Power up 16th rack
     Log   Repeat T25
@@ -655,7 +655,7 @@ T26 Power up 16th rack
     Log   Measure traffic convergence/loss
     #manual untested
 	[Tags] 	sanity    Manual  scaling
-	Manual failed
+	Manual passsed
 	
 T27 Disconnect all switches from BSN controller
     Log   Repeat T3
@@ -696,7 +696,7 @@ T30 Restart ofad in spine
    Log   Verify/measure traffic loss/convergence
    #Manual untested
    [Tags] 	sanity    Manual  scaling
-   Manual failed
+   Manual passed
 	
 T31 Restart ofad in leaf
    Log   Repeat T3
@@ -706,7 +706,7 @@ T31 Restart ofad in leaf
    Log   Verify/measure traffic loss/convergence
    #Manual untested
    [Tags] 	sanity    Manual  scaling
-   Manual failed
+   Manual passed
 	
 T32 Verify L2 learning rate
    Log   Repeat T3
@@ -716,7 +716,7 @@ T32 Verify L2 learning rate
    Log   Verify/measure traffic loss/convergence
    #manual untested
    [Tags] 	sanity    Manual  scaling
-   Manual failed
+   Manual passed
 	
 T33 Verify L3 hosts ageout and relearn
    Log   Repeat T3
@@ -798,9 +798,9 @@ T41 Verify fabric stability on spine/leaf interface continuous flap
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
+   #manual untested
    [Tags] 	sanity    Manual  scaling
-   #Manual passed
+   Manual failed
 	
 T42 Verify traffic loss in headless mode of controller
    Log   Repeat T3
@@ -808,9 +808,9 @@ T42 Verify traffic loss in headless mode of controller
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   manual untested
+   #manual untested
    [Tags] 	sanity    Manual  scaling
-   #Manual passed
+   Manual passed
 	
 T43 Verify traffic loss in controller split brain mode
    Log   Repeat T3
@@ -818,9 +818,9 @@ T43 Verify traffic loss in controller split brain mode
    Log   Verify no traffic loss
    Log   Restart ofad in one leaf
    Log   Verify/measure traffic loss/convergence
-   #manual untested
+   manual untested
    [Tags] 	sanity    Manual  scaling 
-   Manual passed
+   #Manual passed
 	
 T44 Verify traffic loss in half switches connected to master and rest have connection to standby controller
    Log   Repeat T3
@@ -861,7 +861,7 @@ T47 Verify controller stability when switch sends line rate traffic to controlle
    Log   Verify/measure traffic loss/convergence
    #manual-untested
    [Tags] 	sanity    Manual  scaling
-   Manual passed
+   Manual failed
 	
 	
 T48 Verify switch stability when controller sends line rate traffic switch

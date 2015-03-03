@@ -1,0 +1,272 @@
+*** Settings ***
+Documentation  		Various CLI commands
+Suite Setup  		AAA Suite Setup
+Suite Teardown		AAA Suite Teardown
+Test Setup   		Base Test Setup
+Test Teardown  		Base Test Teardown
+Force Tags   		Big Tap  AAA
+Library             keywords/BsnCommon.py
+Library             keywords/BigTap.py
+
+*** Variables ***
+
+*** Test Cases ***
+T1.0 Authorization - remote > local, authentication remote > local
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default group tacacs+ local
+	Verify admin access
+	Verify read-only access
+	Verify rbac access
+
+T2.0 Authorization - remote > local, authentication local > remote
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default local group tacacs+
+	Verify admin access
+	Verify read-only access
+	Verify rbac access
+
+T3.0 Authorization - local > remote, authentication local > remote
+	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default local group tacacs+
+	Verify admin access
+	Verify read-only access
+	Verify rbac access
+
+T4.0 Authorization - local > remote, authentication remote > local
+	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default group tacacs+ local
+	Verify admin access
+	Verify read-only access
+	Verify rbac access
+	
+	#Intermission
+	Bash  master  sudo service floodlight restart
+	Sleep  60
+
+T5.0 Authorization - local, authentication local
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
+	Verify local access
+
+T6.0 Authorization - local, authentication local > remote
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local group tacacs+
+	Verify local access
+	Verify remote admin
+	
+T7.0 Authorization - local, authentication remote > local
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default group tacacs+ local
+	Verify local access
+	Verify remote admin
+
+T8.0 Authorization - local, authentication remote
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default group tacacs+
+	Verify remote admin
+	BT Cli Run  master  show running-config  user=taco-user  password=taco
+	BT Cli Run  master  enable; config; bigtap policy policy-remote-3 rbac-permission local-rbac  user=taco-user  password=taco
+	BT Cli Run  master  enable; config; no bigtap policy policy-remote-3 rbac-permission local-rbac  user=taco-user  password=taco
+	Run Keyword and Ignore Error  BT Cli Run  master  logout  user=taco-user  password=taco
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+
+	#Intermission
+	Bash  master  sudo service floodlight restart
+	Sleep  60
+
+T9.0 Authorization - remote, authentication local
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+; aaa authentication login default local
+	Verify local admin
+	BT Cli Run  master  show running-config  user=rbac-user  password=local
+	BT Cli Run  master  enable; config; bigtap policy policy-remote-1 rbac-permission remote-rbac  user=rbac-user  password=local
+	BT Cli Run  master  enable; config; no bigtap policy policy-remote-1 rbac-permission remote-rbac  user=rbac-user  password=local
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
+
+T10.0 Authorization - remote, authentication local > remote
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+; aaa authentication login default local group tacacs+
+	Verify remote access
+	Verify remote admin
+
+T11.0 Authorization - remote, authentication remote > local
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+; aaa authentication login default group tacacs+ local
+	Verify remote access
+	Verify local admin
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
+
+T12.0 Authorization - remote, authentication remote
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+; aaa authentication login default group tacacs+
+	Verify remote access
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+
+	#Intermission
+	Bash  master  sudo service floodlight restart
+	Sleep  60
+
+T13.0 Authorization - local > remote, authentication local
+	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default local
+	Verify local access
+	BT Cli Run  master  show running-config  user=longevity  password=local
+	BT Cli Run  master  enable; config; user test-longevity  user=longevity  password=local
+	BT Cli Run  master  enable; config; no user test-longevity  user=longevity  password=local
+
+T14.0 Authorization - remote > local, authentication local
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default local
+	BT Cli Run  master  show running-config  user=taco-user  password=local
+	BT Cli Run  master  enable; config; bigtap policy policy-remote-4 rbac-permission local-rbac  user=taco-user  password=local
+	BT Cli Run  master  enable; config; no bigtap policy policy-remote-4 rbac-permission local-rbac  user=taco-user  password=local
+	Verify local access
+
+T15.0 Authorization - local > remote, authentication remote
+	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default group tacacs+
+	Verify remote access
+	BT Cli Run  master  show running-config  user=longevity  password=longevity
+	BT Cli Run  master  enable; config; user test-longevity-1  user=longevity  password=longevity
+	BT Cli Run  master  enable; config; no user test-longevity-1  user=longevity  password=longevity
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+
+T16.0 Authorization - remote > local, authentication remote
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default group tacacs+
+	Verify remote access
+	BT Cli Run  master  show running-config  user=taco-user  password=taco
+	BT Cli Run  master  enable; config; bigtap policy policy-remote-5 rbac-permission local-rbac  user=taco-user  password=taco
+	BT Cli Run  master  enable; config; no bigtap policy policy-remote-5 rbac-permission local-rbac  user=taco-user  password=taco
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+
+
+*** Keywords ***
+AAA Suite Setup
+	Base Suite Setup
+	BT Cli Run  master  enable; config; ssh connection timeout 300
+	BT Cli Run  master  enable; config; tacacs server host 10.2.3.201 timeout 5 key secret
+	BT Cli Run  master  enable; config; user local; password local
+	BT Cli Run  master  enable; config; user taco-user; password local
+	BT Cli Run  master  enable; config; user longevity; password local
+	BT Cli Run  master  enable; config; group read-only; associate user local
+	BT Cli Run  master  enable; config; user rbac-user; password local
+	BT Cli Run  master  enable; config; user local-rbac-user; password local
+	BT Cli Run  master  enable; config; rbac-permission local-rbac bigtap
+	BT Cli Run  master  enable; config; rbac-permission remote-rbac bigtap
+	BT Cli Run  master  enable; config; group local-bigtap-rbac; associate user local-rbac-user; associate rbac-permission local-rbac
+	BT Cli Run  master  enable; config; group bigtap-rbac; associate rbac-permission remote-rbac
+	BT Cli Run  master  enable; config; group local-bigtap-rbac; associate user taco-user
+
+AAA Suite Teardown
+	${status}=  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
+    Run Keyword If  '${status}'=='False'  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+	BT Cli Run  master  enable; config; no group local-bigtap-rbac
+	BT Cli Run  master  enable; config; no group bigtap-rbac
+	BT Cli Run  master  enable; config; no group local-bigtap-rbac
+	#BT Cli Run  master  enable; config; no rbac-permission local-rbac bigtap
+	#BT Cli Run  master  enable; config; no rbac-permission remote-rbac bigtap
+	BT Cli Run  master  enable; config; no user rbac-user
+	BT Cli Run  master  enable; config; no user local-rbac-user
+	BT Cli Run  master  enable; config; no user local
+	BT Cli Run  master  enable; config; no user taco-user
+	BT Cli Run  master  enable; config; no user longevity
+	BT Cli Run  master  enable; config; no tacacs server host 10.2.3.201
+	BT Cli Run  master  enable; config; ssh connection timeout 0
+	Base Suite Teardown
+
+Verify admin access
+	Verify local admin
+	Verify remote admin using shell:roles=bigtap-admin
+	Verify remote admin using shell:roles=admin
+	Verify remote admin using BSN-User-Role=bigtap-admin
+	Verify remote admin using BSN-User-Role=admin
+
+Verify read-only access
+	Verify local read-only user
+	Verify remote read-only user using shell:roles=bigtap-read-only
+	Verify remote read-only user using shell:roles=read-only
+	Verify remote read-only user using BSN-User-Role=bigtap-read-only
+	Verify remote read-only user using BSN-User-Role=read-only
+
+Verify rbac access
+	Verify local rbac-user
+	Verify remote rbac-user using shell:roles=bigtap-rbac
+	Verify remote rbac-user using BSN-User-Role=bigtap-rbac
+
+Verify local access
+	Verify local admin
+	Verify local read-only user
+	Verify local rbac-user
+
+Verify remote access
+	Verify remote admin using shell:roles=bigtap-admin
+	Verify remote admin using shell:roles=admin
+	Verify remote admin using BSN-User-Role=bigtap-admin
+	Verify remote admin using BSN-User-Role=admin
+	Verify remote read-only user using shell:roles=bigtap-read-only
+	Verify remote read-only user using shell:roles=read-only
+	Verify remote read-only user using BSN-User-Role=bigtap-read-only
+	Verify remote read-only user using BSN-User-Role=read-only
+	Verify remote rbac-user using shell:roles=bigtap-rbac
+	Verify remote rbac-user using BSN-User-Role=bigtap-rbac
+
+
+Verify local admin
+	BT Cli Run  master  show running-config  user=admin  password=adminadmin
+	BT Cli Run  master  enable; config; user test-local-admin  user=admin  password=adminadmin
+	BT Cli Run  master  enable; config; no user test-local-admin  user=admin  password=adminadmin
+	
+Verify remote admin using shell:roles=bigtap-admin
+	BT Cli Run  master  show running-config  user=bt-admin  password=adminadmin
+	BT Cli Run  master  enable; config; user test-remote-admin-1  user=bt-admin  password=adminadmin
+	BT Cli Run  master  enable; config; no user test-remote-admin-1  user=bt-admin  password=adminadmin
+
+Verify remote admin using shell:roles=admin
+	BT Cli Run  master  show running-config  user=remote  password=remote
+	BT Cli Run  master  enable; config; user test-remote-admin-2  user=remote  password=remote
+	BT Cli Run  master  enable; config; no user test-remote-admin-2  user=remote  password=remote
+
+Verify remote admin using BSN-User-Role=bigtap-admin
+	BT Cli Run  master  show running-config  user=bsn-vsa-bigtap-admin-user  password=adminadmin
+	BT Cli Run  master  enable; config; user test-remote-admin-3  user=bsn-vsa-bigtap-admin-user  password=adminadmin
+	BT Cli Run  master  enable; config; no user test-remote-admin-3  user=bsn-vsa-bigtap-admin-user  password=adminadmin
+
+Verify remote admin using BSN-User-Role=admin
+	BT Cli Run  master  show running-config  user=bsn-vsa-admin-user  password=adminadmin
+	BT Cli Run  master  enable; config; user test-remote-admin-4  user=bsn-vsa-admin-user  password=adminadmin
+	BT Cli Run  master  enable; config; no user test-remote-admin-4  user=bsn-vsa-admin-user  password=adminadmin
+
+Verify remote admin
+	BT Cli Run  master  show running-config  user=admin  password=Password1
+	BT Cli Run  master  enable; config; user test-local-admin  user=admin  password=Password1
+	BT Cli Run  master  enable; config; no user test-local-admin  user=admin  password=Password1
+
+Verify local read-only user
+	BT Cli Run  master  show running-config  user=local  password=local
+	Run Keyword and Expect Error
+	...  *Error: Unauthorized: User local has no privilege for this command*
+	...  BT Cli Run  master  enable  user=local  password=local
+	
+Verify remote read-only user using shell:roles=bigtap-read-only
+	BT Cli Run  master  show running-config  user=bigtap-read-only  password=bsnbsn
+	Run Keyword and Expect Error
+	...  *Error: Unauthorized: User bigtap-read-only has no privilege for this command*
+	...  BT Cli Run  master  enable  user=bigtap-read-only  password=bsnbsn
+
+Verify remote read-only user using shell:roles=read-only
+	BT Cli Run  master  show running-config  user=remote-reader  password=bsnbsn
+	Run Keyword and Expect Error
+	...  *Error: Unauthorized: User remote-reader has no privilege for this command*
+	...  BT Cli Run  master  enable  user=remote-reader  password=bsnbsn
+
+Verify remote read-only user using BSN-User-Role=bigtap-read-only
+	BT Cli Run  master  show running-config  user=bsn-vsa-read-only-user  password=bsnbsn
+	Run Keyword and Expect Error
+	...  *Error: Unauthorized: User bsn-vsa-read-only-user has no privilege for this command*
+	...  BT Cli Run  master  enable  user=bsn-vsa-read-only-user  password=bsnbsn
+
+Verify remote read-only user using BSN-User-Role=read-only
+	BT Cli Run  master  show running-config  user=bsn-vsa-bigtap-read-only-user  password=bsnbsn
+	Run Keyword and Expect Error
+	...  *Error: Unauthorized: User bsn-vsa-bigtap-read-only-user has no privilege for this command*
+	...  BT Cli Run  master  enable  user=bsn-vsa-bigtap-read-only-user  password=bsnbsn
+
+Verify local rbac-user
+	BT Cli Run  master  show running-config  user=local-rbac-user  password=local
+	BT Cli Run  master  enable; config; bigtap policy policy-remote-5 rbac-permission local-rbac  user=local-rbac-user  password=local
+	BT Cli Run  master  enable; config; no bigtap policy policy-remote-5 rbac-permission local-rbac  user=local-rbac-user  password=local
+
+Verify remote rbac-user using shell:roles=bigtap-rbac
+	BT Cli Run  master  show running-config  user=rbac-user  password=bsnbsn
+	BT Cli Run  master  enable; config; bigtap policy policy-remote-1 rbac-permission remote-rbac  user=rbac-user  password=bsnbsn
+	BT Cli Run  master  enable; config; no bigtap policy policy-remote-1 rbac-permission remote-rbac  user=rbac-user  password=bsnbsn
+
+Verify remote rbac-user using BSN-User-Role=bigtap-rbac
+	BT Cli Run  master  show running-config  user=bsn-vsa-bigtap-rbac-user  password=bsnbsn
+	BT Cli Run  master  enable; config; bigtap policy policy-remote-2 rbac-permission remote-rbac  user=bsn-vsa-bigtap-rbac-user  password=bsnbsn
+	BT Cli Run  master  enable; config; no bigtap policy policy-remote-2 rbac-permission remote-rbac  user=bsn-vsa-bigtap-rbac-user  password=bsnbsn

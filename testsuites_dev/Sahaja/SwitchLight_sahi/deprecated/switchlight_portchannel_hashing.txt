@@ -1,0 +1,846 @@
+*Settings
+Documentation  SwitchLight Platform : Port Channel Hashing Test Suite
+Suite Setup  lag suite setup
+Suite Teardown   lag suite teardown
+Test Setup   base test setup
+Test Teardown   lag test teardown
+Force Tags   SwitchLight  switch-platform  BigTap
+Library  keywords/AppController.py
+Library  keywords/BsnCommon.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+${switchlight_version}  SwitchLight 2.0.1
+
+${r1r5_10g_name}  port-channel1  
+${r1r5_10g_port_range}  49-50
+${r1r5_10g_number}  1
+${r1r6_10g_name}  port-channel2  
+${r1r6_10g_port_range}  51-52
+${r1r6_10g_number}  2
+${r1r7_1g_name}  port-channel3  
+${r1r7_1g_port_range}  13-20
+${r1r7_1g_number}  3
+
+${r2r5_10g_name}  port-channel1  
+${r2r5_10g_port_range}  49-50
+${r2r5_10g_number}  1
+${r2r6_10g_name}  port-channel2  
+${r2r6_10g_port_range}  51-52
+${r2r6_10g_number}  2
+${r2r7_1g_name}  port-channel3  
+${r2r7_1g_port_range}  21-28
+${r2r7_1g_number}  3
+
+${r5r1_10g_name}  port-channel2  
+${r5r1_10g_port_range}  7-8
+${r5r1_10g_number}  2
+${r5r2_10g_name}  port-channel3  
+${r5r2_10g_port_range}  9-10
+${r5r2_10g_number}  3
+
+${r6r1_10g_name}  port-channel2  
+${r6r1_10g_port_range}  7-8
+${r6r1_10g_number}  2
+${r6r2_10g_name}  port-channel3  
+${r6r2_10g_port_range}  9-10
+${r6r2_10g_number}  3
+
+${r7r1_1g_name}  port-channel1  
+${r7r1_1g_port_range}  13-20
+${r7r1_1g_number}  1
+${r7r2_1g_name}  port-channel2  
+${r7r2_1g_port_range}  21-28
+${r7r2_1g_number}  2
+
+${filter_1}  ethernet1  
+${filter_nick_1}  F1
+${filter_2}  ethernet2  
+${filter_nick_2}  F2
+${delivery_1}  ethernet2  
+${delivery_nick}  D1
+
+* Test Case
+
+Verify Configuration
+    verify portchannel interface is up   s1  ${r1r5_10g_name}
+    [Tags]  lag  hashing
+
+Verify (L2) Source MAC address hashing for non-IP packets
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3   
+    ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01
+    ...     name=a1_b_flow
+    ${stream2}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:01
+    ...     name=a2_b_flow    
+    ${stream3}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:01
+    ...     name=a3_b_flow
+    ${stream4}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:01
+    ...     name=a4_b_flow    
+    ${stream5}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:04  dst_mac=00:02:03:04:05:01
+    ...     name=a5_b_flow
+    ${stream6}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:05  dst_mac=00:02:03:04:05:01
+    ...     name=a6_b_flow    
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3  
+    [Tags]  lag  hashing  l2srcmac
+
+Verify (L2) destination MAC address hashing for non-IP packets
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3   
+    ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01
+    ...     name=a1_b_flow
+    ${stream2}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:02
+    ...     name=a2_b_flow    
+    ${stream3}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:03
+    ...     name=a3_b_flow
+    ${stream4}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:04
+    ...     name=a4_b_flow    
+    ${stream5}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:05
+    ...     name=a5_b_flow
+    ${stream6}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:06
+    ...     name=a6_b_flow    
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3  
+    [Tags]  lag  hashing  l2dstmac
+
+Verify (L2) Ethernet type hashing for non-IP packets
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3   
+    ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0801
+    ...     name=a1_b_flow
+    ${stream2}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0802
+    ...     name=a2_b_flow    
+    ${stream3}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0803
+    ...     name=a3_b_flow
+    ${stream4}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0804
+    ...     name=a4_b_flow    
+    ${stream5}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0805
+    ...     name=a5_b_flow
+    ${stream6}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0806
+    ...     name=a6_b_flow    
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3  
+    [Tags]  lag  hashing  l2ethertype
+
+
+Verify (L2) VLAN Id hashing for non-IP packets
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3  
+    ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01
+    ...     ethertype=8100  vlan_id=100  name=a1_b_flow
+    ${stream2}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:02
+    ...     ethertype=8100  vlan_id=101  name=a2_b_flow    
+    ${stream3}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:03
+    ...     ethertype=8100  vlan_id=102  name=a3_b_flow
+    ${stream4}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:04
+    ...     ethertype=8100  vlan_id=103  name=a4_b_flow    
+    ${stream5}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:05
+    ...     ethertype=8100  vlan_id=104  name=a5_b_flow
+    ${stream6}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:06
+    ...     ethertype=8100  vlan_id=100  name=a6_b_flow    
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3  
+    [Tags]  lag  hashing  l2vlan
+
+Verify (L2) Source MAC address hashing for IP packets
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:04  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:05  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l2srcmacip
+
+
+Verify (L2) Destination MAC address hashing for IP packets
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3    
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:02  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:03  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:04  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:05  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:06  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a5_b_flow         
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3       
+    [Tags]  lag  hashing  l2dstmacip    
+
+Verify (L2) Ethernet type hashing for IP packets
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3    
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0806  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8847  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a4_b_flow       
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3       
+    [Tags]  lag  hashing  l2ethertypeip
+
+Verify (L2) VLAN Id hashing for IP packets
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3    
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  vlan_id=100  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  vlan_id=101  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  vlan_id=102  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  vlan_id=103  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  vlan_id=104  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  vlan_id=105  name=a5_b_flow         
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3       
+    [Tags]  lag  hashing  l2vlanip 
+
+Verify (L3) Source MAC address hashing for non-IP packets
+    configure lag interfaces with hash mode  L3
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3   
+    ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01
+    ...     name=a1_b_flow
+    ${stream2}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:02:03:04:05:01
+    ...     name=a2_b_flow    
+    ${stream3}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:02  dst_mac=00:02:03:04:05:01
+    ...     name=a3_b_flow
+    ${stream4}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:03  dst_mac=00:02:03:04:05:01
+    ...     name=a4_b_flow    
+    ${stream5}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:04  dst_mac=00:02:03:04:05:01
+    ...     name=a5_b_flow
+    ${stream6}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:05  dst_mac=00:02:03:04:05:01
+    ...     name=a6_b_flow    
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3  
+    [Tags]  lag  hashing  l3srcmac
+
+Verify (L3) Destination MAC address hashing for non-IP packets
+    configure lag interfaces with hash mode  L3
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3   
+    ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01
+    ...     name=a1_b_flow
+    ${stream2}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:02
+    ...     name=a2_b_flow    
+    ${stream3}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:03
+    ...     name=a3_b_flow
+    ${stream4}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:04
+    ...     name=a4_b_flow    
+    ${stream5}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:05
+    ...     name=a5_b_flow
+    ${stream6}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:06
+    ...     name=a6_b_flow    
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3  
+    [Tags]  lag  hashing  l3dstmac
+
+Verify (L3) Ethernet type hashing for non-IP packets
+    configure lag interfaces with hash mode  L3
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3   
+    ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0801
+    ...     name=a1_b_flow
+    ${stream2}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0802
+    ...     name=a2_b_flow    
+    ${stream3}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0803
+    ...     name=a3_b_flow
+    ${stream4}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0804
+    ...     name=a4_b_flow    
+    ${stream5}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0805
+    ...     name=a5_b_flow
+    ${stream6}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01  ethertype=0806
+    ...     name=a6_b_flow    
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3  
+    [Tags]  lag  hashing  l3ethertype
+
+Verify (L3) VLAN Id hashing for non-IP packets
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3  
+    ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01
+    ...     ethertype=8100  vlan_id=100  name=a1_b_flow
+    ${stream2}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:02
+    ...     ethertype=8100  vlan_id=101  name=a2_b_flow    
+    ${stream3}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:03
+    ...     ethertype=8100  vlan_id=102  name=a3_b_flow
+    ${stream4}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:04
+    ...     ethertype=8100  vlan_id=103  name=a4_b_flow    
+    ${stream5}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:05
+    ...     ethertype=8100  vlan_id=104  name=a5_b_flow
+    ${stream6}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:06
+    ...     ethertype=8100  vlan_id=100  name=a6_b_flow    
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3  
+    [Tags]  lag  hashing  l3vlan
+
+Verify (L3) IP source address hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=101.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=102.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=103.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=104.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=105.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3srcip
+
+Verify (L3) IP destination address hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=102.1.1.2  ethertype=0800  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=103.1.1.2  ethertype=0800  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=104.1.1.2  ethertype=0800  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=105.1.1.2  ethertype=0800  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=106.1.1.2  ethertype=0800  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3dstip
+
+Verify (L3) TCP source port hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=TCP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=TCP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=TCP  src_port=8104  dst_port=8002  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=TCP  src_port=8105  dst_port=8002  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=TCP  src_port=8106  dst_port=8002  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3tcpsrcport
+
+
+Verify (L3) TCP destination port hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=TCP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=TCP  src_port=8101  dst_port=8004  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=TCP  src_port=8101  dst_port=8005  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=TCP  src_port=8101  dst_port=8006  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3tcpdstport
+
+
+Verify (L3) UDP source port hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=UDP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=UDP  src_port=8104  dst_port=8002  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=UDP  src_port=8105  dst_port=8002  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=UDP  src_port=8106  dst_port=8002  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3udpsrcport
+
+
+Verify (L3) UDP destination port hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=UDP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=UDP  src_port=8101  dst_port=8005  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800    
+    ...     protocol=UDP  src_port=8101  dst_port=8006  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3udpdstport
+
+
+Verify (L3) IPv6 source address hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:02  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:03  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:04  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:05  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:06  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3srcipv6
+
+Verify (L3) IPv6 destination address hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:02  ethertype=86dd  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:03  ethertype=86dd  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:04  ethertype=86dd  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:05  ethertype=86dd  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:06  ethertype=86dd  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3dstipv6
+
+Verify (L3) IPv6 TCP source port hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd     
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=TCP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=TCP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=TCP  src_port=8104  dst_port=8002  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=TCP  src_port=8105  dst_port=8002  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=TCP  src_port=8106  dst_port=8002  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3tcpsrcportipv6
+
+
+Verify (L3) IPv6 TCP destination port hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd     
+    ...     protocol=TCP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=TCP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=TCP  src_port=8101  dst_port=8004  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=TCP  src_port=8101  dst_port=8005  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=TCP  src_port=8101  dst_port=8006  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3tcpdstportipv6
+
+
+Verify (L3) IPv6 UDP source port hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd     
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=UDP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=UDP  src_port=8104  dst_port=8002  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=UDP  src_port=8105  dst_port=8002  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=UDP  src_port=8106  dst_port=8002  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3udpsrcportipv6
+
+
+Verify (L3) IPv6 UDP destination port hashing
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3 
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd     
+    ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=UDP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=UDP  src_port=8101  dst_port=8005  name=a4_b_flow
+    ${stream6}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  
+    ...     protocol=UDP  src_port=8101  dst_port=8006  name=a5_b_flow                   
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3   
+    [Tags]  lag  hashing  l3udpdstportipv6
+    
+* Keywords
+
+configure lag interfaces with hash mode  [Arguments]  ${lag_mode}  
+    # Configure LAG on 10.192.80.81    
+    cli add portchannel  s1  ${r1r5_10g_number}  ${r1r5_10g_port_range}  ${lag_mode}
+    cli add portchannel  s1  ${r1r6_10g_number}  ${r1r6_10g_port_range}  ${lag_mode}
+    cli add portchannel  s1  ${r1r7_1g_number}   ${r1r7_1g_port_range}   ${lag_mode}
+    # Configure LAG on 10.192.80.84
+    cli add portchannel  s3  ${r5r1_10g_number}  ${r5r1_10g_port_range}  ${lag_mode}
+    cli add portchannel  s3  ${r5r2_10g_number}  ${r5r2_10g_port_range}  ${lag_mode}
+    # Configure LAG on 10.192.80.85
+    cli add portchannel  s4  ${r6r1_10g_number}  ${r6r1_10g_port_range}  ${lag_mode}
+    cli add portchannel  s4  ${r6r2_10g_number}  ${r6r2_10g_port_range}  ${lag_mode}
+    # Configure LAG on 10.192.80.86
+    cli add portchannel  s5  ${r7r1_1g_number}  ${r7r1_1g_port_range}    ${lag_mode}
+    cli add portchannel  s5  ${r7r2_1g_number}  ${r7r2_1g_port_range}    ${lag_mode}
+    # Configure LAG on 10.192.80.82
+    cli add portchannel  s2  ${r2r5_10g_number}  ${r2r5_10g_port_range}  ${lag_mode}
+    cli add portchannel  s2  ${r2r6_10g_number}  ${r2r6_10g_port_range}  ${lag_mode}
+    cli add portchannel  s2  ${r2r7_1g_number}   ${r2r7_1g_port_range}   ${lag_mode}
+    Sleep   30
+
+lag suite setup
+    base suite setup
+    configure lag interfaces with hash mode  L2
+    rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}
+    rest add interface role  s1  ${filter_2}  filter  ${filter_nick_2}       
+    rest add interface role  s2  ${delivery_1}  delivery  ${delivery_nick}
+    rest add policy  admin-view  P1  forward
+    rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  P1  ${filter_nick_2}  filter    
+    rest add policy interface  admin-view  P1  ${delivery_nick}  delivery
+    Sleep  10     
+    
+
+verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
+    ${inft_state}=  cli show interface state  ${switch}  ${interface_name}
+    Should Contain  ${inft_state}  up
+
+send and verify traffic
+    clear stats  
+    cli execute command  s1  clear interface statistics
+    cli execute command  s2  clear interface statistics
+    start traffic    
+    sleep  10
+    stop traffic    
+    ${member1_s1}=  cli return member interface stats  s1  1  ethernet49  tx
+    ${member2_s1}=  cli return member interface stats  s1  1  ethernet50  tx
+    ${member1_s2}=  cli return member interface stats  s2  1  ethernet49  rx
+    ${member2_s2}=  cli return member interface stats  s2  1  ethernet50  rx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    Should Not Be Equal As Integers  ${member2_s2}  0              
+    ${range_1}=  Evaluate  ${member1_s2} - ${member1_s1}
+    ${range_2}=  Evaluate  ${member2_s2} - ${member2_s1}
+    verify value is in range  ${range_1}  0  20
+    verify value is in range  ${range_2}  0  20
+
+disable other lag interfaces  [Arguments]  ${switch}  ${lag_name_1}  ${lag_name_2}  
+    cli disable interface  ${switch}  ${lag_name_1}
+    cli disable interface  ${switch}  ${lag_name_2} 
+
+re-enable disabled lag interfaces  [Arguments]  ${switch}  ${lag_name_1}  ${lag_name_2}  
+    cli enable interface  ${switch}  ${lag_name_1}
+    cli enable interface  ${switch}  ${lag_name_2}     
+
+lag test teardown
+    delete traffic
+
+lag suite teardown
+    rest delete policy  admin-view  P1
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_nick_1} 
+    rest delete interface role  s1  ${filter_2}  filter  ${filter_nick_2} 
+    rest delete interface role  s2  ${delivery_1}  delivery  ${delivery_nick}
+    rest delete interface  s1  ${filter_1}
+    rest delete interface  s1  ${filter_2}    
+    rest delete interface  s2  ${delivery_1}
+    rest delete switch  s1
+    rest delete switch  s2
+    base suite teardown    

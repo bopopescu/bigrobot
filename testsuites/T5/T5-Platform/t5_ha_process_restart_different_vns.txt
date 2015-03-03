@@ -21,8 +21,6 @@ ${switch4_name}      spine1
 ${tenant_1}         T5HATenant
 ${vns_1}            T5HAVNS-1
 ${vns_2}            T5HAVNS-2
-${interface_1}      ethernet24
-${interface_2}      ethernet24
 ${src_ip}	    10.100.1.10
 ${src_gw}	    10.100.1.1
 ${dst_ip}	    10.100.2.10
@@ -162,7 +160,7 @@ Controller HA: Restart Process snmpd on Master Controller:
     Sleep  20
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}        
-    [Tags]  feature  ha  traffic  controller 
+    [Tags]  feature  ha  traffic  controller  daily-sanity
 
 Controller HA: Restart Process snmpd on Slave Controller:
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -309,7 +307,7 @@ Controller HA: Restart Process Floodlight on Slave Controller:
     Sleep  120
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}  
-    [Tags]  feature  ha  traffic  controller   
+    [Tags]  feature  ha  traffic  controller   daily-sanity
 
 
 Controller HA: Restart Process Floodlight on Master Controller:
@@ -328,7 +326,7 @@ Controller HA: Restart Process Floodlight on Master Controller:
     Sleep  90
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}        
-    [Tags]  feature  ha  traffic  controller
+    [Tags]  feature  ha  traffic  controller  daily-sanity
 
 Switch HA: Restart Process OFAD on switch
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=128
@@ -346,12 +344,17 @@ Switch HA: Restart Process OFAD on switch
     Sleep  400
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}   
-    [Tags]  feature  ha  traffic  switch 
+    [Tags]  feature  ha  traffic  switch  daily-sanity
  
 *Keywords
 
 t5 suite setup
     base suite setup
+    ${interface_1}=     get_switch_int_topo  s1  ixia1_int0
+    Set Suite Variable		${interface_1}
+	${interface_2}=      get_switch_int_topo  s2  ixia1_int0
+	Set Suite Variable		${interface_2}
+	
     rest add snmp keyword  community  public
     rest add snmp keyword  contact  Big Switch Networks
     rest add snmp keyword  location  mountainview
@@ -381,8 +384,8 @@ t5 suite setup
     rest add fabric role  ${switch4_name}  spine    
 	sleep  255
 	rest_verify_fabric_switch_all
-    add ntp server  master  time-c.nist.gov
-    verify ntp  master  time-c.nist.gov
+    #add ntp server  master  time-c.nist.gov
+    #verify ntp  master  time-c.nist.gov
     reconnect_switch_ips  s1
 	reconnect_switch_ips  s2
 	reconnect_switch_ips  s7

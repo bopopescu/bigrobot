@@ -1,0 +1,78 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+# tg1 : Tester like Ixia
+
+## Topology - Dell S6000 switch as leaf1-b ( 40G breakout ports)
+## Peer link between DELL S6000(s4) and AS5710 (s3) - breakout cable ( 4x 10G ports) 
+
+c1:
+  ip:  10.8.67.51
+  
+c2:
+  ip:  10.8.67.52
+
+s1:
+  alias: leaf0-a
+  mac: 70:72:cf:c6:fd:35
+  fabric-role: leaf
+  leaf-group: rack0
+  console:
+    ip:  10.1.8.183
+    protocol: telnet
+    port: 6020
+  set_session_ssh: false
+  set_init_ping: false
+   
+s3:
+  alias: leaf1-a
+  mac: 70:72:cf:bd:da:22
+  fabric-role: leaf
+  leaf-group: rack1
+  console:
+    ip:  10.1.8.183
+    protocol: telnet
+    port: 6022
+  set_session_ssh: false
+  set_init_ping: false  
+
+s4:
+  alias: leaf1-b
+  mac: ec:f4:bb:fb:d2:77
+  fabric-role: leaf
+  leaf-group: rack1
+  console:
+    ip:  10.1.8.183
+    protocol: telnet
+    port: 6023
+  set_session_ssh: false
+  set_init_ping: false
+
+s7:
+  alias: spine0
+  mac: 70:72:cf:ae:b2:24
+  fabric-role: spine
+  console:
+    ip:  10.1.8.183
+    protocol: telnet
+    port: 6018
+  set_session_ssh: false
+  set_init_ping: false 
+    
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.8.0.6
+  tcl_server_ip: 10.9.19.220
+  tcl_server_port: 8009
+  ix_version: '7.10'
+  set_init_ping: false
+  ports:
+    a:
+      name: 11/15
+    b:
+     name: 11/16
+
+      

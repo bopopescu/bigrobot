@@ -42,7 +42,7 @@ Test IXIA
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  
     
 02_Bi-Direction L2 Traffic with line rate
 # Basic test case with all default values and just start the flow
@@ -437,6 +437,7 @@ Test IXIA
 	${H2}=  L3 add host  src_ip=${dst_ip}  gw_ip=${src_ip}  port_name=b
 	L3 start hosts  port_name=a
 	L3 start hosts  port_name=b
+	#pause
 	${result}=  L3 chk gw arp
 	should be true  ${result}
 	[Tags]  traffic  L3
@@ -495,7 +496,7 @@ Test IXIA
     stop traffic  ${stream1}
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
-    [Tags]  traffic  run
+    [Tags]  traffic  
 
 35_IXIA_RAW_STREAM_LACP with just the lacp_src_mac and different src_mac
 	${stream}=  raw stream add  name=${stream_name}  flow=a->b  lacp=True  lacp_src_mac=00:00:99:99:88:99  src_cnt=100  src_mac_step=00:00:00:00:00:02
@@ -517,6 +518,75 @@ Test IXIA
     ${report}=             fetch port stats
     verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
     [Tags]  traffic
+
+37_IXIA_L3_Add with IP SrC and DST Increment
+	${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=a0_c_flow
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.0.1  src_cnt=28  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+	clear stats
+    start traffic  ${stream}
+    sleep  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate    
+    stop traffic  ${stream}
+	[Tags]
+
+38_IXIA_L2_ADD with Ethertype increment
+
+	 ${stream}=  L2 add  name=atoc  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+	pause
+	clear stats
+    start traffic  ${stream}
+    sleep  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate    
+    stop traffic  ${stream}
+	[Tags]
+
+39_Ixia_Simulate Port Status up or Down and chk the port state
+	simulate port state  port_name=a  action=down
+	sleep  2
+	${result}=  get_port_state  port_name=a  state=down
+	Should contain  ${result}  down
+	[Tags]  simulate
+	
+40_IXIA_RAW_add with MPLS Label
+	${stream}=  raw_stream_add  name=L3_2  flow=a->b  frame_rate=100   frame_size=128  mpls_label=99
+    ...	src_ip=100.0.0.2  src_mac=00:00:12:12:12:01
+    ...	dst_ip=100.1.0.3  dst_mac=5c:16:c7:01:00:14
+    #pause
+    clear stats
+    start traffic  ${stream}
+    sleep  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
+    stop traffic  ${stream}
+    [Tags]  traffic  
+
+41_Basic L3 Add Hosts with VLAN ID and vlan step and Stop Hosts with chk Arp Resolution for Gateways
+	${Hosts}=  L3 add host   src_ip=30.0.0.2  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=a  
+	    ...    src_mac=00:70:03:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4  vlan_id=1  vlan_step=1  vlan_priority=1  vlan_priority_step=1
+	L3 start hosts  port_name=a
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	[Tags]  traffic  L3 	
+	
+42_Basic L3 Add Hosts with start host with arp retransmit intervals and counts
+	${Hosts1}=  L3 add host   src_ip=30.0.0.2  src_ip_step=0.0.1.0  gw_ip=30.0.0.1  src_gw_step=0.0.1.0  port_name=a  
+	    ...    src_mac=00:70:03:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+	${Hosts1}=  L3 add host   src_ip=30.0.0.1  src_ip_step=0.0.1.0  gw_ip=30.0.0.2  src_gw_step=0.0.1.0  port_name=b  
+	    ...    src_mac=00:90:03:00:01:01   src_mac_step=00:00:00:00:01:00  s_cnt=3000  ip_type=ipv4
+
+	L3 start hosts  RetransmitInterval=10000  RetransmitCount=10  arp_check=False
+	
+	${result}=  L3 chk gw arp
+	should be true  ${result}
+	[Tags]  traffic  L3  run
 *Keywords
 atest teardown
 	delete traffic

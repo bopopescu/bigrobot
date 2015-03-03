@@ -18,6 +18,17 @@ Library  Collections.py
 ${projectname}  Big Cloud Fabric Appliance
     
 * Test Case
+TC000: Warmup
+    Verify Tacacs Configuration  0  10.2.3.201  5
+    Verify AAA Authentication Configuration
+    Run Keyword and Ignore Error
+    ...  Cli Run  master  show tacacs  user=remote  password=remote
+    Run Keyword and Ignore Error
+    ...  Cli Run  slave  show tacacs  user=remote  password=remote
+    Sleep  60
+    # workaround for BSC-6771
+    [Tags]  feature  BSC-6771
+
 TC001: Verify Running-Configuration
     Verify Tacacs Configuration  0  10.2.3.201  5
     Verify AAA Authentication Configuration 
@@ -39,19 +50,19 @@ TC003: Add user tacacsadmin to group admin and verify access
 TC004: Verify remote authentication with open source tacacs
     ${result}=  rest delete tacacs server  10.2.3.201
     Should be true  ${result}
-    ${result}=  rest add tacacs server  10.9.18.2  secret  5
+    ${result}=  rest add tacacs server  10.9.18.3  secret  5
     Should be true  ${result}
     verify version  tacacsadmin  adminadmin  ${true}
-    ${result}=  rest delete tacacs server  10.9.18.2    
+    ${result}=  rest delete tacacs server  10.9.18.3    
     Should be true  ${result}
     [Tags]  feature  runthis 
 
 TC005: Verify multiple tacacs servers can be configured 
-    ${result}=  rest add tacacs server  10.9.18.2  secret  5
+    ${result}=  rest add tacacs server  10.9.18.3  secret  5
     Should be true  ${result}
     Verify Tacacs Configuration  0  10.2.3.201  5
-    Verify Tacacs Configuration  1  10.9.18.2  5
-    ${result}=  rest delete tacacs server  10.9.18.2        
+    Verify Tacacs Configuration  1  10.9.18.3  5
+    ${result}=  rest delete tacacs server  10.9.18.3        
     Should be true  ${result}
     [Tags]  feature
 

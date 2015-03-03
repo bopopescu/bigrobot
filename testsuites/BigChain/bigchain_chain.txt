@@ -1,0 +1,1735 @@
+*Settings
+Documentation                           BigChain Chain Test Suite
+Suite Setup                             chain suite setup
+Suite Teardown                          chain suite teardown
+Test Setup                              chain test setup
+Test Teardown                           chain test teardown
+Force Tags                              bigchain  corsair-450  accton-AS5710  chain
+Library                                 keywords/BsnCommon.py
+Library                                 keywords/AppController.py
+Library                                 keywords/BigTap.py
+Library                                 keywords/BigChain.py
+Library                                 keywords/SwitchLight.py
+Library                                 keywords/Ixia.py
+Library                                 keywords/ThirdParty.py
+Library                                 Collections.py
+Library                                 OperatingSystem.py
+Library                                 String.py
+
+
+* Variable
+${switch1_alias}                        app-ras5710-2
+
+${span_service_name_1}                  SPAN1
+${span_service_interface_1}             ethernet5
+${span_service_name_2}                  SPAN2
+${span_service_interface_2}             ethernet13
+${span_service_interface_3}             ethernet15
+
+${service_name_1}                       SERVICE1
+${service_in_interface1}                ethernet13
+${service_out_interface1}               ethernet14
+${service_name_2}                       SERVICE2
+${service_in_interface2}                ethernet15
+${service_out_interface2}               ethernet16
+${service_name_3}                       SERVICE3
+${service_in_interface3}                ethernet17
+${service_out_interface3}               ethernet18
+${service_name_4}                       SERVICE4
+${service_in_interface4}                ethernet21
+${service_out_interface4}               ethernet22
+
+${chain_name_1}                         CHAIN1
+${chain_name_2}                         CHAIN2
+${chain_interface_1}                    ethernet1
+${chain_interface_2}                    ethernet2
+${chain_interface_3}                    ethernet23
+${chain_interface_4}                    ethernet24
+
+
+${arista_ixia_interface_s3}             Ethernet 1
+${arista_span_interface_s1s3}           Ethernet 6
+${arista_ixia_interface_s4}             Ethernet 1
+${arista_span_interface_s2s4}           Ethernet 8
+
+${s1s2_10g_name_1}                      port-channel1
+${s1s2_10g_port_range_1}                13,15,17,21
+${s1s2_10g_number_1}                    1
+${s1s2_10g_name_2}                      port-channel2
+${s1s2_10g_port_range_2}                14,16,18,22
+${s1s2_10g_number_2}                    2
+${src_mac}                              00:11:00:00:00:01
+${src_mac_other}                        00:11:00:00:01:02
+${dst_mac}                              00:11:00:00:00:02
+${dst_mac_other}                        00:11:00:00:01:01
+
+
+### S3 <=> S1
+${portchannel_2_range}                  11,12
+${portchannel_2_number}                 2
+${portchannel_2_name}                   port-channel2
+${arista_portchannel_interface_s3}      Port-Channel 2
+${arista_portchannel_mem_intfs3_1}      Ethernet 11
+${arista_portchannel_mem_intfs3_2}      Ethernet 12
+${s1s3port_intf_1}                      ethernet11
+${s1s3port_intf_2}                      ethernet12
+${s3s1port_intf_1}                      Ethernet 11
+${s3s1port_intf_2}                      Ethernet 12
+### S3 <=> S1
+
+### S4 <=> S1
+${portchannel_1_range}                  9,10
+${portchannel_1_number}                 1
+${portchannel_1_name}                   port-channel1
+${arista_portchannel_interface_s4}      Port-Channel 1
+${arista_portchannel_mem_intfs4_1}      Ethernet 5
+${arista_portchannel_mem_intfs4_2}      Ethernet 6
+${s1s4port_intf_1}                      ethernet9
+${s1s4port_intf_2}                      ethernet10
+${s4s1port_intf_1}                      Ethernet 5
+${s4s1port_intf_2}                      Ethernet 6
+### S4 <=> S1
+
+### S1 to H1
+${switch_to_server_port}                ethernet4
+### Single Port Loopback on S1
+${single_port_loopback}                 ethernet46
+
+* Test Case
+
+TC001: Verify standard ethernet interfaces can be used as endpoint-pair
+    ${result2}=  rest add a chain  ${chain_name_1}
+    Should be true  ${result2}
+    sleep  1
+    ${result3}=  rest add chain endpoint  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be true  ${result3}
+    sleep  1
+    ${result4}=  rest verify bichain chain config  s1  chain_name=${chain_name_1}  endpoint1=${chain_interface_1}  endpoint2=${chain_interface_2}
+    Should be true  ${result4}
+    [Tags]  full  feature  chain
+    
+TC002: Verify port-channel interfaces can be used as endpoint1 
+    ${result1}=  cli add portchannel  s1  ${portchannel_1_number}   ${portchannel_1_range}  L2
+    Should be true  ${result1}
+    sleep  5
+    ## START: configure passive lag on s4 (app-arista-1)
+    config  node=s4  cmd=interface ${arista_portchannel_interface_s4}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=switchport
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=exit
+    config  node=s4  cmd=interface ${arista_portchannel_mem_intfs4_1}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=shutdown
+    sleep  2
+    config  node=s4  cmd=no shutdown
+    config  node=s4  cmd=channel-group ${portchannel_1_number} mode on
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=exit
+    config  node=s4  cmd=interface ${arista_portchannel_mem_intfs4_2}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=shutdown
+    sleep  2
+    config  node=s3  cmd=no shutdown
+    config  node=s4  cmd=channel-group ${portchannel_1_number} mode on
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    sleep  10
+    ## END: configure passive lag on s4 (app-arista-1)
+    ${result2}=  rest add a chain  ${chain_name_1}
+    Should be true  ${result2}
+    sleep  1
+    ${result3}=  rest add chain endpoint  node=s1  chain_name=${chain_name_1}  interface1=${portchannel_1_name}  interface2=${chain_interface_2}
+    Should be true  ${result3}
+    sleep  3
+    ${result4}=  rest verify bichain chain config  s1  chain_name=${chain_name_1}  endpoint1=${portchannel_1_name}  endpoint2=${chain_interface_2}
+    Should be true  ${result4}
+    ${result5}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${portchannel_1_name}  interface2=${chain_interface_2}
+    Should be true  ${result5}
+    sleep  30
+    ${stream_new}=  L3 add  flow=d->b  frame_rate=10000   frame_size=128  frame_cnt=100000  name=d_b_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  src_ip=100.1.1.1  dst_ip=100.1.1.2  no_arp=True
+    clear stats
+    sleep  30
+    config  node=s4  cmd=clear counters
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  d  b  transmitted_frames  received_valid_frames
+    ### unconfigure port-channel interface on switch S4
+    config  node=s4  cmd=interface ${arista_portchannel_mem_intfs4_1}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=no channel-group ${portchannel_1_number}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=interface ${arista_portchannel_mem_intfs4_2}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=no channel-group ${portchannel_1_number}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=exit
+    config  node=s4  cmd=no interface ${arista_portchannel_interface_s4}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    [Tags]  full  feature  chain
+    
+TC003: Verify port-channel interfaces can be used as endpoint2 
+    ${result1}=  cli add portchannel  s1  ${portchannel_2_number}   ${portchannel_2_range}  L2
+    Should be true  ${result1}
+    sleep  5
+    ## START: configure passive lag on s3 (app-arista-1)
+    config  node=s3  cmd=interface ${arista_portchannel_interface_s3}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${arista_portchannel_mem_intfs3_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=shutdown
+    sleep  2
+    config  node=s3  cmd=no shutdown
+    config  node=s3  cmd=channel-group ${portchannel_2_number} mode on
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=interface ${arista_portchannel_mem_intfs3_2}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=shutdown
+    sleep  2
+    config  node=s3  cmd=no shutdown
+    config  node=s3  cmd=channel-group ${portchannel_2_number} mode on
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    sleep  5
+    ## END: configure passive lag on s3 (app-arista-1)
+    ${result2}=  rest add a chain  ${chain_name_1}
+    Should be true  ${result2}
+    sleep  1
+    ${result3}=  rest add chain endpoint  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${portchannel_2_name}
+    Should be true  ${result3}
+    sleep  5
+    ${result4}=  rest verify bichain chain config  s1  chain_name=${chain_name_1}  endpoint1=${chain_interface_1}  endpoint2=${portchannel_2_name}
+    Should be true  ${result4}
+    ${result5}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${portchannel_2_name}
+    Should be true  ${result5}
+    sleep  30
+    ${stream_new}=  L3 add  flow=a->c  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_c_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2
+    clear stats
+    sleep  30
+    config  node=s4  cmd=clear counters
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  a  c  transmitted_frames  received_valid_frames
+    ### unconfigure port-channel interface on switch S3
+    config  node=s3  cmd=interface ${arista_portchannel_mem_intfs3_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no channel-group ${portchannel_2_number} mode on
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${arista_portchannel_mem_intfs3_2}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no channel-group ${portchannel_2_number} mode on
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    sleep  5
+    config  node=s3  cmd=no interface ${arista_portchannel_interface_s3}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    [Tags]  full  feature  chain  
+
+TC004: Verify port-channel interfaces can be used as endpoint-pair. Bring down a member interface and verify
+    ${result1}=  cli add portchannel  s1  ${portchannel_2_number}   ${portchannel_2_range}  L2
+    Should be true  ${result1}
+    sleep  5
+    ## START: configure passive lag on s3 (app-arista-1)
+    config  node=s3  cmd=interface ${arista_portchannel_interface_s3}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${arista_portchannel_mem_intfs3_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=shutdown
+    sleep  2
+    config  node=s3  cmd=no shutdown
+    config  node=s3  cmd=channel-group ${portchannel_2_number} mode on
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=interface ${arista_portchannel_mem_intfs3_2}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=shutdown
+    sleep  2
+    config  node=s3  cmd=no shutdown
+    config  node=s3  cmd=channel-group ${portchannel_2_number} mode on
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    sleep  5
+    ## END: configure passive lag on s3 (app-arista-1)
+    ${result2}=  rest add a chain  ${chain_name_1}
+    Should be true  ${result2}
+    sleep  1
+    ${result3}=  rest add chain endpoint  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${portchannel_2_name}
+    Should be true  ${result3}
+    sleep  5
+    ${result4}=  rest verify bichain chain config  s1  chain_name=${chain_name_1}  endpoint1=${chain_interface_1}  endpoint2=${portchannel_2_name}
+    Should be true  ${result4}
+    ${result5}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${portchannel_2_name}
+    Should be true  ${result5}
+    sleep  30
+    ${stream_new}=  L3 add  flow=a->c  frame_rate=10000   frame_size=128  frame_cnt=100000  name=a_c_flow  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  
+    clear stats
+    sleep  30
+    config  node=s4  cmd=clear counters
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  a  c  transmitted_frames  received_valid_frames
+    config  node=s3  cmd=interface ${arista_portchannel_mem_intfs3_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=shutdown
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    sleep  10
+    clear stats
+    config  node=s3  cmd=clear counters
+    cli clear interface statistics  s1 
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    config  node=s3  cmd=interface ${arista_portchannel_mem_intfs3_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no shutdown
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    sleep  10
+    clear stats
+    sleep  30
+    config  node=s4  cmd=clear counters
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  a  c  transmitted_frames  received_valid_frames
+    ### unconfigure port-channel interface on switch S3
+    config  node=s3  cmd=interface ${arista_portchannel_mem_intfs3_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no channel-group ${portchannel_2_number} mode on
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${arista_portchannel_mem_intfs3_2}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no channel-group ${portchannel_2_number} mode on
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    sleep  5
+    config  node=s3  cmd=no interface ${arista_portchannel_interface_s3}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    [Tags]  full  feature  chain  jira-PAN-1675  jira-PAN-1687  
+    
+TC005: Configure a single chain with three services in both directions. Verify chain operation with bidirectional traffic
+    setup three services and attach services to chain
+    sleep  30
+    ${result6}=  rest verify bigchain chain  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result6}
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    sleep  30
+    config  node=s4  cmd=clear counters
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify traffic across chain and services  100000
+    [Tags]  full  feature  chain  chain-service
+
+TC006: Verify service is skipped if traffic does not match policy conditions
+    add a service via rest  ${service_name_1}  1  service1  s1  ${service_in_interface1}  ${service_out_interface1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    ${config1}=  rest add a bigchain policy match  chain_service_name=${service_name_1}  match_number=2  data={"src-ip-mask": "255.255.255.255", "sequence": 2, "src-ip": "100.1.1.2", "ether-type": 2048}
+    Should be true  ${config1}
+    add a service via rest  ${service_name_2}  1  service2  s1  ${service_in_interface2}  ${service_out_interface2}  1  {"dst-ip-mask": "255.255.255.255", "sequence": 1, "dst-ip": "100.1.1.2", "ether-type": 2048}
+    ${config2}=  rest add a bigchain policy match  chain_service_name=${service_name_2}  match_number=2  data={"dst-ip-mask": "255.255.255.255", "sequence": 2, "dst-ip": "100.1.1.1", "ether-type": 2048}
+    Should be true  ${config2}
+    add a service via rest  ${service_name_3}  1  service3  s1  ${service_in_interface3}  ${service_out_interface3}  1  {"ether-type": 2048, "dst-tp-port": 8080, "ip-proto": 6, "sequence": 1}
+    ${config3}=  rest add a bigchain policy match  chain_service_name=${service_name_3}  match_number=2  data={"ether-type": 2048, "dst-tp-port": 8443, "ip-proto": 6, "sequence": 2}
+    Should be true  ${config3}
+    sleep  10
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  10
+    ${result3}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_1}  instance=1  sequence=1
+    Should be True  ${result3}
+    ${result4}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_2}  instance=1  sequence=2
+    Should be True  ${result4}
+    ${result5}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_3}  instance=1  sequence=3
+    Should be True  ${result5}
+    sleep  45
+    ${result6}=  rest verify bigchain chain  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result6}
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    sleep  30
+    config  node=s4  cmd=clear counters
+    cli clear interface statistics  s1
+    sleep  2
+    start traffic  ${stream_new}
+    sleep  10
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  a  b  transmitted_frames  received_valid_frames
+    ${cint1_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
+    ${in_range1}=  ixia verify traffic rate  100000  ${cint1_tx}  rangev=10
+    Should be true  ${in_range1}
+    ${cint1_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    ${in_range2}=  ixia verify traffic rate  100000  ${cint1_rx}  rangev=10
+    Should be true  ${in_range2}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    ${in_range3}=  ixia verify traffic rate  100000  ${cint2_tx}  rangev=10
+    Should be true  ${in_range3}
+    ${cint2_rx}=  cli return interface counter brief  s1  ${chain_interface_2}  rx
+    ${in_range4}=  ixia verify traffic rate  100000  ${cint2_rx}  rangev=10
+    Should be true  ${in_range4}
+    #Service1
+    ${sint1_in_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    ${in_range5}=  ixia verify traffic rate  100000  ${sint1_in_tx}  rangev=10
+    Should be true  ${in_range5}
+    ${sint1_in_rx}=  cli return interface counter brief  s1  ${service_in_interface1}  rx
+    ${in_range6}=  ixia verify traffic rate  100000  ${sint1_in_rx}  rangev=10
+    Should be true  ${in_range6}
+    ${sint1_out_tx}=  cli return interface counter brief  s1  ${service_out_interface1}  tx
+    ${in_range7}=  ixia verify traffic rate  100000  ${sint1_out_tx}  rangev=10
+    Should be true  ${in_range7}
+    ${sint1_out_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    ${in_range8}=  ixia verify traffic rate  100000  ${sint1_out_rx}  rangev=10
+    Should be true  ${in_range8}
+    #Service2
+    ${sint2_in_tx}=  cli return interface counter brief  s1  ${service_in_interface2}  tx
+    ${in_range9}=  ixia verify traffic rate  100000  ${sint2_in_tx}  rangev=10
+    Should be true  ${in_range9}
+    ${sint2_in_rx}=  cli return interface counter brief  s1  ${service_in_interface2}  rx
+    ${in_range10}=  ixia verify traffic rate  100000  ${sint2_in_rx}  rangev=10
+    Should be true  ${in_range10}
+    ${sint2_out_tx}=  cli return interface counter brief  s1  ${service_out_interface2}  tx
+    ${in_range11}=  ixia verify traffic rate  100000  ${sint2_out_tx}  rangev=10
+    Should be true  ${in_range11}
+    ${sint2_out_rx}=  cli return interface counter brief  s1  ${service_out_interface2}  rx
+    ${in_range12}=  ixia verify traffic rate  100000  ${sint2_out_rx}  rangev=10
+    Should be true  ${in_range12}
+    #Service3
+    ${sint3_in_tx}=  cli return interface counter brief  s1  ${service_in_interface3}  tx
+    ${in_range13}=  ixia verify traffic rate  0  ${sint3_in_tx}  rangev=10
+    Should be true  ${in_range13}
+    ${sint3_in_rx}=  cli return interface counter brief  s1  ${service_in_interface3}  rx
+    ${in_range14}=  ixia verify traffic rate  0  ${sint3_in_rx}  rangev=10
+    Should be true  ${in_range14}
+    ${sint3_out_tx}=  cli return interface counter brief  s1  ${service_out_interface3}  tx
+    ${in_range15}=  ixia verify traffic rate  0  ${sint3_out_tx}  rangev=10
+    Should be true  ${in_range15}
+    ${sint3_out_rx}=  cli return interface counter brief  s1  ${service_out_interface3}  rx
+    ${in_range16}=  ixia verify traffic rate  0  ${sint3_out_rx}  rangev=10
+    Should be true  ${in_range16}
+    [Tags]  full  feature  chain  chain-service  
+
+TC007: Change ordering of services by changing sequence numbers.Verify chain operation with bidirectional traffic.
+    add a service via rest  ${service_name_1}  1  service1  s1  ${service_in_interface1}  ${service_out_interface1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    ${config1}=  rest add a bigchain policy match  chain_service_name=${service_name_1}  match_number=2  data={"src-ip-mask": "255.255.255.255", "sequence": 2, "src-ip": "100.1.1.2", "ether-type": 2048}
+    Should be true  ${config1}
+    add a service via rest  ${service_name_2}  1  service2  s1  ${service_in_interface2}  ${service_out_interface2}  1  {"dst-ip-mask": "255.255.255.255", "sequence": 1, "dst-ip": "100.1.1.2", "ether-type": 2048}
+    ${config2}=  rest add a bigchain policy match  chain_service_name=${service_name_2}  match_number=2  data={"dst-ip-mask": "255.255.255.255", "sequence": 2, "dst-ip": "100.1.1.1", "ether-type": 2048}
+    Should be true  ${config2}
+    add a service via rest  ${service_name_3}  1  service3  s1  ${service_in_interface3}  ${service_out_interface3}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    ${config3}=  rest add a bigchain policy match  chain_service_name=${service_name_3}  match_number=2  data={"ether-type": 2048, "dst-tp-port": 1234, "ip-proto": 6, "sequence": 2}
+    Should be true  ${config3}
+    sleep  20
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  10
+    ${result3}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_1}  instance=1  sequence=1
+    Should be True  ${result3}
+    ${result4}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_2}  instance=1  sequence=2
+    Should be True  ${result4}
+    ${result5}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_3}  instance=1  sequence=3
+    Should be True  ${result5}
+    sleep  30
+    ${result6}=  rest verify bigchain chain  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result6}
+    sleep  2
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:11:12:00:00:00  dst_mac=00:11:13:00:00:00  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    sleep  30
+    config  node=s4  cmd=clear counters
+    cli clear interface statistics  s1
+    clear stats
+    start traffic  ${stream_new}
+    sleep  10
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  b  received_valid_frames  transmitted_frames
+    verify traffic across chain and services  100000
+    ### Change service sequence
+    ${result3}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_1}  instance=1  sequence=3
+    Should be True  ${result3}
+    ${result4}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_2}  instance=1  sequence=2
+    Should be True  ${result4}
+    ${result5}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_3}  instance=1  sequence=1
+    Should be True  ${result5}
+    sleep  30
+    ${result6}=  rest verify bigchain chain  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_3}  service2=${service_name_2}  service3=${service_name_1}
+    Should be True  ${result6}
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  b  received_valid_frames  transmitted_frames
+    verify traffic across chain and services  100000
+    [Tags]  full  feature  chain  chain-service  
+
+TC008: Configure a single chain with three services in single direction (inskip). Verify chain operation with bidirectional traffic.
+    add a service via rest  ${service_name_1}  1  service1  s1  ${service_in_interface1}  ${service_out_interface1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    ${config1}=  rest add a bigchain policy match  chain_service_name=${service_name_1}  match_number=2  data={"src-ip-mask": "255.255.255.255", "sequence": 2, "src-ip": "100.1.1.2", "ether-type": 2048}
+    Should be true  ${config1}
+    sleep  10
+    add a service via rest  ${service_name_2}  1  service2  s1  ${service_in_interface2}  ${service_out_interface2}  1  {"dst-ip-mask": "255.255.255.255", "sequence": 1, "dst-ip": "100.1.1.2", "ether-type": 2048}
+    ${config2}=  rest add a bigchain policy match  chain_service_name=${service_name_2}  match_number=2  data={"dst-ip-mask": "255.255.255.255", "sequence": 2, "dst-ip": "100.1.1.1", "ether-type": 2048}
+    Should be true  ${config2}
+    sleep  10
+    add a service via rest  ${service_name_3}  1  service3  s1  ${service_in_interface3}  ${service_out_interface3}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    ${config3}=  rest add a bigchain policy match  chain_service_name=${service_name_3}  match_number=2  data={"ether-type": 2048, "dst-tp-port": 1234, "ip-proto": 6, "sequence": 2}
+    Should be true  ${config3}
+    sleep  10
+    ${config5}=  rest skip service  chain_service_name=${service_name_1}  instance_id=1  inskip=True
+    Should be true  ${config5}
+    sleep  2
+    ${config6}=  rest skip service  chain_service_name=${service_name_2}  instance_id=1  inskip=True
+    Should be true  ${config6}
+    sleep  2
+    ${config7}=  rest skip service  chain_service_name=${service_name_3}  instance_id=1  inskip=True
+    Should be true  ${config7}
+    sleep  10
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  5
+    ${result3}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_1}  instance=1  sequence=1
+    Should be True  ${result3}
+    ${result4}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_2}  instance=1  sequence=2
+    Should be True  ${result4}
+    ${result5}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_3}  instance=1  sequence=3
+    Should be True  ${result5}
+    sleep  30
+    ${result6}=  rest verify bigchain chain  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result6}
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    sleep  30
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  b  received_valid_frames  transmitted_frames
+    ${cint1_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
+    ${in_range1}=  ixia verify traffic rate  100000  ${cint1_tx}  rangev=10
+    Should be true  ${in_range1}
+    ${cint1_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    ${in_range2}=  ixia verify traffic rate  100000  ${cint1_rx}  rangev=10
+    Should be true  ${in_range2}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    ${in_range3}=  ixia verify traffic rate  100000  ${cint2_tx}  rangev=10
+    Should be true  ${in_range3}
+    ${cint2_rx}=  cli return interface counter brief  s1  ${chain_interface_2}  rx
+    ${in_range4}=  ixia verify traffic rate  100000  ${cint2_rx}  rangev=10
+    Should be true  ${in_range4}
+    #Service1
+    ${sint1_in_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    ${in_range5}=  ixia verify traffic rate  100000  ${sint1_in_tx}  rangev=10
+    Should be true  ${in_range5}
+    ${sint1_in_rx}=  cli return interface counter brief  s1  ${service_in_interface1}  rx
+    ${in_range6}=  ixia verify traffic rate  100000  ${sint1_in_rx}  rangev=10
+    Should be true  ${in_range6}
+    ${sint1_out_tx}=  cli return interface counter brief  s1  ${service_out_interface1}  tx
+    ${in_range7}=  ixia verify traffic rate  100000  ${sint1_out_tx}  rangev=10
+    Should be true  ${in_range7}
+    ${sint1_out_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    ${in_range8}=  ixia verify traffic rate  100000  ${sint1_out_rx}  rangev=10
+    Should be true  ${in_range8}
+    #Service2
+    ${sint2_in_tx}=  cli return interface counter brief  s1  ${service_in_interface2}  tx
+    ${in_range9}=  ixia verify traffic rate  100000  ${sint2_in_tx}  rangev=10
+    Should be true  ${in_range9}
+    ${sint2_in_rx}=  cli return interface counter brief  s1  ${service_in_interface2}  rx
+    ${in_range10}=  ixia verify traffic rate  100000  ${sint2_in_rx}  rangev=10
+    Should be true  ${in_range10}
+    ${sint2_out_tx}=  cli return interface counter brief  s1  ${service_out_interface2}  tx
+    ${in_range11}=  ixia verify traffic rate  100000  ${sint2_out_tx}  rangev=10
+    Should be true  ${in_range11}
+    ${sint2_out_rx}=  cli return interface counter brief  s1  ${service_out_interface2}  rx
+    ${in_range12}=  ixia verify traffic rate  100000  ${sint2_out_rx}  rangev=10
+    Should be true  ${in_range12}
+    #Service3
+    ${sint3_in_tx}=  cli return interface counter brief  s1  ${service_in_interface3}  tx
+    ${in_range13}=  ixia verify traffic rate  100000  ${sint3_in_tx}  rangev=10
+    Should be true  ${in_range13}
+    ${sint3_in_rx}=  cli return interface counter brief  s1  ${service_in_interface3}  rx
+    ${in_range14}=  ixia verify traffic rate  100000  ${sint3_in_rx}  rangev=10
+    Should be true  ${in_range14}
+    ${sint3_out_tx}=  cli return interface counter brief  s1  ${service_out_interface3}  tx
+    ${in_range15}=  ixia verify traffic rate  100000  ${sint3_out_tx}  rangev=10
+    Should be true  ${in_range15}
+    ${sint3_out_rx}=  cli return interface counter brief  s1  ${service_out_interface3}  rx
+    ${in_range16}=  ixia verify traffic rate  100000  ${sint3_out_rx}  rangev=10
+    Should be true  ${in_range16}
+    [Tags]  full  feature  chain  chain-service  jira-bt-1898  
+
+TC009: Configure a single chain with three services in single direction (outskip). Verify chain operation with bidirectional traffic.
+    setup three services and attach services to chain
+    sleep  30
+    ${config5}=  rest skip service  chain_service_name=${service_name_1}  instance_id=1  outskip=True
+    Should be true  ${config5}
+    ${config6}=  rest skip service  chain_service_name=${service_name_2}  instance_id=1  outskip=True
+    Should be true  ${config6}
+    ${config7}=  rest skip service  chain_service_name=${service_name_3}  instance_id=1  outskip=True
+    Should be true  ${config7}
+    sleep  30
+    ${result6}=  rest verify bigchain chain  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result6}
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    sleep  30
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  b  received_valid_frames  transmitted_frames
+    ${cint1_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
+    ${in_range1}=  ixia verify traffic rate  100000  ${cint1_tx}  rangev=10
+    Should be true  ${in_range1}
+    ${cint1_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    ${in_range2}=  ixia verify traffic rate  100000  ${cint1_rx}  rangev=10
+    Should be true  ${in_range2}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    ${in_range3}=  ixia verify traffic rate  100000  ${cint2_tx}  rangev=10
+    Should be true  ${in_range3}
+    ${cint2_rx}=  cli return interface counter brief  s1  ${chain_interface_2}  rx
+    ${in_range4}=  ixia verify traffic rate  100000  ${cint2_rx}  rangev=10
+    Should be true  ${in_range4}
+    #Service1
+    ${sint1_in_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    ${in_range5}=  ixia verify traffic rate  100000  ${sint1_in_tx}  rangev=10
+    Should be true  ${in_range5}
+    ${sint1_in_rx}=  cli return interface counter brief  s1  ${service_in_interface1}  rx
+    ${in_range6}=  ixia verify traffic rate  0  ${sint1_in_rx}  rangev=10
+    Should be true  ${in_range6}
+    ${sint1_out_tx}=  cli return interface counter brief  s1  ${service_out_interface1}  tx
+    ${in_range7}=  ixia verify traffic rate  0  ${sint1_out_tx}  rangev=10
+    Should be true  ${in_range7}
+    ${sint1_out_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    ${in_range8}=  ixia verify traffic rate  100000  ${sint1_out_rx}  rangev=10
+    Should be true  ${in_range8}
+    #Service2
+    ${sint2_in_tx}=  cli return interface counter brief  s1  ${service_in_interface2}  tx
+    ${in_range9}=  ixia verify traffic rate  100000  ${sint2_in_tx}  rangev=10
+    Should be true  ${in_range9}
+    ${sint2_in_rx}=  cli return interface counter brief  s1  ${service_in_interface2}  rx
+    ${in_range10}=  ixia verify traffic rate  0  ${sint2_in_rx}  rangev=10
+    Should be true  ${in_range10}
+    ${sint2_out_tx}=  cli return interface counter brief  s1  ${service_out_interface2}  tx
+    ${in_range11}=  ixia verify traffic rate  0  ${sint2_out_tx}  rangev=10
+    Should be true  ${in_range11}
+    ${sint2_out_rx}=  cli return interface counter brief  s1  ${service_out_interface2}  rx
+    ${in_range12}=  ixia verify traffic rate  100000  ${sint2_out_rx}  rangev=10
+    Should be true  ${in_range12}
+    #Service3
+    ${sint3_in_tx}=  cli return interface counter brief  s1  ${service_in_interface3}  tx
+    ${in_range13}=  ixia verify traffic rate  100000  ${sint3_in_tx}  rangev=10
+    Should be true  ${in_range13}
+    ${sint3_in_rx}=  cli return interface counter brief  s1  ${service_in_interface3}  rx
+    ${in_range14}=  ixia verify traffic rate  0  ${sint3_in_rx}  rangev=10
+    Should be true  ${in_range14}
+    ${sint3_out_tx}=  cli return interface counter brief  s1  ${service_out_interface3}  tx
+    ${in_range15}=  ixia verify traffic rate  0  ${sint3_out_tx}  rangev=10
+    Should be true  ${in_range15}
+    ${sint3_out_rx}=  cli return interface counter brief  s1  ${service_out_interface3}  rx
+    ${in_range16}=  ixia verify traffic rate  100000  ${sint3_out_rx}  rangev=10
+    Should be true  ${in_range16}
+    [Tags]  full  feature  chain  chain-service  jira-bt-1898  
+
+TC010: Configure a single chain with span-service on endpoint 1. Verify chain operation with bi-directional traffic
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ip-proto": 6, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  2
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  2
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  30
+    ${result6}=  rest verify bigchain chain  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result6}
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  b  received_valid_frames  transmitted_frames
+    verify results  a  c  transmitted_frames  received_valid_frames
+    ${cint1_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
+    ${in_range1}=  ixia verify traffic rate  100000  ${cint1_tx}  rangev=10
+    Should be true  ${in_range1}
+    ${cint1_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    ${in_range2}=  ixia verify traffic rate  100000  ${cint1_rx}  rangev=10
+    Should be true  ${in_range2}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    ${in_range3}=  ixia verify traffic rate  100000  ${cint2_tx}  rangev=10
+    Should be true  ${in_range3}
+    ${cint2_rx}=  cli return interface counter brief  s1  ${chain_interface_2}  rx
+    ${in_range4}=  ixia verify traffic rate  100000  ${cint2_rx}  rangev=10
+    Should be true  ${in_range4}
+    ${span_int_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
+    ${in_range5}=  ixia verify traffic rate  100000  ${span_int_tx}  rangev=10
+    Should be true  ${in_range5}
+    [Tags]  full  feature  chain  chain-span  
+
+TC011: Configure a single chain with span-service on endpoint 2. Verify chain operation with bi-directional traffic
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ip-proto": 6, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  2
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  2
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${result6}=  rest verify bigchain chain  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result6}
+    sleep  20
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    config  node=s3  cmd=clear counters
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    ${report}=  fetch port stats
+    ${port_a_tx}=  verify dict key  ${report}  a  transmitted_frames
+    ${port_a_rx}=  verify dict key  ${report}  a  received_valid_frames
+    ${port_b_tx}=  verify dict key  ${report}  b  transmitted_frames
+    ${port_b_rx}=  verify dict key  ${report}  b  received_valid_frames
+    ${port_c_rx}=  verify dict key  ${report}  c  received_valid_frames
+    ${in_range_1}=  ixia verify traffic rate  ${port_a_tx}  100000  50
+    Should be true  ${in_range_1}
+    ${in_range_2}=  ixia verify traffic rate  ${port_b_tx}  100000  50
+    Should be true  ${in_range_2}
+    ${in_range_3}=  ixia verify traffic rate  ${port_a_rx}  100000  50
+    Should be true  ${in_range_3}
+    ${in_range_4}=  ixia verify traffic rate  ${port_c_rx}  100000  50
+    Should be true  ${in_range_4}
+    ${in_range_5}=  ixia verify traffic rate  ${port_b_rx}  200000  50
+    Should be true  ${in_range_5}
+    ${cint1_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
+    ${in_range1}=  ixia verify traffic rate  100000  ${cint1_tx}  rangev=50
+    Should be true  ${in_range1}
+    ${cint1_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    ${in_range2}=  ixia verify traffic rate  100000  ${cint1_rx}  rangev=50
+    Should be true  ${in_range2}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    ${in_range3}=  ixia verify traffic rate  200000  ${cint2_tx}  rangev=50
+    Should be true  ${in_range3}
+    ${cint2_rx}=  cli return interface counter brief  s1  ${chain_interface_2}  rx
+    ${in_range4}=  ixia verify traffic rate  100000  ${cint2_rx}  rangev=50
+    Should be true  ${in_range4}
+    ${span_int_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
+    ${in_range5}=  ixia verify traffic rate  100000  ${span_int_tx}  rangev=50
+    Should be true  ${in_range5}
+    [Tags]  full  feature  chain  chain-span  
+
+TC012: Configure a single chain with span-service on both endpoints. Verify chain operation with bi-directional traffic
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"any-traffic": true, "sequence": 1}
+    Should be True  ${config2}
+    sleep  2
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  2
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  30
+    ${result6}=  rest verify bigchain chain  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result6}
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  b  received_valid_frames  transmitted_frames
+    ${cint1_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
+    ${in_range1}=  ixia verify traffic rate  100000  ${cint1_tx}  rangev=10
+    Should be true  ${in_range1}
+    ${cint1_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    ${in_range2}=  ixia verify traffic rate  100000  ${cint1_rx}  rangev=10
+    Should be true  ${in_range2}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    ${in_range3}=  ixia verify traffic rate  100000  ${cint2_tx}  rangev=10
+    Should be true  ${in_range3}
+    ${cint2_rx}=  cli return interface counter brief  s1  ${chain_interface_2}  rx
+    ${in_range4}=  ixia verify traffic rate  100000  ${cint2_rx}  rangev=10
+    Should be true  ${in_range4}
+    ${span_int_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
+    ${in_range5}=  ixia verify traffic rate  200000  ${span_int_tx}  rangev=10
+    Should be true  ${in_range5}
+    [Tags]  full  feature  chain  chain-span  
+
+TC013: Configure two chains that share the same span-service on both endpoints. Verify chain operation with bidirectional traffic.
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"any-traffic": true, "sequence": 1}
+    Should be True  ${config2}
+    sleep  2
+    ${result1}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_3}
+    Should be True  ${result2}
+    sleep  2
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  5
+    ${result1}=  rest add a chain  chain_name=${chain_name_2}
+    Should be True  ${result1}
+    ${result2}=  rest add chain endpoint  s1  chain_name=${chain_name_2}  interface1=${chain_interface_4}  interface2=${chain_interface_2}
+    Should be True  ${result2}
+    sleep  2
+    ${result3}=  rest add span service to chain  chain_name=${chain_name_2}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${result3}
+    sleep  30
+    ${result6}=  rest verify bigchain chain  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_3}
+    Should be True  ${result6}
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    sleep  30
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  b  received_valid_frames  transmitted_frames
+    ${cint1_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
+    ${in_range1}=  ixia verify traffic rate  100000  ${cint1_tx}  rangev=10
+    Should be true  ${in_range1}
+    ${cint1_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    ${in_range2}=  ixia verify traffic rate  100000  ${cint1_rx}  rangev=10
+    Should be true  ${in_range2}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    ${in_range3}=  ixia verify traffic rate  100000  ${cint2_tx}  rangev=10
+    Should be true  ${in_range3}
+    ${cint2_rx}=  cli return interface counter brief  s1  ${chain_interface_2}  rx
+    ${in_range4}=  ixia verify traffic rate  100000  ${cint2_rx}  rangev=10
+    Should be true  ${in_range4}
+    ${span_int_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
+    ${in_range5}=  ixia verify traffic rate  400000  ${span_int_tx}  rangev=10
+    Should be true  ${in_range5}
+    [Tags]  full  feature  chain  chain-span  
+
+TC014: Configure a single chain that has three services and span-service on both endpoints. Verify chain operation with bidirectional traffic.
+    setup three services and attach services to chain
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"any-traffic": true, "sequence": 1}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${config3}
+    sleep  30
+    ${result6}=  rest verify bigchain chain  node=s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${result6}
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    sleep  30
+    clear stats
+    cli clear interface statistics  s1
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}
+    sleep  10
+    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  b  received_valid_frames  transmitted_frames
+    verify traffic across chain and services  100000
+    ${span_int_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
+    ${in_range5}=  ixia verify traffic rate  200000  ${span_int_tx}  rangev=10
+    Should be true  ${in_range5}
+    [Tags]  full  feature  chain  chain-span  chain-service  jira-bt-1902  
+
+TC015: Configure a single chain that has three services and span-service on both endpoints. Disable/enable endpoint1 and verify entire chain is brought down and re-enabled
+    setup three services and attach services to chain
+    sleep  30
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${config3}
+    sleep  30
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}  
+    Should be True  ${result1}
+    ${switch1_action_1}=  cli disable interface  s1  ${chain_interface_1}
+    Should be True  ${switch1_action_1}
+    sleep  30
+    ${result2}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should not be True  ${result2}
+    sleep  5
+    ${switch1_action_2}=  cli enable interface  s1  ${chain_interface_2}
+    Should be True  ${switch1_action_2}
+    sleep  60
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result3}
+    [Tags]  full  feature  chain  chain-span  chain-service  jira-BT-1935  
+
+TC016: Configure a single chain that has three services and span-service on both endpoints. Disable/enable endpoint2 and verify entire chain is brought down and re-enabled
+    setup three services and attach services to chain
+    sleep  30
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${config3}
+    sleep  30
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result1}
+    ${switch1_action_1}=  cli disable interface  s1  ${chain_interface_2}
+    Should be True  ${switch1_action_1}
+    sleep  30
+    ${result2}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should not be True  ${result2}
+    sleep  10
+    ${switch1_action_2}=  cli enable interface  s1  ${chain_interface_2}
+    Should be True  ${switch1_action_2}
+    sleep  60
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result3}
+    [Tags]  full  feature  chain  chain-span  chain-service  jira-BT-1935  
+
+TC017:Configure a single chain that has three services and span-service on both endpoints. Disable/enable endpoint1 from remote end and verify entire chain is brought down and re-enabled
+    setup three services and attach services to chain on arista
+    sleep  30
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 2048}  update=${False}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${config3}
+    sleep  30
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${s1s3port_intf_1}  interface2=${s1s4port_intf_1}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result1}
+    config  node=s3  cmd=interface ${s3s1port_intf_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=shutdown
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    sleep  30
+    ${result2}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${s1s3port_intf_1}  interface2=${s1s4port_intf_1}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should not be True  ${result2}
+    sleep  5
+    config  node=s3  cmd=no shutdown
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    sleep  45
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${s1s3port_intf_1}  interface2=${s1s4port_intf_1}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result3}
+    [Tags]  full  feature  chain  chain-span  chain-service
+
+TC018:Configure a single chain that has three services and span-service on both endpoints. Disable/enable endpoint2 from remote end and verify entire chain is brought down and re-enabled
+    setup three services and attach services to chain on arista
+    sleep  30
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 2048}  update=${False}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${config3}
+    sleep  30
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${s1s3port_intf_1}  interface2=${s1s4port_intf_1}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result1}
+    config  node=s4  cmd=interface ${s4s1port_intf_1}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=shutdown
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    sleep  30
+    ${result2}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${s1s3port_intf_1}  interface2=${s1s4port_intf_1}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should not be True  ${result2}
+    sleep  5
+    config  node=s4  cmd=no shutdown
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=exit
+    sleep  30
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${s1s3port_intf_1}  interface2=${s1s4port_intf_1}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result3}
+    [Tags]  full  feature  chain  chain-span  chain-service
+
+TC019:Configure a single chain that has three services and span-service on both endpoints. Shutdown non-optional service in interface and verify entire chain is brought down
+    setup three services and attach services to chain
+    sleep  30
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${config3}
+    sleep  30
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result1}
+    ${switch1_action_1}=  cli disable interface  s1  ${service_in_interface1}
+    Should be True  ${switch1_action_1}
+    sleep  30
+    ${result2}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should not be True  ${result2}
+    sleep  5
+    ${switch1_action_2}=  cli enable interface  s1  ${service_in_interface1}
+    Should be True  ${switch1_action_2}
+    sleep  60
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result3}
+    [Tags]  full  feature  chain  chain-span  chain-service  jira-BT-1935
+
+TC020:Configure a single chain that has three services and span-service on both endpoints. Shutdown non-optional service out interface and verify entire chain is brought down
+    setup three services and attach services to chain
+    sleep  30
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${config3}
+    sleep  30
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result1}
+    ${switch1_action_1}=  cli disable interface  s1  ${service_out_interface1}
+    Should be True  ${switch1_action_1}
+    sleep  30
+    ${result2}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should not be True  ${result2}
+    sleep  5
+    ${switch1_action_2}=  cli enable interface  s1  ${service_out_interface1}
+    Should be True  ${switch1_action_2}
+    sleep  60
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result3}
+    [Tags]  full  feature  chain  chain-span  chain-service  jira-BT-1935
+
+TC021:Configure a single chain that has three services and span-service on both endpoints. Shutdown optional service in interface and verify entire chain is brought down
+    setup three services and attach services to chain
+    sleep  30
+    ### Convert Service 1 to optional service
+    config  node=master  cmd=bigchain chain ${chain_name_1}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=use-service ${service_name_1} instance 1 sequence 1 optional
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=exit
+    sleep  30
+    ###
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${config3}
+    sleep  30
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result1}
+    ${switch1_action_1}=  cli disable interface  s1  ${service_in_interface1}
+    Should be True  ${switch1_action_1}
+    sleep  30
+    ${result2}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result2}
+    sleep  5
+    ${switch1_action_2}=  cli enable interface  s1  ${service_in_interface1}
+    Should be True  ${switch1_action_2}
+    sleep  10
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result3}
+    [Tags]  full  feature  chain  chain-span  chain-service
+
+TC022:Configure a single chain that has three services and span-service on both endpoints. Shutdown optional service out interface and verify entire chain is brought down
+    setup three services and attach services to chain
+    sleep  30
+    ### Convert Service 1 to optional service
+    config  node=master  cmd=bigchain chain ${chain_name_1}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=use-service ${service_name_1} instance 1 sequence 1 optional
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=exit
+    ###
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${config3}
+    sleep  10
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result1}
+    ${switch1_action_1}=  cli disable interface  s1  ${service_out_interface1}
+    Should be True  ${switch1_action_1}
+    sleep  10
+    ${result2}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result2}
+    sleep  5
+    ${switch1_action_2}=  cli enable interface  s1  ${service_out_interface1}
+    Should be True  ${switch1_action_2}
+    sleep  10
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result3}
+    [Tags]  full  feature  chain  chain-span  chain-service  jira-BT-1902
+
+TC023:Configure a single chain that has three services and span-service on both endpoints. Shutdown span-service interface and verify chain is not affected.
+    setup three services and attach services to chain
+    sleep  30
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${config3}
+    sleep  10
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result1}
+    ${switch1_action_1}=  cli disable interface  s1  ${span_service_interface_1}
+    Should be True  ${switch1_action_1}
+    sleep  10
+    ${result2}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result2}
+    sleep  5
+    ${switch1_action_2}=  cli enable interface  s1  ${span_service_interface_1}
+    Should be True  ${switch1_action_2}
+    sleep  60
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result3}
+    [Tags]  full  feature  chain  chain-span  chain-service  jira-BT-1902
+
+TC024:Configure a single chain that has three services and span-service on both endpoints. Shutdown span-service interface from remote end and verify chain is not affected.
+    setup three services and attach services to chain
+    ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
+    Should be True  ${config1}
+    sleep  2
+    ${config2}=  rest add span service policy match  span_service_name=${span_service_name_1}  match_number=1  data={"sequence": 1, "ether-type": 2048}
+    Should be True  ${config2}
+    sleep  2
+    ${config3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   endpoint2=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
+    Should be True  ${config3}
+    sleep  30
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result1}
+    config  node=s3  cmd=interface ${arista_span_interface_s1s3}
+    ${content5}=  cli_content  node=s3
+    Should Not Contain  ${content5}  Error
+    config  node=s3  cmd=shutdown
+    ${content5}=  cli_content  node=s3
+    Should Not Contain  ${content5}  Error
+    sleep  10
+    ${result2}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}  span_down=${True}
+    Should be True  ${result2}
+    sleep  5
+    config  node=s3  cmd=no shutdown
+    ${content5}=  cli_content  node=s3
+    Should Not Contain  ${content5}  Error
+    config  node=s3  cmd=exit
+    sleep  45
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
+    Should be True  ${result3}
+    [Tags]  full  feature  chain  chain-span  chain-service  jira-BT-1902  runthis
+
+TC025: Verify STP traffic bypasses service interface.
+    add a service via rest  ${service_name_1}  1  service1  s1  ${service_in_interface1}  ${service_out_interface1}  1  {"any-traffic": true, "sequence": 1}
+    ${config1}=  rest add a bigchain policy match  chain_service_name=${service_name_1}  match_number=2  data={"any-traffic": true, "sequence": 1}
+    Should be true  ${config1}
+    sleep  10
+    ${config2}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${config2}
+    ${config3}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${config3}
+    sleep  10
+    ${config4}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_1}  instance=1  sequence=1
+    Should be True  ${config4}
+    sleep  10
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}
+    Should be True  ${result1}
+    sleep  30
+    ${stream_1}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=100000  src_mac=5C:16:C7:13:14:01  dst_mac=01:80:c2:00:00:00  name=a_b_flow
+    clear stats
+    cli clear interface statistics  s1
+    start traffic
+    sleep  10        
+    stop traffic
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames
+    sleep  5
+    ${cint1_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    ${in_range1}=  ixia verify traffic rate  100000  ${cint1_rx}  rangev=50
+    Should be true  ${in_range1}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    ${in_range2}=  ixia verify traffic rate  100000  ${cint2_tx}  rangev=50
+    Should be true  ${in_range2}
+    ## Service 1
+    ${sint1_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    ${in_range1}=  ixia verify traffic rate  0  ${sint1_tx}  rangev=50
+    Should be true  ${in_range1}
+    ${sint2_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    ${in_range2}=  ixia verify traffic rate  0  ${sint2_rx}  rangev=50
+    Should be true  ${in_range2}
+    [Tags]  full  feature  chain  chain-service  traffic
+
+TC026: Verify LACP traffic bypasses service interface.
+    add a service via rest  ${service_name_1}  1  service1  s1  ${service_in_interface1}  ${service_out_interface1}  1  {"any-traffic": true, "sequence": 1}
+    ${config1}=  rest add a bigchain policy match  chain_service_name=${service_name_1}  match_number=2  data={"any-traffic": true, "sequence": 1}
+    Should be true  ${config1}
+    sleep  10
+    ${config2}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${config2}
+    ${config3}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${switch_to_server_port}  interface2=${chain_interface_4}
+    Should be True  ${config3}
+    sleep  10
+    ${config4}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_1}  instance=1  sequence=1
+    Should be True  ${config4}
+    sleep  10
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${switch_to_server_port}  interface2=${chain_interface_4}  service1=${service_name_1}
+    Should be True  ${result1}
+    sleep  30
+    cli clear interface statistics  s1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth4 /root/pcaps/LACP.pcap     timeout=180
+    sleep  4
+    ${cint1_rx}=  cli return interface counter brief  s1  ${switch_to_server_port}  rx
+    ${in_range1}=  ixia verify traffic rate  10000  ${cint1_rx}  rangev=50
+    Should be true  ${in_range1}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_4}  tx
+    ${in_range2}=  ixia verify traffic rate  10000  ${cint2_tx}  rangev=50
+    Should be true  ${in_range2}
+    ## Service 1
+    ${sint1_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    ${in_range1}=  ixia verify traffic rate  0  ${sint1_tx}  rangev=50
+    Should be true  ${in_range1}
+    ${sint2_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    ${in_range2}=  ixia verify traffic rate  0  ${sint2_rx}  rangev=50
+    Should be true  ${in_range2}
+    [Tags]  full  feature  chain  chain-service  traffic  
+
+TC027: Verify CDP v1 frame transmitted by a router bypasses service interface.
+    add a service via rest  ${service_name_1}  1  service1  s1  ${service_in_interface1}  ${service_out_interface1}  1  {"any-traffic": true, "sequence": 1}
+    ${config1}=  rest add a bigchain policy match  chain_service_name=${service_name_1}  match_number=2  data={"any-traffic": true, "sequence": 1}
+    Should be true  ${config1}
+    sleep  10
+    ${config2}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${config2}
+    ${config3}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${switch_to_server_port}  interface2=${chain_interface_4}
+    Should be True  ${config3}
+    sleep  10
+    ${config4}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_1}  instance=1  sequence=1
+    Should be True  ${config4}
+    sleep  10
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${switch_to_server_port}  interface2=${chain_interface_4}  service1=${service_name_1}
+    Should be True  ${result1}
+    sleep  30
+    cli clear interface statistics  s1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth4 /root/pcaps/cdp.pcap     timeout=180
+    sleep  4
+    ${cint1_rx}=  cli return interface counter brief  s1  ${switch_to_server_port}  rx
+    ${in_range1}=  ixia verify traffic rate  500  ${cint1_rx}  rangev=50
+    Should be true  ${in_range1}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_4}  tx
+    ${in_range2}=  ixia verify traffic rate  500  ${cint2_tx}  rangev=50
+    Should be true  ${in_range2}
+    ## Service 1
+    ${sint1_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    ${in_range1}=  ixia verify traffic rate  0  ${sint1_tx}  rangev=50
+    Should be true  ${in_range1}
+    ${sint2_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    ${in_range2}=  ixia verify traffic rate  0  ${sint2_rx}  rangev=50
+    Should be true  ${in_range2}
+    [Tags]  full  feature  chain  chain-service  traffic  
+
+TC028: Verify CDP v2 frame transmitted by a switch bypasses service interface.
+    add a service via rest  ${service_name_1}  1  service1  s1  ${service_in_interface1}  ${service_out_interface1}  1  {"any-traffic": true, "sequence": 1}
+    ${config1}=  rest add a bigchain policy match  chain_service_name=${service_name_1}  match_number=2  data={"any-traffic": true, "sequence": 1}
+    Should be true  ${config1}
+    sleep  10
+    ${config2}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${config2}
+    ${config3}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${switch_to_server_port}  interface2=${chain_interface_4}
+    Should be True  ${config3}
+    sleep  10
+    ${config4}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_1}  instance=1  sequence=1
+    Should be True  ${config4}
+    sleep  10
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${switch_to_server_port}  interface2=${chain_interface_4}  service1=${service_name_1}
+    Should be True  ${result1}
+    sleep  30
+    cli clear interface statistics  s1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth4 /root/pcaps/cdp_v2.pcap     timeout=180
+    sleep  4
+    ${cint1_rx}=  cli return interface counter brief  s1  ${switch_to_server_port}  rx
+    ${in_range1}=  ixia verify traffic rate  2000  ${cint1_rx}  rangev=50
+    Should be true  ${in_range1}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_4}  tx
+    ${in_range2}=  ixia verify traffic rate  2000  ${cint2_tx}  rangev=50
+    Should be true  ${in_range2}
+    ## Service 1
+    ${sint1_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    ${in_range1}=  ixia verify traffic rate  0  ${sint1_tx}  rangev=50
+    Should be true  ${in_range1}
+    ${sint2_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    ${in_range2}=  ixia verify traffic rate  0  ${sint2_rx}  rangev=50
+    Should be true  ${in_range2}
+    [Tags]  full  feature  chain  chain-service  traffic
+
+TC029: Verify CDP v2 frames transmitted by a switch with the voice VLAN id for an IP Phone bypasses service interface.
+    add a service via rest  ${service_name_1}  1  service1  s1  ${service_in_interface1}  ${service_out_interface1}  1  {"any-traffic": true, "sequence": 1}
+    ${config1}=  rest add a bigchain policy match  chain_service_name=${service_name_1}  match_number=2  data={"any-traffic": true, "sequence": 1}
+    Should be true  ${config1}
+    sleep  10
+    ${config2}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${config2}
+    ${config3}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${switch_to_server_port}  interface2=${chain_interface_4}
+    Should be True  ${config3}
+    sleep  10
+    ${config4}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_1}  instance=1  sequence=1
+    Should be True  ${config4}
+    sleep  10
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${switch_to_server_port}  interface2=${chain_interface_4}  service1=${service_name_1}
+    Should be True  ${result1}
+    sleep  30
+    cli clear interface statistics  s1
+    bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth4 /root/pcaps/cdp_v2_voice.pcap     timeout=180
+    sleep  4
+    ${cint1_rx}=  cli return interface counter brief  s1  ${switch_to_server_port}  rx
+    ${in_range1}=  ixia verify traffic rate  500  ${cint1_rx}  rangev=50
+    Should be true  ${in_range1}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_4}  tx
+    ${in_range2}=  ixia verify traffic rate  500  ${cint2_tx}  rangev=50
+    Should be true  ${in_range2}
+    ## Service 1
+    ${sint1_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    ${in_range1}=  ixia verify traffic rate  0  ${sint1_tx}  rangev=50
+    Should be true  ${in_range1}
+    ${sint2_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    ${in_range2}=  ixia verify traffic rate  0  ${sint2_rx}  rangev=50
+    Should be true  ${in_range2}
+    [Tags]  full  feature  chain  chain-service  traffic
+
+
+
+* Keywords
+chain suite setup
+    base suite setup
+    ${result1}=  rest add switch alias  s1  ${switch1_alias}
+    Should be true  ${result1}
+    ${result2}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result2}
+    #### Configure Switch S3: app-arista-2
+    config  node=s3  cmd=interface ${arista_ixia_interface_s3}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    config  node=s3  cmd=switchport mode trunk
+    ${content3}=  cli_content  node=s3
+    Should Not Contain  ${content3}  Error
+    config  node=s3  cmd=switchport trunk allowed vlan all
+    ${content4}=  cli_content  node=s3
+    Should Not Contain  ${content4}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${arista_span_interface_s1s3}
+    ${content5}=  cli_content  node=s3
+    Should Not Contain  ${content5}  Error
+    config  node=s3  cmd=switchport
+    ${content6}=  cli_content  node=s3
+    Should Not Contain  ${content6}  Error
+    config  node=s3  cmd=switchport mode trunk
+    ${content7}=  cli_content  node=s3
+    Should Not Contain  ${content7}  Error
+    config  node=s3  cmd=switchport trunk allowed vlan all
+    ${content8}=  cli_content  node=s3
+    Should Not Contain  ${content8}  Error
+    #### Configure Switch S4: app-arista-1
+    config  node=s4  cmd=interface ${arista_ixia_interface_s4}
+    ${content9}=  cli_content  node=s4
+    Should Not Contain  ${content9}  Error
+    config  node=s4  cmd=switchport
+    ${content10}=  cli_content  node=s4
+    Should Not Contain  ${content10}  Error
+    config  node=s4  cmd=switchport mode trunk
+    ${content11}=  cli_content  node=s4
+    Should Not Contain  ${content11}  Error
+    config  node=s4  cmd=switchport trunk allowed vlan all
+    ${content12}=  cli_content  node=s4
+    Should Not Contain  ${content12}  Error
+    config  node=s4  cmd=exit
+
+chain test setup
+    ${switch1_action_1}=  cli enable interface  s1  ${chain_interface_1}
+    Should be True  ${switch1_action_1}
+    ${switch1_action_2}=  cli enable interface  s1  ${chain_interface_2}
+    Should be True  ${switch1_action_2}
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
+    ixia initialize  tg1  init=true
+
+setup three services and attach services to chain on arista
+    config  node=s3  cmd=interface ${s3s1port_intf_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    config  node=s3  cmd=switchport mode trunk
+    ${content3}=  cli_content  node=s3
+    Should Not Contain  ${content3}  Error
+    config  node=s3  cmd=switchport trunk allowed vlan all
+    ${content4}=  cli_content  node=s3
+    Should Not Contain  ${content4}  Error
+    config  node=s3  cmd=exit
+    config  node=s4  cmd=interface ${s4s1port_intf_1}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=switchport
+    ${content2}=  cli_content  node=s4
+    Should Not Contain  ${content2}  Error
+    config  node=s4  cmd=switchport mode trunk
+    ${content3}=  cli_content  node=s4
+    Should Not Contain  ${content3}  Error
+    config  node=s4  cmd=switchport trunk allowed vlan all
+    ${content4}=  cli_content  node=s4
+    Should Not Contain  ${content4}  Error
+    config  node=s4  cmd=exit
+    sleep  2
+    add a service via rest  ${service_name_1}  1  service1  s1  ${service_in_interface1}  ${service_out_interface1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    ${config1}=  rest add a bigchain policy match  chain_service_name=${service_name_1}  match_number=2  data={"src-ip-mask": "255.255.255.255", "sequence": 2, "src-ip": "100.1.1.2", "ether-type": 2048}
+    Should be true  ${config1}
+    add a service via rest  ${service_name_2}  1  service2  s1  ${service_in_interface2}  ${service_out_interface2}  1  {"dst-ip-mask": "255.255.255.255", "sequence": 1, "dst-ip": "100.1.1.2", "ether-type": 2048}
+    ${config2}=  rest add a bigchain policy match  chain_service_name=${service_name_2}  match_number=2  data={"dst-ip-mask": "255.255.255.255", "sequence": 2, "dst-ip": "100.1.1.1", "ether-type": 2048}
+    Should be true  ${config2}
+    add a service via rest  ${service_name_3}  1  service3  s1  ${service_in_interface3}  ${service_out_interface3}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    ${config3}=  rest add a bigchain policy match  chain_service_name=${service_name_3}  match_number=2  data={"ether-type": 2048, "dst-tp-port": 1234, "ip-proto": 6, "sequence": 2}
+    Should be true  ${config3}
+    sleep  5
+    ${config5}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${config5}
+    ${config6}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${s1s3port_intf_1}  interface2=${s1s4port_intf_1}
+    Should be True  ${config6}
+    sleep  5
+    ${config7}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_1}  instance=1  sequence=1
+    Should be True  ${config7}
+    ${config8}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_2}  instance=1  sequence=2
+    Should be True  ${config8}
+    ${config9}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_3}  instance=1  sequence=3
+    Should be True  ${config9}
+
+setup three services and attach services to chain
+    add a service via rest  ${service_name_1}  1  service1  s1  ${service_in_interface1}  ${service_out_interface1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    ${config1}=  rest add a bigchain policy match  chain_service_name=${service_name_1}  match_number=2  data={"src-ip-mask": "255.255.255.255", "sequence": 2, "src-ip": "100.1.1.2", "ether-type": 2048}
+    Should be true  ${config1}
+    add a service via rest  ${service_name_2}  1  service2  s1  ${service_in_interface2}  ${service_out_interface2}  1  {"dst-ip-mask": "255.255.255.255", "sequence": 1, "dst-ip": "100.1.1.2", "ether-type": 2048}
+    ${config2}=  rest add a bigchain policy match  chain_service_name=${service_name_2}  match_number=2  data={"dst-ip-mask": "255.255.255.255", "sequence": 2, "dst-ip": "100.1.1.1", "ether-type": 2048}
+    Should be true  ${config2}
+    add a service via rest  ${service_name_3}  1  service3  s1  ${service_in_interface3}  ${service_out_interface3}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    ${config3}=  rest add a bigchain policy match  chain_service_name=${service_name_3}  match_number=2  data={"ether-type": 2048, "dst-tp-port": 1234, "ip-proto": 6, "sequence": 2}
+    Should be true  ${config3}
+    sleep  5
+    ${config5}=  rest add a chain  chain_name=${chain_name_1}
+    Should be True  ${config5}
+    ${config6}=  rest add chain endpoint  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be True  ${config6}
+    sleep  5
+    ${config7}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_1}  instance=1  sequence=1
+    Should be True  ${config7}
+    ${config8}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_2}  instance=1  sequence=2
+    Should be True  ${config8}
+    ${config9}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_3}  instance=1  sequence=3
+    Should be True  ${config9}
+
+verify traffic across chain and services  [Arguments]  ${total_packets}
+    ${cint1_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
+    ${in_range1}=  ixia verify traffic rate  ${total_packets}  ${cint1_tx}  rangev=10
+    Should be true  ${in_range1}
+    ${cint1_rx}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
+    ${in_range2}=  ixia verify traffic rate  ${total_packets}  ${cint1_rx}  rangev=10
+    Should be true  ${in_range2}
+    ${cint2_tx}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
+    ${in_range3}=  ixia verify traffic rate  ${total_packets}  ${cint2_tx}  rangev=10
+    Should be true  ${in_range3}
+    ${cint2_rx}=  cli return interface counter brief  s1  ${chain_interface_2}  rx
+    ${in_range4}=  ixia verify traffic rate  ${total_packets}  ${cint2_rx}  rangev=10
+    Should be true  ${in_range4}
+    #Service1
+    ${sint1_in_tx}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
+    ${in_range5}=  ixia verify traffic rate  ${total_packets}  ${sint1_in_tx}  rangev=10
+    Should be true  ${in_range5}
+    ${sint1_in_rx}=  cli return interface counter brief  s1  ${service_in_interface1}  rx
+    ${in_range6}=  ixia verify traffic rate  ${total_packets}  ${sint1_in_rx}  rangev=10
+    Should be true  ${in_range6}
+    ${sint1_out_tx}=  cli return interface counter brief  s1  ${service_out_interface1}  tx
+    ${in_range7}=  ixia verify traffic rate  ${total_packets}  ${sint1_out_tx}  rangev=10
+    Should be true  ${in_range7}
+    ${sint1_out_rx}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
+    ${in_range8}=  ixia verify traffic rate  ${total_packets}  ${sint1_out_rx}  rangev=10
+    Should be true  ${in_range8}
+    #Service2
+    ${sint2_in_tx}=  cli return interface counter brief  s1  ${service_in_interface2}  tx
+    ${in_range9}=  ixia verify traffic rate  ${total_packets}  ${sint2_in_tx}  rangev=10
+    Should be true  ${in_range9}
+    ${sint2_in_rx}=  cli return interface counter brief  s1  ${service_in_interface2}  rx
+    ${in_range10}=  ixia verify traffic rate  ${total_packets}  ${sint2_in_rx}  rangev=10
+    Should be true  ${in_range10}
+    ${sint2_out_tx}=  cli return interface counter brief  s1  ${service_out_interface2}  tx
+    ${in_range11}=  ixia verify traffic rate  ${total_packets}  ${sint2_out_tx}  rangev=10
+    Should be true  ${in_range11}
+    ${sint2_out_rx}=  cli return interface counter brief  s1  ${service_out_interface2}  rx
+    ${in_range12}=  ixia verify traffic rate  ${total_packets}  ${sint2_out_rx}  rangev=10
+    Should be true  ${in_range12}
+    #Service3
+    ${sint3_in_tx}=  cli return interface counter brief  s1  ${service_in_interface3}  tx
+    ${in_range13}=  ixia verify traffic rate  ${total_packets}  ${sint3_in_tx}  rangev=10
+    Should be true  ${in_range13}
+    ${sint3_in_rx}=  cli return interface counter brief  s1  ${service_in_interface3}  rx
+    ${in_range14}=  ixia verify traffic rate  ${total_packets}  ${sint3_in_rx}  rangev=10
+    Should be true  ${in_range14}
+    ${sint3_out_tx}=  cli return interface counter brief  s1  ${service_out_interface3}  tx
+    ${in_range15}=  ixia verify traffic rate  ${total_packets}  ${sint3_out_tx}  rangev=10
+    Should be true  ${in_range15}
+    ${sint3_out_rx}=  cli return interface counter brief  s1  ${service_out_interface3}  rx
+    ${in_range16}=  ixia verify traffic rate  ${total_packets}  ${sint3_out_rx}  rangev=10
+    Should be true  ${in_range16}
+
+    
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
+    Should be true  ${in_range}
+
+add a service via rest  [Arguments]  ${sname}  ${sid}  ${sdesc}  ${snode}  ${sin}  ${sout}  ${smatch_num}  ${user_data}
+    ${result1}=  rest add a bigchain service  chain_service_name=${sname}  service_type=custom  instance_id=${sid}
+    Should be True  ${result1}
+    ${result2}=  rest add a bigchain service description  chain_service_name=${sname}  descrption=${sdesc}
+    Should be True  ${result2}
+    ${result3}=  rest add a bigchain service instance interface pair  node=${snode}  chain_service_name=${sname}  instance_id=${sid}  inintf=${sin}  outintf=${sout}
+    Should be True  ${result3}
+    ${result4}=  rest update bigchain policy action  chain_service_name=${sname}
+    Should be True  ${result4}
+    ${result5}=  rest add a bigchain policy match  chain_service_name=${sname}  match_number=${smatch_num}  data=${user_data}
+    Should be True  ${result5}
+    sleep  5
+
+chain test teardown
+    base test teardown
+    config  node=master  cmd=no bigchain chain ${chain_name_1}
+    config  node=master  cmd=no bigchain chain ${chain_name_2}
+    config  node=master  cmd=no bigchain span-service ${span_service_name_1}
+    ${result1}=  cli delete portchannel  s1  ${portchannel_1_number}
+    Should be true  ${result1}
+    ${result2}=  cli delete portchannel  s1  ${portchannel_2_number}
+    Should be true  ${result2}   
+    ${result3}=  rest delete bigchain service  chain_service_name=${service_name_1}
+    Should be true  ${result3}
+    ${result4}=  rest delete bigchain service  chain_service_name=${service_name_2}
+    Should be true  ${result4}
+    ${result5}=  rest delete bigchain service  chain_service_name=${service_name_3}
+    Should be true  ${result5}
+    ${result6}=  cli enable interface  s1  ${span_service_interface_1}
+    Should be true  ${result6}
+    delete traffic
+    sleep  5
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+    
+chain suite teardown
+    #### Unconfigure Switch S3: app-arista-2
+    config  node=s3  cmd=interface ${arista_ixia_interface_s3}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    config  node=s3  cmd=no switchport mode trunk
+    ${content3}=  cli_content  node=s3
+    Should Not Contain  ${content3}  Error
+    config  node=s3  cmd=no switchport trunk allowed vlan all
+    ${content4}=  cli_content  node=s3
+    Should Not Contain  ${content4}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${arista_span_interface_s1s3}
+    ${content5}=  cli_content  node=s3
+    Should Not Contain  ${content5}  Error
+    config  node=s3  cmd=no switchport
+    ${content6}=  cli_content  node=s3
+    Should Not Contain  ${content6}  Error
+    config  node=s3  cmd=no switchport mode trunk
+    ${content7}=  cli_content  node=s3
+    Should Not Contain  ${content7}  Error
+    config  node=s3  cmd=no switchport trunk allowed vlan all
+    ${content8}=  cli_content  node=s3
+    Should Not Contain  ${content8}  Error
+    #### Unconfigure switch S4: app-arista-1
+    config  node=s4  cmd=interface ${arista_ixia_interface_s4}
+    ${content9}=  cli_content  node=s4
+    Should Not Contain  ${content9}  Error
+    config  node=s4  cmd=no switchport
+    ${content10}=  cli_content  node=s4
+    Should Not Contain  ${content10}  Error
+    config  node=s4  cmd=no switchport mode trunk
+    ${content11}=  cli_content  node=s4
+    Should Not Contain  ${content11}  Error
+    config  node=s4  cmd=no switchport trunk allowed vlan all
+    ${content12}=  cli_content  node=s4
+    Should Not Contain  ${content12}  Error
+    #### Unconfigure controller
+    ${result1}=  rest delete switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result3}=  rest delete switch alias  s1
+    Should be true  ${result3}
+    ${result4}=  rest delete switch  s1
+    Should be true  ${result4}
+    base suite teardown

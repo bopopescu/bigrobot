@@ -76,23 +76,4 @@ h6:
   ip: 10.195.0.106
   user: root
   password: bsn  
-tg1:
-  platform: 'ixia'
-  chassis_ip: 10.192.85.151
-  tcl_server_ip: 10.192.99.10
-  #tcl_server_port: 8009
-  #ix_version: '7.10'
-  #set_init_ping: false
-  ports:
-    a:
-      name: 2/1
-    b:
-      name: 2/2 
-    c:
-      name: 2/3
-    d:
-      name: 2/4
-    e:
-      name: 2/5
-    f:
-      name: 2/6 
+ 

@@ -1,0 +1,80 @@
+*Settings
+Documentation  Upgrade switch and controller: Corsair Plus
+Force Tags   BigTap  Corsair-450
+Library  keywords/SwitchLight.py
+Library  keywords_dev/Sahaja/BigTap.py 
+Library  keywords/BsnCommon.py
+* Variable
+${version}			Switch Light OS SWL-BT-4.5.0
+    
+* Test Case
+
+TC01: Switch Upgrade
+    copy image
+    Run Keyword And Ignore Error  bash upgrade switch   s1   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s2   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s3   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+#    Run Keyword And Ignore Error  bash upgrade switch   s4   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s5   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s6   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s7   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s8   autobuilds/master/latest.switchlight-BT-4.5.0-amd64-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s9   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    #Run Keyword And Ignore Error  bash upgrade switch   s10  autobuilds/master/latest.switchlight-BT-4.5.0-amd64-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s11  autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s12  autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s13  autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+
+    sleep  600
+    cli  node=s1  cmd=show version
+    ${content1}=  cli_content  node=s1
+    Should Contain  ${content1}  ${version}
+	
+    cli  node=s2  cmd=show version
+    ${content2}=  cli_content  node=s2
+    Should Contain  ${content2}  ${version}
+   
+    cli  node=s3  cmd=show version
+    ${content3}=  cli_content  node=s3
+    Should Contain  ${content3}  ${version}
+	
+    cli  node=s4  cmd=show version
+    ${content4}=  cli_content  node=s4
+    Should Contain  ${content4}  ${version}
+	
+    cli  node=s5  cmd=show version
+    ${content5}=  cli_content  node=s5
+    Should Contain  ${content5}  ${version}
+	
+    cli  node=s6  cmd=show version
+    ${content6}=  cli_content  node=s6
+    Should Contain  ${content6}  ${version}
+	
+    cli  node=s7  cmd=show version
+    ${content7}=  cli_content  node=s7
+    Should Contain  ${content7}  ${version}
+	
+    cli  node=s8  cmd=show version
+    ${content8}=  cli_content  node=s8
+    Should Contain  ${content8}  ${version}
+	
+    cli  node=s9  cmd=show version
+    ${content9}=  cli_content  node=s9
+    Should Contain  ${content9}  ${version}
+    
+    cli  node=s10  cmd=show version
+    ${content10}=  cli_content  node=s10
+    Should Contain  ${content10}  ${version}
+    	
+    cli  node=s11  cmd=show version
+    ${content11}=  cli_content  node=s11
+    Should Contain  ${content11}  ${version}
+
+    cli  node=s12  cmd=show version
+    ${content12}=  cli_content  node=s12
+    Should Contain  ${content12}  ${version}
+
+    cli  node=s13  cmd=show version
+    ${content13}=  cli_content  node=s13
+    Should Contain  ${content13}  ${version}
+    [Tags]  feature  sanity 

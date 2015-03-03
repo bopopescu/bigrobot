@@ -4,7 +4,7 @@ Suite Setup             corsair suite setup
 Suite Teardown          corsair suite teardown
 Test Setup              corsair test setup
 Test Teardown           corsair test teardown 
-Force Tags              corsair  bigtap  ha  tunnelling
+Force Tags              BigTap  corsair-400  Accton-AS4600  Accton-AS5610  Accton-AS5710  Accton-AS6700  tunnel
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -128,35 +128,35 @@ ${policy_overlap}                       _ZP1_o_P1
 *Test Case
 
 TC1:AS4600:Verify bidirectional tunnel interface
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
-    [Tags]  feature  as4600
+    [Tags]  full  feature   Accton-AS4600  Accton-AS5710  Accton-AS6700  
 
 TC2:AS5710:Verify bidirectional tunnel interface
-    ${verify_tun_sw5}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    ${verify_tun_sw5}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
     Should be true  ${verify_tun_sw5}
-    [Tags]  feature  as5710
+    [Tags]  full  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700  
 
 TC3:AS6700:Verify bidirectional tunnel interface   
-    ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
     Should be true  ${verify_tun_sw8}
-    [Tags]  feature  as6700  
+    [Tags]  full  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700  
 
 TC4:Verify policies across Accton 4600 platform are up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy2}
-    [Tags]  feature  
+    [Tags]  full  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700  
     
 TC5:Verify policies across Accton 5710 and Accton 6700 platform are up
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_3}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy_name_4}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy2}
-    [Tags]  feature  
+    [Tags]  full  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700  
     
 TC6:Verify end-to-end traffic (Accton 4600<==>Accton 4600)
     delete traffic
@@ -180,7 +180,7 @@ TC6:Verify end-to-end traffic (Accton 4600<==>Accton 4600)
     sleep  2    
     verify results  b  c  transmitted_frames  received_data_integrity_frames
     delete traffic  
-    [Tags]  traffic  
+    [Tags]  full  feature  traffic  Accton-AS4600
 
 TC7:Verify end-to-end traffic (Accton 5710<==>Accton 6700)
     delete traffic
@@ -203,7 +203,7 @@ TC7:Verify end-to-end traffic (Accton 5710<==>Accton 6700)
     sleep  2    
     verify results  g  f  transmitted_frames  received_data_integrity_frames           
     delete traffic  
-    [Tags]  traffic
+    [Tags]  full  feature  traffic  Accton-AS5710  Accton-AS6700
 
 TC8:Switch HA: Restart Process OFAD on app-as4600-1
     delete traffic
@@ -244,7 +244,7 @@ TC8:Switch HA: Restart Process OFAD on app-as4600-1
     stop traffic  ${stream_21}   
     sleep  10
     delete traffic  
-    [Tags]  ha  as4600  traffic  ofad
+    [Tags]  ha  robustness  full  traffic  Accton-AS4600  process-restart  switch
 
 TC9:Switch HA: Restart Process OFAD on app-as4600-2
     delete traffic
@@ -284,7 +284,7 @@ TC9:Switch HA: Restart Process OFAD on app-as4600-2
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}       
     delete traffic  
-    [Tags]  ha  as4600  traffic  ofad
+    [Tags]  ha  robustness  full  traffic  Accton-AS4600  process-restart  switch
 
 TC10:Switch HA: Restart Process OFAD on as5710
     delete traffic
@@ -324,7 +324,7 @@ TC10:Switch HA: Restart Process OFAD on as5710
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  as5710  traffic  ofad
+    [Tags]  ha  robustness  full  traffic  Accton-AS5710  process-restart  switch
 
 TC11:Switch HA: Restart Process OFAD on as6700
     delete traffic
@@ -364,7 +364,7 @@ TC11:Switch HA: Restart Process OFAD on as6700
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}               
     delete traffic  
-    [Tags]  ha  as6700  traffic  ofad  runnow
+    [Tags]  ha  robustness  full  traffic  Accton-AS6700  process-restart  switch
 
 
 TC12:Switch HA: Restart Process networking on app-as4600-1
@@ -397,7 +397,7 @@ TC12:Switch HA: Restart Process networking on app-as4600-1
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  as4600  traffic
+    [Tags]  ha  robustness  full  Accton-AS4600  traffic  process-restart  switch
 
 
 TC13:Switch HA: Restart Process networking on app-as4600-2
@@ -430,7 +430,7 @@ TC13:Switch HA: Restart Process networking on app-as4600-2
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  as4600  traffic
+    [Tags]  ha  robustness  full  Accton-AS4600  traffic  process-restart  switch
 
 TC14:Switch HA: Restart Process networking on as5710
     delete traffic
@@ -462,7 +462,7 @@ TC14:Switch HA: Restart Process networking on as5710
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  as5710  traffic
+    [Tags]  ha  robustness  full  Accton-AS5710  traffic  process-restart  switch
 
 TC15:Switch HA: Restart Process networking on as6700
     delete traffic
@@ -494,7 +494,7 @@ TC15:Switch HA: Restart Process networking on as6700
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  as6700  traffic
+    [Tags]  ha  robustness  full  Accton-AS6700  traffic  process-restart  switch
     
 TC16:Switch HA: Restart switch app-as4600-1
     delete traffic
@@ -526,7 +526,7 @@ TC16:Switch HA: Restart switch app-as4600-1
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  as4600  traffic    
+    [Tags]  ha  robustness  full  Accton-AS4600  traffic  reboot  switch
     
 TC17:Switch HA: Restart switch app-as4600-2
     delete traffic
@@ -558,7 +558,7 @@ TC17:Switch HA: Restart switch app-as4600-2
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  as4600  traffic    
+    [Tags]  ha  robustness  full  Accton-AS4600  traffic  reboot  switch
     
 TC18:Switch HA: Restart switch as5710
     delete traffic
@@ -590,7 +590,7 @@ TC18:Switch HA: Restart switch as5710
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  as5710  traffic
+    [Tags]  ha  robustness  full  Accton-AS5710  traffic  reboot  switch
     
 TC19:Switch HA: Restart switch as6700
     delete traffic
@@ -622,7 +622,7 @@ TC19:Switch HA: Restart switch as6700
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  as6700  traffic 
+    [Tags]  ha  robustness  full  Accton-AS6700  traffic  reboot  switch
        
 TC20:Controller HA: Restart process floodlight on active controller and verify tunnel status
     delete traffic
@@ -654,7 +654,7 @@ TC20:Controller HA: Restart process floodlight on active controller and verify t
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  active  traffic
+    [Tags]  ha  robustness  full  traffic  controller  process-restart
 
 TC21:Controller HA: Restart process floodlight on standby controller and verify tunnel status
     delete traffic
@@ -686,7 +686,7 @@ TC21:Controller HA: Restart process floodlight on standby controller and verify 
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  standby  traffic
+    [Tags]  ha  robustness  full  traffic  controller  process-restart
 
 
 TC22:Controller HA: Restart process keepalived on active controller and verify tunnel status
@@ -719,7 +719,7 @@ TC22:Controller HA: Restart process keepalived on active controller and verify t
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  active  traffic
+    [Tags]  ha  robustness  full  controller  traffic  process-restart
 
 TC23:Controller HA: Restart process keepalived on standby controller and verify tunnel status
     delete traffic
@@ -751,7 +751,7 @@ TC23:Controller HA: Restart process keepalived on standby controller and verify 
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  standby  traffic
+    [Tags]  ha  robustness  full  controller  traffic  process-restart
 
 TC24:Controller HA: Restart process collectd on active controller and verify tunnel status
     delete traffic
@@ -783,7 +783,7 @@ TC24:Controller HA: Restart process collectd on active controller and verify tun
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  active  traffic
+    [Tags]  ha  robustness  full  controller  traffic  process-restart
 
 TC25:Controller HA: Restart process collectd on standby controller and verify tunnel status
     delete traffic
@@ -815,7 +815,7 @@ TC25:Controller HA: Restart process collectd on standby controller and verify tu
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  standby  traffic
+    [Tags]  ha  robustness  full  controller  traffic  process-restart
 
 TC26:Controller HA: Execute HA Failover and verify tunnel status
     delete traffic
@@ -847,7 +847,7 @@ TC26:Controller HA: Execute HA Failover and verify tunnel status
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  active  traffic
+    [Tags]  ha  robustness  full  controller  traffic
 
 TC27:Controller HA: Execute HA failback and verify tunnel status
     delete traffic
@@ -879,7 +879,7 @@ TC27:Controller HA: Execute HA failback and verify tunnel status
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  active  traffic
+    [Tags]  ha  robustness  full  controller  traffic
 
 TC28:Controller HA: Flap eth0 on active controller and verify tunnel status
     delete traffic
@@ -911,7 +911,7 @@ TC28:Controller HA: Flap eth0 on active controller and verify tunnel status
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  active  traffic
+    [Tags]  ha  robustness  full  controller  traffic
 
 TC29:Controller HA: Flap eth0 on standby controller and verify tunnel status
     delete traffic
@@ -943,8 +943,7 @@ TC29:Controller HA: Flap eth0 on standby controller and verify tunnel status
     stop traffic  ${stream_12}
     stop traffic  ${stream_21}              
     delete traffic  
-    [Tags]  ha  standby  traffic
-
+    [Tags]  ha  robustness  full  controller  traffic
 
 
 * Keyword
@@ -988,13 +987,13 @@ change tunnel direction to bidir
     sleep  10
 
 verify tunnel status
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
-    ${verify_tun_sw5}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    ${verify_tun_sw5}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
     Should be true  ${verify_tun_sw5}
-    ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
     Should be true  ${verify_tun_sw8}
 
 verify traffic rate across tunnels

@@ -145,16 +145,19 @@ TC026 deploy as a compute/controller node(?)
     
 #Platform
 TC027 Remove/insert Qsfp while traffic running
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed          
     
 TC028 40G optic cable from HCL list ==> check with WTan
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed        
     
 TC029 Continuous host/leaf reboots
-    manual untested
-    [Tags]              feature         Manual-untested          
+    #manual untested
+    [Tags]              feature         Manual
+    manual passed          
 
 TC030 snmp walk 
     #manual untested

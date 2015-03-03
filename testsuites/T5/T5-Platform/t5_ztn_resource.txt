@@ -4,6 +4,8 @@
 	...  powerpc-as5710-54x-r0b
 @{supported_swi_platforms}  powerpc-quanta-ly2-r0  powerpc-as6700-32x-r0
 	...  powerpc-as5710-54x-r0a  powerpc-as5710-54x-r0b
+${ztn_timeout}  8 min
+${ztn_period}  30 sec
 
 *** Keywords ***
 Suite Setup
@@ -49,11 +51,12 @@ Suite Setup
 	@{leafList}=  Create List  ${s2_dpid}  ${s3_dpid}  ${s4_dpid}
 
 	Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
-
-	Sleep  60
+    Sleep  60
 
     ${status}=  Wait Until All Switches Connected And Return Status
-    #Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
+    ${status}=  Wait Until All Switches Connected And Return Status
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches and Reinstall Switchlight
 
 	${tmp}=  Rest Get Switch Ip Address  master  ${s1_alias}
 	set suite variable  ${s1_ip}  ${tmp}
@@ -65,6 +68,9 @@ Suite Setup
 	set suite variable  ${s4_ip}  ${tmp}
 	${tmp}=  Rest Get Switch Ip Address  master  ${s5_alias}
 	set suite variable  ${s5_ip}  ${tmp}
+
+    ${tmp}=  Controller Get Release String
+    Set Suite Variable  ${release_string}  ${tmp}
 
 Suite Teardown
 	Sleep  30
@@ -85,7 +91,8 @@ Test Setup
 	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config
 	Run Keyword and Ignore Error  Cli Copy  running-config  snapshot://test-config  node=slave
     ${status}=  Wait Until All Switches Connected And Return Status
-    #Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
+	Run Keyword If  '${status}'=='False'  Wait Until All Switches Connected
 
 Test Teardown
 	Run Keyword and Ignore Error  Sleep  15
@@ -212,16 +219,17 @@ Randomize ZTN Configuration
 	Cli Run  master  snmp-server switch trap auth-fail
 	Cli Run  master  snmp-server switch trap cpu-load 80
 	Cli Run  master  snmp-server switch trap fm-flow-table-util 80
-	Cli Run  master  snmp-server switch trap l2-flow-table-util 80
+	#Cli Run  master  snmp-server switch trap l2-flow-table-util 80
 	Cli Run  master  snmp-server switch trap mem-free 8080
 	${threshold_random_1}  Generate Random Threshold
 	${threshold_random_2}  Generate Random Threshold
 	Cli Run  master  snmp-server switch trap cpu-load ${threshold_random_1}
 	Cli Run  master  snmp-server switch trap fm-flow-table-util ${threshold_random_1}
-	Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random_1}
+	#Cli Run  master  snmp-server switch trap l2-flow-table-util ${threshold_random_1}
 	Cli Run  master  snmp-server switch trap mem-free ${threshold_random_1}${threshold_random_2}
 	Cli Run  master  snmp-server switch trap fan-status 1${threshold_random_1}${threshold_random_2}
-	Cli Run  master  snmp-server switch trap psu-status ${threshold_random_1}${threshold_random_2}
+	# 1 in the middle ${}1${} below to avoid numbers <10
+	Cli Run  master  snmp-server switch trap psu-status ${threshold_random_1}1${threshold_random_2}
 	Cli Run  master  snmp-server switch trap link-status ${threshold_random_1}${threshold_random_2}
 	${host_random}  Generate Random IP
 	Cli Run  master  ntp server ${host_random}
@@ -286,12 +294,14 @@ Verify Switch SWI Version
 	${swi_version_bundle}=  Bash Get Switchlight Version  swi
 	${swi_version_switch}=  Telnet Get Switch Switchlight Version  swi  ${switch_alias}
 	Should Contain  ${swi_version_switch}  ${swi_version_bundle}
+	Should Contain  ${swi_version_switch}  ${release_string}
 
 Verify Switch Installer Version
 	[Arguments]  ${switch_alias}
 	${installer_version_bundle}=  Bash Get Switchlight Version  installer
 	${installer_version_switch}=  Telnet Get Switch Switchlight Version  installer  ${switch_alias}
 	Should Contain  ${installer_version_switch}  ${installer_version_bundle}
+	Should Contain  ${installer_version_switch}  ${release_string}
 
 Failover
 	${status}=  Rest Verify Cluster Election Take Leader
@@ -364,35 +374,55 @@ Power Cycle All Switches
 	Wait Until All Switches Connected
 
 Power Down All Switches
-	Power Down Switch  s1
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Down Switch  s1
 	Sleep  5
-	Power Down Switch  s2
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Down Switch  s2
 	Sleep  5
-	Power Down Switch  s3
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Down Switch  s3
 	Sleep  5
-	Power Down Switch  s4
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Down Switch  s4
 	Sleep  5
-	Power Down Switch  s5
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Down Switch  s5
 	Sleep  5
 
 Power Up All Switches
-	Power Up Switch  s1
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Up Switch  s1
 	Sleep  5
-	Power Up Switch  s2
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Up Switch  s2
 	Sleep  5
-	Power Up Switch  s3
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Up Switch  s3
 	Sleep  5
-	Power Up Switch  s4
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Up Switch  s4
 	Sleep  5
-	Power Up Switch  s5
+	Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Power Up Switch  s5
 	Sleep  5
 
 Wait Until All Switches Connected
-    Wait Until Keyword Succeeds  5 min  30 s  Verify All Switches Connected
+    Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify All Switches Connected
 
 Wait Until All Switches Connected And Return Status
-    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  5 min  30 s  Verify All Switches Connected
+    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify All Switches Connected
     [Return]  ${status}
+
+Wait Until All Switches Disconnected
+    Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify All Switches Disconnected
+
+Wait Until All Switches Disconnected And Return Status
+    ${status}=  Run Keyword And Return Status   Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify All Switches Disconnected
+    [Return]  ${status}
+
+Wait Until Switch Connected
+    [Arguments]  ${switch_alias}
+    Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify Switch Connection State  True  ${switch_alias}
+
+Wait Until Switch Disconnected
+    [Arguments]  ${switch_alias}
+    Wait Until Keyword Succeeds  ${ztn_timeout}  ${ztn_period}  Verify Switch Connection State  False  ${switch_alias}
+
+Wait Until Switch Reconnected
+    [Arguments]  ${switch_alias}
+    Wait Until Switch Disconnected  ${switch_alias}
+    Wait Until Switch Connected  ${switch_alias}
 
 Power Cycle Single Switch
     [Arguments]  ${switch_id}
@@ -402,9 +432,6 @@ Power Cycle Single Switch
 
 Power Cycle Single Switch and Reinstall Switchlight
     [Arguments]  ${switch_id}
-    Power Down Switch  ${switch_id}
-    Sleep  10
-    Power Up Switch  ${switch_id}
     Telnet Reinstall Switchlight  ${switch_id}
 
 Power Cycle Disconnected Switches
@@ -418,18 +445,16 @@ Power Cycle Disconnected Switches
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s4
     ${status}=  Rest Get Switch Connection State  master  ${s5_alias}
     Run Keyword If  '${status}'=='False'  Power Cycle Single Switch  s5
-    ${status}=  Wait Until All Switches Connected And Return Status
-    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches and Reinstall Switchlight
 
 Power Cycle Disconnected Switches and Reinstall Switchlight
     ${status}=  Rest Get Switch Connection State  master  ${s1_alias}
-    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s1
+    Run Keyword If  '${status}'=='False'  Telnet Reinstall Switchlight  s1
     ${status}=  Rest Get Switch Connection State  master  ${s2_alias}
-    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s2
+    Run Keyword If  '${status}'=='False'  Telnet Reinstall Switchlight  s2
     ${status}=  Rest Get Switch Connection State  master  ${s3_alias}
-    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s3
+    Run Keyword If  '${status}'=='False'  Telnet Reinstall Switchlight  s3
     ${status}=  Rest Get Switch Connection State  master  ${s4_alias}
-    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s4
+    Run Keyword If  '${status}'=='False'  Telnet Reinstall Switchlight  s4
     ${status}=  Rest Get Switch Connection State  master  ${s5_alias}
-    Run Keyword If  '${status}'=='False'  Power Cycle Single Switch and Reinstall Switchlight  s5
+    Run Keyword If  '${status}'=='False'  Telnet Reinstall Switchlight  s5
     Wait Until All Switches Connected

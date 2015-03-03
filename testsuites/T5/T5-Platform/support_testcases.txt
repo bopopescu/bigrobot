@@ -1,0 +1,170 @@
+*** Settings ***
+Documentation    Support Test Cases
+Force Tags       T5  feature  IronHorse
+Suite Setup     T5 support suite setup
+Suite Teardown  T5 support suite teardown
+Test Teardown    base test teardown
+Library		 OperatingSystem
+Library	 	 String
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Platform.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library			 keywords/SwitchLight.py
+Library	         Collections.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library		keywords/T5Support.py
+Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+
+*** Test Cases ***
+TC01 Check New Flood light Partitions for Diagnostics
+	${result}=  check partitions for diagnostics  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+	
+TC02 Generate Support file and check they are created on diagnostics partitions
+	${result}=  check support file location
+	Log  ${result}
+	[Tags]  support  sanity
+
+TC03 Check Suport bundle for controllers
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check controller folders  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+	
+TC04 Check switch interface hardware counters in support
+	${support_bundle_name}=  get support bundle name
+	${result}=  check switch hardware counters  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+	
+TC05 Check Controller cli show command output are logged
+	${support_bundle_name}=  get support bundle name
+	${result}=  check_controller_cli_cmds  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+	
+TC06 Check show dump core are seen after creating core dumps
+	manual passed
+	
+TC07 Check Sizes of core dumps
+    manual passed
+    
+TC08 Check Endpoints from the Support logs with 4k static endpoints configured
+	manual passed
+	
+TC09 Check Show segments from Support logs with 4k+ segments configured
+	manual passed
+
+TC10 Check Switch Support Log for show version
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  show version  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+	
+TC11 Check Switch Support Log for show log
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  /var/log/syslog  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+
+TC12 Check Switch Support Log for show boot
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  cat /mnt/flash/boot-config  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+
+TC13 Check Switch Support Log for show users
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  ===== w  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+
+TC14 Check Switch Support Log for show environment
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  ofad-ctl environment  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  
+
+TC15 Check Switch Support Log for show inventory
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  ofad-ctl inventory  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+
+TC16 Check Switch Support Log for debug ofad onlpdump
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  onlpdump  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+	
+TC17 Check Switch Support Log for show interface
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  show interface  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+
+TC18 Check Switch Support Log for show flowtable
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  show flowtable  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+	
+TC19 Check Switch Support Log for show flowtable summary
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  show flowtable summary  /tmp/${support_bundle_name}  master
+	Should be True  ${result}
+	[Tags]  support  sanity
+
+TC20 check ofad error in Support Log for switch
+	${support_bundle_name}=  get support bundle name  master
+	${result}=  check switch cmd  raise error  /tmp/${support_bundle_name}  master
+	Should not be True  ${result}
+	[Tags]  support  sanity
+	
+TC21 check ofad crash in Support log on switch and run SNMP walk
+    rest add snmp keyword  community  public
+    rest add snmp keyword  contact  Big Switch Networks
+    rest add snmp keyword  location  Mountain View
+    rest add snmp keyword  trap-enabled  True
+    rest add snmp host  10.9.18.2  162    
+    rest add firewall rule  service=snmp
+    Sleep  10 
+    ${result}=  snmp cmd  master  snmpbulkwalk  public
+    : FOR    ${i}    IN RANGE    0    5
+    \  delete support bundles
+	\  ${result}=  Generate support  master
+	\  Log  ${result}
+	\  ${path}=  get support bundle fs path
+	\  ${support_bundle_name}=  get support bundle name
+	\  ${switches}=  rest_get_disconnect_switch
+	\  log   the disconnected switches are ${switches}
+	\  ${master_ip}=  get node ip  master
+	\  scp get  ${master_ip}  ${path}  /tmp/.  recovery  bsn
+	\  run_cmd  cmd=tar -xvf /tmp/${support_bundle_name} -C /tmp
+	\  ${result}=  check switch cmd  backtrace  /tmp/${support_bundle_name}  master
+	\  Log  ${result}
+	\  Should Be Empty   ${switches}
+	Should not be True  ${result}
+	[Tags]  support  run
+	
+* Keywords
+T5 support suite setup
+	fabric infra suite setup
+	delete support bundles
+	${result}=  Generate support  master
+	Log  ${result}
+	${path}=  get support bundle fs path
+	${support_bundle_name}=  get support bundle name
+	set suite variable   ${support_bundle_name}
+	${master_ip}=  get node ip  master
+	scp get  ${master_ip}  ${path}  /tmp/.  recovery  bsn
+	run_cmd  cmd=tar -xvf /tmp/${support_bundle_name} -C /tmp
+	
+T5 support suite teardown
+	base suite teardown
+	run_cmd  cmd=rm -rf /tmp/${support_bundle_name}
+	

@@ -3,9 +3,10 @@ Documentation   	Test suite with tests for configuring policy, changing action, 
 ...             	have a workflow that is created using keywords from the resource file.
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
-Force Tags      	bigtap  blackbird  gui
+Force Tags      	bigtap  blackbird  gui  policy
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
+Library             keywords/AppController.py
 Library        		SeleniumLibrary
 Resource        	bigtap_resource.txt
 Library       		String
@@ -14,92 +15,119 @@ Library       		String
  	
 ### Configure Big Tap Policy with different names	
 T1 Test set up:
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rlb9-1		filter			ixia-2-9
-	Configure Big Tap Interface from Big Tap Menu			ethernet1			app-rly2-1 		delivery		ixia-2-15	
-	Configure Big Tap Interface from Big Tap Menu			ethernet2			app-rly2-1 		delivery		ixia-4-8	
-	Configure Big Tap Interface Group from Big Tap Menu 	filter				filter-group		ixia-2-9
-	Configure Big Tap Interface Group from Big Tap Menu		delivery			delivery-group		ixia-2-15	
-	
+	Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1			 filter	        ixia-2-9
+    Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-intern1       delivery       ixia-2-15
+    Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             delivery       ixia-4-8    	
+	Configure Big Tap Interface Group from Big Tap Menu 	 filter				  filter-group			 ixia-2-9
+	Configure Big Tap Interface Group from Big Tap Menu		 delivery			  delivery-group		 ixia-2-15	
+    [Tags]  full  feature  policy
 #Arguments												Policy	 				RBAC 			Action 			Ethertype				Filter			Delivery 		Service			fg				dg	
 T1.1 Policy with policy name as alphabets
 	Configure Big Tap Policy					 		testpolicy				admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
+    [Tags]  full  feature  policy
 T1.2 Policy with policy name as alphanumeric
 	Configure Big Tap Policy					 		testpolicy22			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  	${EMPTY}	  	${EMPTY}	  ${EMPTY}	  	
+    [Tags]  full  feature  policy
 T1.3 Policy with policy name as hypen in between
 	Configure Big Tap Policy					 		test-policy3			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-4-8	  	${EMPTY}	  	${EMPTY}	  ${EMPTY}	  	
+    [Tags]  full  feature  policy
 T1.4 Policy with policy name as "_" in between
 	Configure Big Tap Policy					 		test_policy4			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-4-8	  	${EMPTY}	  	${EMPTY}	  ${EMPTY}	  	
+    [Tags]  full  feature  policy
 T1.5 Policy with policy name as all CAPS
 	Configure Big Tap Policy					 		TESTPOLICY5				admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-4-8	  	${EMPTY}	  	${EMPTY}	  ${EMPTY}	  	
+    [Tags]  full  feature  policy
 #T1.6 Policy with new rbac                
 #	Configure Big Tap Policy					 		test-policy6			__new__			Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  	${EMPTY}	  ${EMPTY}	  	
 #T1.7 Policy with interfaces and interface groups
 #	Configure Big Tap Policy					 		tesT-p0licy7			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}	  	filter-group	delivery-group	
 T1.8 Teardown
 	Delete All Big Tap Policies
-
+    [Tags]  full  feature  policy
 
 ##Change action
 
 T2.1 Create Policy
 	Configure Big Tap Policy					 	test-policy		admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}	  	${EMPTY}		${EMPTY}	 
+    [Tags]  sanity  feature  policy
 T2.2 Change action from forward to inactive
 	Change Policy Action					 		test-policy		Inactive				
+    [Tags]  sanity  feature  policy
 T2.3 Change action from inactive to capture
 	Change Policy Action					 		test-policy		Capture					
+    [Tags]  sanity  feature  policy
 T2.4 Change action from capture to rate-measure
 	Change Policy Action					 		test-policy		Rate Measure			
+    [Tags]  sanity  feature  policy
 T2.5 Change action from rate-measure to forward
 	Change Policy Action					 		test-policy		Forward			
+    [Tags]  sanity  feature  policy
 T2.6 Teardown
 	Delete All Big Tap Policies
-	
+    [Tags]  sanity  feature  policy
 
 ##Scheduling									Policy	 		Action		Start Policy	AfterDelayOfTime	Run Policy		Duration		Packets
 
 TC3.1 Create Policy
 	Configure Big Tap Policy					test-policy1		admin-view			Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}	  	${EMPTY}		${EMPTY}	 
+    [Tags]  full  feature  timed-policy  policy
 T3.2 Schedule policy to start now and run always  
 	Schedule Big Tap Policy					 	test-policy1		Forward		Immediately			${EMPTY}			Always			${EMPTY}		${EMPTY}
+    [Tags]  full  feature  timed-policy  policy
 T3.3 Schedule policy to start now and run for 5 minutes
 	Schedule Big Tap Policy				 		test-policy1		Forward		Immediately			${EMPTY}			For Duration	5				${EMPTY}	
+    [Tags]  full  feature  timed-policy  policy
 T3.4 Schedule policy to start now, run for 15 minutes or until 5000 packets are delivered
 	Schedule Big Tap Policy					 	test-policy1		Forward		Immediately			${EMPTY}			For Duration	15				5000			
+    [Tags]  full  feature  timed-policy  policy
 T3.5 Schedule policy to start after a delay of 5 minutes and run for 5 minutes 
 	Schedule Big Tap Policy					 	test-policy1		Forward		After Delay Of		5					For Duration	5				${EMPTY}				
+    [Tags]  full  feature  timed-policy  policy
 T3.6 Schedule policy to start after a delay of 10 minutes and run for 2 minutes 
 	Schedule Big Tap Policy				 		test-policy1		Forward		After Delay Of		10					For Duration	2				${EMPTY}
+    [Tags]  full  feature  timed-policy  policy
 T3.7 Schedule policy to start after a delay of 15 minutes, run for 10 minute(s) or until 10000 packets are delivered
 	Schedule Big Tap Policy					 	test-policy1		Forward		After Delay Of		15					For Duration	10				10000		
+    [Tags]  full  feature  timed-policy  policy
 T3.8 Teardown
 	Delete All Big Tap Policies
-	
+    [Tags]  full  feature  timed-policy  policy
 
 ##Associate Rules
 
 T4.1 Create Policy
 	Configure Big Tap Policy					 		test-policy		admin-view		Forward		IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}		${EMPTY}		${EMPTY}	 
+    [Tags]  sanity  feature  match-conditions
 T4.2 Associate Match Rule for IPv4 and UDP 
 	Associate Policy Match Rule					 		test-policy		IPv4 - 0x800 (2048)		UDP (17)		
+    [Tags]  sanity  feature  match-conditions
 T4.3 Associate Match Rule for IPv4 and TCP
 	Associate Policy Match Rule					 		test-policy		IPv4 - 0x800 (2048)		TCP (6)			
+    [Tags]  sanity  feature  match-conditions
 T4.4 Associate Match Rule for IPv4 and SCTP
 	Associate Policy Match Rule					 		test-policy		IPv4 - 0x800 (2048)		SCTP (132)	
+    [Tags]  full  feature  match-conditions
 T4.5 Associate Match Rule for IPv4 and ICMP
 	Associate Policy Match Rule					 		test-policy		IPv4 - 0x800 (2048)		ICMP (1)	
+    [Tags]  full  feature  match-conditions
 T4.6 Associate Match Rule for IPv6 and UDP
 	Associate Policy Match Rule					 		test-policy		IPv6 - 0x86DD (34525)	UDP (17)		
+    [Tags]  full  feature  match-conditions
 T4.7 Associate Match Rule for IPv6 and TCP
 	Associate Policy Match Rule					 		test-policy		IPv6 - 0x86DD (34525)	TCP (6)			
+    [Tags]  full  feature  match-conditions
 T4.8 Associate Match Rule for IPv6 and SCTP
 	Associate Policy Match Rule					 		test-policy		IPv6 - 0x86DD (34525)	SCTP (132)	
+    [Tags]  full  feature  match-conditions
 T4.9 Associate Match Rule for IPv6 and ICMP
 	Associate Policy Match Rule					 		test-policy		IPv6 - 0x86DD (34525)	ICMP (1)
+    [Tags]  full  feature  match-conditions
 T4.10 Associate Match Rule for ARP
 	Associate Policy Match Rule					 		test-policy		ARP - 0x806 (2054)		${EMPTY}			
+    [Tags]  full  feature  match-conditions
 T4.11 Teardown
 	Delete All Big Tap Policies
-
+    [Tags]  full  feature  match-conditions
 ## Policy Overlap
 #T5 Test set up:	
 #	Configure Match Mode								Policy Overlap
@@ -137,8 +165,22 @@ config suite setup
     Delete All Big Tap Resources
     #Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
  	#Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
- 	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			app-rlb9-1		 							
- 	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			app-rly2-1
+ 	#Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			app-rlb9-1		 							
+ 	#Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			app-rly2-1
+    #Configure Switch Alias    00:00:08:9e:01:b3:0c:0c            app-rlb9-1                                     
+    #Configure Switch Alias    00:00:08:9e:01:f8:6b:8b            app-rly2-1   
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+    ${switch_dpid_s3}=  rest return switch dpid from ip  s3
+    ${switch_dpid_s4}=  rest return switch dpid from ip  s4
+    ${switch_dpid_s5}=  rest return switch dpid from ip  s5
+    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
+ 	write version to file   
+    
     
 config suite teardown
 	Close Browser

@@ -1,6 +1,8 @@
 *** Settings ***
 Documentation    Basic Open Stack Unit Test leveraging from Khanze's platform tests
 Force Tags       T5 
+Suite Setup      base suite setup
+Test Teardown    base test teardown
 Library		 OperatingSystem
 Library	 	 String
 Library          keywords/BsnCommon.py
@@ -23,7 +25,7 @@ TC01 Open Stack Unit Testcases test_bsc_interface
 	scp get  ${c1_ip}  /etc/ssl/certs/nsapi.pem  /tmp/nsapi.pem  recovery  bsn
 	${out}=  run_cmd  cmd=sudo mv /tmp/nsapi.pem /etc/ssl/certs/nsapi.pem
 	${out}=  run_cmd  cmd=python ${workspace}/src/main/python/ns_project/nsapp/tests/test_bsc_interface.py ${c1_ip}     shell=${true}
-	log  ${out}
+	pretty log  ${out}   format_newline=True
 	${out1}=   Convert To String  ${out}
 	${lines}=  Get Lines Containing String  ${out1}  OK
 	${count}=  Get Line Count  ${lines}
@@ -39,7 +41,7 @@ TC02 Open Stack Unit Testcases test_t5_api
         scp get  ${c1_ip}  /etc/ssl/certs/nsapi.pem  /tmp/nsapi.pem  recovery  bsn
         ${out}=  run_cmd  cmd=sudo mv /tmp/nsapi.pem /etc/ssl/certs/nsapi.pem
         ${out}=  run_cmd  cmd=python ${workspace}/src/main/python/ns_project/nsapp/tests/test_t5_api.py ${c1_ip}     shell=${true}
-        log  ${out}
+        pretty log  ${out}   format_newline=True
         ${out1}=   Convert To String  ${out}
         ${lines}=  Get Lines Containing String  ${out1}  OK
         ${count}=  Get Line Count  ${lines}

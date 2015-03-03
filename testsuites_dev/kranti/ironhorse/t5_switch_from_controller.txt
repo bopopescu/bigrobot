@@ -1,7 +1,8 @@
 * Settings
-Documentation     Switch Platform Information from Controller 
-#Suite Setup       T5 switch platform test setup
-#Suite Teardown    T5 switch platform test teardown
+Documentation      T5 Switch Platform Information from Controller 
+Suite Setup        T5 switch platform test setup
+Suite Teardown     T5 switch platform test teardown
+#Force Tags        T5  IronHorse
 Force Tags         Test  
 ...             
 ...            
@@ -11,23 +12,41 @@ Library         keywords/SwitchLight.py
 Library         keywords/AppController.py
 Library         keywords/Ixia.py 
 Library         keywords/T5.py   
-Library         keywords_dev/kranti/ironhorse/T5SwitchPlatform.py  
-Library         keywords_dev/kranti/ironhorse/T5SwitchFromController.py
+Library         keywords_dev/kranti/ironhorse/T5Switch.py  
+#Library         keywords_dev/kranti/ironhorse/T5SwitchFromController.py
 Library         String
 #Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
 
 
 *Variables
-${switchlight_version}  Switch Light OS
-${netmask}  18
-${gateway}  10.8.0.1
-${gateway1}  10.192.60.1
-${dns_server}  10.3.0.4
-${dns_domain}  qa.bigswitch.com
-${j}    1
-${switch1_name}=  leaf0-a
+${switchlight_version}      Switch Light OS
+${netmask}                  18
+${switch1_name}=            leaf0-a
+${leaf_modelcomp}=          Model
+${leaf_model}=              AS5710-54X
+${leaf_manufcomp}=          Manufacturer
+${leaf_manuf}=              Accton
+${leaf_platcomp}=           Platform
+${leaf_plat}=               powerpc-accton-as5710-54x-r0
+${leaf_platnamecomp}=       Platformname
+${leaf_platname}=           powerpc-accton_as5710_54x-r0
+${leaf_vendorcomp}=         Vendor
+${leaf_vendor}=             Edgecore
+${leaf_cpldcomp}=           CPLD
+${leaf_cpld}=               5.5.5
+${leaf_oniecomp}=           ONIE
+${leaf_onie}=               2014.08.00.09
+${leaf_lagcomp}=            LAG
+${leaf_lag}=                16
+${interface1g}=             ethernet18
+${interface40g}=            ethernet49
+${interface40gType}=        40GBASE-CR4
+${interface40gMedia}=       Copper
+${interface40gLen}=         1m
+${interface40gVendor}=      Amphenol
+${interface40gModel}=       624410001
+${interface40gHCL}=         Yes
 
- 
 
 *Test Case
 
@@ -35,122 +54,236 @@ ${switch1_name}=  leaf0-a
 ### Section I : Environment Information FAN, PSU from Controller 
 ###
 ###
-Get and Verify the switch environment Fan 1 information from Controller 
-    Log  Step 1 - Get the switch environment information of Fan 1 from controller 
-    ${dpid} =  rest get dpid  ${switch1_name}  
+
+TC01 Get and Verify the switch environment Fan 1 State information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment information of Fan 1 State from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  State 
+
+TC02 Get and Verify the switch environment Fan 1 Status information from Controller
+    [Tags]  switch-platform  environment  feature
+    Log  Step 1 - Get the switch environment information of Fan 1 Status from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  Status
+
+TC03 Get and Verify the switch environment Fan 1 RPM information from Controller
+    [Tags]  switch-platform  environment  feature
+    Log  Step 1 - Get the switch environment information of Fan 1 RPM from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  RPM
+    
+TC04 Get and Verify the switch environment Fan 1 Speed information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment information of Fan 1 Speed from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  Speed
+
+TC05 Get and Verify the switch environment Fan 1 Airflow information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment information of Fan 1 Airflow from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  Airflow
     
-    [Tags]  final
-
-Get and Verify the switch environment Fan 2 information from Controller 
-    Log  Step 1 - Get the switch environment of Fan 2 from controller 
-    ${dpid} =  rest get dpid  ${switch1_name}  
+TC06 Get and Verify the switch environment Fan 2 State information from Controller
+    [Tags]  switch-platform  environment  feature
+    Log  Step 1 - Get the switch environment of Fan 2 State from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  State 
+
+TC07 Get and Verify the switch environment Fan 2 Status information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 2 Status from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  Status
+
+TC08 Get and Verify the switch environment Fan 2 RPM information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 2 RPM from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  RPM
+
+TC09 Get and Verify the switch environment Fan 2 Speed information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 2 Speed from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  Speed
+
+TC10 Get and Verify the switch environment Fan 2 Airflow information from Controller 
+    [Tags]  switch-platform  environment  feature
+    Log  Step 1 - Get the switch environment of Fan 2 Airflow from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  Airflow
     
-    [Tags]  final
-
-Get and Verify the switch environment Fan 3 information from Controller 
-    Log  Step 1 - Get the switch environment of Fan 3 from controller 
-    ${dpid} =  rest get dpid  ${switch1_name}  
+TC11 Get and Verify the switch environment Fan 3 State information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 3 State information from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  State 
+
+TC12 Get and Verify the switch environment Fan 3 Status information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 3 Status information from controller 
+    ${dpid} =  rest get mac  ${switch1_name}   
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  Status
+
+TC13 Get and Verify the switch environment Fan 3 RPM information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 3 RPM from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  RPM
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  Speed
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  Airflow
-    
-    [Tags]  final  
-
-Get and Verify the switch environment Fan 4 information from Controller 
-    Log  Step 1 - Get the switch environment of Fan 4 from controller 
-    ${dpid} =  rest get dpid  ${switch1_name}  
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  State 
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Status
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  RPM
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Speed
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Airflow
-    
-    [Tags]  final  
-
-Get and Verify the switch environment Fan 5 information from Controller 
-    Log  Step 1 - Get the switch environment of Fan 5 from controller 
-    ${dpid} =  rest get dpid  ${switch1_name}  
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  State 
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Status
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  RPM
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Speed
-    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Airflow
-    
-    [Tags]  final
-
-Get and Verify the switch PSU State information from controller 
-    Log  Step 1 - Get the switch PSU State information from Controller 
-    ${dpid} =  rest get dpid  ${switch1_name}
-    verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  State  
-    [Tags]  test1   
- 
-Get and Verify the switch PSU Status information from controller 
-    Log  Step 1 - Get the switch PSU Status information from Controller 
-    ${dpid} =  rest get dpid  ${switch1_name}
-    verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  Status  
-    [Tags]  test1   
-
-Get and Verify the switch PSU Type information from controller 
-    Log  Step 1 - Get the switch PSU Type information from Controller 
-    ${dpid} =  rest get dpid  ${switch1_name}
-    verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  Type  
-    [Tags]  test1
-
    
+TC14 Get and Verify the switch environment Fan 3 Speed information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 3 Speed from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  Speed
+    
+TC15 Get and Verify the switch environment Fan 3 Airflow information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 3 Airflow from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  Airflow
+     
+TC16 Get and Verify the switch environment Fan 4 State information from Controller
+    [Tags]  switch-platform  environment  feature
+    Log  Step 1 - Get the switch environment of Fan 4 State from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  State 
+
+TC17 Get and Verify the switch environment Fan 4 Status information from Controller
+    [Tags]  switch-platform  environment  feature
+    Log  Step 1 - Get the switch environment of Fan 4 Status from controller 
+    ${dpid} =  rest get mac  ${switch1_name}   
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Status
+  
+TC18 Get and Verify the switch environment Fan 4 RPM information from Controller
+    [Tags]  switch-platform  environment  feature
+    Log  Step 1 - Get the switch environment of Fan 4 RPM from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  RPM
+    
+TC19 Get and Verify the switch environment Fan 4 Speed information from Controller
+    [Tags]  switch-platform  environment  feature
+    Log  Step 1 - Get the switch environment of Fan 4 Speed from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Speed
+    
+TC20 Get and Verify the switch environment Fan 4 Airflow information from Controller
+    [Tags]  switch-platform  environment  feature
+    Log  Step 1 - Get the switch environment of Fan 4 Airflow from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Airflow    
+
+TC21 Get and Verify the switch environment Fan 5 State information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 5 State from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  State 
+
+TC22 Get and Verify the switch environment Fan 5 Status information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 5 Status from controller 
+    ${dpid} =  rest get mac  ${switch1_name}   
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Status
+    
+TC23 Get and Verify the switch environment Fan 5 RPM information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 5 RPM from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  RPM
+
+TC24 Get and Verify the switch environment Fan 5 Speed information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 5 Speed from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Speed
+
+TC25 Get and Verify the switch environment Fan 5 Airflow information from Controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch environment of Fan 5 Airflow from controller 
+    ${dpid} =  rest get mac  ${switch1_name}  
+    verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Airflow
+
+TC26 Get and Verify the switch PSU State information from controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch PSU State information from Controller 
+    ${dpid} =  rest get mac  ${switch1_name}
+    verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  State  
+   
+TC27 Get and Verify the switch PSU Status information from controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch PSU Status information from Controller 
+    ${dpid} =  rest get mac  ${switch1_name}
+    verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  Status  
+
+TC28 Get and Verify the switch PSU Type information from controller
+    [Tags]  switch-platform  environment  feature 
+    Log  Step 1 - Get the switch PSU Type information from Controller 
+    ${dpid} =  rest get mac  ${switch1_name}
+    verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  Type  
+    
+TC29 Verify Manufacturer of leaf switch version from controller 
+    [Tags]  feature    
+    verify switch version  ${switch1_name}  ${leaf_manufcomp}  ${leaf_manuf}     
+
+TC30 Verify switch version from controller for Platform of leaf switch
+    [Tags]  feature 
+    verify switch version  ${switch1_name}  ${leaf_platcomp}  ${leaf_plat}
+
+TC31 Verify switch version from controller for PlatformName of leaf switch
+    [Tags]  feature  
+    verify switch version  ${switch1_name}  ${leaf_platnamecomp}  ${leaf_platname}
+
+TC32 Verify switch version from controller for Vendor of leaf switch
+    [Tags]  feature  
+    verify switch version  ${switch1_name}  ${leaf_vendorcomp}  ${leaf_vendor}
+
+TC33 Verify switch version from controller for CPLD of leaf switch
+    [Tags]  feature  
+    verify switch version  ${switch1_name}  ${leaf_cpldcomp}  ${leaf_cpld}
+
+TC34 Verify switch version from controller for ONIE of leaf switch
+    [Tags]  feature  
+    verify switch version  ${switch1_name}  ${leaf_oniecomp}  ${leaf_onie}
+
+TC35 Verify switch version from controller for LAG of leaf switch
+    [Tags]  feature  
+    verify switch version  ${switch1_name}  ${leaf_lagcomp}  ${leaf_lag}
+
+TC36 Verify the switch inventory output for Type for 40G cable  
+     [Tags]  feature  switch-platform  inventory
+     verify switch inventory  ${switch1_name}  ${interface40g}  Type  ${interface40gType}    
+
+TC37 Verify the switch inventory output for Media for 40G cable  
+     [Tags]  feature  switch-platform  inventory  
+     verify switch inventory  ${switch1_name}  ${interface40g}  Media  ${interface40gMedia}
+
+TC38 Verify the switch inventory output for Length for 40G cable  
+     [Tags]  feature  switch-platform  inventory  
+     verify switch inventory  ${switch1_name}  ${interface40g}  Length  ${interface40gLen}     
+
+TC39 Verify the switch inventory output for Vendor for 40G cable  
+     [Tags]  feature  switch-platform  inventory  
+     verify switch inventory  ${switch1_name}  ${interface40g}  Vendor  ${interface40gVendor}
+
+TC40 Verify the switch inventory output for Model for 40G cable  
+     [Tags]  feature  switch-platform  inventory  
+     verify switch inventory  ${switch1_name}  ${interface40g}  Model  ${interface40gModel}
+
+TC41 Verify the switch inventory output for HCL for 40G cable  
+     [Tags]  feature  switch-platform  inventory  
+     verify switch inventory  ${switch1_name}  ${interface40g}  HCL  ${interface40gHCL}
+
+     
+        
 * Keywords
       
 T5 switch platform test setup
    base suite setup
-   #rest add switch  ${switch1_name}
-   #${swDpid1}=  rest return switch dpid from ip  s1
-   #rest add dpid  ${switch1_name}   ${swDpid1}
-   #rest add fabric role  ${switch1_name}  leaf
-      
-   #rest add switch  ${switch2_name}
-   #${swDpid2}=  rest return switch dpid from ip  s2
-   #rest add dpid  ${switch2_name}   ${swDpid2}
-   #rest add fabric role  ${switch2_name}  leaf
-   
-   #rest add switch  ${switch7_name}
-   #${swDpid7}=  rest return switch dpid from ip  s7
-   #rest add dpid  ${switch7_name}   ${swDpid7}
-   #rest add fabric role  ${switch7_name}  spine
-      
-   #rest add tenant  ${tenant1}
-   #rest add tenant  ${tenant2}
-   #rest add vns  ${tenant1}  ${vns1}
-   #rest add vns  ${tenant2}  ${vns2}
-   
-   #rest add interface to vns  ${tenant1}  ${vns1}  ${switch1_name}  ${intf_1}  ${vlan} 
-   #rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_2}  ${vlan}
-   #rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_3}  ${vlan}
-   #rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_4}  ${vlan}
-   
-   
-   #rest add interface to vns  ${tenant1}  ${vns1}  ${switch2_name}  ${intf_6}  ${vlan} 
-   #rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_7}  ${vlan}
-   #rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_8}  ${vlan}
-   #rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_9}  ${vlan}
    sleep  10
                    
 T5 switch platform test teardown
-   #rest delete tenant  ${tenant1}
-   #rest delete tenant  ${tenant2}    
-   #rest delete fabric switch  ${switch1_name} 
-   #rest delete fabric switch  ${switch2_name}
-   #rest delete fabric switch  ${switch7_name}
    base suite teardown
    sleep  10   
 
@@ -165,4 +298,17 @@ verify switch model info from controller  [Arguments]  ${switch}
 verify switch environment PSU from controller  [Arguments]  ${switch}  ${dpid}  ${model}  ${element}  ${element_number}  ${component}
     ${result}=  rest get switch environment psu from controller  ${switch}  ${dpid}  ${model}  ${element}  ${element_number}  ${component}
            
+verify switch version  [Arguments]  ${switch}  ${component}  ${expectedVal}
+    ${result}=  rest get switch version leaf from controller  ${switch}  ${component}  ${expectedVal}
+    Should be True  ${result}
+
+verify switch inventory  [Arguments]  ${switch}  ${intf}  ${component}  ${expectedval}   
+    ${result}=  rest get switch inventory from controller  ${switch}  ${intf}  ${component}  ${expectedval}  
+    Should be True  ${result}  
+     
+    
+     
+
    
+    
+           

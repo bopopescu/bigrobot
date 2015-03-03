@@ -1,0 +1,414 @@
+*Settings
+Documentation  sFlow Test Suite Release:Corsair Plus
+Suite Setup  sFlow suite setup
+Suite Teardown   sFlow suite teardown
+#Test Setup   base test setup
+#Test Teardown   base test teardown
+Force Tags   BigTap  Corsair-plus  4.5.0  sFlow  Accton-AS5710
+Library  keywords/BsnCommon.py
+Library  keywords_dev/Sahaja/BigTap.py 
+Library  keywords_dev/Sahaja/SwitchLight.py
+
+
+Library                 keywords/AppController.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
+
+
+* Variable
+@{fil_intf}       2 
+${switch_1_alias}   fil_switch
+${switch_2_alias}   del_switch
+
+${policy_name_1}    POLICY1
+${policy_name_2}    POLICY2
+
+${filter_1}         ethernet2  
+${filter_1_nick}    ixia-2-25 
+${delivery_1}       ethernet2  
+${delivery_1_nick}  ixia-1-26
+${col_ip}			10.8.33.10
+
+
+* Test Case
+
+TC01: Configure and verify sflow collector config 
+	${config_sflow}=  rest config sflow collector   ${col_ip} 
+	Should be true  ${config_sflow}
+    ${collector_return}=  rest verify sflow config    collector   ${col_ip}
+    Should be true  ${collector_return}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+    [Tags]  feature  sanity 
+    
+TC02: Configure and verify sflow collector config with udp-port 0
+	${config_sflow}=  rest config sflow collector   ${col_ip}   col_param=udp-port  col_param_val=0 
+	Should be true  ${config_sflow}
+    ${collector_return}=  rest verify sflow config    collector   ${col_ip}  col_param=udp-port   col_sub_param_val=0
+    Should be true  ${collector_return}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample}     
+    [Tags]  feature  sanity  
+    
+    
+TC03: Config and Verify sflow sample-rate
+	${config_sample}=  rest config sflow collector  sample_rate=1000
+	Should be true  ${config_sample}
+    ${sample_ret}=  rest verify sflow config    sample-rate  1000
+    Should be true  ${sample_ret}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample}  
+    ${sample_rate}=  switch sflow sample rate   s1  1000  @{fil_intf}
+    Should be true  ${sample_rate}
+    [Tags]  feature  sanity 
+    
+    
+TC04: Config and Verify Counter-interval config    
+	${config_counter}=  rest config sflow collector  counter_interval=60
+	Should be true  ${config_counter}
+    ${counter_ret}=  rest verify sflow config    counter-interval   60
+    Should be true  ${counter_ret}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+    [Tags]  feature  sanity 
+    
+    
+TC05: Config and Verify header-size config    
+	${config_header}=  rest config sflow collector  header_size=64
+	Should be true  ${config_header}
+    ${header_ret}=  rest verify sflow config    max-header-size   64
+    Should be true  ${header_ret}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+    [Tags]  feature  sanity   
+    
+    
+TC06: Config and Verify all the parameters in one test
+	${config_ret}=  rest config sflow collector  ${col_ip}   col_param=udp-port  col_param_val=10   sample_rate=3000   counter_interval=600    header_size=32
+	Should be true   ${config_ret}
+	${counter_ret}=  rest verify sflow config   collector   ${col_ip}  col_param=udp-port   col_sub_param_val=10
+	Should be true  ${counter_ret}
+	${sample_ret}=  rest verify sflow config    sample-rate  3000
+    Should be true  ${sample_ret}
+    ${counter_ret}=  rest verify sflow config    counter-interval   600
+    Should be true  ${counter_ret}    
+    ${header_ret}=  rest verify sflow config    max-header-size   32
+    Should be true  ${header_ret}       
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+    [Tags]  feature  sanity  
+    
+TC07: Config 4 sflow collectors make sure the config is pushed to switch
+	${config_sflow}=  rest config sflow collector   ${col_ip} 
+	Should be true  ${config_sflow}
+	${config_sflow}=  rest config sflow collector   10.8.33.11 
+	Should be true  ${config_sflow}
+	${config_sflow}=  rest config sflow collector   10.8.33.12 
+	Should be true  ${config_sflow}
+	${config_sflow}=  rest config sflow collector   10.8.33.13 
+	Should be true  ${config_sflow}
+    ${collector_return}=  rest verify sflow config    collector   ${col_ip}
+	Should be true  ${config_sflow}
+    ${collector_return}=  rest verify sflow config    collector   10.8.33.11
+	Should be true  ${config_sflow}
+    ${collector_return}=  rest verify sflow config    collector   10.8.33.12
+	Should be true  ${config_sflow}
+    ${collector_return}=  rest verify sflow config    collector   10.8.33.13
+    ${collector_ip}=  switch sflow collector   s1   ${col_ip}
+    Should be true  ${collector_ip}
+    ${collector_ip}=  switch sflow collector   s1   10.8.33.11
+    Should be true  ${collector_ip}
+    ${collector_ip}=  switch sflow collector   s1   10.8.33.12
+    Should be true  ${collector_ip}
+    ${collector_ip}=  switch sflow collector   s1   10.8.33.13
+    Should be true  ${collector_ip}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+    ${sflow_delete}=  delete sflow collector smplrt cntr hdr  collector  ${col_ip}
+    Should be true    ${sflow_delete}
+    ${sflow_delete}=  delete sflow collector smplrt cntr hdr  collector  10.8.33.11
+    Should be true    ${sflow_delete}
+    ${sflow_delete}=  delete sflow collector smplrt cntr hdr  collector  10.8.33.12
+    Should be true    ${sflow_delete}
+    ${sflow_delete}=  delete sflow collector smplrt cntr hdr  collector  10.8.33.13
+    Should be true    ${sflow_delete}  
+    ${collector_ip}=  switch sflow collector   s1   ${col_ip}
+    Should not be true  ${collector_ip}
+    ${collector_ip}=  switch sflow collector   s1   10.8.33.11
+    Should not be true  ${collector_ip}
+    ${collector_ip}=  switch sflow collector   s1   10.8.33.12
+    Should not be true  ${collector_ip}
+    ${collector_ip}=  switch sflow collector   s1   10.8.33.13
+    Should not be true  ${collector_ip}          
+    ${sample}=  switch sflow counters   s1
+    Should not be true  ${sample} 
+    [Tags]  feature   
+ 
+TC08: Configure sample rate of 0 and make sure sampling is not happening
+	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=0   
+	Should be true   ${config_ret}
+	${sample_ret}=  rest verify sflow config    sample-rate  0
+    Should be true  ${sample_ret}
+    sleep  300
+    ${sample}=  switch sflow counters   s1
+    Should not be true  ${sample} 
+    ${sflow_delete}=  delete sflow collector smplrt cntr hdr  sample-rate  0
+    Should be true    ${sflow_delete} 
+    [Tags]  feature   	
+    
+TC09: Configure counter-interval of 0 
+	${config_ret}=  rest config sflow collector  ${col_ip}   counter_interval=0    
+	Should be true   ${config_ret}
+	${counter_ret}=  rest verify sflow config    counter-interval   0
+    Should be true  ${counter_ret} 
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample}  
+    ${sflow_delete}=  delete sflow collector smplrt cntr hdr  counter-interval  0
+    Should be true    ${sflow_delete}     
+    [Tags]  feature  
+    
+TC10: Flap filter interface and make sure counters are incrementing after the flap
+	${config_ret}=  rest config sflow collector  ${col_ip}   
+	Should be true   ${config_ret}
+	shut interface  s1  ${filter_1}
+    Sleep  5
+    ${ret_value_1}=  cli show interface state  s1  ${filter_1}  admin_down=${True}
+    Should Contain  ${ret_value_1}  down     
+    unshut interface  s1  ${filter_1}
+    Sleep  30
+    ${ret_value_1}=  cli show interface state  s1  ${filter_1}
+    Should Contain  ${ret_value_1}  up    
+    sleep  60
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample}   
+    [Tags]  feature       
+
+
+TC11: Stop the traffic and make sure sampling is not happening
+	${config_ret}=  rest config sflow collector  ${col_ip}   
+	Should be true   ${config_ret}	 
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    stop traffic  ${stream}
+    sleep  180
+    ${sample}=  switch sflow counters   s1
+    Should not be true  ${sample}
+    start traffic  ${stream}
+    sleep  100         
+    [Tags]  feature    
+    
+TC12: Send jumbo frames make sure sampling happens    
+	${config_ret}=  rest config sflow collector  ${col_ip}   
+	Should be true   ${config_ret}	 
+	delete traffic
+	sleep  30
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=92200  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+    delete traffic
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    [Tags]  feature
+           	 
+           	 
+TC013: Config more than 4 sflow collectors make sure the error is thrown
+	${config_sflow}=  rest config sflow collector   ${col_ip} 
+	Should be true  ${config_sflow}
+	${config_sflow}=  rest config sflow collector   10.8.33.11 
+	Should be true  ${config_sflow}
+	${config_sflow}=  rest config sflow collector   10.8.33.12 
+	Should be true  ${config_sflow}
+	${config_sflow}=  rest config sflow collector   10.8.33.13 
+	Should be true  ${config_sflow}
+	${config_sflow}=  rest config sflow collector   10.8.33.14
+	Should not be true  ${config_sflow}
+    ${config_sflow}=  rest verify sflow config    collector   10.8.33.14
+	Should not be true  ${config_sflow}
+    ${sflow_delete}=  delete sflow collector smplrt cntr hdr  collector  10.8.33.11
+    Should be true    ${sflow_delete}
+    ${sflow_delete}=  delete sflow collector smplrt cntr hdr  collector  10.8.33.12
+    Should be true    ${sflow_delete}
+    ${sflow_delete}=  delete sflow collector smplrt cntr hdr  collector  10.8.33.13
+    Should be true    ${sflow_delete}    
+    ${config_sflow}=  rest verify sflow config    collector   10.8.33.11
+	Should not be true  ${config_sflow}
+    ${config_sflow}=  rest verify sflow config    collector   10.8.33.12
+	Should not be true  ${config_sflow}
+    ${config_sflow}=  rest verify sflow config    collector   10.8.33.13
+	Should not be true  ${config_sflow}        
+    [Tags]  feature    
+	      
+	      
+TC14: Give in an invalid ip for collector and make sure error is thrown
+	${config_sflow}=  rest config sflow collector   10.8.333.10 
+	Should not be true  ${config_sflow}      
+    [Tags]  feature  
+    
+TC15: Give a negative value for counter-interval and see for error
+	${config_counter}=  rest config sflow collector  counter_interval=-60
+	Should not be true  ${config_counter}
+    [Tags]  feature  
+    
+TC16: Configure a header-size of more than 256 and look for error
+	${config_header}=  rest config sflow collector  header_size=257
+	Should not be true  ${config_header}   
+	[Tags]  feature  run
+	
+TC17: Perform ha failover
+    rest execute ha failover
+    sleep  90
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+	[Tags]  feature  run   
+            
+TC18: Reboot master controller and verify if sflow config is intact
+	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
+	Should be true   ${config_ret}
+    restart controller  Master
+    sleep  300
+	${counter_ret}=  rest verify sflow config   collector   ${col_ip}  
+	Should be true  ${counter_ret}    
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+	[Tags]  feature  run 
+	
+TC19: Reboot slave controller and verify if sflow config is looking okay
+	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
+	Should be true   ${config_ret}
+    restart controller  Slave
+    sleep  300
+	${counter_ret}=  rest verify sflow config   collector   ${col_ip}  
+	Should be true  ${counter_ret}    
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+	[Tags]  feature  run 
+	 
+	 
+TC20: Reboot filter switch and verify if sampling is happening after the switch is up
+	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
+	Should be true   ${config_ret}
+    ${result}=  cli restart switch  s1  save_config=yes
+    Should be True  ${result}
+    sleep  100
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+	[Tags]  feature  run 
+	
+TC21: Restart floodlight process on master controller
+	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
+	Should be true   ${config_ret}
+    restart process on controller  floodlight  Master
+    Sleep  120
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+	[Tags]  feature  run    
+       
+
+TC22: Restart floodlight process on slave controller
+	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
+	Should be true   ${config_ret}
+    restart process on controller  floodlight  Slave
+    Sleep  120
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+	[Tags]  feature  run    
+
+TC23: Restart ofad on switch and make sure sampling is happening after it
+	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
+	Should be true   ${config_ret}
+    bash restart process  s1  ofad  timeout=90
+    Sleep  60
+    clear stats
+    ${clear}=  cli clear interface statistics  s1
+    Should be true  ${clear}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+	[Tags]  feature  run   
+
+TC24: Upgrade controllers and make sure sampling is happening after upgrade
+	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
+	Should be true   ${config_ret}
+	copy image
+	sleep  100
+	${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+	[Tags]  feature  run 
+	
+TC25: Upgrade switch and see if sampling is happening
+	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
+	Should be true   ${config_ret}
+    Run Keyword And Ignore Error  bash upgrade switch   s1   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-release.swi
+    sleep  600
+	${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+	[Tags]  feature  run
+
+
+   
+            
+* Keyword
+
+shut interface  [Arguments]  ${switch}  ${interface}
+    ${ret_value_1}=  cli disable interface  ${switch}  ${interface}
+    Should Be True  ${ret_value_1}    
+
+verify interface state  [Arguments]  ${switch}  ${interface}  ${state}  ${admin_down}
+    ${ret_value_1}=  cli show interface state  ${switch}  ${interface}  admin_down=${admin_down}
+    Should Contain  ${ret_value_1}  ${state}  
+
+unshut interface  [Arguments]  ${switch}  ${interface}
+    ${ret_value_1}=  cli enable interface  ${switch}  ${interface}
+    Should Be True  ${ret_value_1}
+    
+    
+
+sFlow suite setup
+    base suite setup
+    rest add switch alias  s1  ${switch_1_alias}
+    rest add switch alias  s2  ${switch_2_alias}
+
+    rest add interface role  s1  ${filter_1}  filter  ${filter_1_nick}  
+    rest add interface role  s2  ${delivery_1}  delivery  ${delivery_1_nick}
+    
+    rest add policy  admin-view  ${policy_name_1}  forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${filter_1_nick}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${delivery_1_nick}  delivery 
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    
+sFlow suite teardown
+	delete traffic
+    rest delete policy  admin-view   ${policy_name_1}
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_1_nick} 
+    rest delete interface role  s2  ${delivery_1}  delivery  ${delivery_1_nick}
+    rest delete interface  s1  ${filter_1}  switch_alias=${switch_1_alias}  
+    rest delete interface  s2  ${delivery_1}  switch_alias=${switch_2_alias}  
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch  s1
+    rest delete switch  s2
+    base suite teardown
+
+base test teardown
+	delete sflow collector smplrt cntr hdr  collector  ${col_ip}
+	delete sflow collector smplrt cntr hdr  sample-rate  3000
+	delete sflow collector smplrt cntr hdr  counter-interval  600
+	delete sflow collector smplrt cntr hdr  header-size   32
+	
+
+
+#sFlow suite setup
+#    base suite setup
+#    rest configure sflow   collector  ${col_ip}  
+#    rest enable feature  overlap
+ 
+    

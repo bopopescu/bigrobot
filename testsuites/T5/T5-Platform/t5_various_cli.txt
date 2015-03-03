@@ -596,6 +596,67 @@ T50 route 0.0.0.0/32 next-hop null
     ...  route 0.0.0.0/32 next-hop null
     [Tags]  BVS-2036
 
+T51.1 Show logging syslog last master
+    ${node}  Set Variable  master
+    ${threshold}  Set Variable  20
+    Config  master  no ntp time-zone
+    Sleep  3
+    ${result1}  Cli Get Number Of Logs In Last  ${node}  5hour
+    Config  master  ntp time-zone America/New_York
+    Sleep  3
+    ${result2}  Cli Get Number Of Logs In Last  ${node}  5hour
+    Config  master  ntp time-zone America/Los_Angeles
+    Sleep  3
+    ${result3}  Cli Get Number Of Logs In Last  ${node}  5hour
+    Config  master  ntp time-zone Asia/Tokyo
+    Sleep  3
+    ${result4}  Cli Get Number Of Logs In Last  ${node}  5hour
+    Config  master  ntp time-zone Europe/Warsaw
+    Sleep  3
+    ${result5}  Cli Get Number Of Logs In Last  ${node}  5hour
+
+    ${status}=  Evaluate  (${result2} - ${result1}) < ${threshold}
+    Should Be True  ${status}
+    ${status}=  Evaluate  (${result3} - ${result2}) < ${threshold}
+    Should Be True  ${status}
+    ${status}=  Evaluate  (${result4} - ${result3}) < ${threshold}
+    Should Be True  ${status}
+    ${status}=  Evaluate  (${result5} - ${result4}) < ${threshold}
+    Should Be True  ${status}
+    [Tags]  BSC-7011
+
+T51.2 Show logging syslog last slave
+    ${node}  Set Variable  slave
+    ${threshold}  Set Variable  20
+    Cli Run  slave  exit
+    Cli Run  slave  enable
+    Cli Run  slave  show run
+    Cli Run  master  no ntp time-zone
+    Sleep  3
+    ${result1}  Cli Get Number Of Logs In Last  ${node}  5hour
+    Config  master  ntp time-zone America/New_York
+    Sleep  3
+    ${result2}  Cli Get Number Of Logs In Last  ${node}  5hour
+    Config  master  ntp time-zone America/Los_Angeles
+    Sleep  3
+    ${result3}  Cli Get Number Of Logs In Last  ${node}  5hour
+    Config  master  ntp time-zone Asia/Tokyo
+    Sleep  3
+    ${result4}  Cli Get Number Of Logs In Last  ${node}  5hour
+    Config  master  ntp time-zone Europe/Warsaw
+    Sleep  3
+    ${result5}  Cli Get Number Of Logs In Last  ${node}  5hour
+
+    ${status}=  Evaluate  (${result2} - ${result1}) < ${threshold}
+    Should Be True  ${status}
+    ${status}=  Evaluate  (${result3} - ${result2}) < ${threshold}
+    Should Be True  ${status}
+    ${status}=  Evaluate  (${result4} - ${result3}) < ${threshold}
+    Should Be True  ${status}
+    ${status}=  Evaluate  (${result5} - ${result4}) < ${threshold}
+    Should Be True  ${status}
+    [Tags]  BSC-7011
+
 *** Keywords ***
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
@@ -678,7 +739,7 @@ Teardown
 	Cli Run  master  exit
 	Cli Run  master  enable
 	Cli Run  master  config
-	Cli Run  master  reauth admin adminadmin
-	Cli  master  no aaa accounting exec default start-stop group tacacs+  timeout=200
+	Run Keyword and Ignore Error  Cli Run  master  reauth admin adminadmin
+	Run Keyword and Ignore Error  Cli  master  enable; config; no aaa accounting exec default start-stop group tacacs+  timeout=200
 	Cli Copy  snapshot://startup-config  running-config
 	Base Test Teardown

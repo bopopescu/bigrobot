@@ -1,0 +1,105 @@
+# Verification Template
+#
+# This file contains a list of test cases which have been manually verified.
+# You can find the latest version of this file at
+# bigrobot/templates/verication.<build_name>_debug.yaml
+#
+# * This file must be saved as
+#   bigrobot/data/verification/verification.<build_name>.<user>.yaml
+#   E.g.,
+#     bigrobot/data/verification/verification.bvs_master_beta2_debug.don.yaml
+#
+# * File format:
+#   - name:                the name of the test case (must be exact match)
+#   - product_suite:       the name of the test suite including path (must be
+#                            an exact match)
+#   - status:              the test case status from the verification,
+#                            should be either PASS or FAIL
+#   - build_name_verified: the name of the build which was used to verify
+#                            the test case
+#   - notes:               free form comments
+#
+# * Examples:
+#
+#   - name: Verify L3 traffic honor more specific routes with ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: PASS
+#     build_name_verified: 'bvs master #2794'
+#     jira: 
+#     notes: I manually verified this and it works.
+#
+#   - name: Add and delete all ECMP members in ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: FAIL
+#     build_name_verified: 'bvs master #2806'
+#     jira: BVS-1598
+#     notes: This test case failed continuously in regression. It also fails in my testbed some of the time.
+#
+
+
+### new entry in recent 'bvs master #nnn'
+- name: T12.1. Filtering
+  product_suite: T5/T5-Platform/t5_gui
+  status: PASS
+  build_name_verified: 'ihplus_bcf-2.5.0-122'
+  jira:
+  notes: Already fixed.
+
+### new entry in recent 'bvs master #nnn'
+- name: T2.1.2. Verify that all logs available in files on the controller are available in the Analytics tool on Slave controller
+  product_suite: T5/T5-Platform/t5_ihp_analytics
+  status: PASS
+  build_name_verified: 'ihplus_bcf-2.5.0-122'
+  jira:
+  notes: Rerun was successful.
+
+### new entry in recent 'bvs master #nnn'
+- name: T2.2. Verify that all logs from before controller graceful failover are visible in the Analytics
+  product_suite: T5/T5-Platform/t5_ihp_analytics
+  status: PASS
+  build_name_verified: 'ihplus_bcf-2.5.0-122'
+  jira:
+  notes: Rerun was successful.
+
+### new entry in recent 'bvs master #nnn'
+- name: T2.3. Verify that all logs from before controller graceful reload are visible in the Analytics
+  product_suite: T5/T5-Platform/t5_ihp_analytics
+  status: PASS
+  build_name_verified: 'ihplus_bcf-2.5.0-122'
+  jira:
+  notes: Rerun was successful.
+
+- name: T1.1. Verify that release images are present on all controllers
+  product_suite: T5/T5-Platform/t5_ztn_1_baseline
+  status: PASS
+  build_name_verified: 'ihplus_bcf-2.5.0-122'
+  jira:
+  notes: naming convention of images has been fixed
+
+- name: T5.1.3. Power down, change config, failover
+  product_suite: T5/T5-Platform/t5_ztn_8_standby_switch_disconnected
+  status: PASS
+  build_name_verified: 'ihplus_bcf-2.5.0-122'
+  jira:
+  notes: intermittent failure
+
+- name: T5.4.2. Disconnect, delete, reconnect, reload (reboot?)
+  product_suite: T5/T5-Platform/t5_ztn_8_standby_switch_disconnected
+  status: PASS
+  build_name_verified: 'ihplus_bcf-2.5.0-122'
+  jira:
+  notes: intermittent failure
+
+- name: T0.4. Show remote on Active
+  product_suite: T5/T5-Platform/t5_ztn_1_baseline
+  status: PASS
+  build_name_verified: 'ihplus_bcf-2.5.0-122'
+  jira:
+  notes: outdated script has already been updated
+
+- name: T0.5. Show remote on Standby
+  product_suite: T5/T5-Platform/t5_ztn_1_baseline
+  status: PASS
+  build_name_verified: 'ihplus_bcf-2.5.0-122'
+  jira:
+  notes: outdated script has already been updated

@@ -1,0 +1,96 @@
+* Settings
+Documentation    T5 upgrade Test Suite
+Suite Setup      Upgrade Suite Setup
+Suite Teardown   Upgrade suite teardown
+Test Setup       Upgrade base test setup
+Test Teardown    current test teardown
+Force Tags       T5   Ironhorse   ha   upgrade
+Library			 OperatingSystem
+Library          keywords/BsnCommon.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library		     keywords_dev/mingtao/T5_longevity.py
+Library	         keywords/T5Platform.py
+Library	         keywords/T5Parallel.py
+Library	         keywords/T5ZTN.py 
+Library	         keywords/T5Utilities.py 
+Library	         keywords/T5.py
+Library          keywords/T5L3.py
+Library	         keywords/Controller.py
+Library	         keywords/SwitchLight.py
+Resource		 testsuites_dev/mingtao/t5_upgrade_ztn_resource.txt 
+
+# this will only cover upgrade from GA #43 to target image
+ 
+ 
+
+* Variable
+
+${short}  1
+${medium}  10
+${long}   30
+${verylong}    90 
+${upgradetime}    600 
+ 
+${image}      bsn@jenkins:/var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive/controller-*.pkg
+ 
+${config}   scp://root@10.8.28.6:/home/mingtao/config_basic
+${h2ip}     20.20.20.61
+${h1ip}  	20.20.20.60
+${File}     script.log
+ 
+ 
+
+
+* Test Case
+ 
+UPGRADE: T1 Verify upgrade (controller - upgrade, switch - upgrade )   	
+  		config    master       no user upgrader
+ 		${result}=   Verify Dual nodes upgrade 	  ${image}
+		 
+ 	[Tags] 	sanity  feature  upgrade_ztn       
+ 	
+UPGRADE: T2 Verify upgrade rollback 
+
+	log  step 0 - get image for other partition
+		 ${c1_image}=   get_boot_partition_image   c1  alternate
+		 ${c2_image}=   get_boot_partition_image   c2  alternate
+		 
+  	log  step 1 - rollback once the upgrade is finished on both nodes 
+  		${result}=  cluster_boot_partition
+  		Should be True   ${result}
+  		
+ 	log  step 2 - check both controller 
+ 		${c1_new}=  rest_get_ver  c1
+ 		${c2_new}=  rest_get_ver  c2
+ 		
+ 		Should Be Equal    ${c1_new}    ${c1_image} 	
+ 		Should Be Equal    ${c2_new}    ${c2_image} 
+ 	log  step 3 - remove usr upgrader
+		  config    master       no user upgrader
+ 	log  step 4 - reboot all switches		
+		cli_reboot_switch_all 
+		sleep  ${long}
+		Verify switch are booted with correct image
+		Verify All Switch Startup Config 
+		Verify All Switch Running Config 
+
+ 	 	
+	[Tags]  full   feature  upgrade_ztn       
+     
+   
+UPGRADE: T3 upgrade launch timeout
+  		config    master       no user upgrader
+		Verify Dual nodes upgrade     ${image}    switch-timeout 900   	
+			
+	[Tags] 	sanity  feature  upgrade_ztn     
+
+
+################  
+* Keywords
+current test teardown
+	base test teardown
+ 	Run Keyword if   '${TEST STATUS}' != 'PASS'    Fatal Error   stop all tests either upgrade or rollback did not pass
+
+ 

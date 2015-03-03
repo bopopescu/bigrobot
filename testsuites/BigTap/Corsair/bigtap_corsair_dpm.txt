@@ -4,7 +4,7 @@ Suite Setup             offset suite setup
 Suite Teardown          offset suite teardown
 Test Setup              offset test setup
 Test Teardown           offset test teardown 
-Force Tags              corsair  bigtap  sanity  feature
+Force Tags              BigTap  corsair-400  Quanta-LB9  Quanta-LY2  match-conditions  dpm
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -40,7 +40,7 @@ TC1:Verify no errors are reported in CLI/Syslog while enabling offset based matc
 	sleep  10
     ${return_value}=  rest enable feature  l3-l4-offset-match
     Should be true   ${return_value}       
-    [Tags]  feature
+    [Tags]  sanity  feature
 
 TC2:With offset matching enabled, verify basic BigTap policy with "match any" condition is active and installed. Verify flow table in switch. 
 
@@ -62,7 +62,7 @@ TC2:With offset matching enabled, verify basic BigTap policy with "match any" co
     sleep  2
     ${ethType}=  rest return switch flow  s2  0  eth-type  flow_id=${1}
     Should be equal as integers  ${ethType}  34525    
-    [Tags]  feature  runthis
+    [Tags]  sanity  feature  
 
 TC3:Verify basic BigTap policy with "1 match gtp gtp-v1-teid 100" condition is active and installed.
 	   
@@ -96,7 +96,7 @@ TC3:Verify basic BigTap policy with "1 match gtp gtp-v1-teid 100" condition is a
     Should be equal as integers  ${dstport}  2152   
     ${udf}=  rest return switch flow  s2  4  udf1
     Should be equal as integers  ${udf}  100
-    [Tags]  feature
+    [Tags]  full  feature
 
 
 TC4:With TC3 config, change action from forward to inactive. Verify policy is inactive and flows are deleted from both Switches
@@ -110,7 +110,7 @@ TC4:With TC3 config, change action from forward to inactive. Verify policy is in
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  0
     sleep  10    
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC5:With TC4 config, change action from inactive to forward. Verify policy is active and installed. Verify flow table on both switch
 
@@ -129,7 +129,7 @@ TC5:With TC4 config, change action from inactive to forward. Verify policy is ac
     Should be equal as integers  ${flow_count}  1 
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1    
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC6:With TC3 config, change action from forward to rate-measure. Verify policy is installed and flows are deleted only from SW 2
 
@@ -140,7 +140,7 @@ TC6:With TC3 config, change action from forward to rate-measure. Verify policy i
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  0   
     sleep  10 
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC7:With TC4 config, change action from rate-measure to forward. Verify policy is active and installed. Verify flow table on both switches
 	
@@ -154,7 +154,7 @@ TC7:With TC4 config, change action from rate-measure to forward. Verify policy i
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1
     sleep  10    
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC8:With TC3 config, change match condition (add second match condition, then delete first match condition). Verify updated flows are installed on both switches.
 
@@ -177,7 +177,7 @@ TC8:With TC3 config, change match condition (add second match condition, then de
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1 
     sleep  10
-    [Tags]  feature
+    [Tags]  full  feature
 
 TC9:With TC3 config, change match condition (first delete existing match condition, then add second match condition). Verify updated flows are installed on both switches.
 	
@@ -200,7 +200,7 @@ TC9:With TC3 config, change match condition (first delete existing match conditi
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1 
     sleep  10 
-    [Tags]  feature
+    [Tags]  full  feature
     
 
 TC10:With policy installed (TC3 Configuration), send matching traffic. Verify traffic is forwarded to delivery ports
@@ -220,7 +220,7 @@ TC10:With policy installed (TC3 Configuration), send matching traffic. Verify tr
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
     sleep  10
-	[Tags]  feature
+	[Tags]  full  feature
 
 TC11:With policy installed, send matching traffic. Verify traffic statistics are reported correctly for offset match in "show bigtap policy <policy_name>"
 
@@ -249,7 +249,7 @@ TC11:With policy installed, send matching traffic. Verify traffic statistics are
  	Should be True  ${return_value} 
     stop traffic  ${stream}
     
-    [Tags]  feature
+    [Tags]  full  feature
     
 TC12:With policy installed, send matching traffic. Verify traffic statistics are reported correctly in "show bigtap policy <policy_name> delivery-interfaces"
 
@@ -271,7 +271,7 @@ TC12:With policy installed, send matching traffic. Verify traffic statistics are
  	${return_value}=  ixia verify traffic rate  ${value}  ${rx_value}  rangev=20
  	Should be True  ${return_value} 
     stop traffic  ${stream}
- 	[Tags]  feature
+ 	[Tags]  full  feature
 
 TC13:With policy installed, send matching traffic. Verify traffic statistics are reported correctly in "show bigtap policy <policy_name> filter-interfaces"
 
@@ -293,7 +293,7 @@ TC13:With policy installed, send matching traffic. Verify traffic statistics are
  	${return_value}=  ixia verify traffic rate  ${value}  ${tx_value}  rangev=20
  	Should be True  ${return_value}
     stop traffic  ${stream}
- 	[Tags]  feature
+ 	[Tags]  full  feature
 
 TC14:With policy installed. Verify CLI O/P for "show bigtap policy-flow <policy name> "
 	 
@@ -311,7 +311,7 @@ TC14:With policy installed. Verify CLI O/P for "show bigtap policy-flow <policy 
      Should be equal as integers   ${switch1_dictionary[0]['flow-info'][1]['flow'][0]['flow-mod']['match-field'][4]['udf1']}  100
      Should be equal as integers   ${switch1_dictionary[0]['flow-info'][1]['flow'][0]['flow-mod']['instruction'][0]['action'][0]['max-length']}  65535
      
-	 [Tags]  feature
+	 [Tags]  full  feature
 
 TC15:With policy installed. Verify CLI O/P for "show bigtap policy <policy name> optimized match"
 
@@ -321,7 +321,7 @@ TC15:With policy installed. Verify CLI O/P for "show bigtap policy <policy name>
     Should be true  ${verify_policy1}
     ${count}=  rest_show_policy_optimize  ${bigtap_policy_name}  
 	Should be equal as integers  ${count}  1
- 	[Tags]  feature
+ 	[Tags]  full  feature
 
 TC16:Verify CLI "show running-config"
 
@@ -348,7 +348,7 @@ TC16:Verify CLI "show running-config"
     Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['offset-match-0']['mask']}    4294967295
     Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['offset-match-0']['offset']}  12
     Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['offset-match-0']['value']}  100
-    [Tags]  feature	
+    [Tags]  full  feature
 
 
 TC17:Delete and re-add policy and verify flows get deleted and re-installed.
@@ -375,7 +375,7 @@ TC17:Delete and re-add policy and verify flows get deleted and re-installed.
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1    
     sleep  10    
-    [Tags]  feature
+    [Tags]  full  negative
 	
 
 TC18:With policy installed, go from l3-l4-offset mode to l3-l4 mode. Verify CLI disallows
@@ -386,7 +386,7 @@ TC18:With policy installed, go from l3-l4-offset mode to l3-l4 mode. Verify CLI 
     ${return_value}=  rest enable feature  l3-l4
     Should not be true   ${return_value} 
     sleep  10     
-    [Tags]  feature
+    [Tags]  full  negative
 	
 
 TC20:With policy installed, go from l3-l4-offset mode to full-match mode. Verify CLI disallows
@@ -397,7 +397,7 @@ TC20:With policy installed, go from l3-l4-offset mode to full-match mode. Verify
     ${return_value}=  rest enable feature  full-match
     Should not be true   ${return_value}
     sleep  10         
-    [Tags]  feature
+    [Tags]  full  negative
 
 TC21:With policy installed, enable overlap mode. Verify no affect on BigTap policy
      
@@ -414,7 +414,7 @@ TC21:With policy installed, enable overlap mode. Verify no affect on BigTap poli
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1
     sleep  10     
-    [Tags]  feature
+    [Tags]  full  negative
 
 TC22:With policy installed, disable overlap mode. Verify no affect on BigTap policy
       
@@ -432,7 +432,7 @@ TC22:With policy installed, disable overlap mode. Verify no affect on BigTap pol
     ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1 
     sleep  5     
-    [Tags]  feature
+    [Tags]  full  negative
 
 TC23:With policy installed, enable inport-masking. Verify no affect on BigTap policy
 
@@ -446,7 +446,7 @@ TC23:With policy installed, enable inport-masking. Verify no affect on BigTap po
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     sleep  5      
-    [Tags]  feature
+    [Tags]  full  negative
 
 TC24:With policy installed, disable inport-masking. Verify no affect on BigTap policy
 
@@ -459,7 +459,7 @@ TC24:With policy installed, disable inport-masking. Verify no affect on BigTap p
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1} 
     sleep  5
-    [Tags]  feature
+    [Tags]  full  negative
 
 TC25:With policy installed, send non-matching traffic. Verify traffic is dropped at ingress ports
 	
@@ -480,7 +480,7 @@ TC25:With policy installed, send non-matching traffic. Verify traffic is dropped
     sleep  10
     verify false results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  feature
+    [Tags]  full  negative
 
 TC26:With policy installed and match on GTP TEID, send packet with GTP header and bad CRC
 	
@@ -508,7 +508,7 @@ TC26:With policy installed and match on GTP TEID, send packet with GTP header an
  	${return_value}=  ixia verify traffic rate  ${value}  ${rx_value}  rangev=20
  	Should be True  ${return_value}
     stop traffic  ${stream}
- 	[Tags]  feature
+ 	[Tags]  full  negative
 
 
 	

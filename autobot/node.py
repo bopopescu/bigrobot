@@ -450,6 +450,18 @@ class ControllerNode(Node):
     def monitor_reauth(self, state):
         return self.dev.monitor_reauth(state)
 
+    def close(self, delete_session_cookie=True):
+        super(ControllerNode, self).close()
+        if delete_session_cookie:
+            try:
+                self.rest.delete_session_cookie()
+            except:
+                helpers.log("Failed to delete REST session cookie for node '%s'. Ignore error."
+                            % self.name())
+        else:
+            helpers.log("Argument delete_session_cookie=%s. Don't delete session cookie."
+                        % delete_session_cookie)
+
 
 class MininetNode(Node):
     def __init__(self, name, ip, user, password, t,

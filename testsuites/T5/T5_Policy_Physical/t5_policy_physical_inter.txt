@@ -16,6 +16,8 @@ Library         keywords/BsnCommon.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Resource		testsuites/T5/T5_Policy_Physical/t5_policy_physical_inter_variables_regression.txt
+Resource        testsuites/T5/t5_physical_variables.txt
+Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 Library         OperatingSystem
 Library         Collections
 Library         Dialogs
@@ -28,7 +30,7 @@ Library         Dialogs
 #---------------------------------------------
 
 T1 Interface tenant add/remove permit policy src-ip to dest-ip 
-	[Tags]  feature
+	[Tags]  feature  daily-sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy							${tenantX}		${tenant2_polname}		
@@ -60,7 +62,7 @@ T1 Interface tenant add/remove permit policy src-ip to dest-ip
 
 
 T2 Interface tenant add/removedeny policy src-ip to dest-ip 
-	[Tags]  feature  deny
+	[Tags]  feature  deny  daily-sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy							${tenantX}		${tenant2_polname}		
@@ -90,7 +92,7 @@ T2 Interface tenant add/removedeny policy src-ip to dest-ip
 
 
 T3 Interface tenant add/remove permit policy src-ip to dest-vns
-	[Tags]  feature
+	[Tags]  feature  
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
 	rest add policy								X		${tenant2_polname}		
@@ -121,7 +123,7 @@ T3 Interface tenant add/remove permit policy src-ip to dest-vns
     
 
 T4 Interface tenant add/remove deny policy src-ip to dest-vns
-	[Tags]  feature
+	[Tags]  feature  
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
 	rest add policy								X		${tenant2_polname}		
@@ -150,7 +152,7 @@ T4 Interface tenant add/remove deny policy src-ip to dest-vns
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
     
 T5 Interface tenant add/remove permit policy src-ip to dest-tenant
-	[Tags]  feature
+	[Tags]  feature  
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
@@ -179,7 +181,7 @@ T5 Interface tenant add/remove permit policy src-ip to dest-tenant
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 T6 Interface tenant add/remove deny policy src-ip to dest-tenant
-	[Tags]  feature
+	[Tags]  feature  daily-sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
@@ -209,7 +211,7 @@ T6 Interface tenant add/remove deny policy src-ip to dest-tenant
 
 ######  **  ANY **  ########	
 T7 Interface tenant add/remove permit policy src-ip to any
-	[Tags]  feature
+	[Tags]  feature  daily-sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	#${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
@@ -268,7 +270,7 @@ T8 Interface tenant add/remove deny policy src-ip to any
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
     
 T9 Interface tenant add/remove permit policy src-tenant to dest-ip
-	[Tags]  feature
+	[Tags]  feature  
 	${src_dict}=  Create Dictionary  tenant  ${tenantY}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy								X		${tenant1_polname}		
@@ -355,7 +357,7 @@ T11 Interface tenant add/remove permit policy src-tenant to dest-tenant
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
     
 T12 Interface tenant add/remove deny policy src-tenant to dest-tenant
-	[Tags]  feature
+	[Tags]  feature  daily-sanity
 	${src_dict}=  Create Dictionary  tenant  ${tenantY}
 	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
@@ -538,7 +540,7 @@ T17 Interface tenant add/remove permit policy src-vns to dest-ip
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 T18 Interface tenant add/remove deny policy src-vns to dest-ip
-	[Tags]  feature
+	[Tags]  feature  daily-sanity
 	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	rest add policy								X		${tenant1_polname}		
@@ -625,7 +627,7 @@ T20 Interface tenant add/remove deny policy src-vns to dest-tenant
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 T21 Interface tenant add/remove permit policy src-vns to dest-vns
-	[Tags]  smoke  feature
+	[Tags]  smoke  feature  daily-sanity
 	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
 	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
@@ -2856,6 +2858,12 @@ Policy vns interface any  [Arguments]  ${seq}  ${action}  ${src}
 
 
 test setup topology
+	add fabric switch
+    BuiltIn.Sleep  125
+    rest verify fabric switch all
+    BuiltIn.Sleep  25
+    Set swith int variables
+    Set switch dpid variables	
 	T5 base suite setup
 	REST add tenant 								X
 	REST add tenant									Y
@@ -2876,11 +2884,11 @@ test setup topology
 	REST add vns ip  								X							X3				10.251.3.1				24	
 	REST add vns ip  								Y							Y1				10.252.1.1				24	
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
-	REST add interface to vns						X							X1				leaf0-a					${ixia1}	-1
-	REST add interface to vns						X							X2				leaf0-b					${ixia3}	-1
-	REST add interface to vns						X							X3				leaf1-a					${ixia2}	-1
-	REST add interface to vns						Y							Y1				leaf1-b					${ixia4}	-1
-	REST add interface to vns						Z							Z1				leaf2-a					${ixia7}	-1
+	REST add interface to vns						X							X1				leaf0-a					${leaf0a_ixia_intf}	-1
+	REST add interface to vns						X							X2				leaf0-b					${leaf0b_ixia_intf}	-1
+	REST add interface to vns						X							X3				leaf1-a					${leaf1a_ixia_intf}	-1
+	REST add interface to vns						Y							Y1				leaf1-b					${leaf1b_ixia_intf}	-1
+	REST add interface to vns						Z							Z1				leaf2-a					${leaf2a_ixia_intf}	-1
 	
 	REST add tenant routers intf to system			X
 	REST add tenant routers intf to system			Y
@@ -2917,7 +2925,7 @@ test teardown topology
 
 T5 base suite setup
 	base suite setup
-	add fabric switch
+	reconnect_switch_ips
 	sleep 											5
 	${result} = 									CLI verify controller		s1							c1		
 	Should Be True									${result}
@@ -2957,48 +2965,6 @@ verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${strea
     ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range}	
-  	
-add fabric switch
-  rest add switch  spine0  
-  rest add dpid  spine0  ${spine0_dpid}
-  rest add fabric role  spine0  spine 
-  rest add switch  spine1 
-  rest add dpid  spine1  ${spine1_dpid}
-  rest add fabric role  spine1  spine
-  rest add switch  leaf0-a 
-  rest add dpid  leaf0-a  ${leaf0a_dpid}
-  rest add fabric role  leaf0-a  leaf
-  rest add leaf group  leaf0-a  rack0
-  rest add switch  leaf0-b 
-  rest add dpid  leaf0-b  ${leaf0b_dpid}
-  rest add fabric role  leaf0-b  leaf
-  rest add leaf group  leaf0-b  rack0
-  rest add switch  leaf1-a 
-  rest add dpid  leaf1-a  ${leaf1a_dpid}
-  rest add fabric role  leaf1-a  leaf
-  rest add leaf group  leaf1-a  rack1
-  rest add switch  leaf1-b 
-  rest add dpid  leaf1-b  ${leaf1b_dpid}
-  rest add fabric role  leaf1-b  leaf
-  rest add leaf group  leaf1-b  rack1
-  rest add switch  leaf2-a 
-  rest add dpid  leaf2-a  ${leaf2a_dpid}
-  rest add fabric role  leaf2-a  leaf
-  rest add leaf group  leaf2-a  rack2
-  rest add switch  leaf2-b 
-  rest add dpid  leaf2-b  ${leaf2b_dpid}
-  rest add fabric role  leaf2-b  leaf
-  rest add leaf group  leaf2-b  rack2
-  
-delete fabric switch  
-  rest delete fabric switch  spine0 
-  rest delete fabric switch  spine1 
-  rest delete fabric switch  leaf2-a 
-  rest delete fabric switch  leaf2-b 
-  rest delete fabric switch  leaf0-a 
-  rest delete fabric switch  leaf0-b 
-  rest delete fabric switch  leaf1-a 
-  rest delete fabric switch  leaf1-b 
 
 
 test teardown

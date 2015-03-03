@@ -14,40 +14,49 @@ Resource        	testsuites/BigTap/BigTapGUI-Corsair/bigtap_resource.txt
 
 
 
-***Test Cases***
+*Test Case 
 ### Configure Tunnels					 ${name}  ${rate-limit}  ${direction}  ${src-ip}  	${prefix}  ${gateway}  		${dst-ip}  		${switch}  		${parent-if}  ${loopback-if}					
 TC1 Configure Transmit Only tunnel	
 	  Configure Big Tap Tunnels			 tunnel1	${EMPTY}	Transmit		110.110.6.1	 	24		110.110.6.2		110.110.1.1		qa-corsair-1	ethernet9		ethernet5
+	  [Tags]  feature gui bigtap
 TC2 Configure Receive Only Tunnel														
-	  Configure Big Tap Tunnels			 tunnel2	${EMPTY}	Receive			110.110.1.1	 	24		110.110.1.2		110.110.6.1		qa-corsair-2	ethernet10		${EMPTY}		
+	  Configure Big Tap Tunnels			 tunnel1	${EMPTY}	Receive			110.110.1.1	 	24		110.110.1.2		110.110.6.1		qa-corsair-2	ethernet10		${EMPTY}		
 TC3 Configure Bidirectional tunnel														
-	  Configure Big Tap Tunnels			 tunnel1	${EMPTY}	Bidirectional	110.110.1.3	 	24		110.110.1.2		110.110.2.1		qa-corsair-2	ethernet9		ethernet51		
+	  Configure Big Tap Tunnels			 tunnel2	${EMPTY}	Bidirectional	110.110.1.3	 	24		110.110.1.2		110.110.2.1		qa-corsair-1	ethernet9		ethernet51		
 TC4 Configure Bidirectional tunnel	
-	  Configure Big Tap Tunnels			 tunnel2	${EMPTY}	Bidirectional	110.110.2.1	 	24		110.110.2.2		110.110.1.3		qa-corsair-1	ethernet5		ethernet52
+	  Configure Big Tap Tunnels			 tunnel2	${EMPTY}	Bidirectional	110.110.2.1	 	24		110.110.2.2		110.110.1.3		qa-corsair-2	ethernet5		ethernet52
 TC5 Configure Bigtap role for tunnel1
 	  Configure Big Tap Interface from Controller Menu				 tunnel1	00:00:5c:16:c7:1e:f3:95	  service		pre-service				 
 TC6 Configure Bigtap role for tunnel1
-	  Configure Big Tap Interface from Controller Menu			 	 tunnel2	00:00:5c:16:c7:1c:16:f2   filter		filter-1	
+	  Configure Big Tap Interface from Controller Menu			 	 tunnel1	00:00:5c:16:c7:1c:16:f2   service		post-service	
 TC7 Configure Bigtap role for tunnel2
-	  Configure Big Tap Interface from Controller Menu				 tunnel1	00:00:5c:16:c7:1c:16:f2   service		post-service	
+	  Configure Big Tap Interface from Controller Menu				 tunnel2	00:00:5c:16:c7:1c:16:f2   filter		filter-1		
 TC8 Configure Bigtap role for tunnel2
 	  Configure Big Tap Interface from Controller Menu				 tunnel2	00:00:5c:16:c7:1e:f3:95   delivery		delivery-1	
 TC9 Remove BigTap Configuration from tunnel1				
  	  Edit Big Tap Interface from Controller Menu					 tunnel1	00:00:5c:16:c7:1e:f3:95	  ${EMPTY}		${EMPTY}
 TC10 Remove BigTap Configuration from tunnel2				
- 	  Edit Big Tap Interface from Controller Menu					 tunnel2	00:00:5c:16:c7:1c:16:f2	  ${EMPTY}		${EMPTY}
-TC11 Remove BigTap Configuration from tunnel1				
  	  Edit Big Tap Interface from Controller Menu					 tunnel1	00:00:5c:16:c7:1c:16:f2	  ${EMPTY}		${EMPTY}
+TC11 Remove BigTap Configuration from tunnel1				
+ 	  Edit Big Tap Interface from Controller Menu					 tunnel2	00:00:5c:16:c7:1c:16:f2	  ${EMPTY}		${EMPTY}
 TC12 Remove BigTap Configuration from tunnel2				
  	  Edit Big Tap Interface from Controller Menu					 tunnel2	00:00:5c:16:c7:1e:f3:95	  ${EMPTY}		${EMPTY}
 TC13 Delete Transmit only Tunnel
 	  Delete Tunnel													 tunnel1	00:00:5c:16:c7:1e:f3:95						
 TC14 Delete Receive only Tunnel
-	  Delete Tunnel													 tunnel2	00:00:5c:16:c7:1c:16:f2					
+	  Delete Tunnel													 tunnel1	00:00:5c:16:c7:1c:16:f2					
 TC15 Delete Bidirectional Tunnel1
-	  Delete Tunnel													 tunnel1	00:00:5c:16:c7:1c:16:f2						
+	  Delete Tunnel													 tunnel2	00:00:5c:16:c7:1c:16:f2						
 TC16 Delete Bidirectional Tunnel2
 	  Delete Tunnel													 tunnel2	00:00:5c:16:c7:1e:f3:95					
+
+
+Configure policy with transmit only at one end and receive only in another
+Configure policy with transmit only at one end and bidirectional in another
+Configure policy with receive only at one end and bidirectional in another
+Configure policy with transmit only at both ends
+Configure policy with receive only at both ends
+
 
 * Keyword
 config suite setup

@@ -202,6 +202,7 @@ T4.1. Replace provisioned switch's MAC with MAC of powered-down switch, verify c
 
 T4.2. Replace provisioned switch's MAC with MAC of switch when connectivity with switch is down, reconnect, verify correct commissioning
 	Telnet Set MA1 State  s2  down
+    Sleep  20
 	Cli Run  master  switch ${s2_alias}; no mac ${s2_mac}
 	Cli Run  master  switch ${s3_alias}; mac ${s2_mac}
 	Cli Run  master  switch ${s2_alias}; mac ${s3_mac}

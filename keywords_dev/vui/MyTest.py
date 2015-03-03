@@ -159,7 +159,7 @@ root@nova-controller:~#
 root@nova-controller:~#
 """
         out_dict = helpers.openstack_convert_table_to_dict(openstack_output)
-        helpers.prettify_log("out_dict:", out_dict)
+        helpers.pretty_log(out_dict)
 
         # Now you can walk through the dictionary...
         key = '02f4a4d1-0930-43bf-94db-2d39b11c343d'
@@ -790,6 +790,50 @@ vui@Vuis-MacBook-Pro$
 
         return True
 
+    def test_bsn_common_services(self):
+        from bsn_common_services import tasks as tasks
+        t = test.Test()
+        task = tasks.UpgradeCommands()
+
+        res1 = task.add.delay(99, 99)
+        res2 = task.add.delay(101, 101)
+        results = []
+        results.append(res1)
+        results.append(res2)
+
+        is_pending = True
+        iterations = 0
+        max_tries = 10
+        while is_pending and iterations <= max_tries:
+            is_pending = False
+            iterations += 1
+            helpers.sleep(3)
+            for res in results:
+                task_id = res.task_id
+                if res.ready() == True:
+                    helpers.log("****** %d.READY     - task_id(%s)"
+                                % (iterations, res.task_id))
+                else:
+                    helpers.log("****** %d.NOT-READY - task_id(%s)"
+                                % (iterations, res.task_id))
+                    is_pending = True
+        if is_pending and iterations > max_tries:
+            helpers.log("Not able to retrieve results from ESB")
+            return False
+
+        helpers.log("*** Parallel tasks completed")
+        for res in results:
+            task_id = res.task_id
+            helpers.log_task_output(task_id)  # display URL of task output
+
+        #
+        # Check task output
+        #
+        for res in results:
+            task_id = res.task_id
+            output = res.get()
+            helpers.log("task_id: %s, result: %s" % (res.task_id, output))
+
     def test_vui_esb(self, nodes):
         # from bsn_services import sample_method_tasks as tasks
         from vui_services import tasks as tasks
@@ -846,7 +890,7 @@ vui@Vuis-MacBook-Pro$
         while is_pending and iterations <= max_tries:
             is_pending = False
             iterations += 1
-            helpers.sleep(1)
+            helpers.sleep(3)
             for res in results:
                 task_id = res.task_id
                 action = result_dict[task_id]["node"] + ' ' + result_dict[task_id]["action"]
@@ -871,11 +915,11 @@ vui@Vuis-MacBook-Pro$
         #
         for res in results:
             task_id = res.task_id
+            helpers.log("Getting result for task_id: %s" % task_id)
             output = res.get()
             result_dict[task_id]["result"] = output
 
         helpers.log("***** result_dict:\n%s" % helpers.prettify(result_dict))
-
         return True
 
     def exit_early(self):
@@ -1081,7 +1125,10 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         content = n.cli('show user')['content']
         output = helpers.strip_cli_output(content)
         helpers.log("**** output: %s" % output)
-        n = t.node_reconnect(node)
+        try:
+            n = t.node_reconnect(node, delete_session_cookie=False)
+        except:
+            helpers.log(helpers.exception_info())
         n.bash('uptime')
         n2 = t.node_spawn(ip=n.ip())
         n2.cli('show session')
@@ -1234,3 +1281,12 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
     def test_check_version(self):
         status = BsnCommon().check_version('master', '2.1.0')
         helpers.log("version check against 2.1.0: %s" % status)
+
+    def rest_bigtap_delivery_group(self, node):
+        t = test.Test()
+        c = t.controller(node)
+        res = c.rest.put('/api/v1/data/controller/applications/bigtap/view[name="admin-view"]/policy[name="P1"]/delivery-group[name="demo-eth3"]',
+                          data={"name": "demo-eth3"}
+                         )
+        return res
+

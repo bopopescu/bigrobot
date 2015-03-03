@@ -3,7 +3,7 @@ Documentation   	Test suite with tests to match TCP Flags. The tests have
 ...             	a workflow that is created using keywords from the resource file.
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
-Force Tags      	bigtap  corsair  gui
+Force Tags      	bigtap  corsair  gui  match-conditions  tcp-flags  match-conditions
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
 Library        		SeleniumLibrary
@@ -11,50 +11,64 @@ Resource        	bigtap_resource.txt
 Library       		String
 Library				keywords/AppController.py
 
-
-
 *Test Case
 ### Configure Big Tap Policy Match for TCP Flags					Policy		Ethertype				FIN			SYN				RST			PSH			ACK			URG
 TC Set up
 	Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-1		filter			ixia-2-9
 	Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rly2-1 		delivery		ixia-2-15	
 	Configure Big Tap Policy					 					policy-tcp			admin-view		Forward			IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15		${EMPTY}	${EMPTY}	  	${EMPTY}	
-
+    [Tags]  full  feature  sanity
 TC1 Unset FIN														
-	  Edit Big Tap Policy for TCP Flags								policy-tcp	IPv4 - 0x800 (2048)		!FIN 		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	 Edit Big Tap Policy for TCP Flags								policy-tcp	IPv4 - 0x800 (2048)		!FIN 		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+    [Tags]  full  feature  sanity
 TC2 Unset SYN	
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	!SYN			${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	!SYN			${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+    [Tags]  full  feature  sanity
 TC3 Unset RST
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		!RST		${EMPTY}	${EMPTY}	${EMPTY}
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		!RST		${EMPTY}	${EMPTY}	${EMPTY}
+    [Tags]  full  feature
 TC4 Unset PSH	
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	!PSH		${EMPTY}	${EMPTY}
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	!PSH		${EMPTY}	${EMPTY}
+    [Tags]  full  feature
 TC5 Unset ACK	
-	  Edit Big Tap Policy for TCP Flags								policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	!ACK		${EMPTY} 
+	Edit Big Tap Policy for TCP Flags								policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	!ACK		${EMPTY} 
+    [Tags]  full  feature
 TC6 Unset URG
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	!URG
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	!URG
+    [Tags]  full  feature
 TC7 Unset all
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		!FIN 		!SYN			!RST		!PSH		!ACK		!URG
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		!FIN 		!SYN			!RST		!PSH		!ACK		!URG
+    [Tags]  full  feature
 TC8 Set FIN														
-	  Edit Big Tap Policy for TCP Flags								policy-tcp	IPv4 - 0x800 (2048)		FIN 		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	Edit Big Tap Policy for TCP Flags								policy-tcp	IPv4 - 0x800 (2048)		FIN 		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+    [Tags]  full  feature
 TC9 Set SYN	
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	SYN				${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	SYN				${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+    [Tags]  full  feature
 TC10 Set RST
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		RST			${EMPTY}	${EMPTY}	${EMPTY}
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		RST			${EMPTY}	${EMPTY}	${EMPTY}
+    [Tags]  full  feature
 TC11 Set PSH	
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	PSH			${EMPTY}	${EMPTY}
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	PSH			${EMPTY}	${EMPTY}
+    [Tags]  full  feature
 TC12 Set ACK	
-	  Edit Big Tap Policy for TCP Flags								policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	ACK			${EMPTY} 
+	Edit Big Tap Policy for TCP Flags								policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	ACK			${EMPTY} 
+    [Tags]  full  feature
 TC13 Set URG
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	URG
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		${EMPTY} 	${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	URG
+    [Tags]  full  feature
 TC14 Set all
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		FIN 		SYN				RST			PSH			ACK			URG
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		FIN 		SYN				RST			PSH			ACK			URG
+    [Tags]  full  feature
 TC15 Miscellaneous-I
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		FIN 		!SYN			RST			!PSH		ACK			URG
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		FIN 		!SYN			RST			!PSH		ACK			URG
+    [Tags]  full  feature
 TC16 Miscellaneous-II
-	  Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		!FIN 		SYN				!RST		${EMPTY}	${EMPTY}	URG
+	Edit Big Tap Policy for TCP Flags 							policy-tcp	IPv4 - 0x800 (2048)		!FIN 		SYN				!RST		${EMPTY}	${EMPTY}	URG
+    [Tags]  full  feature
 TC17 Teardown
 	Delete All Big Tap Policies
-    
+    [Tags]  full  feature
 			
 * Keyword
 config suite setup
@@ -71,9 +85,21 @@ config suite setup
 	Set Switching Mode		L3-L4 Offset Match
 	#Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
  	#Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
- 	Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			app-rlb9-1		 							
- 	Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			app-rly2-1
- 	write version to file
+ 	#Configure Switch Alias	00:00:5c:16:c7:1e:f3:95			app-rlb9-1		 							
+ 	#Configure Switch Alias	00:00:5c:16:c7:1c:16:f2			app-rly2-1
+ 	#Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
+ 	#Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1
+ 	${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+    ${switch_dpid_s3}=  rest return switch dpid from ip  s3
+    ${switch_dpid_s4}=  rest return switch dpid from ip  s4
+    ${switch_dpid_s5}=  rest return switch dpid from ip  s5
+    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
+  	write version to file
 
 config suite teardown
 	Close Browser

@@ -1,0 +1,40 @@
+*Variables
+
+## Topology - Dell S6000 switch as leaf1-b ( 40G breakout ports)
+## Peer link between DELL S6000(s4) and AS5710 (s3) - breakout cable ( 4x 10G ports) 
+
+${switch1_name}  	leaf0-a
+${switch3_name}  	leaf1-a
+${switch7_name}  	spine0
+${switch4_name}  	leaf1-b
+
+${leaf1b_intf}  	ethernet9
+${leaf1b_intf1}  	ethernet9/1
+${leaf1b_intf2}  	ethernet9/2
+${leaf1b_intf3}  	ethernet9/3
+${leaf1b_intf4}  	ethernet9/4
+${leaf1a_intf1}  	ethernet8
+${leaf1a_intf2}  	ethernet9
+${leaf1a_intf3}  	ethernet10
+${leaf1a_intf4}  	ethernet11
+
+## This link does not have breakout cable inserted
+${leaf1b_intf5}  	ethernet10
+${leaf1b_intf6}  	ethernet10/1
+${leaf1b_intf7}  	ethernet10/2
+${leaf1b_intf8}  	ethernet10/3
+${leaf1b_intf9}  	ethernet10/4
+
+  
+   
+      
+     
+
+
+
+
+
+
+
+
+

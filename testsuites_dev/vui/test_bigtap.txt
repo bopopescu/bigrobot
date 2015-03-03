@@ -1,0 +1,32 @@
+* Setting
+Documentation   This suite is my sandbox for experimentation.
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+Library         keywords/BigTap.py
+
+
+* Test Case
+Clear bigtap stats
+    #[Tags]  skipped
+    ${status} =      Rest Clear Bigtap statistics
+    should be true   ${status}
+
+Add bigtap user
+    [Tags]  skipped
+    ${status} =      Rest add user    user123
+    should be true   ${status}
+
+Add bigtap service
+    [Tags]  skipped
+    ${status} =      Rest add service    service123   ABC   XYZ
+    should be true   ${status}
+
+Delete bigtap service
+    [Tags]  skipped
+    ${status} =      Rest delete service    service123
+    should be true   ${status}
+

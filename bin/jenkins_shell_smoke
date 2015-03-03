@@ -29,14 +29,6 @@ if [ $status -eq 0 ]; then
     (cd bigrobot/bin; ./run_smoketests)
 fi
 
-pwd
-bigrobot/bin/vm_teardown test --vm_list /tmp/vm_temp_$BUILD_NUMBER --kvm_host $NODE_NAME
-
-# Short-circuit if vm_teardown was not successful
-if [ $status -ne 0 ]; then
-    exit $status
-fi
-
 testlogs_path=bigrobot/testlogs
 # Generate BigRobot log/report.
 (cd "$testlogs_path"; ../bin/bigrobot_log_gen)
@@ -50,4 +42,17 @@ if [ $failed_count -gt 0 ]; then
     mesg "Failed smoke test suites:"
     grep FAILED $result_file
 fi
+
+pwd
+# Only Teardown Vms if the there no Smoke Failures
+if [ $failed_count -eq 0 ]
+then
+ echo "No Smoke Failures Teardown VMs..."
+ bigrobot/bin/vm_teardown test --vm_list /tmp/vm_temp_$BUILD_NUMBER --kvm_host $NODE_NAME
+else
+ echo "VM_TEARDOWN IS SKIPPED FOR DEBUGGIN THE SMOKE FAILURES..."
+fi
+
+
 exit $failed_count
+

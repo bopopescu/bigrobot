@@ -1,0 +1,289 @@
+*Settings
+Documentation                       Timed Policies Test Suite
+Suite Setup                         time suite setup
+Suite Teardown                      time suite teardown
+Test Setup                          time test setup
+Test Teardown                       time test teardown 
+Force Tags                          bigtap  corsair-450  Accton-AS5710  timed-policy  policy
+Library                             keywords/BsnCommon.py
+Library                             keywords/AppController.py
+Library                             keywords/BigTap.py
+Library                             keywords/SwitchLight.py
+Library                             keywords/Ixia.py
+Library                             Collections.py
+Library                             OperatingSystem.py
+Library                             String.py
+
+* Variable
+${switch1_alias}                    app-ras5710-1  #Alias for switch 1
+
+### Ixia Ports
+${switch1_filter_intf_1}            ethernet1           #Filter interface on switch 1
+${switch1_filter_alias_1}           ixia-1-5            #Alias for filter interface on switch 1
+${switch1_delivery_intf_1}          ethernet2           #Delivery interface on switch 1
+${switch1_delivery_alias_1}         ixia-1-6            #Alias for delivery interface on switch 1
+${switch1_delivery_intf_2}          ethernet12          #Delivery interface on switch 1
+${switch1_delivery_alias_2}         ixia-3-2            #Alias for delivery interface on switch 1
+
+### BigTap Policy Configuration
+${policy_name_1}                    P1
+${policy_name_2}                    ZP1
+${policy_name_overlap}              _ZP1_o_P1
+
+
+*Test Case
+
+TC001: Verify configuration
+    ${verify_policy}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy}
+    [Tags]  full  feature
+
+TC002: Verify timed policy operation with durartion and start time specified (duration: 30 seconds, starting: 10 seconds from now)
+    ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=30  starttime=10+  pktcount=0
+    Should be true  ${verify_policy_1}
+    sleep  1
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_2}
+    sleep  10
+    ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_3}
+    sleep  40
+    ${verify_policy_4}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_4}
+    [Tags]  full  feature
+
+TC003: Verify timed policy operation with durartion and start time specified (duration: 30 seconds, starting now)
+    ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=30  starttime=now  pktcount=0
+    Should be true  ${verify_policy_1}
+    sleep  1
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_2}
+    sleep  30
+    ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_3}
+    [Tags]  full  feature
+
+TC004: Verify timed policy operation with durartion and start time specified (duration: 30 seconds, starting now)
+    ${time}=  Evaluate  datetime.datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')  time,datetime
+    log  ${time}    
+    ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=30  starttime=${time}  pktcount=0
+    Should be true  ${verify_policy_1}
+    sleep  1
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_2}
+    sleep  30
+    ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_3}
+    [Tags]  full  feature
+
+TC005: Verify timed policy operation with durartion and start time specified (duration: 30 seconds, starting now)
+    ${time}=  Evaluate  datetime.datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%dT%H:%M:%S')  time,datetime
+    log  ${time}    
+    ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=30  starttime=${time}  pktcount=0
+    Should be true  ${verify_policy_1}
+    sleep  1
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_2}
+    sleep  30
+    ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_3}
+    [Tags]  full  feature
+
+TC006: Verify policy times out when packet count is received correctly.
+    ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=1000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01
+    clear stats
+    ${clear}=  rest clear bigtap statistics
+    Should be True  ${clear}
+    ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=60  starttime=now  pktcount=1000
+    Should be true  ${verify_policy_1}
+    sleep  1
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_2}
+    start traffic
+    sleep  5
+    stop traffic
+    sleep  5
+    ${report}=  fetch port stats
+    ${verify_policy_4}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_4}    
+    [Tags]  full  feature
+
+TC007: Verify policy times out when packet count is not received but 60 seconds expires.
+    ${stream1}=  L2 add  flow=a->b  frame_rate=100  frame_size=64  frame_cnt=100
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01
+    clear stats
+    ${clear}=  rest clear bigtap statistics
+    Should be True  ${clear}
+    ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=60  starttime=now  pktcount=1000
+    Should be true  ${verify_policy_1}
+    sleep  1
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_2}
+    start traffic
+    sleep  5
+    stop traffic
+    sleep  5
+    ${report}=  fetch port stats
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_2}
+    sleep  50
+    ${verify_policy_4}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_4}
+    [Tags]  full  feature
+
+TC008: Verify timed policy operation with start now (starting now)
+    ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=0  starttime=now  pktcount=0
+    Should be true  ${verify_policy_1}
+    sleep  1
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_2}
+    sleep  60
+    ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_3}
+    [Tags]  full  feature
+
+TC009: Verify timed policy operation with start now (starting now, duration 70 seconds, packet-count 10000)
+    ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01
+    clear stats
+    ${clear}=  rest clear bigtap statistics
+    Should be True  ${clear}
+    ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=70  starttime=now  pktcount=10000
+    Should be true  ${verify_policy_1}
+    sleep  1
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_2}
+    start traffic
+    sleep  10
+    stop traffic
+    sleep  20
+    ${report}=  fetch port stats
+    ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_3}
+    sleep  50
+    ${verify_policy_4}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_4}
+    [Tags]  full  feature  jira-bt-1826
+
+TC010: Veriy policy times out when "stop" command is given 
+    ${verify_policy_1}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=0  starttime=now  pktcount=0
+    Should be true  ${verify_policy_1}
+    sleep  1
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_2}
+    sleep  60
+    ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_3}
+    config  node=master  cmd=bigtap policy ${policy_name_1}
+    config  node=master  cmd=stop
+    sleep  1
+    ${verify_policy_4}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_4}      
+    [Tags]  full  feature  
+
+TC011: Verify overlap policy is removed when one component policy times out
+    ${ovelap_enabled}=  rest enable feature  overlap
+    Should be true  ${ovelap_enabled}
+    ${result1}=  rest add policy  admin-view  ${policy_name_2}  forward
+    Should be true  ${result1}
+    ${result2}=  rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${result2}
+    ${result3}=  rest add policy interface  admin-view  ${policy_name_2}  ${switch1_filter_alias_1}  filter
+    Should be true  ${result3}
+    ${result4}=  rest add policy interface  admin-view  ${policy_name_2}  ${switch1_delivery_alias_2}  delivery
+    Should be true  ${result4}
+    Sleep  10
+    ${result5}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_2}  duration=45  starttime=now  pktcount=0
+    Should be true  ${result5}
+    sleep  1
+    ${verify_policy_1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_1}
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_2}
+    ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy_3}
+    sleep  45
+    ${verify_policy_1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy_1}
+    ${verify_policy_2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_2}
+    ${verify_policy_3}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_policy_3}
+    [Tags]  full  feature
+
+TC012: Verify policy with start time in the past does not get installed if duration is less than current date and time
+    ${add_time}=  rest add timed policy  rbac_view_name=admin-view  policy_name=${policy_name_1}  duration=10  starttime=2013-02-18T09:00:00  pktcount=0
+    Should be true  ${add_time}
+    sleep  3
+    ${verify_policy_1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should not be true  ${verify_policy_1}
+    [Tags]  full  feature
+
+* Keyword
+
+time suite setup
+    base suite setup
+    ${result1}=  rest add switch alias  s1  ${switch1_alias}
+    Should be true  ${result1}
+    #Configure filter interfaces on all switches
+    ${result2}=  rest add interface role  s1  ${switch1_filter_intf_1}  filter    intf_nickname=${switch1_filter_alias_1}
+    Should be true  ${result2}
+    #Configure delivery interfaces on all switches    
+    ${result3}=  rest add interface role  s1  ${switch1_delivery_intf_1}  delivery  intf_nickname=${switch1_delivery_alias_1}
+    Should be true  ${result3}
+    ${result4}=  rest add interface role  s1  ${switch1_delivery_intf_2}  delivery  intf_nickname=${switch1_delivery_alias_2}
+    Should be true  ${result3}
+    #First verify basic policy works
+    Sleep  10
+
+time test setup
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
+    ${result3}=  rest add policy  admin-view  ${policy_name_1}  forward
+    Should be true  ${result3}
+    ${result4}=  rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${result4}
+    ${result5}=  rest add policy interface  admin-view  ${policy_name_1}  ${switch1_filter_alias_1}  filter
+    Should be true  ${result5}
+    ${result6}=  rest add policy interface  admin-view  ${policy_name_1}  ${switch1_delivery_alias_1}  delivery
+    Should be true  ${result6}
+    Sleep  30
+
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
+    Should be true  ${in_range}
+
+time test teardown
+    delete traffic
+    ${result0}=  rest delete policy  admin-view  ${policy_name_1}
+    Should be true  ${result0}
+    ${result1}=  rest delete policy  admin-view  ${policy_name_2}
+    Should be true  ${result1}
+    ${result2}=  stop syslog monitor
+    Should be true  ${result2}
+
+time suite teardown
+    ${result1}=  rest delete interface role  s1  ${switch1_filter_intf_1}  filter
+    Should be true  ${result1}
+    ${result2}=  rest delete interface role  s1  ${switch1_delivery_intf_1}  delivery
+    Should be true  ${result2}
+    ${result3}=  rest delete interface role  s1  ${switch1_delivery_intf_2}  delivery
+    Should be true  ${result3}
+    ${result4}=  rest delete interface  s1  ${switch1_filter_intf_1}
+    Should be true  ${result4}
+    ${result5}=  rest delete interface  s1  ${switch1_delivery_intf_1}
+    Should be true  ${result5}
+    ${result6}=  rest delete interface  s1  ${switch1_delivery_intf_2}
+    Should be true  ${result6}
+    ${result7}=  rest delete switch alias  s1
+    Should be true  ${result7}
+    ${result8}=  rest delete switch  s1
+    Should be true  ${result8}
+    base suite teardown 

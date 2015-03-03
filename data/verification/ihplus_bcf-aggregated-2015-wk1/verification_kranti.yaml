@@ -1,0 +1,398 @@
+# Verification Template
+#
+# This file contains a list of test cases which have been manually verified.
+# You can find the latest version of this file at
+# bigrobot/templates/verication.<build_name>_debug.yaml
+#
+# * This file must be saved as
+#   bigrobot/data/verification/verification.<build_name>.<user>.yaml
+#   E.g.,
+#     bigrobot/data/verification/verification.bvs_master_beta2_debug.don.yaml
+#
+# * File format:
+#   - name:                the name of the test case (must be exact match)
+#   - product_suite:       the name of the test suite including path (must be
+#                            an exact match)
+#   - status:              the test case status from the verification,
+#                            should be either PASS or FAIL
+#   - build_name_verified: the name of the build which was used to verify
+#                            the test case
+#   - notes:               free form comments
+#
+# * Examples:
+#
+#   - name: Verify L3 traffic honor more specific routes with ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: PASS
+#     build_name_verified: 'bvs master #2794'
+#     jira: 
+#     notes: I manually verified this and it works.
+#
+#   - name: Add and delete all ECMP members in ecmp group
+#     product_suite: T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter
+#     status: FAIL
+#     build_name_verified: 'bvs master #2806'
+#     jira: BVS-1598
+#     notes: This test case failed continuously in regression. It also fails in my testbed some of the time.
+#
+
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC01 Get and Verify the switch environment Fan 1 State information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC02 Get and Verify the switch environment Fan 1 Status information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC03 Get and Verify the switch environment Fan 1 RPM information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC04 Get and Verify the switch environment Fan 1 Speed information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC05 Get and Verify the switch environment Fan 1 Airflow information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC06 Get and Verify the switch environment Fan 2 State information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC07 Get and Verify the switch environment Fan 2 Status information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC08 Get and Verify the switch environment Fan 2 RPM information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC09 Get and Verify the switch environment Fan 2 Speed information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC10 Get and Verify the switch environment Fan 2 Airflow information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC11 Get and Verify the switch environment Fan 3 State information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC12 Get and Verify the switch environment Fan 3 Status information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC13 Get and Verify the switch environment Fan 3 RPM information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC14 Get and Verify the switch environment Fan 3 Speed information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC15 Get and Verify the switch environment Fan 3 Airflow information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC16 Get and Verify the switch environment Fan 4 State information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC17 Get and Verify the switch environment Fan 4 Status information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC18 Get and Verify the switch environment Fan 4 RPM information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC19 Get and Verify the switch environment Fan 4 Speed information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC20 Get and Verify the switch environment Fan 4 Airflow information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC21 Get and Verify the switch environment Fan 5 State information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC22 Get and Verify the switch environment Fan 5 Status information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC23 Get and Verify the switch environment Fan 5 RPM information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC24 Get and Verify the switch environment Fan 5 Speed information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC25 Get and Verify the switch environment Fan 5 Airflow information from Controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC26 Get and Verify the switch PSU State information from controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC27 Get and Verify the switch PSU Status information from controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: TC28 Get and Verify the switch PSU Type information from controller
+  product_suite: T5/T5-Platform/t5_switch_from_controller
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-106'
+- name: Test with traffic invalid dst mac and verify that traffic is dropped
+  product_suite: T5/T5-Platform/t5_platform_negativetestcases
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC12 Verify interface shutdown for spine port 40G breakout cable sub interfaces one-by-one
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC14 Verify interface shutdown for leaf switch port interface port shutdown
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC17 Verify the 40G breakout cable breakout configured taken out and reinserted back on same port different port on spine
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC18 Verify the 40G breakout cable sub-interface port taken out and reinserted back on leaf side
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC28 Verify bpdu guard protection when breakout interface is connected with Arista switch
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC30 verify the supported HCL breakout cable removed and inserted non-supported HCL cable
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC31 verify the non-supported HCL breakout cable inserted and not auto detected
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC32 verify the non-supported HCL breakout cable inserted and force CLI configuration
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC33 verify the non-supported HCL breakout cable configuration, remove and put the regular DAC cable
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC51 Remove the breakout cable and plugged in back on the same interfaces
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC64 Upgrade Controller Breakout cable auto detection case
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC65 Upgrade Controller Breakout cable forced configuration case
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC66 Upgrade Controller Breakout cable plugged-in then while upgrade change to non-breakout cable
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC67 Upgrade Controller while upgrade change from non-breakout cable to breakout cable
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC68 Breakout cable plugged-in upgrade the controller - supported software package to another one
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 
+
+### new entry in recent 'ihplus_bcf-2.5.0-113'
+- name: TC69 Breakout cable plugged-in upgrade the controller - from not-supported software package to supported software package
+  product_suite: T5/T5-Platform/t5_breakout_manual
+  status: FAIL
+  build_name_verified: 'bvs master #nnn'
+  jira: 
+  notes: 

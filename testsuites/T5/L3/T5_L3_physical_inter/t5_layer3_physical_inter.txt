@@ -1352,12 +1352,12 @@ Restart ofad on leaf with dhcp-relay
     Should Be True                              ${value}
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
-    BASH restart process                        s3                              ofad                    timeout=60
+    BASH restart process                        s3                              ofad                    timeout=190
     sleep                                       5
     ${value} =                                  BASH check service status       s1                      ofad
     Should Contain                              ${value}                        is started
     sleep                                       10
-    BASH restart process                        s4                              ofad                    timeout=60
+    BASH restart process                        s4                              ofad                    timeout=190
     sleep                                       5
     ${value} =                                  BASH check service status       s1                      ofad
     Should Contain                              ${value}                        is started
@@ -1450,12 +1450,12 @@ Restart ofad on spine with dhcp-relay
     Should Be True                              ${value}
     ${value} =                                  BASH release dhcpv4 address     h5                      bond0
     Should Be True                              ${value}
-    BASH restart process                        s7                              ofad                    timeout=60
+    BASH restart process                        s7                              ofad                    timeout=190
     sleep                                       5
     ${value} =                                  BASH check service status       s7                      ofad
     Should Contain                              ${value}                        is started
     sleep                                       10
-    BASH restart process                        s8                              ofad                    timeout=60
+    BASH restart process                        s8                              ofad                    timeout=190
     sleep                                       5
     ${value} =                                  BASH check service status       s8                      ofad
     Should Contain                              ${value}                        is started
@@ -2096,14 +2096,15 @@ test teardown topology
     initialize host
 #    Stop Floodlight Monitor    
     BASH ifdown intf                                h3                          bond0
-    BASH restart networking service                 h1                          timeout=60
-    BASH restart networking service                 h3                          timeout=60
-    BASH restart networking service                 h6                          timeout=60
+    BASH restart networking service                 h1                          timeout=190
+    BASH restart networking service                 h3                          timeout=190
+    BASH restart networking service                 h6                          timeout=190
     
 
 T5 base suite setup
     base suite setup
     add fabric switch
+    reconnect_switch_ips
     sleep                                           5
     ${result} =                                     CLI verify controller       s1                          c1      
     Should Be True                                  ${result}

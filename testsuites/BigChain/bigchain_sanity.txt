@@ -1,0 +1,317 @@
+*Settings
+Documentation           BigChain Sanity Test Suite
+Suite Setup             sanity suite setup
+Suite Teardown          sanity suite teardown
+Test Setup              sanity test setup
+Test Teardown           sanity test teardown
+Force Tags              bigchain  corsair-450  accton-AS5710
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/BigChain.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
+
+* Variable
+${switch1_alias}        app-ras5710-trident-1
+${switch2_alias}        app-ras4600-nontrident-1
+${chain_name}           CHAIN1
+${chain_interface_1}    ethernet1
+${chain_interface_2}    ethernet2
+
+* Test Case
+
+TC001: Verify switch mode in output of "show switch" is bigtap by default
+    ${result}=  rest verify switch mode show  node=s1  mode=bigtap-full-match
+    Should be true  ${result}
+    [Tags]  sanity  feature  switch-mode
+
+TC002: Verify switch mode can be changed to big chain mode and changed mode is visible in show output
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result2}=  rest verify switch mode show  node=s1  mode=bigchain
+    Should be true  ${result2}
+    [Tags]  sanity  feature  switch-mode
+
+TC003: Verify switch mode can be changed to big chain mode and changed mode is visible in running-config.
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result2}=  rest verify switch mode config  node=s1  mode=bigchain
+    Should be true  ${result2}
+    [Tags]  sanity  feature  switch-mode
+        
+TC004: Verify non-Trident 2 switches cannot be converted to big chain mode.
+    ${result1}=  rest add switch role  node=s2  mode=bigchain
+    Should not be true  ${result1}
+    sleep  5
+    ${result2}=  rest verify switch mode show  node=s2  mode=bigchain
+    Should not be true  ${result2}
+    [Tags]  sanity  feature  jira-bt-1820
+
+TC005: Verify LLDP link discovery does not occur for switches in big chain mode
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result2}=  rest verify interswitch link  s1  s1
+    Should not be true  ${result2}
+    [Tags]  sanity  feature
+
+TC006: Configure single chain without service and verify chain configuration in running-config
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result2}=  rest add a chain  ${chain_name}
+    Should be true  ${result2}
+    sleep  1
+    ${result3}=  rest add chain endpoint  node=s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be true  ${result3}
+    sleep  1
+    ${result4}=  rest verify bichain chain config  s1  chain_name=${chain_name}  endpoint1=${chain_interface_1}  endpoint2=${chain_interface_2}
+    Should be true  ${result4}
+    [Tags]  sanity  feature  chain
+
+TC007: Configure single chain without service and verify chain via rest command equivalent of show bigchain chain
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result2}=  rest add a chain  ${chain_name}
+    Should be true  ${result2}
+    sleep  1
+    ${result3}=  rest add chain endpoint  node=s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be true  ${result3}
+    sleep  5
+    ${check_output_1}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=detailedstatus
+    Should Be Equal As Strings  ${check_output_1}  All flows installed for this chain
+    ${check_output_2}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=endpoint1
+    Should Be Equal As Strings  ${check_output_2}  ${chain_interface_1}
+    ${check_output_3}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=endpoint1-drop
+    Should not be true  ${check_output_3}
+    ${check_output_4}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=name-in-status
+    Should Be Equal As Strings  ${check_output_4}  ${chain_name}
+    ${check_output_5}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=runtime-status
+    Should Be Equal As Strings  ${check_output_5}  installed
+    ${check_output_6}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=services
+    Should Be Empty  ${check_output_6}
+    ${switch_dpid}=  rest return switch dpid from ip  s1
+    ${check_output_7}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=switch
+    Should Be Equal As Strings  ${check_output_7}  ${switch_dpid}
+    ${check_output_8}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=endpoint2
+    Should Be Equal As Strings  ${check_output_8}  ${chain_interface_2}
+    ${check_output_9}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=endpoint2-drop
+    Should not be true  ${check_output_9}
+    [Tags]  sanity  feature  chain
+
+TC008: Configure single chain without service and verify chain via rest command equivalent of show bigchain chain chain name
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result2}=  rest add a chain  ${chain_name}
+    Should be true  ${result2}
+    sleep  1
+    ${result3}=  rest add chain endpoint  node=s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be true  ${result3}
+    sleep  5
+    ${check_output_1}=  rest verify bigchain chain  node=s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be true  ${check_output_1}
+    [Tags]  sanity  feature  chain
+
+TC009: Configure single chain without service and verify chain via rest command equivalent of show bigchain chain chain_name policy
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result2}=  rest add a chain  ${chain_name}
+    Should be true  ${result2}
+    sleep  1
+    ${result3}=  rest add chain endpoint  node=s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be true  ${result3}
+    sleep  5
+    ${result4}=  rest verify bigchain chain policy  node=s1  chain_name=${chain_name}  endpoint1=${chain_interface_1}  endpoint2=${chain_interface_2}
+    Should be true  ${result4}
+    [Tags]  sanity  feature  chain  runthis
+
+TC010: Configure single chain without service and verify chain via rest command equivalent of show bigchain policy-flow
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result2}=  rest add a chain  ${chain_name}
+    Should be true  ${result2}
+    sleep  1
+    ${result3}=  rest add chain endpoint  node=s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be true  ${result3}
+    sleep  1
+    [Tags]  sanity  feature  chain
+
+TC011: Delete chain configured in TC011 and verify chain is deleted in running-config.
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result2}=  rest add a chain  ${chain_name}
+    Should be true  ${result2}
+    sleep  1
+    ${result3}=  rest add chain endpoint  node=s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be true  ${result3}
+    sleep  5
+    ${check_output_1}=  rest verify bigchain chain  node=s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be true  ${check_output_1}
+    config  node=master  cmd=no bigchain chain ${chain_name}
+    sleep  5    
+    ${check_output_2}=  rest verify bichain chain config  s1  chain_name=${chain_name}  endpoint1=${chain_interface_1}  endpoint2=${chain_interface_2}
+    Should not be true  ${check_output_2}    
+    [Tags]  sanity  feature  chain
+
+TC012: Delete chain configured in TC011 and verify cli command show bigchain chain returns none.
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${result2}=  rest add a chain  ${chain_name}
+    Should be true  ${result2}
+    sleep  1
+    ${result3}=  rest add chain endpoint  node=s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be true  ${result3}
+    sleep  5
+    ${check_output_1}=  rest verify bigchain chain  node=s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}
+    Should be true  ${check_output_1}
+    config  node=master  cmd=no bigchain chain ${chain_name}
+    sleep  5    
+    ${check_output_1}=  rest show bigchain chain  chain_name=${chain_name}  desired_output=detailedstatus
+    Should not be true  ${check_output_1}
+    [Tags]  sanity  feature  chain
+
+TC013: Verify bigtap filter interface cannot be configured, via CLI, for a switch in bigchain mode
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    config  node=master  cmd=switch ${switch_dpid_s1}
+    config  node=master  cmd=interface ethernet15
+    config  node=master  cmd=bigtap role filter interface-name F1
+    ${content}=   cli_content   node=master
+    Should contain  ${content}  Error
+    [Tags]  sanity  feature  jira-bt-1822  chain
+
+TC014: Verify bigtap delivery interface cannot be configured, via CLI, for a switch in bigchain mode
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    config  node=master  cmd=switch ${switch_dpid_s1}
+    config  node=master  cmd=interface ethernet15
+    config  node=master  cmd=bigtap role delivery interface-name D1
+    ${content}=   cli_content   node=master
+    Should contain  ${content}  Error
+    [Tags]  sanity  feature  jira-bt-1822  chain
+
+TC015: Verify bigtap service interface cannot be configured, via CLI, for a switch in bigchain mode
+    ${result1}=  rest add switch role  node=s1  mode=bigchain
+    Should be true  ${result1}
+    sleep  5
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    config  node=master  cmd=switch ${switch_dpid_s1}
+    config  node=master  cmd=interface ethernet15
+    config  node=master  cmd=bigtap role service interface-name S1
+    ${content}=   cli_content   node=master
+    Should contain  ${content}  Error
+    [Tags]  sanity  feature  jira-bt-1822  chain-service
+
+TC016: Verify switch mode cannot be changed to bigchain mode if filter interface is configured under switch.
+    ${result1}=  rest add switch role  node=s1  mode=bigtap
+    Should be true  ${result1}
+    sleep  5
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    config  node=master  cmd=switch ${switch_dpid_s1}
+    config  node=master  cmd=interface ethernet15
+    config  node=master  cmd=bigtap role filter interface-name F1
+    config  node=master  cmd=exit
+    config  node=master  cmd=deployment role bigchain
+    config  node=master  cmd=interface ethernet16
+    config  node=master  cmd=bigtap role filter interface-name F2
+    ${content}=   cli_content   node=master
+    Should contain  ${content}  Error
+    config  node=master  cmd=no bigtap role filter interface-name F2
+    config  node=master  cmd=no interface ethernet16
+    config  node=master  cmd=interface ethernet15
+    config  node=master  cmd=no bigtap role filter interface-name F1
+    config  node=master  cmd=no interface ethernet15
+    [Tags]  sanity  feature  jira-bt-1822  switch-mode
+
+TC017: Verify switch mode cannot be changed to bigchain mode if delivery interface is configured under switch.
+    ${result1}=  rest add switch role  node=s1  mode=bigtap
+    Should be true  ${result1}
+    sleep  5
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    config  node=master  cmd=switch ${switch_dpid_s1}
+    config  node=master  cmd=interface ethernet15
+    config  node=master  cmd=bigtap role delivery interface-name D1
+    config  node=master  cmd=exit
+    config  node=master  cmd=deployment role bigchain
+    config  node=master  cmd=interface ethernet16
+    config  node=master  cmd=bigtap role delivery interface-name D2
+    ${content}=   cli_content   node=master
+    Should contain  ${content}  Error
+    config  node=master  cmd=no bigtap role delivery interface-name D2
+    config  node=master  cmd=no interface ethernet16
+    config  node=master  cmd=interface ethernet15
+    config  node=master  cmd=no bigtap role delivery interface-name D1
+    config  node=master  cmd=no interface ethernet15
+    [Tags]  sanity  feature  jira-bt-1822  switch-mode
+
+TC018: Verify switch mode cannot be changed to bigchain mode if service interface is configured under switch.
+    ${result1}=  rest add switch role  node=s1  mode=bigtap
+    Should be true  ${result1}
+    sleep  5
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    config  node=master  cmd=switch ${switch_dpid_s1}
+    config  node=master  cmd=interface ethernet15
+    config  node=master  cmd=bigtap role service interface-name S1
+    config  node=master  cmd=exit
+    config  node=master  cmd=deployment role bigchain
+    config  node=master  cmd=interface ethernet16
+    config  node=master  cmd=bigtap role service interface-name S2
+    ${content}=   cli_content   node=master
+    Should contain  ${content}  Error
+    config  node=master  cmd=no bigtap role service interface-name S2
+    config  node=master  cmd=no interface ethernet16
+    config  node=master  cmd=interface ethernet15
+    config  node=master  cmd=no bigtap role service interface-name S1
+    config  node=master  cmd=no interface ethernet15
+    [Tags]  sanity  feature  jira-bt-1822  switch-mode
+    
+* Keywords
+
+sanity suite setup
+    base suite setup
+    rest add switch alias  s1  ${switch1_alias}
+    rest add switch alias  s2  ${switch2_alias}
+        
+sanity test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
+    ixia initialize  tg1  init=true
+    
+sanity test teardown
+    config  node=master  cmd=no bigchain chain ${chain_name}
+    delete traffic
+    sleep  2
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+
+sanity suite teardown
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+    config  node=master  cmd=switch ${switch_dpid_s1}
+    config  node=master  cmd=deployment role bigtap
+    config  node=master  cmd=exit
+    config  node=master  cmd=switch ${switch_dpid_s2}
+    config  node=master  cmd=deployment role bigtap
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch  s1
+    rest delete switch  s2
+    base suite teardown

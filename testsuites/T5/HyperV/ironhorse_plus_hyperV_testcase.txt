@@ -148,8 +148,6 @@ TC043 Measure L3 intra and inter tenant traffic forwarding between two VM in 40g
     manual passed
     [Tags]              feature         manual          hyperV
 
-
-
 TC050 Verify Controller HA failover does not impact VM creation or VM traffic
     manual passed
     [Tags]              feature         manual          hyperV

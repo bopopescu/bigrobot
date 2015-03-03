@@ -3,9 +3,10 @@ Documentation   	Test suite with tests create tenants. The tests have
 ...             	a workflow that is created using keywords from the resource file.
 Suite Setup  		config suite setup
 Suite Teardown  	config suite teardown
-Force Tags      	GUI BCF Ironhorse
+Force Tags          T5  GUI  BCF  Feature  IronHorse
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
+Library				keywords/T5Utilities.py
 Library        		SeleniumLibrary
 Resource        	bcf_resource.txt
 Library       		String
@@ -85,22 +86,39 @@ T4.4 Configure Interfaces for leaf switch switch_spine
 T5.1 Create Port group with name as small and mode Static
 	Create Port Group				portgroup		Static			leaf-group
 T5.2 Create Port group with a dot in between name
-    Create Port Group				port.group.1	Static			leaf_group_new	
-T5.3 Create Port group with a hypen in name
+    Create Port Group				port.group.1	Static			leaf_group_new
+T5.3 Create Port group with a hyphen in name
     Create Port Group				port-group-2	Static			leaf-group
 T5.4 Create Port group with an underscore in name
     Create Port Group				port_group_3	Static			leaf_group_new
 T5.5 Create Port group with name in CAPS and mode as LACP
-    Create Port Group				PORT-GROUP-4	LACP			leaf_group_new		
-T5.6 Delete Port groups
+    Create Port Group				PORT-GROUP-4	LACP			leaf_group_new
+T5.6 Create Port group with 2 interfaces
+	Create Port Group				portgroup2		Static			rack0  			ethernet5  			ethernet5
+T5.7 Create Port group with 8 interfaces
+	@{interface list4}=  Create List  ethernet10  ethernet11  ethernet12  ethernet13
+	Create Port Group				portgroup8		Static			rack0  			${interface list4}  ${interface list4}
+T5.8 Create Port group with 16 interfaces
+	@{interface list8}=  Create List  ethernet20  ethernet21  ethernet22  ethernet23  ethernet24  ethernet25  ethernet26  ethernet27
+	Create Port Group				portgroup16		Static			rack0  			${interface list8}  ${interface list8}
+T5.9 Try and fail to create port group with 17 interfaces on one switch
+	@{interface list17}=  Create List
+	...  ethernet30  ethernet31  ethernet32  ethernet33
+	...  ethernet34  ethernet35  ethernet36  ethernet37
+	...  ethernet38  ethernet39  ethernet40  ethernet41
+	...  ethernet42  ethernet43  ethernet44  ethernet45
+	...  ethernet46
+	Run Keyword and Expect Error  *  Create Port Group	portgroup17		Static		rack0  		${interface list17}
+T5.10 Delete Port groups
     Delete All Port Groups
     
 #### Support Bundles
 
-#T6.1 Generate a Support Bundle
-#	Generate Support Bundle		
-#T6.2 Delete Support Bundle
-#	Delete All Support Bundles	
+T6.1 Generate a Support Bundle
+	Generate Support Bundle
+	[Tags]   gf		
+T6.2 Delete Support Bundle
+	Delete All Support Bundles	
 
 ### Configure User	  		Username 			Password 			Confirm Password  			Full Name				Group
 T7.1 User with password 	
@@ -122,19 +140,19 @@ T7 Teardown
  	
 ### Configure SNMP Traps	Contact		Location	Community	Traps		Server		Port
 T8.1 Configure SNMP 	
- 	Configure SNMP			Contact1	L0cation2	Community3   Enabled  	${EMPTY}	${EMPTY}		
+	Configure SNMP			Contact1	L0cation2	Community3   Enabled  	${EMPTY}	${EMPTY}
 T8.2 Configure SNMP		
- 	Configure SNMP			Cntct_2		L0cation_2  Community_3  Disabled	2.3.1.4		162
+	Configure SNMP			Cntct_2		L0cation_2  Community_3  Disabled	2.3.1.4		162
 T8.3 Configure SNMP
- 	Configure SNMP			Contact-3   L0cation-3  Community-3  Enabled	1.22.14.64  2300
+	Configure SNMP			Contact-3   L0cation-3  Community-3  Enabled	1.22.14.64  2300
 T8.4 Configure SNMP Traps	
- 	Configure SNMP Traps	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	Configure SNMP Traps	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
 T8.5 Edit SNMP Traps
- 	Configure SNMP Traps	${EMPTY}	1			${EMPTY}	1			50			${EMPTY}	75			${EMPTY}
+	Configure SNMP Traps	${EMPTY}	1			${EMPTY}	1			50			${EMPTY}	${EMPTY}
 T8.6 Edit SNMP Traps
- 	Configure SNMP Traps		1		1			1			1			10			20			80			100
+	Configure SNMP Traps		1		1			1			1			10			20			100
 T8.7 Edit SNMP Traps
-	Configure SNMP Traps	${EMPTY}	${EMPTY}	1			1			${EMPTY}	${EMPTY}	0			0
+	Configure SNMP Traps	${EMPTY}	${EMPTY}	1			1			${EMPTY}	${EMPTY}	0
 
 
 #### Configure TACACS Server	Server		Timeout		Secret			Encryption
@@ -155,22 +173,208 @@ T9.7 Delete TACACS Host
  	Delete TACACS Host			2.3.1.0	
 T9.8 Delete All TACACS Hosts
 	Delete All TACACS Hosts	
+
+T9.9 Default TACACS Settings - timeout
+	Go To Tacacs Page
+	Configure TACACS Default Settings  10  ${EMPTY}  No
+	Page Should Contain  10
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 10
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key
+	...  flag=False
+	[Tags]  BVS-2739
+
+T9.10 Default TACACS Settings - secret
+	Go To Tacacs Page
+	Configure TACACS Default Settings  ${EMPTY}  foo-secret  No
+	Page Should Contain  30
+	Page Should Contain  foo-secret
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 30
+	...  flag=False
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key 7 foo-secret
+	[Tags]  BVS-2739
+
+T9.11 Default TACACS Settings - default timeout and secret
+	Go To Tacacs Page
+	Configure TACACS Default Settings  30  secret  No
+	Page Should Contain  30
+	Page Should Contain  foo-secret
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 30
+	...  flag=False
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key 7 secret
+	[Tags]  BVS-2739
+
+T9.12 Default TACACS Settings - timeout and secret
+	Go To Tacacs Page
+	Configure TACACS Default Settings  5  secret1234  No
+	Page Should Contain  5
+	Page Should Contain  secret1234
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 5
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key 7 secret1234
+	[Tags]  BVS-2739
+
+T9.13 Default TACACS Settings - timeout and encryped secret
+	Go To Tacacs Page
+	Configure TACACS Default Settings  15  secret  Yes
+	Page Should Contain  15
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 15
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key 7
+	[Tags]  BVS-2739
+
+T9.14 Default TACACS Settings edit
+	Go To Tacacs Page
+	Configure TACACS Default Settings  10  secret-foo  No
+	Page Should Contain  10
+	Page Should Contain  secret-foo
+	Configure TACACS Default Settings  20  ${EMPTY}  No
+	Page Should Contain  20
+	Page Should Not Contain  secret-foo
+	Configure TACACS Default Settings  30  secret-foo  Yes
+	Page Should Contain  30
+	Page Should Not Contain  secret-foo
+	Configure TACACS Default Settings  20  secret-foo  Yes
+	Page Should Contain  20
+	Page Should Not Contain  secret-foo
+	[Tags]  BVS-2739
+
+T9.15 Default TACACS Settings delete
+	Go To Tacacs Page
+	Configure TACACS Default Settings  ${EMPTY}  ${EMPTY}  Yes
+	Page Should Contain  30
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 30
+	...  flag=False
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key
+	...  flag=False
+	[Tags]  BVS-2739
 	 
+#### Configure AAA Accounting
+T10.1 Accounting Configuration local+remote
+	Configure Accounting  Yes  Yes
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local group tacacs+
+T10.2 Accounting Configuration local only
+	Configure Accounting  Yes  No
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local
+T10.3 Accounting Configuration remote only
+	Configure Accounting  No  Yes
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop group tacacs+
+T10.4 Accounting Configuration none
+	Configure Accounting  No  No
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting
+	...  flag=False
 
+#### Configure AAA Authentication
+T11.1 Authentication Configuration Local TACACS
+	Configure Authentication  Local  TACACS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default local group tacacs+
+T11.2 Authentication Configuration TACACS Local
+	Configure Authentication  TACACS  Local
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default group tacacs+ local
+T11.3 Authentication Configuration Local
+	Configure Authentication  Local  None
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default local
+T11.4 Authentication Configuration Remote then None
+	Configure Authentication  TACACS  None
+	Configure Authentication  None  ${EMPTY}
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication
+	...  flag=False
 
-				
+T12.1 Sync to bigswitch NTP server
+	Go To Clock Page
+	Sync To NTP Server  0.bigswitch.pool.ntp.org
+	Sleep  15
+	[Tags]  NTP
+
+T12.2 Configure NTP Server and delete with action menu
+	Go To Clock Page
+	Configure NTP Server  1.1.1.1
+	Configure NTP Server  2.2.2.2
+	Configure NTP Server  3.3.3.3
+	Configure NTP Server  4.4.4.4
+	Configure NTP Server  5.5.5.5
+	Sync To NTP Server  5.5.5.5
+	Sleep  15
+	Delete NTP Server Using Action Menu  5.5.5.5
+	Go To Clock Page
+	Delete NTP Server Using Action Menu  4.4.4.4
+	Go To Clock Page
+	Delete NTP Server Using Action Menu  3.3.3.3
+	Go To Clock Page
+	Delete NTP Server Using Action Menu  2.2.2.2
+	Go To Clock Page
+	Delete NTP Server Using Action Menu  1.1.1.1
+	[Tags]  NTP
+
+T12.3 Configure NTP Server and delete with minus button
+	Go To Clock Page
+	Configure NTP Server  1.1.1.1
+	Configure NTP Server  2.2.2.2
+	Configure NTP Server  3.3.3.3
+	Configure NTP Server  4.4.4.4
+	Configure NTP Server  5.5.5.5
+	Run Keyword and Expect Error  *  Delete NTP Server Using Minus Button  5.5.5.5
+	Go To Next Table Page
+	Sync To NTP Server  5.5.5.5
+	Sleep  15
+	Go To Next Table Page
+	Delete NTP Server Using Minus Button  5.5.5.5
+	Delete NTP Server Using Minus Button  4.4.4.4
+	Delete NTP Server Using Minus Button  3.3.3.3
+	Delete NTP Server Using Minus Button  2.2.2.2
+	Delete NTP Server Using Minus Button  1.1.1.1
+	[Tags]  NTP  BVS-2750
+
 * Keyword
 config suite setup
     base suite setup
+    Config  master  show running-conifg
+    Config  slave  show running-config
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
     Start Selenium Server  -trustAllSSLCertificates
-    #CLI Start Mininet Server  tree,3
-    #Rest Open GUI Port
+    Sleep  30
     Open Browser To Login Page
+    Sleep  30
     Valid Login  admin  adminadmin
-    #Config  master  switch switch-11; interface ethernet1; interface ethernet2; interface ethernet3
     
 	
 config suite teardown
@@ -179,5 +383,5 @@ config suite teardown
 	Clear Switch Config				switch.2-leaf
 	Clear Switch Config				switch.spine
 	Close Browser
-    #Stop Selenium Server
+    Stop Selenium Server
     base suite teardown

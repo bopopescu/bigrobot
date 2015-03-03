@@ -5,7 +5,7 @@ Documentation    T5 Controller Platform Test Suite - Physical Regression Testbed
 Suite Setup      T5 base suite setup
 Suite Teardown   T5 base suite teardown
 #Test Setup       T5 Platform test setup
-#Test Teardown    T5 Platform test teardown
+Test Teardown    base test teardown
 Force Tags       IronHorse  Platform  HA
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
@@ -14,6 +14,7 @@ Library          keywords/T5.py
 Library	         keywords/T5L3.py
 Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
+Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 * Variables
 #@{spineList}  00:00:00:00:01:00:00:01  00:00:00:00:01:00:00:02
@@ -49,22 +50,22 @@ bring up host bond0 interface
 	sleep  2
 
 Configure Multiple L2 Tenants With Single VNS & Failover
-	[Tags]	sanity  feature
+	[Tags]	sanity  feature  daily-sanity
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
 	Reboot the master node & verify fabric integrity
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
 
 Verify HA Cluster Formation
-   [Tags]  sanity  feature
+   [Tags]  sanity  feature  daily-sanity
    Verify the cluster formation 
    
 Verify Cluster Election Take-Leader
-	[Tags]  sanity  feature 
+	[Tags]  sanity  feature  daily-sanity
 	Verify cluster election take leader
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology
 	
 Verify Cluster Election Re-run
-	[Tags]  feature  
+	[Tags]  feature   daily-sanity
 	Verify cluster election rerun 
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology
 	
@@ -323,6 +324,7 @@ bring up h6 bond0
 
 
 T5 base suite setup
+	fabric infra suite setup
 	base suite setup
 
 

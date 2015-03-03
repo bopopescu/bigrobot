@@ -1,5 +1,5 @@
-c1:
-  ip: dummy
+#c1:
+#  ip: dummy
 ##  #ip: 10.192.5.71
 #  ip: 10.192.104.1
 #  openflow_port: 6633

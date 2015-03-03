@@ -1,15 +1,15 @@
 *Settings
-Documentation  App Tacacs Test Suite Release:Blackbird/Bowmore
-Suite Setup  base suite setup
-Suite Teardown   base suite teardown
-Test Setup   tacacs test setup
-Test Teardown   tacacs test teardown
-Force Tags   T5 Platform
+Documentation               App Tacacs Test Suite Release:Blackbird/Bowmore
+Suite Setup                 base suite setup
+Suite Teardown              base suite teardown
+Test Setup                  tacacs test setup
+Test Teardown               tacacs test teardown
+Force Tags                  BigTap  Augusta  user  tacacs
 
-Library  keywords/AppController.py
-Library  keywords/BsnCommon.py
-Library  keywords/BigTap.py
-Library  Collections.py
+Library                     keywords/AppController.py
+Library                     keywords/BsnCommon.py
+Library                     keywords/BigTap.py
+Library                     Collections.py
 
 * Variable
 ${projectname}  Big Tap Controller
@@ -19,32 +19,32 @@ ${version}      Big Tap Controller 2.0.4
 Verify Running-Configuration
     Verify Tacacs Configuration  0  10.2.3.201  300
     Verify AAA Authentication Configuration                      
-    [Tags]  verifyconfig
+    [Tags]  feature
 
 Verify tacacs server key is not shown in clear text 
     ${myDictionary}=  rest return dictionary from get  /api/v1/data/controller/core/aaa/tacacs?config=true
     ${value}=  Get from dictionary  ${myDictionary[0]}  server
     ${secret}=  Get from dictionary  ${value[0]}  secret
     Should not be equal as strings  ${secret}  secret
-    [Tags]  verify-tacacs-secret
+    [Tags]  feature
         
 Add user tacacsadmin to group admin and verify access
     verify version  tacacsadmin  adminadmin  ${true}
-    [Tags]  add-tacacs-user
+    [Tags]  feature
 
 Verify remote authentication with open source tacacs
     rest delete tacacs server  10.2.3.201
     rest add tacacs server  10.9.18.3  secret  300
     verify version  tacacsadmin  adminadmin  ${true}
     rest delete tacacs server  10.9.18.3    
-    [Tags]  tacacs-linux
+    [Tags]  feature
 
 Verify multiple tacacs servers can be configured 
     rest add tacacs server  10.9.18.3  secret  200
     Verify Tacacs Configuration  0  10.2.3.201  300
     Verify Tacacs Configuration  1  10.9.18.3  200
     rest delete tacacs server  10.9.18.3        
-    [Tags]  multiple-tacacs-server
+    [Tags]  feature
 
 Verify second tacacs server is used when the first is unreachable   
     rest delete tacacs server  10.2.3.201
@@ -55,14 +55,14 @@ Verify second tacacs server is used when the first is unreachable
     verify version  tacacsadmin  adminadmin  ${true}
     rest delete tacacs server  10.9.18.3
     rest delete tacacs server  10.192.97.20 
-    [Tags]  second-tacacs-server
+    [Tags]  feature
             
 Configure mismatched tacacs secret and verify tacacs user cannot login
     rest delete tacacs server  10.2.3.201
     rest add tacacs server  10.2.3.201  bsnbsn  300
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
-    [Tags]  mismatched-secret
+    [Tags]  negative
 
 Verify that when AAA is configured for tacacs only, local AAA should not work even though local user-accounts are configured
     rest add tacacs authentication  tacacs=${true}  tacacs_priority=1  local=${false}  local_priority=2  username=tacacsadmin  password=adminadmin
@@ -70,20 +70,20 @@ Verify that when AAA is configured for tacacs only, local AAA should not work ev
     ${content}=  rest show version  string=version  user=admin  password=adminadmin   local=${false}
     Should not be true  ${content}            
     rest add tacacs authentication  tacacs=${true}  tacacs_priority=1  local=${true}  local_priority=2  username=tacacsadmin  password=adminadmin
-    [Tags]  only-tacacs  run
+    [Tags]  negative
                 
 Delete tacacs server from configuration and verify tacacs user has no access
     rest delete tacacs server  10.2.3.201
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
-    [Tags]  deletetacacs  run
+    [Tags]  negative
 
 Delete user tacacsadmin from group admin and verify access
     cli delete user from group  tacacsadmin  admin
     sleep  3
     verify version  tacacsadmin  adminadmin  ${true}
     rest add user to group  tacacsadmin  admin
-    [Tags]  deleteuser  run 
+    [Tags]  negative
 
 Verify user tacacsdemoclient from group readers has access to only his group
     rest add rbac group  readers  readers-view
@@ -96,12 +96,12 @@ Verify user tacacsdemoclient from group readers has access to only his group
     Should contain  ${content}  Error: Authentication failed: insufficient group privilege for user
     rest delete rbac group  readers
     sleep  3  
-    [Tags]  nonadmin-user    
+    [Tags]  negative
 
 Verify user tacacsnobody, an unprvileged tacacs user, is denied access
     ${content}=  rest show version  string=version  user=tacacsnobody  password=clientclient  local=${false}
     Should not be true  ${content}
-    [Tags]  unprivileged-user  run
+    [Tags]  negative
 
 Restart process tacacs_plus on Master and verify users can login
     restart process on controller  tacacs_plus  Master
@@ -116,7 +116,7 @@ Restart process tacacs_plus on Master and verify users can login
     ${content}=  cli execute show command  show tacacs  tacacsdemoclient  clientclient
     Should contain  ${content}  Error: Authentication failed: insufficient group privilege for user
     rest delete rbac group  readers
-    [Tags]  restart-tacacs_plus
+    [Tags]  ha
         
 * Keywords
 

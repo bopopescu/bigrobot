@@ -16,6 +16,15 @@ if [ "$BUILD_NAME"x = x ]; then
     usage
 fi
 
+# !!! FIXME: This code is duplicated from run_repopulate_build_baseline.sh.
+if [ "$TEST_CATALOG_LOG_DIR"x = x ]; then
+    ts=`date "+%Y-%m-%d_%H%M%S"`
+    dest=.data.$ts
+    mkdir $dest
+    export TEST_CATALOG_LOG_DIR=$dest
+    echo "TEST_CATALOG_LOG_DIR='$TEST_CATALOG_LOG_DIR'"
+fi
+
 while :
 do
     case "$1" in
@@ -30,7 +39,7 @@ do
 done
 
 ts=`date "+%Y-%m-%d_%H%M%S"`
-outfile=raw_data.populate_db_aggregated_build.$ts.log
+outfile=${TEST_CATALOG_LOG_DIR}/raw_data.populate_db_aggregated_build.$ts.log
 
 
 if [ "$force_overwrite"x = 1x ]; then

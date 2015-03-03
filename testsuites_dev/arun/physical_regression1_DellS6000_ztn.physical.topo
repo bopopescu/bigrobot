@@ -1,0 +1,130 @@
+c1:
+ ip: 10.9.16.60
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+ console: 
+   ip: regress
+   libvirt_vm_name: amallina_ztn-c1_06251549
+   user: root
+   password: bsn
+c2:
+ ip: 10.9.16.61
+ #set_init_ping: false            # default: true
+ #set_session_ssh: false          # default: true
+ console: 
+   ip: regress
+   libvirt_vm_name: amallina_snt-c2_06251553
+   user: root
+   password: bsn
+   
+s1:
+  alias: spine0
+  fabric-role: spine
+  mac: ec:f4:bb:fb:d7:81
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.9.16.213
+    port: 7002
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 2
+  set_session_ssh: false
+  set_init_ping: false
+  interfaces:
+    leaf0a_int0: ethernet9
+    leaf1a_int0: ethernet5
+    leaf0b_int0: ethernet21
+    leaf1b_int0: ethernet29
+    leaf2a_int0: ethernet17
+    leaf2b_int0: ethernet25
+  
+s2:
+  alias: leaf0-a
+  leaf-group: rack0
+  mac: 90:B1:1C:F4:C0:12
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.9.16.213
+    port: 7003
+    protocol: telnet
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 3
+  interfaces:
+    spine0_int0: ethernet8
+    leaf0b_int0: ethernet19
+    spine1_int0: ethernet20
+    h1_int0: ethernet13/4
+    h2_int0: ethernet10/2
+  set_session_ssh: false
+  set_init_ping: false
+
+s3:
+  alias: leaf0-b
+  leaf-group: rack0
+  mac: ec:f4:bb:fb:d1:f6
+  user: admin
+  password: adminadmin
+  interfaces:
+    leaf0a_int0: ethernet19
+    spine0_int0: ethernet3
+    spine1_int0: ethernet20
+    h1_int0: ethernet13/2
+    h2_int0: ethernet10/3
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 4
+  console:
+    ip: 10.9.16.213
+    port: 7004
+  set_session_ssh: false
+  set_init_ping: false
+
+s4:
+  alias: leaf1-a
+  leaf-group: rack1
+  mac: 70:72:CF:AE:B7:BA
+  user: admin
+  password: adminadmin
+  interfaces:
+    spine1_int0: ethernet25
+    leaf1b_int0: ethernet21
+    leaf1b_int1: ethernet15
+    spine0_int0: ethernet8
+    h3_int0: ethernet1
+    h4_int0: ethernet9/3
+  pdu:
+    ip: pdu-111-b.bigswitch.com
+    port: 1
+  console:
+    ip: 10.9.16.213
+    port: 7007
+  set_session_ssh: false
+  set_init_ping: false
+
+s5:
+  alias: spine1
+  fabric-role: spine
+  mac: 90:b1:1c:f4:c6:1e
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.9.16.213
+    port: 7001
+  set_session_ssh: false
+  set_init_ping: false
+  pdu:
+    ip: pdu-111-a.bigswitch.com
+    port: 1
+  interfaces:
+    leaf0a_int0: ethernet2
+    leaf0b_int0: ethernet7
+    leaf1a_int0: ethernet32
+    leaf1b_int0: ethernet27
+    leaf2a_int0: ethernet14
+    leaf2b_int0: ethernet21
+
+
+

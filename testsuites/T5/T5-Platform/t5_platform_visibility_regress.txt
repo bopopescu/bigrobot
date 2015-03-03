@@ -1,11 +1,11 @@
-== T5 Platform Visibility Test Suite - Physical Colo Test Bed ==
+== T5 Platform Visibility Test Suite - Regression Test Bed ==
 
 * Setting
 Documentation    T5 Controller Platform Test Suite - Visibiility (SPAN/TestPath)
-Suite Setup      base suite setup
-#Suite Teardown   base suite teardown
+Suite Setup      T0 Setup
+Suite Teardown   base suite teardown
 #Test Setup       T5 Platform Test Setup
-#Test Teardown    T5 Platform Test Teardown
+Test Teardown    base test teardown
 Force Tags       T5  IronHorse  Platform  Visibility
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
@@ -14,126 +14,61 @@ Library          keywords/T5.py
 Library	         keywords/T5L3.py
 Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
-Library			 keywords/Ixia.py
 Library	         keywords/SwitchLight.py
-Resource		 testsuites_dev/don/physical_variables.txt
+Library		     keywords/Ixia.py
+Resource		 testsuites/T5/t5_physical_variables.txt
+Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+
 
 * Variables
-@{spineList}  00:00:70:72:CF:AE:B5:B2  00:00:70:72:CF:AE:B3:AA
-@{leafList}  00:00:70:72:CF:AB:36:D8  00:00:70:72:CF:AB:36:98  00:00:70:72:CF:B5:F5:CE  00:00:70:72:CF:B5:EB:B0  00:00:70:72:CF:B5:E6:C6  00:00:70:72:CF:AB:39:18  
+@{spineList}  00:00:00:00:01:00:00:01  00:00:00:00:01:00:00:02
+@{leafList}  00:00:00:00:02:00:00:01  00:00:00:00:02:00:00:02  00:00:00:00:02:00:00:03  00:00:00:00:02:00:00:04  00:00:00:00:02:00:00:05  00:00:00:00:02:00:00:06
 
-${gateway1IP}	10.10.10.100
-${gateway2IP}	20.20.20.100
+
+${gateway1IP}	192.168.4.100
+${gateway2IP}	192.168.0.100
 
 
 ${s1SrcSwitch}  leaf0-a
-${s1SrcInt}		ethernet33
+${s1SrcInt}		ethernet25
 ${s1DstSwitch}	leaf0-a
-${s1DstInt}		ethernet34
-${s1PingIP}		192.168.1.53
+${s1DstInt}		ethernet28
+${s1PingIP}		192.168.1.10
 ${s1VerifyHost}  h2
 ${s1VerifyInt}	eth1
 
 ${s2SrcSwitch}  leaf0-a
-${s2SrcInt}		ethernet17
+${s2SrcInt}		ethernet48
 ${s2DstSwitch}	leaf0-a
-${s2DstInt}		ethernet34
-${s2PingIP}		20.20.20.56
+${s2DstInt}		ethernet28
+${s2PingIP}		192.168.4.10
 ${s2VerifyHost}  h2
 ${s2VerifyInt}	eth1
 ${s2ShutSwitch}  leaf0-b
-${s2ShutInt}  ethernet17
+${s2ShutInt}  ethernet48
 
 ${s1IxiaSrcSwitch}  leaf0-a
-${s1IxiaSrcInt}		ethernet15
+${s1IxiaSrcInt}		ethernet24
 ${s1IxiaDstSwitch}	leaf0-a
-${s1IxiaDstInt}		ethernet34
+${s1IxiaDstInt}		ethernet28
 ${s1IxiaVerifyHost}  h2
 ${s1IxiaVerifyInt}	eth1
 
+${subMask}  24
+${seg1ip}  192.168.4.100
+${seg2ip}  192.168.0.100
+${seg3ip}  192.168.1.100
+${Ixia1v1IP}  100.1.1.100
+${Ixia1v2IP}  100.1.2.100
+${Ixia3v1IP}  100.3.1.100
+${Ixia4v1IP}  100.4.1.100
+${Ixia5v1IP}  100.5.1.100
+${Ixia6v1IP}  100.5.1.100
 
 * Test Case 
 
-T0 Setup
-	[Tags]  feature  setup  span
-	
-	# To run from scratch: 
-	# 
-	# Uncomment Ixia on topo file
-	# In the RDP make sure TCL server is up
-	# Uncomment Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology  & sleep 180
-	# Stop existing traffic from the h1 , h2 , h3 & so on
-	
-	bash init intf  h1  eth1
-    bash add ip address  h1  ${h1_single_ip}/24  eth1
-    bash ifup intf  h1  eth1
-	
-	bash init intf  h2  eth1
-    bash add ip address  h2  ${h2_single_ip}/24  eth1
-    bash ifup intf  h2  eth1
-    
-    bash init intf  h3  eth1
-    bash add ip address  h3  ${h3_single_ip}/24  eth1
-    bash ifup intf  h3  eth1
-    
-    bash init intf  h4  eth1
-    bash add ip address  h4  ${h4_single_ip}/24  eth1
-    bash ifup intf  h4  eth1
-    
-    bash init intf  h5  eth1
-    bash add ip address  h5  ${h5_single_ip}/24  eth1
-    bash ifup intf  h5  eth1
-    
-    bash init intf  h6  eth1
-    bash add ip address  h6  ${h6_single_ip}/24  eth1
-    bash ifup intf  h6  eth1
-    
-    Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
-    sleep  180
-	Configure Tenants For SPAN & Test Path
-	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
-	
-	
-	${stream-ab1}=  L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab1_flow
-	...			src_mac=aa:bb:01:00:00:01  dst_mac=aa:bb:02:00:00:01
-	...			src_ip=100.1.1.1  src_gw=100.1.1.100  dst_ip=100.1.2.1  dst_gw=100.1.2.100	
-	...			protocol=TCP  src_port=1000  dst_port=2000 
-	
-	${stream-ab2}=  L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab2_flow
-	...			src_mac=aa:bb:01:00:00:02  dst_mac=aa:bb:02:00:00:02
-	...			src_ip=100.1.1.2  src_gw=100.1.1.100  dst_ip=100.1.2.2  dst_gw=100.1.2.100	
-	...			protocol=TCP  src_port=1100  dst_port=2100
-	
-	${stream-ab3}=	L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab3_flow
-	...			src_mac=aa:bb:01:00:00:03  dst_mac=aa:bb:02:00:00:03
-	...			src_ip=100.1.1.3  src_gw=100.1.1.100  dst_ip=100.1.2.3  dst_gw=100.1.2.100	
-	...			protocol=UDP  src_port=1000  dst_port=2000
-	
-	${stream-ab4}=	L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab4_flow
-	...			src_mac=aa:bb:01:00:00:04  dst_mac=aa:bb:02:00:00:04
-	...			src_ip=100.1.1.4  src_gw=100.1.1.100  dst_ip=100.1.2.4  dst_gw=100.1.2.100	
-	...			protocol=UDP  src_port=1100  dst_port=2100
-	
-	${stream-cd1}=  L3 add  flow=c<->d  frame_rate=100  frame_size=64  name=cd1_flow
-	...			src_mac=aa:bb:03:00:00:01  dst_mac=aa:bb:04:00:00:01
-	...			src_ip=100.3.1.1  src_gw=100.3.1.100  dst_ip=100.4.1.1  dst_gw=100.4.1.100	
-	...			protocol=TCP  src_port=3000  dst_port=4000 
-	
-	${stream-ac1}=  L3 add  flow=a<->c  frame_rate=100  frame_size=64  name=ac1_flow
-	...			src_mac=aa:bb:01:00:00:05  dst_mac=aa:bb:03:00:00:02
-	...			src_ip=100.1.1.5  src_gw=100.1.1.100  dst_ip=100.3.1.2  dst_gw=100.3.1.100	
-	...			protocol=TCP  src_port=1000  dst_port=3000 
-	
-	start traffic  ${stream-ab1}
-	start traffic  ${stream-ab2}
-	start traffic  ${stream-ab3}
-	start traffic  ${stream-ab4}
-	start traffic  ${stream-cd1}
-	start traffic  ${stream-ac1}
-	
-
 T1 Configure SPAN session for Single interface - Direction Both
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -144,7 +79,7 @@ T1 Configure SPAN session for Single interface - Direction Both
 	
 	
 T2 Delete SPAN session for Single interface - Direction Both
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  1
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -154,7 +89,7 @@ T2 Delete SPAN session for Single interface - Direction Both
 
 
 T3 Configure SPAN session for Single interface - Direction Ingress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}	 direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
@@ -165,7 +100,7 @@ T3 Configure SPAN session for Single interface - Direction Ingress
 	
 	
 T4 Delete SPAN session for Single interface - Direction Ingress
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  1
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
@@ -175,7 +110,7 @@ T4 Delete SPAN session for Single interface - Direction Ingress
 
 
 T5 Configure SPAN session for Single interface - Direction Egress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}	 direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
@@ -186,7 +121,7 @@ T5 Configure SPAN session for Single interface - Direction Egress
 	
 	
 T6 Delete SPAN session for Single interface - Direction Egress
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  1
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
@@ -196,7 +131,7 @@ T6 Delete SPAN session for Single interface - Direction Egress
 
 
 T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Both
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -221,7 +156,7 @@ T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
     
     
 T8 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Ingress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
@@ -246,7 +181,7 @@ T8 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
 	
 	
 T9 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Egress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
@@ -271,7 +206,7 @@ T9 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
 
 
 T10 Configure SPAN session for Port-Group interface - Direction Both
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
@@ -287,7 +222,7 @@ T10 Configure SPAN session for Port-Group interface - Direction Both
 
 
 T11 Delete SPAN session for Port-Group interface - Direction Both
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  2
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
@@ -297,7 +232,7 @@ T11 Delete SPAN session for Port-Group interface - Direction Both
 
 
 T12 Configure SPAN session for Port-Group interface - Direction Ingress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
@@ -310,7 +245,7 @@ T12 Configure SPAN session for Port-Group interface - Direction Ingress
 	
 	
 T13 Delete SPAN session for Port-Group interface - Direction Ingress
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  2
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
@@ -322,7 +257,7 @@ T13 Delete SPAN session for Port-Group interface - Direction Ingress
 
 
 T14 Configure SPAN session for Port-Group interface - Direction Egress
-    [Tags]  span  feature
+    [Tags]  span  feature  daily-sanity
     ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
@@ -335,7 +270,7 @@ T14 Configure SPAN session for Port-Group interface - Direction Egress
 	
 	
 T15 Delete SPAN session for Port-Group interface - Direction Egress
-	[Tags]  span  feature
+	[Tags]  span  feature  daily-sanity
 	${returnVal} =  rest delete monitor session  2
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
@@ -347,7 +282,7 @@ T15 Delete SPAN session for Port-Group interface - Direction Egress
 	
 
 T16 Configure SPAN session - Direction Both
-	[Tags]  span  feature  
+	[Tags]  span  feature  daily-sanity  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=both  
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=both
@@ -371,7 +306,7 @@ T16 Configure SPAN session - Direction Both
 	
 
 T17 Configure SPAN Session - Direction Ingress
-	[Tags]  span  feature   don
+	[Tags]  span  feature  daily-sanity   
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress
@@ -389,7 +324,7 @@ T17 Configure SPAN Session - Direction Ingress
 	
 	
 T18 Configure SPAN Session - Direction Egress
-	[Tags]  span  feature  don
+	[Tags]  span  feature  daily-sanity  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=egress
@@ -407,7 +342,7 @@ T18 Configure SPAN Session - Direction Egress
 
 
 T19 Configure SPAN session for SRC-IP-CIDR - Direction Ingress
-	[Tags]  span  feature   don
+	[Tags]  span  feature  daily-sanity   
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.1/32
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.1/32
@@ -440,7 +375,7 @@ T19 Configure SPAN session for SRC-IP-CIDR - Direction Ingress
 
 
 T20 Configure SPAN session for SRC-PORT - Direction Ingress
-	[Tags]  span  feature  don
+	[Tags]  span  feature  daily-sanity  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  src-tp-port=1000
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  src-tp-port=1000
@@ -470,7 +405,7 @@ T20 Configure SPAN session for SRC-PORT - Direction Ingress
 	Should not be true  ${returnVal}
 	
 T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
-	[Tags]  span  feature   don
+	[Tags]  span  feature  daily-sanity   
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.1/32
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.1/32
@@ -503,7 +438,7 @@ T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
 	
 	
 T22 Configure SPAN session for DST-PORT - Direction Ingress
-	[Tags]  span  feature  don
+	[Tags]  span  feature  daily-sanity  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  dst-tp-port=2000
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  dst-tp-port=2000
@@ -534,7 +469,7 @@ T22 Configure SPAN session for DST-PORT - Direction Ingress
 	Should not be true  ${returnVal}
 	
 T23 Configure SPAN session for SRC-MAC - Direction Ingress
-	[Tags]  span  feature  don
+	[Tags]  span  feature  daily-sanity  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-mac=aa:bb:01:00:00:01
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-mac=aa:bb:01:00:00:01
@@ -552,65 +487,65 @@ T23 Configure SPAN session for SRC-MAC - Direction Ingress
 	
 	
 T24 Configure SPAN session for DST-MAC - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 T25 Configure SPAN session for IP-Proto - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 	
 T26 Configure SPAN session for IP-DSCP - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed 
 
 T27 Configure SPAN session for IP-ECN - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed 
 
 	
 T28 Configure SPAN session for Ethertype - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed 
 	
 
 T29 Configure SPAN session for Tenant/VNS - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 	
 T30 Configure SPAN session with multiple options - Direction Ingress
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 
 
 T31 Configure SPAN session with Different VLANs
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 
 
 T32 Configure SPAN session with Spine switches 
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 	
 T33 Configure SPAN session with multiple source interfaces
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 	
 T34 Configure SPAN session with multiple destination interfaces
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 
 
 T35 Configure multiple SPAN sessions in multiple switches
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 	
 
 T36 Configure peer links as source interfaces
-	[Tags]  span  feature  manual
+	[Tags]  span  feature  daily-sanity  manual
 	manual passed
 
 
@@ -618,7 +553,11 @@ T36 Configure peer links as source interfaces
 #################################################################	 	Test Path		#################################################################
 
 T1 Intra Segment: SRC & DST Are In Same Rack - Same Switch
-	[Tags]  testpath  feature 
+	[Tags]  testpath  feature  daily-sanity  run
+	BASH ping	h1	${h3_tag_ip}	count=5
+	BASH ping	h2	${h3_tag_ip}	count=5
+	BASH ping	h3	${h1_tag_ip}	count=5
+	cli  master  show endpoint
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${h2_tag_ip}  ip-protocol=icmp
 	#${returnVal}=  rest configure testpath controller view	 src-ip=${h1_tag_ip}  dst-ip=${h2_tag_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
@@ -629,10 +568,11 @@ T1 Intra Segment: SRC & DST Are In Same Rack - Same Switch
 	Should Be True  ${returnVal}
 
 T2 Intra Segment: SRC & DST Are In Same Rack - Different Switch
-	[Tags]  testpath  feature 
+	[Tags]  testpath  feature  daily-sanity 
 	sleep  30
 	rest switch int shut   leaf0-a  ${h2_intf0}
 	sleep  5
+	cli  master  show endpoint
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${h2_tag_ip}  ip-protocol=icmp
 	Run Keyword If  '${returnVal}' == 'False'  rest switch int noshut   leaf0-a  ${h2_intf0}
 	Should Be True  ${returnVal}
@@ -645,7 +585,7 @@ T2 Intra Segment: SRC & DST Are In Same Rack - Different Switch
 	
 	
 T3 Intra Segment: SRC & DST Are In Different Racks
-	[Tags]  testpath  feature 
+	[Tags]  testpath  feature  daily-sanity 
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${h3_tag_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test3	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v1	dst-ip=${h3_tag_ip}  ip-protocol=icmp 
@@ -655,7 +595,7 @@ T3 Intra Segment: SRC & DST Are In Different Racks
 
 
 T4 Intra Segment: DST Is Subnet Gateway
-	[Tags]  testpath  feature 
+	[Tags]  testpath  feature  daily-sanity 
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${gateway1IP}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test4	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v1	dst-ip=${gateway1IP}  ip-protocol=icmp 
@@ -665,45 +605,45 @@ T4 Intra Segment: DST Is Subnet Gateway
 
 
 T5 Intra Tenant/ Different Segments - SRC & DST Are In Same Rack - Same Switch
-	[Tags]  testpath  feature
-	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	[Tags]  testpath  feature  daily-sanity
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_ip}
 	Should Be True  ${returnVal}
 	
 	
 T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Switch
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	sleep  35
 	rest switch int shut   leaf1-a  ${h4_intf0}
 	rest switch int shut   leaf1-b  ${h3_intf1} 
 	sleep  5
-	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_ip}  ip-protocol=icmp
 	Run Keyword If  '${returnVal}' == 'False'  rest switch int noshut   leaf1-a  ${h4_intf0}
 	Run Keyword If  '${returnVal}' == 'False'  rest switch int noshut   leaf1-b  ${h3_intf1}
 	Should Be True  ${returnVal}
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  leaf  host=h3  ip=${h4_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  leaf  host=h3  ip=${h4_ip}
 	rest switch int noshut   leaf1-a  ${h4_intf0}
 	rest switch int noshut   leaf1-b  ${h3_intf1} 
 	Should Be True  ${returnVal}
 
 
 T7 Intra Tenant/ Different Segments: SRC & DST Are In Different Racks
-	[Tags]  testpath  feature
-	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_tag_ip}  ip-protocol=icmp
+	[Tags]  testpath  feature  daily-sanity
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_tag_ip}  ip-protocol=icmp
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_ip}
 	Should Be True  ${returnVal}
 
 
 T8 Intra Tenant/ Different Segments: DST Is Other Segment Gateway
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${gateway2IP}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric view  test-name=Test8	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v2	dst-ip=${gateway2IP}  ip-protocol=icmp 
@@ -713,19 +653,19 @@ T8 Intra Tenant/ Different Segments: DST Is Other Segment Gateway
 
 
 T9 Inter Tenant: SRC & DST Are In Same Rack - Same Switch
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT2	src-segment=v1	src-ip=${h1_single_ip}  dst-tenant=Ixia1	dst-segment=v1	dst-ip=100.1.1.1  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test9	 src-tenant=autoT2	src-segment=v1	src-ip=${h1_single_ip}  dst-tenant=Ixia1	dst-segment=v1	dst-ip=100.1.1.1  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	bash add route  h1  100.1.1.0/24  192.168.1.100  eth1
+	#bash add route  h1  100.1.1.0/24  192.168.1.100  eth1
 	sleep  5
 	${returnVal}=  rest verify testpath fabric view  Test9  HostPing  leaf  spine  leaf  leaf  host=h1  ip=100.1.1.1
 	Should Be True  ${returnVal}
 
 
 T10 Inter Tenant: SRC & DST Are In Same Rack - Different Switch
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia3	src-segment=v1	src-ip=100.3.1.1  
 	...	dst-tenant=Ixia4  dst-segment=v1	dst-ip=100.4.1.1  ip-protocol=tcp  src-l4-port=3000  dst-l4-port=4000  timeout=60
 	Should Be True  ${returnVal}
@@ -738,7 +678,7 @@ T10 Inter Tenant: SRC & DST Are In Same Rack - Different Switch
 	
 
 T11 Inter Tenant: SRC & DST Are In Different Racks
-	[Tags]  testpath  feature
+	[Tags]  testpath  feature  daily-sanity
 	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.5
 	...	dst-tenant=Ixia3  dst-segment=v1	dst-ip=100.3.1.2  ip-protocol=tcp  src-l4-port=1000  dst-l4-port=3000  timeout=60
 	Should Be True  ${returnVal}
@@ -751,11 +691,11 @@ T11 Inter Tenant: SRC & DST Are In Different Racks
 
 
 Test path - Scalability with 20 active test paths
-    [Tags]  testpath  feature  scale
+    [Tags]  testpath  feature  daily-sanity  scale
     
     rest clear testpath
-    bash add route  h1  100.0.0.0/8  192.168.1.100  eth1
-    bash add route  h4  100.0.0.0/8  20.20.20.100  bond0.20
+    #bash add route  h1  100.0.0.0/8  192.168.1.100  eth1
+    #bash add route  h4  100.0.0.0/8  192.168.0.100  bond0
     
     ${returnVal}=  rest configure testpath fabric_view  test-name=Test1	 src-ip=${h1_tag_ip}	dst-ip=${h2_tag_ip}  timeout=1000
 	Should Be True  ${returnVal}
@@ -777,9 +717,9 @@ Test path - Scalability with 20 active test paths
 	${returnVal}=  rest verify testpath fabric view  Test4  HostPing  leaf  host=h1  ip=${gateway1IP}
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-ip=${h3_tag_ip}  dst-ip=${h4_tag_ip}  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-ip=${h3_tag_ip}  dst-ip=${h4_ip}  timeout=1000
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_ip}
 	Should Be True  ${returnVal}
 	
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test6	 src-ip=${h1_single_ip}  dst-ip=100.3.1.1  timeout=1000
@@ -787,9 +727,9 @@ Test path - Scalability with 20 active test paths
 	${returnVal}=  rest verify testpath fabric view  Test6  HostPing  leaf  spine  leaf  leaf  host=h1  ip=100.3.1.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-ip=${h1_tag_ip}  dst-ip=${h6_tag_ip}  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-ip=${h1_tag_ip}  dst-ip=${h6_ip}  timeout=1000
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_ip}
 	Should Be True  ${returnVal}
 	
 	${returnVal}=  rest configure testpath fabric view  test-name=Test8	 src-ip=${h1_tag_ip}	dst-ip=${gateway2IP}  timeout=1000
@@ -821,47 +761,47 @@ Test path - Scalability with 20 active test paths
 	${returnVal}=  rest verify testpath fabric view  Test12  HostPing  leaf  spine  leaf  host=h1  ip=100.4.1.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test13	 src-ip=${h4_tag_ip}  dst-ip=100.1.1.1  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test13	 src-ip=${h4_ip}  dst-ip=100.1.1.1  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test13  HostPing  leaf  spine  leaf  leaf  host=h4  ip=100.1.1.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test14	 src-ip=${h4_tag_ip}  dst-ip=100.1.2.1  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test14	 src-ip=${h4_ip}  dst-ip=100.1.2.1  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test14  HostPing  leaf  spine  leaf  host=h4  ip=100.1.2.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test15	 src-ip=${h4_tag_ip}  dst-ip=100.3.1.1  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test15	 src-ip=${h4_ip}  dst-ip=100.3.1.1  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test15  HostPing  leaf  spine  leaf  host=h4  ip=100.3.1.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test16	 src-ip=${h4_tag_ip}  dst-ip=100.4.1.1  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test16	 src-ip=${h4_ip}  dst-ip=100.4.1.1  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test16  HostPing  leaf  spine  leaf  leaf  host=h4  ip=100.4.1.1
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test17	 src-ip=${h4_tag_ip}  dst-ip=100.1.2.2  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test17	 src-ip=${h4_ip}  dst-ip=100.1.2.2  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test17  HostPing  leaf  spine  leaf  host=h4  ip=100.1.2.2
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test18	 src-ip=${h4_tag_ip}  dst-ip=100.3.1.2  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test18	 src-ip=${h4_ip}  dst-ip=100.3.1.2  timeout=1000
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test18  HostPing  leaf  spine  leaf  host=h4  ip=100.3.1.2
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test19	 src-ip=${h4_tag_ip}  dst-ip=100.4.1.2  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test19	 src-ip=${h4_ip}  dst-ip=100.4.1.2  timeout=1000
 	Should Not Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test19  HostPing  leaf  spine  leaf  host=h4  ip=100.4.1.2
 	Should Be True  ${returnVal}
 	
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test20	 src-ip=${h4_tag_ip}  dst-ip=100.1.1.10  timeout=1000
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test20	 src-ip=${h4_ip}  dst-ip=100.1.1.10  timeout=1000
 	Should Not Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test20  HostPing  leaf  spine  leaf  host=h4  ip=100.1.1.10
 	Should Be True  ${returnVal}
 	
-	
+
 	## Re verify all 20 test paths
 	${returnVal}=  rest verify testpath fabric view  Test1  HostPing  leaf  host=h1  ip=${h2_tag_ip}
 	Should Be True  ${returnVal}
@@ -871,11 +811,11 @@ Test path - Scalability with 20 active test paths
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test4  HostPing  leaf  host=h1  ip=${gateway1IP}
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_ip}
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test6  HostPing  leaf  spine  leaf  leaf  host=h1  ip=100.3.1.1
 	Should Be True  ${returnVal}
-	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_tag_ip}
+	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_ip}
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test8  HostPing  leaf  host=h1  ip=${gateway2IP}
 	Should Be True  ${returnVal}
@@ -917,106 +857,161 @@ Test path - Scalability with 20 active test paths
 	
 
 Verify test packet path with L2 traffic to an unknown destination originating from a tenant which spans across multiple racks
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
 
 Verify the updated paths in test packet path with L2 traffic within a single tenant while introducing path failures
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
     
 Verify the updated paths in test packet path with L3 traffic between multiple tenants while introducing path failures
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
 
 Verify all the CLI options for the test packet path command
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
 
 Destination as a ECMP Group 
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
     
 Destination as a default router
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed
 
 Inter Tenant - Droped by Policy
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
 
 Inter Tenant - Accept by Policy
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
     
 Inter Tenant - Missing Route
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
     
 Inter Tenant - Uninstalled interface
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
 
 Inter Tenant - No Route
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
   
 Inter Tenant - Dropped due to private segment
-   [Tags]  testpath  feature  manual
+   [Tags]  testpath  feature  daily-sanity  manual
     manual passed
   
 Tracking with multiple test paths
-	[Tags]  testpath  feature  manual
+	[Tags]  testpath  feature  daily-sanity  manual
     manual passed 
 
-
-#3. intra tenant test
-#    3.3 3-tier app. We need tcp traffic.
-#    // 3.4 service insertion
-#4. inter tenant test
-#    4.3 3-tier app.
-#          4.3.1. we change router's default policy to deny and config permit ACLs.
-#    // 4.4 service insertion
-#    4.5 dst is other tenant's gateway <===== We don't support this?
-#5. to destination outside
-#    // 5.1 fabric default gateway is one router
-#    5.2 fabric default gateway is an ecmp group, whose members are in multiple VNSes.
-#6. private vns test
-#    6.1 make sure this vns cannot get out of its tenant, even if ACL says permit.
-    
-#7. tracking topology change
-#    7.1 create cases where we have to use peer link.  
-
-#1. work flow test
-#    1.1 tracking 25 tests at the same time. 25 is the tcam limitation.
-#    1.2 if policy simulation fails, we don't do fabric simulation. we don't program tcam entry.
-#    1.3 we configure with wrong src, dst, test-name, timeout. Make sure the error messages are right
-#    1.4 Track by name of the endpoints
-#    // 1.4 we can clear timedout tests.
-    
-#2. Negative Test
-# 	1.1 Intra VNS: from src to a wrong dst vns
- 	
-    
 ################## 		Visibility		################## 	
 
-Verify LED support: “beacon switch”
-	[Tags]  visibility  feature  manual
+Verify LED support: beacon switch
+	[Tags]  visibility  feature  daily-sanity  manual
 	manual passed
 
 OF packet capture details
-	[Tags]  visibility  feature  manual
+	[Tags]  visibility  feature  daily-sanity  manual
 	manual passed
 
 
 ########################################################################################################################################
 
-* Keywords 
+########################################################################################################################################
 
+* Keywords 
+T0 Setup
+	fabric infra suite setup
+    Set swith int variables
+    Set switch dpid variables
+    Set host int variables
+    BASH run command                                h1							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h2							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h3							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h4							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h5							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH run command                                h6							cp /etc/network/interfaces.visibility /etc/network/interfaces
+    BASH restart networking service                 h1                          timeout=60
+    BASH restart networking service                 h2                          timeout=60
+    BASH restart networking service                 h3                          timeout=60
+    BASH restart networking service                 h4                          timeout=60
+    BASH restart networking service                 h5                          timeout=60
+    BASH restart networking service                 h6                          timeout=60
+    Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
+	Configure Tenants For SPAN & Test Path
+	#bash execute command  leaf0-a  ofad-ctl autoneg 25
+	#bash execute command  leaf0-a  ofad-ctl autoneg 26
+	#bash execute command  leaf1-a  ofad-ctl autoneg 25
+	#bash execute command  leaf1-a  ofad-ctl autoneg 26
+	
+	#bring up h1 bond0
+	#sleep  2
+	#bring up h2 bond0
+	#sleep  2
+	#bring up h3 bond0
+	#sleep  2
+	#bring up h4 bond0
+	#sleep  2
+	#bring up h5 bond0
+	#sleep  2
+	#bring up h6 bond0
+	#sleep  2
+	#bring up h1 eth1
+	#sleep  2
+	#bring up h2 eth1
+	#sleep  2
+	#bring up h3 eth1
+	#sleep  2
+	#bring up h4 eth1
+	#sleep  2
+	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
+	
+	
+	${stream-ab1}=  L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab1_flow
+	...			src_mac=aa:bb:01:00:00:01  dst_mac=aa:bb:02:00:00:01
+	...			src_ip=100.1.1.1  src_gw=100.1.1.100  dst_ip=100.1.2.1  dst_gw=100.1.2.100	
+	...			protocol=TCP  src_port=1000  dst_port=2000 
+	
+	${stream-ab2}=  L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab2_flow
+	...			src_mac=aa:bb:01:00:00:02  dst_mac=aa:bb:02:00:00:02
+	...			src_ip=100.1.1.2  src_gw=100.1.1.100  dst_ip=100.1.2.2  dst_gw=100.1.2.100	
+	...			protocol=TCP  src_port=1100  dst_port=2100
+	
+	${stream-ab3}=	L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab3_flow
+	...			src_mac=aa:bb:01:00:00:03  dst_mac=aa:bb:02:00:00:03
+	...			src_ip=100.1.1.3  src_gw=100.1.1.100  dst_ip=100.1.2.3  dst_gw=100.1.2.100	
+	...			protocol=UDP  src_port=1000  dst_port=2000
+		
+	${stream-ab4}=	L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab4_flow
+	...			src_mac=aa:bb:01:00:00:04  dst_mac=aa:bb:02:00:00:04
+	...			src_ip=100.1.1.4  src_gw=100.1.1.100  dst_ip=100.1.2.4  dst_gw=100.1.2.100	
+	...			protocol=UDP  src_port=1100  dst_port=2100
+	
+	${stream-cd1}=  L3 add  flow=c<->d  frame_rate=100  frame_size=64  name=cd1_flow
+	...			src_mac=aa:bb:03:00:00:01  dst_mac=aa:bb:04:00:00:01
+	...			src_ip=100.3.1.1  src_gw=100.3.1.100  dst_ip=100.4.1.1  dst_gw=100.4.1.100	
+	...			protocol=TCP  src_port=3000  dst_port=4000 
+	
+	${stream-ac1}=  L3 add  flow=a<->c  frame_rate=100  frame_size=64  name=ac1_flow
+	...			src_mac=aa:bb:01:00:00:05  dst_mac=aa:bb:03:00:00:02
+	...			src_ip=100.1.1.5  src_gw=100.1.1.100  dst_ip=100.3.1.2  dst_gw=100.3.1.100	
+	...			protocol=TCP  src_port=1000  dst_port=3000 
+	
+	start traffic  ${stream-ab1}
+	start traffic  ${stream-ab2}
+	start traffic  ${stream-ab3}
+	start traffic  ${stream-ab4}
+	start traffic  ${stream-cd1}
+	start traffic  ${stream-ac1}
+	
 Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 
-   auto configure fabric switch  ${spineList}  ${leafList}  2
-   sleep  10
-
+   #auto configure fabric switch  ${spineList}  ${leafList}  2
+   #sleep  30
    rest add portgroup  p1
    rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
    rest add interface to portgroup  leaf0-b  ${h1_intf1}  p1
@@ -1041,31 +1036,10 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
    rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
    rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
    rest add portgroup lacp  p6
-   rest add portgroup  p7
-   rest add interface to portgroup  leaf0-a  ${esx1_intf0}  p7
-   rest add interface to portgroup  leaf0-b  ${esx1_intf1}  p7
-   rest add portgroup lacp  p7
-   rest add portgroup  p8
-   rest add interface to portgroup  leaf0-a  ${esx2_intf0}  p8
-   rest add interface to portgroup  leaf0-b  ${esx2_intf1}  p8
-   rest add portgroup lacp  p8
-
    sleep  10
 
 
 Configure Tenants For SPAN & Test Path
-   
-   Set Test Variable  ${subMask}  24
-   Set Test Variable  ${seg1ip}  10.10.10.100
-   Set Test Variable  ${seg2ip}  20.20.20.100
-   Set Test Variable  ${seg3ip}  192.168.1.100
-   Set Test Variable  ${Ixia1v1IP}  100.1.1.100
-   Set Test Variable  ${Ixia1v2IP}  100.1.2.100
-   Set Test Variable  ${Ixia3v1IP}  100.3.1.100
-   Set Test Variable  ${Ixia4v1IP}  100.4.1.100
-   Set Test Variable  ${Ixia5v1IP}  100.5.1.100
-   Set Test Variable  ${Ixia6v1IP}  100.5.1.100
-
    rest add tenant  autoT1
    rest add vns  autoT1  v1
    rest add portgroup to vns  autoT1  v1  p1  10
@@ -1075,9 +1049,9 @@ Configure Tenants For SPAN & Test Path
    rest add vns ip  autoT1  v1  ${seg1ip}  ${subMask}
    
    rest add vns  autoT1  v2
-   rest add portgroup to vns  autoT1  v2  p4  20
-   rest add portgroup to vns  autoT1  v2  p5  20
-   rest add portgroup to vns  autoT1  v2  p6  20
+   rest add portgroup to vns  autoT1  v2  p4  -1
+   rest add portgroup to vns  autoT1  v2  p5  -1
+   rest add portgroup to vns  autoT1  v2  p6  -1
    rest add router intf  autoT1  v2
    rest add vns ip  autoT1  v2  ${seg2ip}  ${subMask}
    
@@ -1085,7 +1059,6 @@ Configure Tenants For SPAN & Test Path
    rest add vns  autoT2  v1
    rest add interface to vns  autoT2  v1  leaf0-a  ${h1_intf0_single}  -1
    rest add interface to vns  autoT2  v1  leaf1-a  ${h3_intf0_single}  -1
-   rest add interface to vns  autoT2  v1  leaf2-a  ${h5_intf0_single}  -1
    rest add router intf  autoT2  v1
    rest add vns ip  autoT2  v1  ${seg3ip}  ${subMask}
    
@@ -1155,34 +1128,68 @@ Configure Tenants For SPAN & Test Path
 
 Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
    
-   ###	Verify L2 ping between autoT1-v1
+   ###	Verify L2 ping between autoT1-v1   
    ${returnVal}=  platform bash ping  h1  ${h2_tag_ip}
    Should Be True  ${returnVal}  
    ${returnVal}=  platform bash ping  h1  ${h3_tag_ip}
    Should Be True  ${returnVal}  
    ${returnVal}=  platform bash ping  h2  ${h3_tag_ip}
-   Should Be True  ${returnVal}  
+   #Should Be True  ${returnVal}  
+   
 
    ###	Verify L2 ping between autoT1-v2
-   ${returnVal}=  platform bash ping  h4  ${h5_tag_ip}
+   ${returnVal}=  platform bash ping  h4  ${h5_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h4  ${h6_tag_ip}
+   ${returnVal}=  platform bash ping  h4  ${h6_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h5  ${h6_tag_ip}
+   ${returnVal}=  platform bash ping  h5  ${h6_ip}
    Should Be True  ${returnVal}   
    
    ###	Verify ping between autoT2 			
    ${returnVal}=  platform bash ping  h1  ${h3_single_ip}
    Should Be True  ${returnVal}   
-   ${returnVal}=  platform bash ping  h1  ${h5_single_ip}
-   Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h3  ${h5_single_ip}
-   Should Be True  ${returnVal}  
-   
 
-T5 Platform Test Setup
-	start floodlight monitor
-	
-T5 Platform Test Teardown
-	stop floodlight monitor
+
+bring up h1 bond0
+	bash init intf  h1  bond0.10
+    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
+    bash ifup intf  h1  bond0 
+bring up h2 bond0
+	bash init intf  h2  bond0.10
+    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
+    bash ifup intf  h2  bond0
+bring up h3 bond0
+	bash init intf  h3  bond0.10
+    bash add ip address  h3  ${h3_tag_ip}/24  bond0.10
+    bash ifup intf  h3  bond0 
+bring up h4 bond0
+	bash init intf  h4  bond0
+    bash add ip address  h4  ${h4_ip}/24  bond0
+    bash ifup intf  h4  bond0
+bring up h5 bond0
+	bash init intf  h5  bond0
+    bash add ip address  h5  ${h5_ip}/24  bond0
+    bash ifup intf  h5  bond0
+bring up h6 bond0
+	bash init intf  h6  bond0
+    bash add ip address  h6  ${h6_ip}/24  bond0
+    bash ifup intf  h6  bond0
+
+bring up h1 eth1
+	bash init intf  h1  eth1
+    bash add ip address  h1  ${h1_single_ip}/24  eth1
+    bash ifup intf  h1  eth1
+bring up h2 eth1
+	bash init intf  h2  eth1
+    bash add ip address  h2  ${h2_single_ip}/24  eth1
+    bash ifup intf  h2  eth1
+bring up h3 eth1
+	bash init intf  h3  eth1
+    bash add ip address  h3  ${h3_single_ip}/24  eth1
+    bash ifup intf  h3  eth1
+bring up h4 eth1
+	bash init intf  h4  eth1
+    bash add ip address  h4  ${h4_single_ip}/24  eth1
+    bash ifup intf  h4  eth1
+
 

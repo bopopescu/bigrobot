@@ -12,6 +12,7 @@ Library          keywords/SwitchLight.py
 Library          keywords/Ixia.py
 Library          keywords/T5.py
 Library          keywords/T5L3.py
+Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 *Variables
 ${switch1_name}      leaf0-a
@@ -21,8 +22,6 @@ ${switch4_name}      spine1
 ${tenant_1}         T5HATenant
 ${vns_1}            T5HAVNS-1
 ${vns_2}            T5HAVNS-2
-${interface_1}      ethernet24
-${interface_2}      ethernet24
 ${src_ip}       10.100.100.10
 ${src_gw}       10.100.100.1
 ${dst_ip}       10.100.200.10
@@ -57,7 +56,7 @@ Verify L3 traffic: frame size 128 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  feature  traffic  L3
+    [Tags]  feature  traffic  L3  daily-sanity
 
 Verify L3 traffic: frame size 256 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=256
@@ -128,7 +127,7 @@ Verify L3 TCP traffic
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  feature  traffic  L3
+    [Tags]  feature  traffic  L3  daily-sanity
     
 Verify L3 UDP traffic
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=1518
@@ -158,7 +157,7 @@ Verify L3 ICMP traffic
     verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  feature  traffic  L3  ICMP
+    [Tags]  feature  traffic  L3  ICMP  daily-sanity
 
         
 Verify L3 Traffic: VLAN Tagged Traffic
@@ -251,29 +250,12 @@ t5 tenant add  [Arguments]  ${vlan}
     sleep  5    
     
 t5 suite setup
+    ${interface_1}=     get_switch_int_topo  s1  ixia1_int0
+    Set Suite Variable		${interface_1}
+	${interface_2}=      get_switch_int_topo  s2  ixia1_int0
+    Set Suite Variable		${interface_2}
     base suite setup
-    rest add switch  ${switch1_name}
-    ${switch1_dpid}=  rest return switch dpid from ip  s1
-    rest add dpid  ${switch1_name}  ${switch1_dpid}
-    rest add fabric role  ${switch1_name}  leaf
-    rest add leaf group  ${switch1_name}  rack0  
-
-    rest add switch  ${switch2_name}
-    ${switch2_dpid}=  rest return switch dpid from ip  s2
-    rest add dpid  ${switch2_name}  ${switch2_dpid}
-    rest add fabric role  ${switch2_name}  leaf
-    rest add leaf group  ${switch2_name}  rack1      
-
-    rest add switch  ${switch3_name}
-    ${switch3_dpid}=  rest return switch dpid from ip  s7
-    rest add dpid  ${switch3_name}  ${switch3_dpid}
-    rest add fabric role  ${switch3_name}  spine
-
-    rest add switch  ${switch4_name}
-    ${switch4_dpid}=  rest return switch dpid from ip  s8
-    rest add dpid  ${switch4_name}  ${switch4_dpid}
-    rest add fabric role  ${switch4_name}  spine             
-    
+	fabric infra suite setup            
     t5 tenant add  -1
 
 verify results   [Arguments]  ${transmitted_frames}  ${txport}  ${received_frames}  ${rxport}

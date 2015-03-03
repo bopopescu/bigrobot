@@ -1,6 +1,6 @@
 * Variable
-${bsn_ctrl1}			10.193.0.41
-${bsn_ctrl2}			10.193.0.42
+${bsn_ctrl1}		10.8.24.101
+${bsn_ctrl2}		10.8.24.102
 ${tenantX}			X
 ${tenantY}			Y
 ${tenantZ}			Z
@@ -66,3 +66,14 @@ ${leaf2_pc1_intf1}	ethernet47
 ${leaf2_pc1_intf2}	ethernet47
 ${leaf2_pc2_intf1}	ethernet48
 ${leaf2_pc2_intf2}	ethernet48
+${leaf0_a}          leaf0-a
+${leaf0_b}          leaf0-b
+${leaf1_a}          leaf1-a
+${leaf1_b}          leaf1-b
+${leaf2_a}          leaf2-a
+${leaf2_b}          leaf2-b
+${ixia2a_1}        ethernet30
+${ixia0a_1}        ethernet33
+
+${src_mac}          00:11:22:00:00:01
+${dst_mac}          00:ff:ee:00:00:01

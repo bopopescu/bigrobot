@@ -4,7 +4,7 @@ Suite Setup             corsair suite setup
 Suite Teardown          corsair suite teardown
 Test Setup              corsair test setup
 Test Teardown           corsair test teardown 
-Force Tags              corsair  bigtap  scale  tunnelling
+Force Tags              BigTap  Corsair-400  Accton-AS4600  tunnel
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -137,7 +137,7 @@ TC1: Create 42 bidirectional tunnels across same parent interface and verify sta
     \    ${tunnel_s2name}=  Catenate  SEPARATOR=  ${tunnel_sw2_name}  ${INDEX}
     \    ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_s2name}  
     \    Should be true  ${verify_del_tun_sw2}   
-    [Tags]  bidirectional  one-to-one
+    [Tags]  scaling  full  traffic
 
 TC2: Create 42 transmit/receive tunnels across same parent interface and verify status
     : FOR    ${INDEX}    IN RANGE    1    ${number_of_tunnels}
@@ -182,7 +182,7 @@ TC2: Create 42 transmit/receive tunnels across same parent interface and verify 
     \    ${tunnel_s2name}=  Catenate  SEPARATOR=  ${tunnel_sw2_name}  ${INDEX}
     \    ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_s2name}  
     \    Should be true  ${verify_del_tun_sw2}   
-    [Tags]  txrx  one-to-one
+    [Tags]  scaling  full  traffic
             
 * Keyword
 corsair suite setup

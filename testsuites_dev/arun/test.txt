@@ -54,6 +54,11 @@ Test Base Post Moterm
 	[Tags]  support
 	base test postmortem  Test Support
 	
+Test Upgrade CPLD 4.1.1
+	
+	upgrade cpld via uboot  s2  
+	[Tags]  cplds
+	
 * Keywords	
 T5 base suite setup
     base suite setup

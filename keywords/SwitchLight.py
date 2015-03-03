@@ -164,6 +164,7 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
+
     def cli_show_interface_state(self, node, intf_name, admin_down=False):
         '''
             Objective:
@@ -180,7 +181,9 @@ class SwitchLight(object):
             t = test.Test()
             s1 = t.switch(node)
             cli_input = "show interface " + str(intf_name) + " detail"
+            helpers.log("Before issuing the command")
             s1.enable(cli_input)
+            helpers.log("After issuing the command")
             new_content = string.split(s1.cli_content(), '\n')
             helpers.log("Value in content[1] is '%s' " % (new_content[1]))
             content = new_content[1].rstrip()
@@ -197,6 +200,47 @@ class SwitchLight(object):
         except:
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
+
+#    def cli_show_interface_state(self, node, intf_name, admin_down=False):
+#        '''
+#            Objective:
+# #            - Return the Interface State of a given interface on a switch#
+#
+#            Input:
+#            | node | Reference to switch (as defined in .topo file) |
+#            | intf_name | Interface Name eg. ethernet1 or portchannel1 |#
+#
+#            Return Value:
+#            - Interface State of interface.
+#        '''##
+#
+#        t = test.Test()
+#        s1 = t.switch(node)
+#        cli_input = "show interface " + str(intf_name)
+#        helpers.log("Before issuing the command")
+#        s1.enable(cli_input)
+#        helpers.log("After issuing the command")
+#        new_content = string.split(s1.cli_content(), '\n')
+#        helpers.log("Value in content[1] is '%s' " % (new_content[1]))
+#        content = new_content[1:]
+#        helpers.log("Value in content is '%s' " % (content))
+#        if len(content) > 1:
+#            status = content[0].split()[0]
+#            helpers.log("interface exists in the output and the status is {}".format(status))
+#            if 'U' in status:
+#                helpers.log("Interface {} is up".format(intf_name))
+#                intf_state = "up"
+#                return intf_state
+#            else:
+#                helpers.log("Interface {} is not up and status is {} ".format(intf_name, status))
+#                return False
+ #       else:
+ #           helpers.log("Expected interface {} does not exist in the output".format(intf_name))
+ #           return False
+
+        #    helpers.test_log("Could not execute command. Please check log for errors")
+         #   return False
+
 
     def cli_show_interface_statistics(self, node, intf_name):
         '''
@@ -437,6 +481,86 @@ class SwitchLight(object):
                             return_value = temp_value[1].strip()
                             return return_value
                 return False
+
+    def cli_show_version(self, node):
+        '''
+            Objective:
+            - Execute cli command "show version" on switch and return requested parameter
+
+            Input:
+            | node | Switch Reference from topo file |
+
+            Return Value:
+            - Value for requested key
+        '''
+        t = test.Test()
+        switch = t.switch(node)
+        try:
+            switch.cli("show version")
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+        else:
+            switch_output = switch.cli_content()
+            version_array = switch_output.split('\n')
+            return_dict = {}
+            for i in range(0, len(version_array)):
+                if "Manufacturer" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Manufacturer'] = temp_val1[1].strip()
+                if "Model" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Model'] = temp_val1[1].strip()
+                if "Platform" in version_array[i] and "Information" not in version_array[i] and "Name" not in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Platform'] = temp_val1[1].strip()
+                if "Description" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Description'] = temp_val1[1].strip()
+                if "Label" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Label'] = temp_val1[1].strip()
+                if "Part Number" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['PartNumber'] = temp_val1[1].strip()
+                if "Product Name" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['ProductName'] = temp_val1[1].strip()
+                if "Serial Number" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['SerialNumber'] = temp_val1[1].strip()
+                if "Physical" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['PhysicalPorts'] = temp_val1[1].strip()
+                if "LAG" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['MaxLagPorts'] = temp_val1[1].strip()
+                if "Vendor" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['Vendor'] = temp_val1[1].strip()
+                if "MAC" in version_array[i] and "Range" not in version_array[i] and "Serial" not in version_array[i]:
+                    temp_val1 = version_array[i].split()
+                    return_dict['ma1Mac'] = temp_val1[1].strip()
+                if "ONIE Version" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['onie'] = temp_val1[1].strip()
+                if "Country Code" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['country'] = temp_val1[1].strip()
+                if "Diag Version" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['diag'] = temp_val1[1].strip()
+                if "CPLD Version" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['cpld'] = temp_val1[1].strip()
+                if "Service Tag" in version_array[i]:
+                    temp_val1 = version_array[i].split(':')
+                    return_dict['ServiceTag'] = temp_val1[1].strip()
+            if (len(return_dict) < 1):
+                return False
+            else:
+                return return_dict
+
 
     def ping_from_local(self, node):
         '''
@@ -716,19 +840,8 @@ class SwitchLight(object):
             input1 = "interface ma1 ip-address dhcp"
             if input1 in run_config:
                 pass_count = pass_count + 1
-            input2 = "dns-domain " + str(dns_domain)
-            if input2 in run_config:
-                pass_count = pass_count + 1
-            input3 = "dns-server " + str(dns_server)
-            if input3 in run_config:
-                pass_count = pass_count + 1
             s1.enable('show interface ma1 detail')
             show_command = s1.cli_content()
-            # output_1 = string.split(show_command, '\n')
-            # output_2 = string.split(output_1[3], ': ')
-            # output_3 = string.split(output_2[1], '/')
-            # switch_ip = output_3[0]
-            # switch_mask = output_3[1]
             helpers.log("Show Command O/P: \n %s" % (show_command))
             if "ma1 is up" in show_command:
                 pass_count = pass_count + 1
@@ -737,7 +850,10 @@ class SwitchLight(object):
                 pass_count = pass_count + 1
             if "MTU 1500 bytes, Speed 1000 Mbps" in show_command:
                 pass_count = pass_count + 1
-            if pass_count == 6:
+            input5 = str(s1.ip()) + "/" + str(subnet)
+            if input5 in show_command:
+                pass_count = pass_count + 1
+            if pass_count == 5:
                 return True
             else:
                 return False
@@ -947,7 +1063,7 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def cli_flap_interface_ma1(self, node):
+    def cli_flap_interface_ma1(self, node, gateway="10.9.18.1"):
         '''
             Objective:
             - Flap interface ma1 on switch
@@ -965,8 +1081,9 @@ class SwitchLight(object):
             # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -982,7 +1099,8 @@ class SwitchLight(object):
             time.sleep(10)
             tn.write("ifconfig ma1 up" + "\r\n")
             tn.write("exit" + "\r\n")
-            tn.write("ip default-gateway 10.9.18.1")
+            defaultgateway = "ip default-gateway " + str(gateway)
+            tn.write(defaultgateway)
             tn.write("exit" + "\r\n")
             tn.close()
             return True
@@ -1099,8 +1217,9 @@ class SwitchLight(object):
             switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -1141,8 +1260,9 @@ class SwitchLight(object):
             switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -1256,8 +1376,9 @@ class SwitchLight(object):
             # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             try:
                 helpers.log("Switch Console IP is %s \n Switch Console Port is %s :" % (console_ip, console_port))
                 tn = telnetlib.Telnet(console_ip, console_port)
@@ -1266,21 +1387,26 @@ class SwitchLight(object):
                 tn.read_until("Password: ", 3)
                 tn.write(password + "\r\n")
                 tn.read_until('')
+                helpers.log("now here 1")
+                tn.write("\r\n enable \r\n")
+                tn.write("\r\n configure \r\n")
+                tn.write("\r\n dns-domain " + str(dns_domain) + " \r\n")
+                tn.write("\r\n dns-server " + str(dns_server) + " \r\n")
+                helpers.log("now here 2")
+                tn.write("exit" + "\r\n")
+                tn.write("exit" + "\r\n")
+                helpers.log("now here 3")
+                tn.close()
             except:
                 helpers.test_log("Could not configure static IP address configuration on switch. Please check log for errors")
                 return False
             else:
-                tn.write("\r\n" + "dns-domain " + str(dns_domain) + " \r\n")
-                tn.write("\r\n" + "dns-server " + str(dns_server) + " \r\n")
-                tn.write("exit" + "\r\n")
-                tn.write("exit" + "\r\n")
-                tn.close()
                 return True
         except:
             helpers.test_log("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
 
-    def cli_delete_dns_server_domain(self, node, dns_server, dns_domain):
+    def cli_delete_dns_server_domain(self, node, dns_server='10.3.0.4', dns_domain='qa.bigswitch.com'):
         '''
         Objective:
         - Delete DNS configuration on switch.
@@ -1301,8 +1427,9 @@ class SwitchLight(object):
             # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -1411,8 +1538,9 @@ class SwitchLight(object):
             - False on configuration failure
         '''
         t = test.Test()
-        console_ip = t.params(node, "console_ip")
-        console_port = t.params(node, "console_port")
+        console = t.params(node, "console")
+        console_ip = console['ip']
+        console_port = console['port']
         tn = telnetlib.Telnet(console_ip, console_port)
         tn.set_debuglevel(10)
         tn.read_until("login:", 10)
@@ -1448,8 +1576,9 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            console_ip = t.params(node, "console_ip")
-            console_port = t.params(node, "console_port")
+            console = t.params(node, "console")
+            console_ip = console['ip']
+            console_port = console['port']
             helpers.log("Console IP is %s \n Console Port is %s \n" % (console_ip, console_port))
             helpers.log("Username is %s \n Password is %s \n" % (user, new_password))
             tn = telnetlib.Telnet(console_ip, console_port)
@@ -1471,7 +1600,7 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def bash_execute_command(self, node, command):
+    def bash_execute_command(self, node, command, timeout=60):
         '''
         Objective:
         -Execute a command in bash mode and return output
@@ -1491,7 +1620,7 @@ class SwitchLight(object):
         except:
             return False
         else:
-            switch.bash(command)
+            switch.bash(command, timeout=timeout)
             bash_output = switch.cli_content()
             new_output = bash_output.split('\n')
             del new_output[0]
@@ -1527,7 +1656,7 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def bash_restart_process(self, node, processName, timeout=None):
+    def bash_restart_process(self, node, processName, timeout=60):
         '''
         Objective:
         -Restart a process on switch
@@ -1575,15 +1704,17 @@ class SwitchLight(object):
             full_path = "http://10.6.1.1/export/switchlight/" + str(image_path)
             bash_input_2 = "cd /mnt/flash2/; wget " + str(full_path) + " ./"
             switch.bash(bash_input_2)
-            bash_input_3 = "echo SWI=flash2:" + str(image_name) + " > /mnt/flash/boot-config"
+            bash_input_3 = "echo NETDEV=ma1 > /mnt/flash/boot-config"
             switch.bash(bash_input_3)
-            bash_input_4 = "echo NETDEV=ma1 >> /mnt/flash/boot-config"
+            bash_input_4 = "echo BOOTMODE=swi >> /mnt/flash/boot-config"
             switch.bash(bash_input_4)
-            bash_input_5 = "ls -lrt /mnt/flash2/; cat /mnt/flash/boot-config"
+            bash_input_5 = "echo SWI=flash2:" + str(image_name) + " >> /mnt/flash/boot-config"
             switch.bash(bash_input_5)
-            helpers.sleep(1)
-            bash_input_6 = "reboot"
+            bash_input_6 = "ls -lrt /mnt/flash2/; cat /mnt/flash/boot-config"
             switch.bash(bash_input_6)
+            helpers.sleep(2)
+            bash_input_7 = "reboot"
+            switch.bash(bash_input_7)
             return True
         except:
             helpers.test_log("Could not execute command. Please check log for errors")
@@ -1960,7 +2091,7 @@ class SwitchLight(object):
             s1.enable(cli_input)
             cli_output = s1.cli_content()
             if "Error: "  in cli_output:
-                    return False
+                return False
             else:
                 content = string.split(cli_output, '\n')
                 for i in range(0, len(content)):
@@ -2099,15 +2230,42 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
+    def cli_add_hashseed(self, node, seed1, seed2):
+        '''
+            Objective:
+            - Unconfigure port-channel
+
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | pcNumber | PortChannel number. Range is between 1 and 30 |
+
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
+
+            Examples:
+
+                | cli delete portchannel | 10.192.75.7  |  1  |
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input = "hash seed1 " + str(seed1) + "  seed2 " + str(seed2)
+            switch.config(cli_input)
+            return True
+        except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+
 ###### L2GRE Tunnel
     def cli_return_tunnel_info(self, node, tunnel_number, tunnel_variable):
         '''
             Objective:
             - Return info specific to tunnel from switch after executing cli command "show tunnel X"
-            
+
             Input:
             | node | Reference to switch (as defined in .topo file) |
-            | tunnel_number | Tunnel number |            
+            | tunnel_number | Tunnel number |
         '''
         try:
             t = test.Test()
@@ -2295,3 +2453,58 @@ class SwitchLight(object):
         else:
             helpers.test_log("There are no %s to be deleted" % (word))
             return True
+
+  # ## Author: Sahaja
+    def switch_inventory_if_status(self, node, linkspeed):
+        '''
+        Check for all links in inventory and make sure the status is up
+        linkspeed:  10GBASE or 40GBASE or 1GBASE
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            cmd = "show inventory"
+            s1.cli(cmd)
+
+        except:
+            helpers.test_log("Could not issue show command")
+            return False
+        content = string.split(s1.cli_content(), '\n')
+        exp_gig_links = filter(lambda x: re.search(r'{}'.format(linkspeed), x), content)
+        eth_if = map(lambda x: x.split()[0], exp_gig_links)
+        for intf in eth_if:
+            s1.cli("show interface {} detail".format(intf))
+            op = s1.cli_content()
+            intf_exp_line = '{} is up'.format(intf)
+            if intf_exp_line in op:
+                helpers.test_log("Interface {} is up".format(intf))
+            else:
+                helpers.test_log("Interface {} is not up".format(intf))
+                return False
+        return True
+
+
+# ##Author:: Sahaja
+    def switch_if_LB9_s4810_status(self, node):
+        '''
+        Make sure eth1, eth2, eth47 and eth48 are up
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+        except:
+            helpers.test_log("Could not get switch handle")
+            return False
+        eth_intf = ['ethernet1', 'ethernet2', 'ethernet47', 'ethernet48' ]
+        for intf in eth_intf:
+            cmd = "show interface {} detail".format(intf)
+            s1.cli(cmd)
+            op = s1.cli_content()
+            intf_exp_line = '{} is up'.format(intf)
+            if intf_exp_line in op:
+                helpers.test_log("Interface {} is up".format(intf))
+            else:
+                helpers.test_log("Interface {} is not up".format(intf))
+                return False
+        helpers.log("All the expected interfaces are up for switch {}".format(node))
+        return True

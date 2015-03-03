@@ -134,7 +134,7 @@ def summary_log(s, level=2, all_levels=False):
 
 
 def log_task_output(task_id):
-    info("Task output - http://%s/bigrobot_esb/%s.log.gz"
+    info("Task output - http://%s/bigrobot_esb/%s/"
          % (bigrobot_log_archiver(), task_id))
 
 
@@ -166,11 +166,14 @@ def analyze(s, level=3):
     info(s, level)
 
 
-def prettify(data):
+def prettify(data, format_newline=False):
     """
     Return the Python object as a prettified string (formatted).
     """
-    return pprint.pformat(data)
+    pretty_str = pprint.pformat(data)
+    if format_newline:
+        pretty_str = pretty_str.replace('\\n', '\n')
+    return pretty_str
 
 
 def prettify_xml(xml_str):
@@ -188,8 +191,8 @@ def prettify_xml(xml_str):
     return text
 
 
-def prettify_log(s, data, level=3):
-    analyze(''.join((s, '\n', prettify(data))), level)
+def pretty_log(s, format_newline=True, level=3):
+    log(prettify(s, format_newline), level)
 
 
 def exception_info_type():
@@ -721,6 +724,14 @@ def bigrobot_preserve_mininet_screen_session_on_fail(new_val=None, default='Fals
     """
     return _env_get_and_set('BIGROBOT_PRESERVE_MININET_SCREEN_SESSION_ON_FAIL',
                             new_val, default)
+
+
+def bigrobot_delete_session_cookies(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' to pause test case after it had failed.
+    """
+    return _env_get_and_set('BIGROBOT_DELETE_SESSION_COOKIES', new_val, default)
 
 
 def bigrobot_test_suite_status(new_val=None, default=None):
@@ -1873,12 +1884,19 @@ def _run_ping_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
                 ping_output = result["content"]
 
         elif mode == 'cli':
-            if source_if:
-                test_error("source_if option not supported for controller CLI ping.")
-
             # Ping command on Controller is very basic. It doesn't support
-            # any option.
-            cmd = "ping %s" % (host)
+            # any option besides count.
+
+            cmd = "ping"
+            if is_bcf(node_handle.platform()) or is_bigtap(node_handle.platform()):
+                if source_if:
+                    test_error("source_if option not supported for controller CLI ping.")
+                if count == None or int(count) == -1:  # disable count
+                    pass
+                else:
+                    cmd = "%s count %s" % (cmd, count)
+
+            cmd = "%s %s" % (cmd, host)
             if not quiet:
                 log("Ping command: %s" % cmd, level=4)
             result = node_handle.cli(cmd)
@@ -2061,6 +2079,7 @@ def params_to_file(params_dict, path='/tmp', prefix='bigrobot_params_',
     """
     yaml_str = to_yaml(params_dict) if is_dict(params_dict) else params_dict
     _, filename = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=path)
+    os.chmod(filename, 0644)  # Fix default permission from 600 - read/write by user only
     file_write_once(filename, yaml_str)
     return filename
 
@@ -2291,6 +2310,7 @@ def indent_str(input_str, spaces='    '):
     """
     Indent a multi-lined string by the amount of spaces specified.
     """
+    input_str = str(input_str)  # make sure we're dealing with a string
     lines = str_to_list(input_str)
     new_lines = []
     for line in lines:

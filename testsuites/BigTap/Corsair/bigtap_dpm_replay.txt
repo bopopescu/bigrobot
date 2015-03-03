@@ -4,7 +4,7 @@ Suite Setup         corsair suite setup
 Suite Teardown      corsair suite teardown
 Test Setup          corsair test setup
 Test Teardown       corsair test teardown 
-Force Tags          corsair  bigtap  DPM
+Force Tags          BigTap  Corsair-400  Dell-S4810  dpm  match-conditions  traffic
 Library             keywords/BsnCommon.py
 Library             keywords/AppController.py
 Library             keywords/BigTap.py
@@ -34,11 +34,12 @@ ${policy_overlap}                           _ZP1_o_P1
 
 *Test Case
 
-TC1:Verify Configuration
+TC001:Verify Configuration
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}    
-    [Tags]  basic
-TC2:Send GRE packets and verify match on inner source IP
+    [Tags]  full  feature
+
+TC002:Send GRE packets and verify match on inner source IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  36
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 16843009, "offset": 36}}
@@ -52,8 +53,8 @@ TC2:Send GRE packets and verify match on inner source IP
     bash  h1  /usr/bin/tcpreplay -tq -l 5 -i eth1 /root/pcaps/GRE.cap
     sleep  30
     verify packet count 
-    [Tags]  gre
-TC3:Send GRE packets and verify match on inner destination IP
+    [Tags]  full  feature
+TC003:Send GRE packets and verify match on inner destination IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  40
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 33686018, "offset": 40}}
@@ -67,9 +68,9 @@ TC3:Send GRE packets and verify match on inner destination IP
     bash  h1  /usr/bin/tcpreplay -tq -l 5 -i eth1 /root/pcaps/GRE.cap
     sleep  10
     verify packet count 
-    [Tags]  gre  sandip
+    [Tags]  full  feature
 
-TC4:Send GRE within GRE packets and verify match on inner source IP
+TC004:Send GRE within GRE packets and verify match on inner source IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  60
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 168433921, "offset": 60}}
@@ -83,9 +84,9 @@ TC4:Send GRE within GRE packets and verify match on inner source IP
     bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/gre-within-gre.pcap  timeout=180
     sleep  10
     verify packet count 
-    [Tags]  gre-in-gre
+    [Tags]  full  feature
     
-TC5:Send GRE within GRE packets and verify match on inner destination IP
+TC005:Send GRE within GRE packets and verify match on inner destination IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  72
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 3232235778, "offset": 72}}
@@ -99,9 +100,9 @@ TC5:Send GRE within GRE packets and verify match on inner destination IP
     bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/gre-within-gre.pcap     timeout=180
     sleep  10
     verify packet count 
-    [Tags]  gre-in-gre
+    [Tags]  full  feature
 
-TC6:Send doubly tagged 802.1q tunneled IP packet and verify match on source IP
+TC006:Send doubly tagged 802.1q tunneled IP packet and verify match on source IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  12
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 175507969, "offset": 12}}
@@ -115,10 +116,10 @@ TC6:Send doubly tagged 802.1q tunneled IP packet and verify match on source IP
     bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/802.1Q_tunneling.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  802.1q
+    [Tags]  full  feature
 
 
-TC7:Send doubly tagged 802.1q tunneled IP packet and verify match on destination IP
+TC007:Send doubly tagged 802.1q tunneled IP packet and verify match on destination IP
     ${set_udf}=  rest add bigtap udf  0  l3-start  24
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 175507970, "offset": 24}}
@@ -132,9 +133,9 @@ TC7:Send doubly tagged 802.1q tunneled IP packet and verify match on destination
     bash  h1  /usr/bin/tcpreplay -tq -i eth1 /root/pcaps/802.1Q_tunneling.cap     timeout=180
     sleep  10
     verify packet count   
-    [Tags]  802.1q
+    [Tags]  full  feature
         
-TC8:Send GTPv1(control) packets and match on GTP version
+TC008:Send GTPv1(control) packets and match on GTP version
     ${set_udf}=  rest add bigtap udf  0  l4-start  8
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 3758096384, "anchor": "l4-start", "value": 536870912, "offset": 8}}
@@ -148,9 +149,9 @@ TC8:Send GTPv1(control) packets and match on GTP version
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/080618_gtp_v1_timezone.pcap     timeout=180
     sleep  30
     verify packet count      
-    [Tags]  gtpv1-c
+    [Tags]  full  feature
         
-TC9:Send GTPv1(control) packets and match on TEID
+TC009:Send GTPv1(control) packets and match on TEID
     ${set_udf}=  rest add bigtap udf  0  l4-start  12
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 0, "offset": 12}}
@@ -164,9 +165,9 @@ TC9:Send GTPv1(control) packets and match on TEID
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/080618_gtp_v1_timezone.pcap     timeout=180
     sleep  10
     verify packet count      
-    [Tags]  gtpv1-c
+    [Tags]  full  feature
     
-TC10:Send GTPv1(user) packets and match on GTP version
+TC010:Send GTPv1(user) packets and match on GTP version
     ${set_udf}=  rest add bigtap udf  0  l4-start  8
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 3758096384, "anchor": "l4-start", "value": 536870912, "offset": 8}}
@@ -180,9 +181,9 @@ TC10:Send GTPv1(user) packets and match on GTP version
     bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap     timeout=300
     sleep  10
     verify packet count      
-    [Tags]  gtpv1-u
+    [Tags]  full  feature
         
-TC11:Send GTPv1(user) packets and match on TEID
+TC011:Send GTPv1(user) packets and match on TEID
     ${set_udf}=  rest add bigtap udf  0  l4-start  12
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 1, "offset": 12}}
@@ -196,9 +197,9 @@ TC11:Send GTPv1(user) packets and match on TEID
     bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap      timeout=300
     sleep  10
     verify packet count  
-    [Tags]  gtpv1-u
+    [Tags]  full  feature
         
-TC12:Send GTPv1(user) packets and match on inner source IP
+TC012:Send GTPv1(user) packets and match on inner source IP
     ${set_udf}=  rest add bigtap udf  0  l4-start  32
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 3389728926, "offset": 32}}
@@ -212,9 +213,9 @@ TC12:Send GTPv1(user) packets and match on inner source IP
     bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap      timeout=300
     sleep  10
     verify packet count
-    [Tags]  gtpv1-u
+    [Tags]  full  feature
     
-TC13:Send GTPv1(user) packets and match on inner destination IP
+TC013:Send GTPv1(user) packets and match on inner destination IP
     ${set_udf}=  rest add bigtap udf  0  l4-start  44
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 3232245938, "offset": 44}}
@@ -228,9 +229,9 @@ TC13:Send GTPv1(user) packets and match on inner destination IP
     bash  h1  /usr/bin/tcpreplay -tq -l 2 -i eth1 /root/pcaps/gtp-u.pcap      timeout=300
     sleep  10
     verify packet count
-    [Tags]  gtpv1-u
+    [Tags]  full  feature
     
-TC14:Send GTP Prime packets and match on GTP version
+TC014:Send GTP Prime packets and match on GTP version
     ${set_udf}=  rest add bigtap udf  0  l4-start  8
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "src-tp-port": 3386, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 3758096384, "anchor": "l4-start", "value": 536870912, "offset": 8}}
@@ -244,9 +245,9 @@ TC14:Send GTP Prime packets and match on GTP version
     bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp3.pcap     timeout=180
     sleep  10
     verify packet count      
-    [Tags]  gtp-prime
+    [Tags]  full  feature
         
-TC15:Send GTP Prime packets and match on TEID
+TC015:Send GTP Prime packets and match on TEID
     ${set_udf}=  rest add bigtap udf  0  l4-start  12
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "src-tp-port": 3386, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 1, "offset": 12}}
@@ -260,9 +261,9 @@ TC15:Send GTP Prime packets and match on TEID
     bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp3.pcap     timeout=180
     sleep  10
     verify packet count 
-    [Tags]  gtp-prime
+    [Tags]  full  feature
 
-TC16:Send IP-in-GTP packets and match on inner source IP
+TC016:Send IP-in-GTP packets and match on inner source IP
     ${set_udf}=  rest add bigtap udf  0  l4-start  28
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 177339905, "offset": 28}, "dst-tp-port": 2152}
@@ -276,9 +277,9 @@ TC16:Send IP-in-GTP packets and match on inner source IP
     bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp_tunnel_ftp.pcap     timeout=180
     sleep  10
     verify packet count 
-    [Tags]  ip-in-gtp
+    [Tags]  full  feature
 
-TC17:Send IP-in-GTP packets and match on inner destination IP
+TC017:Send IP-in-GTP packets and match on inner destination IP
     ${set_udf}=  rest add bigtap udf  0  l4-start  40
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 1711277312, "offset": 40}, "dst-tp-port": 2152}
@@ -292,9 +293,9 @@ TC17:Send IP-in-GTP packets and match on inner destination IP
     bash  h1  /usr/bin/tcpreplay -tq -l 100 -i eth1 /root/pcaps/gtp_tunnel_ftp.pcap     timeout=180
     sleep  10
     verify packet count 
-    [Tags]  ip-in-gtp
+    [Tags]  full  feature
 
-TC18: Send basic MPLS packet and match on source IP address.
+TC018: Send basic MPLS packet and match on source IP address.
     ${set_udf}=  rest add bigtap udf  0  l3-start  12
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 167838209, "offset": 12}}
@@ -308,9 +309,9 @@ TC18: Send basic MPLS packet and match on source IP address.
     bash  h1  /usr/bin/tcpreplay -tq -l 10 -i eth1 /root/pcaps/mpls-basic.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  mpls-basic
+    [Tags]  full  feature
 
-TC19: Send basic MPLS packet and match on destination IP address.
+TC019: Send basic MPLS packet and match on destination IP address.
     ${set_udf}=  rest add bigtap udf  0  l3-start  24
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 170000385, "offset": 24}}
@@ -324,10 +325,9 @@ TC19: Send basic MPLS packet and match on destination IP address.
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/mpls-basic.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  mpls-basic
-
-
-TC20: Send Ethernet over MPLS packet and match on MPLS Label
+    [Tags]  full  feature
+    
+TC020: Send Ethernet over MPLS packet and match on MPLS Label
     ${set_udf}=  rest add bigtap udf  0  l3-start  0
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294963200, "anchor": "l3-start", "value": 73728, "offset": 0}}
@@ -341,10 +341,9 @@ TC20: Send Ethernet over MPLS packet and match on MPLS Label
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  mpls-ldp 
-
-
-TC21: Send Ethernet over MPLS (UDP) packet and match on LDP-Version.
+    [Tags]  full  feature
+    
+TC021: Send Ethernet over MPLS (UDP) packet and match on LDP-Version.
     ${set_udf}=  rest add bigtap udf  0  l3-start  32
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294901760, "anchor": "l3-start", "value": 65536, "offset": 32}}
@@ -358,9 +357,9 @@ TC21: Send Ethernet over MPLS (UDP) packet and match on LDP-Version.
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  mpls-ldp 
-
-TC22: Send Ethernet over MPLS (UDP) packet and match on LDP-LSR IDs.
+    [Tags]  full  feature
+    
+TC022: Send Ethernet over MPLS (UDP) packet and match on LDP-LSR IDs.
     ${set_udf}=  rest add bigtap udf  0  l3-start  36
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 16843266, "offset": 36}}
@@ -374,9 +373,9 @@ TC22: Send Ethernet over MPLS (UDP) packet and match on LDP-LSR IDs.
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  mpls-ldp 
-
-TC23: Send Ethernet over MPLS (TCP) packet and match on LDP-Version.
+    [Tags]  full  feature
+    
+TC023: Send Ethernet over MPLS (TCP) packet and match on LDP-Version.
     ${set_udf}=  rest add bigtap udf  0  l3-start  44
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294901760, "anchor": "l3-start", "value": 65536, "offset": 44}}
@@ -390,9 +389,9 @@ TC23: Send Ethernet over MPLS (TCP) packet and match on LDP-Version.
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  mpls-ldp 
+    [Tags]  full  feature
 
-TC24: Send Ethernet over MPLS (TCP) packet and match on LDP-LSR IDs.
+TC024: Send Ethernet over MPLS (TCP) packet and match on LDP-LSR IDs.
     ${set_udf}=  rest add bigtap udf  0  l3-start  48
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294967295, "anchor": "l3-start", "value": 16843266, "offset": 48}}
@@ -406,9 +405,9 @@ TC24: Send Ethernet over MPLS (TCP) packet and match on LDP-LSR IDs.
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  mpls-ldp 
+    [Tags]  full  feature
 
-TC25: Send Ethernet over MPLS (TCP) packet and match on second outer MPLS Label
+TC025: Send Ethernet over MPLS (TCP) packet and match on second outer MPLS Label
     ${set_udf_1}=  rest add bigtap udf  0  l3-start  4
     Should be true  ${set_udf_1}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34887, "offset-match-0": {"mask": 4294963200, "anchor": "l3-start", "value": 65536, "offset": 4}}
@@ -422,9 +421,9 @@ TC25: Send Ethernet over MPLS (TCP) packet and match on second outer MPLS Label
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  mpls-ldp 
+    [Tags]  full  feature
     
-TC26: Send Ethernet over MPLS (TCP) packet and match on Inner MPLS Label
+TC026: Send Ethernet over MPLS (TCP) packet and match on Inner MPLS Label
     ${set_udf_1}=  rest add bigtap udf  0  l3-start  44
     Should be true  ${set_udf_1}
     ${set_udf_2}=  rest add bigtap udf  1  l3-start  48
@@ -440,10 +439,10 @@ TC26: Send Ethernet over MPLS (TCP) packet and match on Inner MPLS Label
     bash  h1  /usr/bin/tcpreplay -tq -l 50 -i eth1 /root/pcaps/EoMPLS.cap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  mpls-ldp 
+    [Tags]  full  feature
       
 
-TC27: Send VXLAN packet and match on VXLAN Network Identifier (VNI)
+TC027: Send VXLAN packet and match on VXLAN Network Identifier (VNI)
     ${set_udf}=  rest add bigtap udf  0  l4-start  12
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-proto": 17, "sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967040, "anchor": "l4-start", "value": 1955669760, "offset": 12}}
@@ -457,10 +456,9 @@ TC27: Send VXLAN packet and match on VXLAN Network Identifier (VNI)
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/vxlan.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  vxlan  
-
-
-TC28: Send VXLAN encapsulated ARP packet and match on Sender IP address in ARP packet
+    [Tags]  full  feature
+    
+TC028: Send VXLAN encapsulated ARP packet and match on Sender IP address in ARP packet
     ${set_udf}=  rest add bigtap udf  0  l4-start  44
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 3232287493, "offset": 44}}
@@ -474,10 +472,9 @@ TC28: Send VXLAN encapsulated ARP packet and match on Sender IP address in ARP p
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/vxlan-1.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  vxlan
-
-
-TC29: Send VXLAN encapsulated ARP packet and match on Target IP address in ARP packet
+    [Tags]  full  feature
+    
+TC029: Send VXLAN encapsulated ARP packet and match on Target IP address in ARP packet
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  52    
     Should be true  ${set_udf_1}
     ${set_udf_2}=  rest add bigtap udf  1  l4-start  56    
@@ -493,9 +490,9 @@ TC29: Send VXLAN encapsulated ARP packet and match on Target IP address in ARP p
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/vxlan-1.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  vxlan  run     
+    [Tags]  full  feature
 
-TC30: Send NTP packets and match on NTP Version
+TC030: Send NTP packets and match on NTP Version
     ${set_udf}=  rest add bigtap udf  0  l4-start  8
     Should be true  ${set_udf}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048, "offset-match-0": {"mask": 4026531840, "anchor": "l4-start", "value": 402653184, "offset": 8}, "dst-tp-port": 123}
@@ -509,9 +506,9 @@ TC30: Send NTP packets and match on NTP Version
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/ntp.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  ntp
+    [Tags]  full  feature
 
-TC31: Send BOOTP packets and match on Client Mac Address
+TC031: Send BOOTP packets and match on Client Mac Address
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  36    
     Should be true  ${set_udf_1}
     ${set_udf_2}=  rest add bigtap udf  1  l4-start  40    
@@ -527,9 +524,9 @@ TC31: Send BOOTP packets and match on Client Mac Address
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/bootp.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  bootp
+    [Tags]  full  feature
 
-TC32: Send BOOTP packets and match on Your(client) IP Address
+TC032: Send BOOTP packets and match on Your(client) IP Address
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  24    
     Should be true  ${set_udf_1}
     ${set_policy_match}=  rest add policy match  admin-view  ${policy_name_1}  1  {"ip-proto": 17, "sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4294967295, "anchor": "l4-start", "value": 2130706433, "offset": 24}}
@@ -543,9 +540,9 @@ TC32: Send BOOTP packets and match on Your(client) IP Address
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/bootp.pcap     timeout=180
     sleep  10
     verify packet count
-    [Tags]  bootp  
+    [Tags]  full  feature
 
-TC33: Send L2TP enacapsulated packets and match on Inner source IP Address
+TC033: Send L2TP enacapsulated packets and match on Inner source IP Address
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  32    
     Should be true  ${set_udf_1}
     ${set_udf_2}=  rest add bigtap udf  1  l4-start  28    
@@ -563,9 +560,9 @@ TC33: Send L2TP enacapsulated packets and match on Inner source IP Address
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
     sleep  10
     verify packet count
-    [Tags]  l2tp  runthis    
+    [Tags]  full  feature
 
-TC34: Send L2TP enacapsulated packets and match on Inner Destination IP Address
+TC034: Send L2TP enacapsulated packets and match on Inner Destination IP Address
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  36    
     Should be true  ${set_udf_1}
     ${set_udf_2}=  rest add bigtap udf  1  l4-start  32    
@@ -583,10 +580,9 @@ TC34: Send L2TP enacapsulated packets and match on Inner Destination IP Address
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
     sleep  10
     verify packet count
-    [Tags]  l2tp  runthis  one  
+    [Tags]  full  feature
 
-
-TC35: Send L2TP enacapsulated packets and match on first two bits of L2TP Header
+TC035: Send L2TP enacapsulated packets and match on first two bits of L2TP Header
     ${set_udf_1}=  rest add bigtap udf  0  l4-start  8    
     Should be true  ${set_udf_1}
     ${set_policy_match_1}=  rest add policy match  admin-view  ${policy_name_1}  1   {"ip-proto": 17, "sequence": 1, "ether-type": 2048, "offset-match-0": {"mask": 4278190080, "anchor": "l4-start", "value": 131072, "offset": 8}}
@@ -602,8 +598,8 @@ TC35: Send L2TP enacapsulated packets and match on first two bits of L2TP Header
     bash  h1  /usr/bin/tcpreplay -tq -l 500 -i eth1 /root/pcaps/L2TP-Sample1.pcapng     timeout=180
     sleep  10
     verify packet count
-    [Tags]  l2tp  runthis
-                                   
+    [Tags]  full  feature
+    
 * Keyword
 
 verify packet count

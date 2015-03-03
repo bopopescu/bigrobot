@@ -1,16 +1,16 @@
 *Settings
 Documentation    T5 Test Suite
 Suite Setup      fabric infra suite setup
-Suite Teardown   base suite teardown
+Suite Teardown   qos base suite teardown
 Test Setup       base test setup
-Test Teardown    base test teardown
-Force Tags       IronHorse   T5
+Test Teardown    fabric qos base test teardown
+Force Tags       IronHorse
 Library          keywords/BsnCommon.py
 Library          keywords/Controller.py
 Library			 keywords/Mininet.py
 Library		     keywords/Host.py
 Library		     keywords/Ixia.py
-Library	         keywords/T5.py
+ Library	     keywords/T5.py
 Library          keywords/T5L3.py
 Library	         keywords/T5Platform.py
 Library	         keywords/Controller.py
@@ -23,121 +23,468 @@ ${medium}  3
 ${long}   30
 ${verylong}     120 
 
-${sw}       leaf0-a
-${intf}     ethernet2
+${sw}       leaf2-b
+${uut}      leaf2-b
+
+${f_rate}       5000
+${time}         5	 	 
+${cpurate}      700
+${limitrate}     100
+${ratio}        2.5
+
+# document:  https://bigswitch.atlassian.net/wiki/display/BSC/QoS+Implementation+on+Switch
+
+#1) CPU port has 7 queues going to 3 RX channels
+#chan 1 <- queue 0 with weight 50, Fabric LLDP/LACP
+#chan 1 <- queue 1 with weight 20, Front Panel LLDP/LACP
+#chan 2 <- queue 2 with weight 15, APR/DHCP
+#chan 2 <- queue 3 with weight 15, L2SrcMiss/StationMove
+#chan 3 <- queue 4 with weight 5, Debug/Stat
+#chan 3 <- queue 5 with weight 5, L3ToCPU
+#chan 3 <- queue 6 with weight 5, L3DstMiss
+
 
 * Test Case
 
 
-Verify default qos weight for CPU queue in all switches 
+T1 Verify default qos weight for CPU queue in all switches 
  	${switches}=  get_all_switch_nodes  
  	@{expect}=    Create List   50  20  15  15  5  5  5  1
 	log   switches are ${switches}
  	: FOR    ${switch}   IN   @{switches}   
 	\   Verify to cpu queue weight    ${switch}   ${expect}
  		 
-	[Tags] 	sanity  feature  fabric_QOS
+	[Tags] 	sanity  feature  fabric_QOS  daily-sanity
 
-Verify qos weight for CPU queue in all switches when qos enabled
-	config   master   fabric
+T2 Verify qos weight for CPU queue in all switches when qos enabled
+	config   master   fabric 
     config   master   qos
-    cli      master   show running-config fabric 
+    cli      master   show running-config fabric  
  	${switches}=  get_all_switch_nodes  
  	@{expect}=    Create List   50  20  15  15  5  5  5  1
 	log   switches are ${switches}
  	: FOR    ${switch}   IN   @{switches}   
 	\   Verify to cpu queue weight    ${switch}   ${expect}
-	config   master   fabric
+	config   master   fabric 
     config   master   no qos
 
  		 
-	[Tags] 	sanity  feature  fabric_QOS
+	[Tags] 	sanity  feature  fabric_QOS  daily-sanity
 
+T3 Verify LLDP different src to port 0 queue 1 	
 
-Config all controller plane traffic
-	log   lldp
-	log   lacp
-	log   arp
-	log   dhcp
-	log   l2srcmiss
- 	[Tags] 	full  feature  Manual  fabric_QOS
+ 		${f_cnt}=   expr   ${f_rate} * ${time} 
+		
+	log  LLDP stream with different src address
+	 	${LLDP}=  raw stream add  name=LLDP  flow=leaf2b_int1->f  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
+	 	...    frame_cnt=${f_cnt}   src_mac_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01  src_mac=00:23:23:23:00:00	 
+
+ 		Control Traffic test   ${LLDP}   ${time}	 			
+ 		${rate}=   Get lldp rate         ${time}
+ 		
+	log  lldp controller plane rate (with different src mac) is ${rate}
+	Log To Console    lldp controller plane rate (different src mac) is: ${rate}   
  
+ 		enable    master   show switch ${uut} interface ${intf2} counters
+		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Contain   ${queue}   MC_1	
+		${status} =	Evaluate	${rate}>${cpurate} 				
+ 	 	Should Be True   ${status}
+	 
+	 
+	[Tags] 	full  feature   fabric_QOS   daily-sanity
 
-Verify LLDP packet are going to port 0 queue 1 and get the rate
-	log  packet size 64,send 100s lacp traffic with 1320pps, did not see drop
-	log  the rate is around 1100pps
-	 Manual passed
-	[Tags] 	full  feature  Manual   fabric_QOS
+T4 Verify LLDP packet with same src mac are rate limited 
 
-Verify LACP packet are going to port 0 queue 1 and get the rate
-	log   send 10s lacp traffic with 4315pps, did not see drop packet size 128
-	log   send 100s lacp traffic with 1320pps, did not see drop
-	log   the rate is around 1100pps
-	 Manual passed
-	[Tags] 	full  feature   Manual   fabric_QOS
+		${f_cnt}=   expr   ${f_rate} * ${time} 	
+	log   LLDP stream with same src address
+	 	${LLDP_1}=  raw stream add  name=LLDP_1  flow=leaf2b_int1->f  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
+	 	...    frame_cnt=${f_cnt}     src_mac=00:24:24:24:00:00
  
-Verify ARP packet are going to port 0 queue 2 and get the rate
+ 		Control Traffic test   ${LLDP_1}   ${time}	 	
+ 		${rate}=   Get lldp rate 		${time}
+ 
+ 	log  lldp controller plane rate (with different src mac) is ${rate}
+	Log To Console    lldp controller plane rate (with different src mac) is: ${rate} 
+	  	 	
+		enable    master   show switch ${uut} interface ${intf2} counters	 	
+		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Contain   ${queue}   MC_1	
+		${status} =	Evaluate	${rate}<${limitrate} 				
+ 	 	Should Be True   ${status}
+  	 	
+ 	 	
+	[Tags] 	full  feature   fabric_QOS    daily-sanity
+
+T5 Verify LACP packet to port 0 queue 1	
+		${f_cnt}=   expr   ${f_rate} * ${time} 	
+	log   LACP stream with different src address
+		${LACP}=  raw stream add  name=LACP  flow=leaf2b_int1->f  lacp=True   frame_rate=${f_rate}	
+	 	...    frame_cnt=${f_cnt}   src_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01  lacp_src_mac=00:25:25:25:00:00	 
+ 	
+		Control Traffic test   ${LACP}   ${time}	 	
+ 
+		${rate}=    Get processed packetin rate     ${time}
+	log  lacp controller plane rate (with different src mac) is ${rate}
+	Log To Console    lacp controller plane rate (with different src mac) is: ${rate} 
+ 	
+		enable    master   show switch ${uut} interface ${intf2} counters	  
+		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Contain   ${queue}   MC_1	  
+ 		${status} =	Evaluate	${rate}>${cpurate} 				
+ 	 	Should Be True   ${status}
+ 
+ 	[Tags] 	full  feature      fabric_QOS   
+
+T6 Verify LACP packet with same src mac are rate limited 	
+		${f_cnt}=   expr   ${f_rate} * ${time} 	
+	log   LACP stream with same src address
+		${LACP_1}=  raw stream add  name=LACP_1  flow=leaf2b_int1->f  lacp=True   frame_rate=${f_rate} 
+	 	...    frame_cnt=${f_cnt}     lacp_src_mac=00:26:26:26:00:00	 
+ 	
+		Control Traffic test   ${LACP_1}   ${time}	 	 
+		${rate}=    Get processed packetin rate     ${time}
+	log  lacp controller plane rate (with different src mac) is ${rate}
+	Log To Console    lacp controller plane rate (with different src mac) is: ${rate}   
+ 	 	enable    master   show switch ${uut} interface ${intf2} counters
+ 		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Contain   ${queue}   MC_1	
+		${status} =	Evaluate	${rate}<${limitrate}				
+ 	 	Should Be True   ${status}
+ 
+ 
+ 	[Tags] 	full  feature   fabric_QOS   daily-sanity
+
+ 
+T7 Verify ARP packet to port 0 queue 2 
 	log  packet size 64, send 100s arp traffic with 1320pps, did not see drop
 	log   the rate is around 1100pps	
 	log   both ARP and IFP are hit
-	Manual passed
-	[Tags] 	full  feature   Manual   fabric_QOS
+	 
+	[Tags] 	full  feature   Manual   fabric_QOS    skipped
+
+T8 Verify L2srcmiss mac move(dif port than static endpoint) to port 0 queue 3
+	log  need to config 5k static endpoints.
+	 
+	[Tags] 	full  feature   Manual   fabric_QOS   skipped
+
+	 
+T9 Verify L2srcmiss mac move(dif port then static endpoint) 1 src address to port 0 queue 3
+		${src_mac}=  Set Variable      00:29:29:29:00:01
+		${dst_mac}=  Set Variable      00:00:11:11:11:01
+		${mac_rate}= 	 Set Variable    2000 
+ 		${f_cnt}=   expr  ${mac_rate} * ${time} 
+  		
+		${L2_mv}=  L2 add  name=L2_mv     flow=leaf2b_int1->f  src_mac=${dst_mac}  dst_mac=00:00:99:99:00:00   frame_rate=${mac_rate} 
+	 	...    frame_cnt=${f_cnt}   vlan_id=10    frame_size=128
  
-Verify L2srcmiss mac move(from different port then static endpoint) are going to port 0 queue 3
-	log   packet size 64, send 100s arp traffic with 1320pps, did not see drop
-	log   the rate is around 1100pps	
-	log   send traffic
-	 Manual passed
-	[Tags] 	full  feature  Manual   fabric_QOS
-
-Verify L2srcMiss new mac packet are going to port 0 queue 3
-	log   send traffic
-	 Manual passed
-	[Tags] 	full  feature   Manual   fabric_QOS
-
-Verify L3tocpu packet(intervns packet to unknown host) are going to port 0 queue 5
-	log  9k packet size, around 1kpps
-	log   send traffic
-	 Manual passed
-	[Tags] 	full  feature   Manual   fabric_QOS
-
-Verify L3 miss packet are going to port 0 queue 6
-	log   send traffic
-	 Manual passed
-	[Tags] 	full  feature   Manual   fabric_QOS
-
+ 		Control Traffic test  ${L2_mv}   ${time} 	
+ 		enable    master   show endpoint | wc -l		 		
+ 		enable    master   show switch ${uut} interface ${intf2} counters 		
+ 		${rate}=    Get processed packetin rate     ${time}
+		
+	log  L2srcmiss mac move is ${rate}
+	Log To Console    L2srcmiss mac move is: ${rate}   
+	
+		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Contain   ${queue}   MC_3	  
+		${status} =	Evaluate	${rate}<${limitrate}				
+ 	 	Should Be True   ${status}
+ 		
+	 
+	[Tags] 	full  feature   fabric_QOS    
  
-Verify qos weight for different queue and same port (same rate)
-	log   tested with arp and lacp
-	 Manual passed
-	[Tags] 	full  feature   Manual   fabric_QOS
-
-Verify qos weight for different queue and different port (same rate)
-	log   tested with arp and lacp
-	 Manual passed
-	[Tags] 	full  feature   Manual   JIRA_BVS_1685 fabric_QOS
-
-
-Verify qos weight for different queue (different rate)
-	log    tested with arp and lacp
-	 Manual passed
-	[Tags] 	full  feature   Manual   JIRA-BVS_1683   fabric_QOS
- 
-
-
+T10 Verify L2srcmiss mac learning to port 0 queue 3
+		${src_mac}=  Set Variable      00:2a:2a:2a:00:01
+		${dst_mac}=  Set Variable      00:1a:1a:1a:00:01
+		${mac_rate}= 	 Set Variable    5000 
+ 		${f_cnt}=   expr  ${mac_rate} * ${time} 		
+	log  config static endpoint
+ 		
+		${L2}=  L2 add  name=L2     flow=leaf2b_int1->f  src_mac=${src_mac}  dst_mac=${dst_mac}   frame_rate=${mac_rate} 
+	 	...    frame_cnt=${f_cnt}   src_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01   vlan_id=10    frame_size=128
+	 	 
+ 		Control Traffic test  ${L2}   ${time}  	
+		enable    master   show endpoint | wc -l	
+ 		enable    master   show switch ${uut} interface ${intf2} counters 		
+			
+		${rate}=   Get processed packetin rate     ${time}
+		
+	log  L2 mac learning rate is ${rate}
+	Log To Console    L2 mac learning rate is: ${rate}  
+	 
+		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Contain   ${queue}   MC_3	  
+		${status} =	Evaluate	${rate}>${cpurate}				
+ 	 	Should Be True   ${status}
+	 
+	[Tags] 	full  feature   fabric_QOS   
   
+  
+
+T11 Verify L3 packet(intervns big packet) are sent corretly
+	log   9k packet size 
+		${p_rate}= 	Set Variable    2000 
+ 		${f_cnt}=   expr  ${p_rate} * ${time} 		
+	
+    	${L3}=  L3 add  name=L3  flow=f<->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=9000
+    	...		src_ip=100.0.0.2  src_gw=100.0.0.1  src_mac=00:1b:1b:1b:00:01   src_gw_prefix=16
+    	...		dst_ip=100.1.0.2  dst_gw=100.1.0.1  dst_mac=00:2b:2b:2b:00:01   dst_gw_prefix=16
+
+ 		Control Traffic test  ${L3}   ${time}	
+ 		enable    master   show endpoint | wc -l		 		
+ 		enable    master   show switch ${uut} interface ${intf2} counters 		
+   		
+		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Be Empty    ${queue}      
+   	 	${report}=   fetch port stats  stream=${L3}
+    	verify results  transmitted_frames  received_frames  ${L3}  L3
+	 
+	[Tags] 	full  feature   fabric_QOS    
+
+
+T12 Verify L3tocpu packet(intervns packet to unknown host) same addresses to port 0 queue 5
+	log   send traffic
+		${p_rate}= 	Set Variable    2000 
+ 		${f_cnt}=   expr  ${p_rate} * ${time} 		
+	
+    	${L3_1}=  L3 add  name=L3_1  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=128
+    	...		src_ip=100.0.0.3  src_mac=00:1b:1b:1b:00:01   no_arp=True   
+    	...		dst_ip=100.1.0.3  dst_mac=${routermac}   
+
+ 		Control Traffic test  ${L3_1}   ${time}	
+ 		enable    master   show endpoint 		 		
+ 		enable    master   show switch ${uut} interface ${intf1} counters 		
+ 		${rate}=    Get processed packetin rate     ${time}
+
+	log  L3 to CPU rate is ${rate}
+	Log To Console    L3 to CPU rate is: ${rate}   
+ 		
+		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Contain   ${queue}   MC_5	  
+ 		${status} =	Evaluate	${rate}<${limitrate}			
+ 	 	Should Be True   ${status}
+  
+	[Tags] 	full  feature    fabric_QOS    
+
+T13 Verify L3tocpu packet(intervns packet to unknown host) different addresses to port 0 queue 5
+	log   send traffic
+		${p_rate}= 	Set Variable    2000 
+ 		${f_cnt}=   expr  ${p_rate} * ${time} 
+
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
+ 	
+    	${L3_2}=  raw_stream_add  name=L3_2  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=128
+    	...		src_ip=100.0.0.2  src_mac=00:1b:1b:1b:00:01   
+    	...		dst_ip=100.1.0.3  dst_mac=${routermac}  dst_ip_cnt=${f_cnt}   dst_ip_step=0.0.0.1
+
+ 		Control Traffic test  ${L3_2}   ${time}	
+ 		enable    master   show endpoint		 		
+ 		enable    master   show switch ${uut} interface ${intf1} counters 		
+ 		${rate}=    Get processed packetin rate     ${time}
+	 
+	log   L3 to CPU rate is ${rate}
+	Log To Console    L3 to CPU rate is: ${rate}   
+		${queue}=  get_queue_with_traffic   ${sw}   0   800
+		Should Contain   ${queue}   MC_5	  
+ 		${status} =	Evaluate	${rate}>${cpurate} 				
+ 	 	Should Be True   ${status}
+ 		
+  	 
+	[Tags] 	full  feature    fabric_QOS       
+
+
+T14 Verify L3 miss packet to port 0 queue 6 (consumed by switch) 
+	log   send traffic
+		${p_rate}= 	Set Variable    2000 
+ 		${f_cnt}=   expr  ${p_rate} * ${time} 
+ 		
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
+ 					
+    	${L3_3}=  raw_stream_add  name=L3_3  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${p_rate}   frame_size=128
+    	...		src_ip=100.0.0.2  src_mac=00:1b:1b:1b:00:01    
+    	...		dst_ip=100.2.0.3  dst_mac=${routermac}   dst_ip_cnt=${f_cnt}   dst_ip_step=0.1.0.0
+
+ 		Control Traffic test  ${L3_3}   ${time}	
+ 		enable    master   show endpoint		 		
+ 		enable    master   show switch ${uut} interface ${intf1} counters 		
+		${rate}=   Get icmpa agent rate    ${sw}    ${time} 
+		 
+	log   L3 Miss rate is ${rate}
+	Log To Console    L3 Miss is: ${rate}   
+ 		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Contain   ${queue}   MC_6	  
+ 
+  
+	[Tags] 	full  feature   fabric_QOS  
+
+T15 Verify DHCP packet to port 0 queue 3 and get the rate
+	log  packet size 64, send 100s arp traffic with 1320pps, did not see drop
+	log   the rate is around 1100pps	
+	log   both ARP and IFP are hit
+	 
+	[Tags] 	full  feature   Manual   fabric_QOS    skipped
+
+ 
+T16 Verify qos weight for different queue and same port (same rate)
+	log   tested with arp and lacp
+		${f_cnt}=   expr   ${f_rate} * ${time} 
+  				
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
+	 		
+	log  LLDP stream with different src address
+ 	
+	 	${LLDP}=  raw stream add  name=LLDP  flow=f->leaf2b_int1  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
+	 	...    frame_cnt=${f_cnt}   src_mac_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01  src_mac=00:11:11:11:00:00	 
+ 
+	log  L3 to CPU traffic
+  				  	
+    	${L3_2}=  raw_stream_add  name=L3_2  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${f_rate}   frame_size=128
+    	...		src_ip=100.0.0.2  src_mac=00:1b:1b:1b:00:01   
+    	...		dst_ip=100.1.0.3  dst_mac=${routermac}  dst_ip_cnt=${f_cnt}   dst_ip_step=0.0.0.1
+
+ 		Control Traffic test all   ${time}	
+ 		enable    master   show endpoint		 		
+ 		enable    master   show switch ${uut} interface ${intf1} counters 		
+ 		${trate}=    Get processed packetin rate     ${time}
+ 		${rate2}=    Get lldp rate     ${time}
+ 		${rate1}=    expr	${trate}-${rate2}
+ 		
+	log   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2} 
+	Log To Console   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2}  
+ 		
+ 		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Contain   ${queue}   MC_5	  
+		Should Contain   ${queue}   MC_1
+		
+ 		
+ 		${a}=  Convert To Number    ${rate1}
+ 		${b}=  Convert To Number    ${rate2}
+ 		
+ 		${rate} =	expr	${b}/${a}
+ 		${status}=  Evaluate     ${rate}>=${ratio} 	
+ 	 	Should Be True   ${status}
+
+	 
+	[Tags] 	full  feature   fabric_QOS    
+
+
+T17 Verify qos weight for different queue and different port (same rate)
+	log   tested with l3 to cpu and lldp
+ 		${f_cnt}=   expr   ${f_rate} * ${time} 
+  				 				
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
+
+		
+	log  LLDP stream with different src address
+	 	${LLDP}=  raw stream add  name=LLDP  flow=leaf2b_int1->f  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
+	 	...    frame_cnt=${f_cnt}   src_mac_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01  src_mac=00:22:22:22:00:00	 
+ 
+	log  L3 to CPU traffic
+  				  	
+    	${L3_2}=  raw_stream_add  name=L3_2  flow=f->leaf2b_int1    frame_cnt=${f_cnt}    frame_rate=${f_rate}   frame_size=128
+    	...		src_ip=100.0.0.2  src_mac=00:00:12:12:12:01   
+    	...		dst_ip=100.1.0.3  dst_mac=${routermac}  dst_ip_cnt=${f_cnt}   dst_ip_step=0.0.0.1
+
+ 		Control Traffic test all   ${time}	
+ 		enable    master   show endpoint		 		
+ 		enable    master   show switch ${uut} interface ${intf1} counters 		
+ 		${trate}=    Get processed packetin rate     ${time}
+ 		${rate2}=    Get lldp rate     ${time}
+ 		${rate1}=    expr	${trate}-${rate2}
+ 		
+	log   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2} 
+	Log To Console   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2}  
+ 		
+ 		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Contain   ${queue}   MC_5	  
+		Should Contain   ${queue}   MC_1
+ 		
+ 		${a}=  Convert To Number    ${rate1}
+ 		${b}=  Convert To Number    ${rate2}
+ 		
+ 		${rate} =	expr	${b}/${a}
+ 		${status}=  Evaluate     ${rate}>=${ratio} 	
+ 	 	Should Be True   ${status}
+ 
+	 
+	[Tags] 	full  feature   fabric_QOS     
+
+T18 Verify qos weight for different queue (different rate)
+ 	log   tested with l3 to cpu and lldp
+ 
+ 		${f_cnt}=   expr   ${f_rate} * ${time} 
+  				
+		${HostA}=  L3 add host  src_ip=100.0.0.2  gw_ip=100.0.0.1  port_name=f
+		L3 start hosts  port_name=f
+		
+	log  LLDP stream with different src address
+	
+	 	${LLDP}=  raw stream add  name=LLDP  flow=f->leaf2b_int1  lldp=True  dst_mac=01:80:c2:00:00:0e  frame_rate=${f_rate}
+	 	...    frame_cnt=${f_cnt}   src_mac_cnt=${f_cnt}  src_mac_step=00:00:00:00:00:01  src_mac=00:11:11:11:00:00	 
+ 
+	log  L3 to CPU traffic
+		${p_rate}= 	Set Variable    2000 
+ 		${p_cnt}=   expr  ${p_rate} * ${time} 
+  				  	
+    	${L3_2}=  raw_stream_add  name=L3_2  flow=f->leaf2b_int1    frame_cnt=${p_cnt}    frame_rate=${p_rate}   frame_size=128
+    	...		src_ip=100.0.0.2  src_mac=00:00:12:12:12:01   
+    	...		dst_ip=100.1.0.3  dst_mac=${routermac}  dst_ip_cnt=${p_cnt}   dst_ip_step=0.0.0.1
+
+ 		Control Traffic test all   ${time}	
+ 		enable    master   show endpoint		 		
+ 		enable    master   show switch ${uut} interface ${intf1} counters 		
+ 		${trate}=    Get processed packetin rate     ${time}
+ 		${rate2}=    Get lldp rate     ${time}
+ 		${rate1}=    expr	${trate}-${rate2}
+ 		
+	log   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2} 
+	Log To Console   L3 to cpu rate is: ${rate1}; lldp rate is: ${rate2}  
+ 		
+ 		${queue}=  get_queue_with_traffic   ${sw}   0   1000
+		Should Contain   ${queue}   MC_5	  
+		Should Contain   ${queue}   MC_1
+ 		
+ 		${a}=  Convert To Number    ${rate1}
+ 		${b}=  Convert To Number    ${rate2}
+ 		
+ 		${rate} =	expr	${b}/${a}
+ 		${status}=  Evaluate     ${rate}>=${ratio} 				
+ 	 	Should Be True   ${status}
+ 	 
+	[Tags] 	full  feature   fabric_QOS    run
+
+
 
 * Keywords
 fabric infra suite setup
+	${intf1}=	get_switch_int_topo  s6  ixia1_int0
+	Set Suite Variable		${intf1}
+	${intf2}=	get_switch_int_topo  s6  ixia1_int1
+	Set Suite Variable		${intf2}
  	base suite setup 
-	set fabric switches 	
-	rest_delete_portgroup_all 
+# 	rest_delete_tenant_all
+	set fabric switches 
+	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
+	reconnect_switch_ips  
+	rest_delete_portgroup_all
 	rest_delete_tenant_all
-	sleep   ${long}	
-	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
+	
 	tenant setup   
- 	 
-  
+
+qos base suite teardown 
+#	base suite teardown	
+    sleep  1 
+fabric qos base test teardown
+	base test teardown
+	delete traffic
+	sleep  5
+	 
+	 
 set fabric switches  
  	${switches}=  get_all_switch_nodes  
 	log   switches are ${switches}
@@ -153,35 +500,109 @@ set fabric switches
     \   sleep    1 
     \   Run Keyword if   'leaf' in '${alias}' 	   rest_verify_fabric_switch_role    ${dpid}   leaf
 
-add fabric switch spine   [Arguments]   ${node}   ${dpid}  
-	rest add switch               ${node}
-	rest add dpid                 ${node}          ${dpid}  
-	rest add fabric role          ${node}          spine
-
-add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
-	rest add switch               ${node}
-	rest add dpid                 ${node}         ${dpid} 
-	rest add fabric role          ${node}         leaf
-	rest_add_leaf_group           ${node}         ${leafg} 
- 
-Verify all switches connected back
- 	${switches}=  rest_get_disconnect_switch
-	log   the disconnected switches are ${switches}  	
-	Should Be Empty   ${switches}	
-
 tenant setup   
 	rest_add_tenant  QOS
  	rest_add_vns     QOS    V10  
- 	rest_add_interface_to_vns     QOS     V10     ${sw}   ${intf}   10
-	sleep  ${short}
-	cli_show_running_tenant	   
- 	
+ 	${result}=  rest_add_interface_to_vns     QOS     V10     ${sw}   ${intf1}    10 		 
+	Should Be True   ${result}
+	${result}=  rest_add_interface_to_vns     QOS     V10     ${sw}   ${intf2}   10 		 
+	Should Be True   ${result}
+	rest_add_endpoint_scale     QOS  V10    00:00:11:11:11:00   AA   ${sw}   ${intf1}    10   5 
+	cli_config_tenant_vns_intf  B0   V1   100.0.0.1  16  ${sw}  ${intf1}  
+	cli_config_tenant_vns_intf  B0   V2   100.1.0.1  16  ${sw}  ${intf2}   
 
-Verify to cpu queue weight  [Arguments]   ${node}   ${expect} 
+	sleep  ${short} 	
+	cli_show_running_tenant	   
+ 	${routermac}=   rest_get_router_mac  ip=100.0.0.1
+ 	Set Suite Variable       ${routermac}
+ 	
+ 	
+add fabric switch spine   [Arguments]   ${node}   ${dpid}  
+  rest add switch               ${node}
+  rest add dpid                 ${node}          ${dpid}  
+  rest add fabric role          ${node}          spine
+
+add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
+  rest add switch               ${node}
+  rest add dpid                 ${node}         ${dpid} 
+  rest add fabric role          ${node}         leaf
+  rest_add_leaf_group           ${node}         ${leafg} 
+   
+
+Verify to cpu queue weight  [Arguments]   ${node}   ${export} 
   ${info}=  cli_get_qos_weight	  ${node}    0	
   log   qos weight is ${info}
-  log   expected qos weight is ${expect}
+  log   expected qos weight is ${export}
   : FOR    ${i}    IN RANGE    0    8
-	\   Should Be Equal As Integers    ${info[${i}]}  ${expect[${i}]}   	
+	\   Should Be Equal As Integers    ${info[${i}]}  ${export[${i}]}   	
 
+Get lldp rate   [Arguments]   ${time} 
+	${counter}=   cli_get_debug_counter      ctr-drops-invalid-lldp
+	${rate}=  expr   ${counter} / ${time}  
+	Return From Keyword    	${rate}
+
+
+Get processed packetin rate   [Arguments]   ${time} 
+	${counter}=   cli_get_debug_counter      num-events-processed/packetin
+	${rate}=  expr   ${counter} / ${time}  
+	Return From Keyword    	${rate}
+
+Get icmpa agent rate  [Arguments]  ${sw}    ${time} 
+	${counter}=  	cli_get_agent_counters	 	${sw}   icmp_total_in_packets 
+	${rate}=  expr   ${counter} / ${time}  
+	Return From Keyword    	${rate}
+
+Get lacpa agent rate  [Arguments]  ${sw}    ${time} 
+	${counter}=  	cli_get_agent_counters	 	${sw}   lacp_total_in_packets 
+	${rate}=  expr   ${counter} / ${time}  
+	Return From Keyword    	${rate}
+	
   
+Control Traffic test  [Arguments]  ${stream}   ${time} 
+		enable   master    clear debug counters 
+		enable   master    clear switch all interface all counters 
+		Switch debug ofad clear   ${uut}		
+ 		clear stats
+ 		log   starting traffi .....
+ 	    start traffic  ${stream} 
+	    sleep  ${time}
+	    sleep  5
+ 		log   stoping traffi .....	    
+	    stop traffic   ${stream} 
+		Switch show command    ${uut}
+
+
+Control Traffic test all  [Arguments]    ${time} 
+		enable   master    clear debug counters 
+		enable   master    clear switch all interface all counters 
+		Switch debug ofad clear   ${uut}		
+ 		clear stats
+ 		log   starting traffi .....
+ 	    start traffic   
+	    sleep  ${time}
+	    sleep  5
+ 		log   stoping traffi .....	    
+	    stop traffic  
+		Switch show command    ${uut}
+
+Switch show command     [Arguments]    ${switch} 
+ 		cli_get_qos_port_stat   ${switch}	
+ 		cli_get_pimu_stat       ${switch}
+ 		enable  master          show switch ${switch} agent-counters
+	    
+
+Switch debug ofad clear     [Arguments]    ${switch} 
+ 		cli_qos_clear_stat   ${switch}	
+ 		cli_clear_icmpa      ${switch}
+ 		cli_clear_pimu_stat  ${switch}
+	
+
+	    
+verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}	    
+	 

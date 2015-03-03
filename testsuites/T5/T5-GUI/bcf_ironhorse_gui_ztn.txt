@@ -1,0 +1,460 @@
+*** Settings ***
+Documentation   	Test suite with tests to check pages, hover over menu and check elements. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Suite Setup  		GUI ZTN Suite Setup
+Suite Teardown  	GUI ZTN Suite Teardown
+Test Setup			Test Setup
+Test Teardown		Test Teardown
+Force Tags              T5  GUI  BCF  Feature  IronHorse-Plus
+Library         	keywords/BsnCommon.py
+Library        		keywords/BsnSelenium.py
+Library         	keywords_dev/tomasz/BigTap.py
+Library         	keywords/AppController.py
+Library				keywords/T5Platform.py
+Library				keywords/T5Utilities.py
+Library				keywords/T5ZTN.py
+Library        		SeleniumLibrary
+Resource        	bcf_resource.txt
+Resource			../T5-Platform/t5_ztn_resource.txt
+Library       		String
+
+*** Variables ***
+
+*** Test Case ***
+T0.1 Basic Check
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
+	GUI Randomize ZTN Configuration
+	Sleep  60
+	Verify All Switches Connected
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
+
+T0.2 Failover Check
+	Failover From Fabric Page
+	Sleep  30
+	GUI Randomize ZTN Configuration
+	Sleep  60
+	Verify All Switches Connected
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
+	
+
+# Rebooting Switches
+T1.1 Reboot All Connected Switches From Fabric Page
+	Reboot All Connected Switches From Fabric Page
+	Verify All Switches Disconnected
+
+T1.2 Reboot Switch From Switches Page
+	Reboot Switch From Switches Page  ${s1_alias}
+	Sleep  30
+	Verify Switch Connection State  False  ${s1_alias}
+
+	Reboot Switch From Switches Page  ${s2_alias}
+	Sleep  30
+	Verify Switch Connection State  False  ${s2_alias}
+
+	Reboot Switch From Switches Page  ${s3_alias}
+	Sleep  30
+	Verify Switch Connection State  False  ${s3_alias}
+
+	Reboot Switch From Switches Page  ${s4_alias}
+	Sleep  30
+	Verify Switch Connection State  False  ${s4_alias}
+
+	Reboot Switch From Switches Page  ${s5_alias}
+	Sleep  30
+	Verify Switch Connection State  False  ${s5_alias}
+	
+T1.3 Reboot Switch From Fabric Page
+	Reboot Switch From Fabric Page  SpineSwitch_0
+	Sleep  30
+	Verify Switch Connection State  False  ${s1_alias}
+
+	Reboot Switch From Fabric Page  LeafSwitch_0
+	Sleep  30
+	Verify Switch Connection State  False  ${s2_alias}
+
+	Reboot Switch From Fabric Page  LeafSwitch_1
+	Sleep  30
+	Verify Switch Connection State  False  ${s3_alias}
+
+	Reboot Switch From Fabric Page  LeafSwitch_2
+	Sleep  30
+	Verify Switch Connection State  False  ${s4_alias}
+
+	Reboot Switch From Fabric Page  SpineSwitch_1
+	Sleep  30
+	Verify Switch Connection State  False  ${s5_alias}	
+
+
+T2.1 Deleting a switch
+	Clear Switch Config  ${s1_alias}
+	Sleep  30
+	Telnet Verify ZTN Discovery Failed  s1
+
+T2.2 Deleting a switch and adding it back as stand-by switch
+	Clear Switch Config  ${s2_alias}
+    Sleep  30
+    GUI Randomize ZTN Configuration
+    Provision Switch  ${s2_mac}  ${s2_alias}  None  ${EMPTY}
+    Wait Until Switch Connected  ${s2_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Connection State  True  ${s2_alias}
+	Verify Switch Fabric Connection State  suspended  ${s2_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
+
+T2.3 Shutting down a switch
+	Shutdown Switch From Switches Page  ${s3_alias}
+	GUI Randomize ZTN Configuration
+	Sleep  60
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Connection State  True  ${s3_alias}
+	Verify Switch Fabric Connection State  suspended  ${s3_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s3_alias}
+
+T3.1 Replacing Switch MAC Addresses
+	Clear Switch Config  ${s1_alias}
+	Clear Switch Config  ${s5_alias}
+	GUI Randomize ZTN Configuration
+    Provision Switch  ${s1_mac}  ${s5_alias}  Spine  ${EMPTY}
+    Provision Switch  ${s5_mac}  ${s1_alias}  Spine  ${EMPTY}
+    Wait Until Switch Connected  ${s1_alias}
+    Wait Until Switch Connected  ${s5_alias}
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s1_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Startup Config  ${s5_mac}  ${s1_alias}
+
+T3.2 Replacing Switch MAC Addresses when switches are down
+	Power Down Switch  s2
+	Sleep  5
+	Power Down Switch  s3
+	Clear Switch Config  ${s2_alias}
+	Clear Switch Config  ${s3_alias}
+	GUI Randomize ZTN Configuration
+    Provision Switch  ${s2_mac}  ${s3_alias}  Leaf  rack0
+    Provision Switch  ${s3_mac}  ${s2_alias}  Leaf  rack0
+    Power Up Switch  s2
+	Sleep  5
+	Power Up Switch  s3
+    Wait Until Switch Connected  ${s2_alias}
+    Wait Until Switch Connected  ${s3_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Startup Config  ${s3_mac}  ${s2_alias}
+
+T4.1 Changing switch mode to stand-by
+	Change Switch Config  ${s4_alias}  None  ${EMPTY}
+	GUI Randomize ZTN Configuration
+	Sleep  30
+	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
+	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
+	Verify Switch Fabric Connection State  suspended  ${s4_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s4_alias}
+
+T4.2 Changing switch mode to stand-by and reboot
+	Change Switch Config  ${s5_alias}  None  ${EMPTY}
+	Reboot Switch From Switches Page  ${s5_alias}
+	GUI Randomize ZTN Configuration
+	Sleep  30
+	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Fabric Connection State  suspended  ${s5_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s5_alias}
+
+T4.3 Changing switch mode to stand-by and failover and reboot
+	Change Switch Config  ${s5_alias}  None  ${EMPTY}
+	Failover From Fabric Page
+	Reboot Switch From Switches Page  ${s5_alias}
+	GUI Randomize ZTN Configuration
+	Sleep  30
+	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Running Config  ${s5_mac}  ${s5_alias}
+	Verify Switch Fabric Connection State  suspended  ${s5_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s5_alias}
+
+T5.1 Power down all switches, power up
+	Power Down All Switches
+	GUI Randomize ZTN Configuration
+	Power Up All Switches
+	Wait Until All Switches Connected
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
+
+T5.2 Power down all switches, failover, power up
+	Power Down All Switches
+	Failover From Fabric Page
+	GUI Randomize ZTN Configuration
+	Power Up All Switches
+	Wait Until All Switches Connected
+	Verify All Switches Startup Config
+	Verify All Switches Running Config
+
+T6.1 Reset switch connections from switches page
+	Reset Switch Connection From Switches Page  ${s1_alias}
+	Reset Switch Connection From Switches Page  ${s2_alias}
+	Reset Switch Connection From Switches Page  ${s3_alias}
+	Reset Switch Connection From Switches Page  ${s4_alias}
+	Reset Switch Connection From Switches Page  ${s5_alias}
+
+T6.2 Split from leaf group from switches page
+	Split From Leaf Group From Switches Page  ${s2_alias}
+	Sleep  10
+	Go To Controller Switches Page
+	Page Should Contain  ${s2_dpid}
+
+T6.3 Beacon switch from switches page
+	Beacon Switch From Switches Page  ${s1_alias}
+	Beacon Switch From Switches Page  ${s2_alias}
+	Beacon Switch From Switches Page  ${s3_alias}
+	Beacon Switch From Switches Page  ${s4_alias}
+	Beacon Switch From Switches Page  ${s5_alias}
+
+T6.4 Shutdown and Start switch from switches page
+	Shutdown Switch From Switches Page  ${s1_alias}
+	Shutdown Switch From Switches Page  ${s2_alias}
+	Shutdown Switch From Switches Page  ${s3_alias}
+	Shutdown Switch From Switches Page  ${s4_alias}
+	Shutdown Switch From Switches Page  ${s5_alias}
+	Sleep  30
+	Verify Switch Fabric Connection State  suspended  ${s1_alias}
+	Verify Switch Fabric Connection State  suspended  ${s2_alias}
+	Verify Switch Fabric Connection State  suspended  ${s3_alias}
+	Verify Switch Fabric Connection State  suspended  ${s4_alias}
+	Verify Switch Fabric Connection State  suspended  ${s5_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s1_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s2_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s3_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s4_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s5_alias}
+	Start Switch From Switches Page  ${s1_alias}
+	Start Switch From Switches Page  ${s2_alias}
+	Start Switch From Switches Page  ${s3_alias}
+	Start Switch From Switches Page  ${s4_alias}
+	Start Switch From Switches Page  ${s5_alias}
+	Sleep  30
+	Verify All Switches In Provisioned Mode
+
+T6.5 Clear switch configuration from switches page
+	Clear Switch Configuration From Switches Page  ${s1_alias}
+	Clear Switch Configuration From Switches Page  ${s2_alias}
+	Clear Switch Configuration From Switches Page  ${s3_alias}
+	Clear Switch Configuration From Switches Page  ${s4_alias}
+	Clear Switch Configuration From Switches Page  ${s5_alias}
+	#Wait Until All Switches Disconnected
+	# add better validation here
+
+T7.1 Reset switch connections from fabric page
+	Reset Switch Connection From Fabric Page  SpineSwitch_0
+	Reset Switch Connection From Fabric Page  LeafSwitch_0
+	Reset Switch Connection From Fabric Page  LeafSwitch_1
+	Reset Switch Connection From Fabric Page  LeafSwitch_2
+	Reset Switch Connection From Fabric Page  SpineSwitch_1
+	
+
+T7.2 Split from leaf group from fabric page
+	Split From Leaf Group From Fabric Page  LeafSwitch_1
+	Sleep  10
+	Page Should Contain  ${s3_dpid}
+
+T7.3 Beacon switch from fabric page
+	Beacon Switch From Fabric Page  SpineSwitch_0
+	Beacon Switch From Fabric Page  LeafSwitch_0
+	Beacon Switch From Fabric Page  LeafSwitch_1
+	Beacon Switch From Fabric Page  LeafSwitch_2
+	Beacon Switch From Fabric Page  SpineSwitch_1
+
+T7.4 Shutdown and Start switch from fabric page
+	Shutdown Switch From Fabric Page  SpineSwitch_0
+	Shutdown Switch From Fabric Page  LeafSwitch_0
+	Shutdown Switch From Fabric Page  LeafSwitch_1
+	Shutdown Switch From Fabric Page  LeafSwitch_2
+	Shutdown Switch From Fabric Page  SpineSwitch_1
+	Sleep  30
+	Verify Switch Fabric Connection State  suspended  ${s1_alias}
+	Verify Switch Fabric Connection State  suspended  ${s2_alias}
+	Verify Switch Fabric Connection State  suspended  ${s3_alias}
+	Verify Switch Fabric Connection State  suspended  ${s4_alias}
+	Verify Switch Fabric Connection State  suspended  ${s5_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s1_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s2_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s3_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s4_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s5_alias}
+	Start Switch From Fabric Page  SpineSwitch_0
+	Start Switch From Fabric Page  LeafSwitch_0
+	Start Switch From Fabric Page  LeafSwitch_1
+	Start Switch From Fabric Page  LeafSwitch_2
+	Start Switch From Fabric Page  SpineSwitch_1
+	Sleep  30
+	Verify All Switches In Provisioned Mode
+
+T7.5 Clear switch configuration from fabric page
+	Clear Switch Configuration From Fabric Page  SpineSwitch_1
+	Clear Switch Configuration From Fabric Page  SpineSwitch_0
+	Clear Switch Configuration From Fabric Page  LeafSwitch_2
+	Clear Switch Configuration From Fabric Page  LeafSwitch_1
+	Clear Switch Configuration From Fabric Page  LeafSwitch_0
+
+T8.1 Shutdown and Startup Switch Interface From Interfaces Page
+	${switch}  Set Variable  spine0
+	${interface}  Set Variable  ethernet6
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Shutdown
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Startup
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	...  flag=False
+
+T8.2 Shutdown and Startup Switch Interface From Switches Page
+	${switch}  Set Variable  spine0
+	${interface}  Set Variable  ethernet7
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Shutdown
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Startup
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  shutdown
+	...  flag=False
+
+T8.3 Set And Unset Breakout Interface From Interfaces Page
+	${switch}  Set Variable  spine0
+	${interface}  Set Variable  ethernet5
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Set Breakout Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Unset Breakout Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	...  flag=False
+
+T8.4 Set And Unset Breakout Interface From Switches Page
+	${switch}  Set Variable  spine1
+	${interface}  Set Variable  ethernet4
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Set Breakout Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Unset Breakout Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  breakout
+	...  flag=False
+
+T8.5 Set And Unset Autoneg Interface From Interfaces Page
+	${switch}  Set Variable  leaf1-a
+	${interface}  Set Variable  ethernet7
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Set Auto-Negotiation Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	Execute Interface Action From Interfaces Page  ${switch}  ${interface}  Unset Auto-Negotiation Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	...  flag=False
+
+T8.6 Set And Unset Autoneg Interface From Switches Page
+	${switch}  Set Variable  leaf1-a
+	${interface}  Set Variable  ethernet8
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Set Auto-Negotiation Property
+	Sleep  5
+	Config  master  enable
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	Execute Interface Action From Switches Page  ${switch}  ${interface}  Unset Auto-Negotiation Property
+	Sleep  5
+	Cli Run and Verify Output  master
+	...  show running-config switch ${switch} interface ${interface}
+	...  autoneg
+	...  flag=False
+
+T9.1 Controller Reload
+	${node}  Set Variable  slave
+	Reload Controller From Fabric Page  ${node}
+	Wait Until Keyword Succeeds  3 min  30 sec
+	...  Cli Run and Verify Output  master
+	...  show controller
+	...  redundant
+	Sleep  30
+
+T9.2 Controller Reload
+	${old_master_ip}  Set Variable  ${SERVER}
+	${node}  Set Variable  master
+	Reload Controller From Fabric Page  ${node}
+	Wait Until Keyword Succeeds  3 min  30 sec
+	...  Cli Run and Verify Output  master
+	...  show controller
+	...  redundant
+	${master_ip}=            get node ip   master
+	Should Not Be Equal As Strings  ${old_master_ip}  ${master_ip}
+    Set Suite Variable  ${SERVER}  ${master_ip}
+    Set URLs
+    Valid Login  admin  adminadmin
+
+*** Keyword ***
+GUI ZTN Suite Setup
+	Base Suite Setup
+	${master_ip}=            get node ip   master
+    Set Suite Variable  ${SERVER}  ${master_ip}
+    Set URLs
+    Start Selenium Server  -trustAllSSLCertificates
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+    
+    Cli Copy  snapshot://firstboot-config  running-config
+	Randomize ZTN Configuration
+	Physical GUI Suite Setup
+    
+    ${status}=  Wait Until All Switches Connected And Return Status
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches
+    ${status}=  Wait Until All Switches Connected And Return Status
+    Run Keyword If  '${status}'=='False'  Power Cycle Disconnected Switches and Reinstall Switchlight
+    
+	
+GUI ZTN Suite Teardown
+	Close Browser
+    Stop Selenium Server
+    Cli Copy  snapshot://firstboot-config  running-config
+	Base Suite Teardown
+
+GUI Randomize ZTN Configuration
+	${hostname_random}  Generate Random Name  hostname.tmk.  5
+	Configure Remote Server  ${hostname_random}.com  514
+	${host_random}  Generate Random IP
+	Configure NTP Server  ${host_random}
+	${contact_random}  Generate Random Name  contact  5
+	${location_random}  Generate Random Name  location  5
+	${community_random}  Generate Random Name  community  5
+	${host_random}  Generate Random IP
+	Configure SNMP			${contact_random}   ${location_random}  ${community_random}  Enabled	${host_random}  162
+	${thr1}  Generate Random Threshold
+	${thr2}  Generate Random Threshold
+	Configure SNMP Traps  1${thr1}  1${thr2}  1${thr1}  1${thr1}  1${thr2}  1${thr1}  ${thr2}

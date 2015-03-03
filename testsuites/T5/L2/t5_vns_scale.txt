@@ -25,18 +25,19 @@ ${mac1}		00:02:00:00:00:00
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  scaling  IronHorse  run
+   [Tags]  L2  scaling  IronHorse  daily-sanity
    base suite setup
-   add fabric switch
+   fabric infra suite setup
    Set swith int variables
    Set switch dpid variables
+   Set host int variables
    sleep  50
    rest verify fabric switch all
    rest verify fabric link
    reconnect switch ips
 
 create 100 vns and verify the table and forwarding
-	[Tags]  L2  scaling  IronHorse        
+	[Tags]  L2  scaling  IronHorse       daily-sanity 
 	rest add tenant  t1
 	rest add vns scale  t1  100
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
@@ -53,7 +54,7 @@ create 100 vns and verify the table and forwarding
 	rest delete tenant  t1
    
 create 1k vns and verify the table and forwarding
-	[Tags]  L2  scaling  IronHorse     
+	[Tags]  L2  scaling  IronHorse     daily-sanity
   	rest add tenant  t1
 	rest add vns scale  t1  1000
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
@@ -73,7 +74,7 @@ create 1k vns and verify the table and forwarding
     Should not be True  ${result}
     
 create 4000 vns and verify the table and forwarding
-	[Tags]  L2  scaling  IronHorse      
+	[Tags]  L2  scaling  IronHorse 
   	rest add tenant  t1
 	rest add vns scale  t1  3998
 	summary log  system create a 4k vns
@@ -221,6 +222,7 @@ verify traffic
     stop traffic  ${stream}
     
 T5 test teardown
+	base test teardown
 	delete traffic
 	rest delete tenant  t1
 	sleep  5

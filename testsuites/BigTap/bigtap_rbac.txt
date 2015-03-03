@@ -1,10 +1,10 @@
 *Settings
-Documentation           Release:Blackbird Goal:RBAC Test Suite 
+Documentation           Role based access control test suite 
 Suite Setup             rbac suite setup
 Suite Teardown          rbac suite teardown
 Test Setup              rbac test setup
 Test Teardown           rbac test teardown 
-Force Tags              bigtap  rbac  scale
+Force Tags              BigTap  blackbird-300  Quanta-LB9  Quanta-LY2  rbac
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -32,28 +32,28 @@ TC1: Verify user userOne and user userTwo can create and verify policies in thei
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=userTwo  password=bsnbsn
     Should be true  ${verify_policy2}
-    [Tags]  feature  verify 
+    [Tags]  sanity  feature
     
 TC2: Verify userOne cannot see userTwo's policy and vice-versa
     ${verify_policy1}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=userOne  password=bsnbsn
     Should not be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1  user=userTwo  password=bsnbsn
     Should not be true  ${verify_policy2}
-    [Tags]  feature  verify
+    [Tags]  sanity  feature
     
 TC3: Verify user admin can see both userOne's as well as userTwo's policies
     ${verify_policy1}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy2}    
-    [Tags]  feature  verify
+    [Tags]  sanity  feature
     
 TC4: Verify user userTwoGroup can see policies in both rbac views
     ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1  user=userTwoGroup  password=bsnbsn
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=userTwoGroup  password=bsnbsn
     Should be true  ${verify_policy2}
-    [Tags]  feature  verify
+    [Tags]  sanity  feature
     
 TC5: Verify user userTwoGroup can create a policies in both rbac views
     rest add policy  groupOne-view  P1-1  forward  user=userTwoGroup  password=bsnbsn
@@ -69,23 +69,23 @@ TC5: Verify user userTwoGroup can create a policies in both rbac views
     Should be true  ${verify_policy1} 
     ${verify_policy2}=  rest verify bigtap policy  P2-1  num_filter_intf=1  num_delivery_intf=1  user=userTwoGroup  password=bsnbsn
     Should be true  ${verify_policy2}
-    [Tags]  feature  userTwoGroup  
+    [Tags]  full  feature
 
 TC6: Verify userOne sees only interfaces assigned to him in running-config
     Verify running-config  userOne  bsnbsn  ${filter_1}  ${delivery_1}  ${filter_nick_1}  ${delivery_nick_1}                       
-    [Tags]  feature  config 
+    [Tags]  full  feature
 
 TC7: Verify TACACS based admin user 'tacacsadmin' can login and view policies across groups
     ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1  user=tacacsadmin  password=adminadmin
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=tacacsadmin  password=adminadmin
     Should be true  ${verify_policy2}    
-    [Tags]  feature  tacacs  
+    [Tags]  full  feature
 
 TC8: Verify TACACS based non-admin user 'tacacsalice' cannot view policies in group groupTwo    
     ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=tacacsalice  password=clientclient
     Should not be true  ${verify_policy2}    
-    [Tags]  feature  tacacs   
+    [Tags]  full  feature
 
 TC9: Verify TACACS based non-admin user 'tacacsalice' can configure policy in group web-admin
     rest add policy  web-admin-view  P1-TACACS  forward  user=tacacsalice  password=clientclient
@@ -94,7 +94,7 @@ TC9: Verify TACACS based non-admin user 'tacacsalice' can configure policy in gr
     rest add policy interface  web-admin-view  P1-TACACS  D2  delivery  user=tacacsalice  password=clientclient
     ${verify_policy1}=  rest verify bigtap policy  P1-TACACS  num_filter_intf=1  num_delivery_intf=1  user=tacacsalice  password=clientclient
     Should be true  ${verify_policy1}   
-    [Tags]  feature  tacacs     
+    [Tags]  full  feature 
 
 TC10: Tacacs (admin-user) based login and logout of controller 30 times
     rest set banner  RBAC TEST
@@ -102,7 +102,7 @@ TC10: Tacacs (admin-user) based login and logout of controller 30 times
     \    ${banner_status}=  cli verify banner  RBAC TEST  user=tacacsadmin  password=adminadmin  
     \    Should Be True  ${banner_status}
     \    Sleep  1   
-    [Tags]  feature  tacacslogin   
+    [Tags]  full  feature 
 
 TC11: Tacacs (nonadmin-user) based login and logout of controller 30 times
     rest set banner  RBAC TEST
@@ -110,7 +110,7 @@ TC11: Tacacs (nonadmin-user) based login and logout of controller 30 times
     \    ${banner_status}=  cli verify banner  RBAC TEST  user=tacacsalice  password=clientclient  
     \    Should Be True  ${banner_status}
     \    Sleep  1   
-    [Tags]  feature  tacacslogin   
+    [Tags]  ha  robustness  full
 
 TC12: Create 30 groups and assign one user to all 30 groups. Verify user can login
     rest add user  bigUser
@@ -133,7 +133,7 @@ TC12: Create 30 groups and assign one user to all 30 groups. Verify user can log
     \    rest delete rbac group   ${group_name}
     \    Sleep  1     
     rest delete user  bigUser     
-    [Tags]  scale 
+    [Tags]  scaling  full 
 
 TC13: Create 30 users and assign all user to one group. Verify user can login
     : FOR    ${INDEX}    IN RANGE    0    31
@@ -155,8 +155,7 @@ TC13: Create 30 users and assign all user to one group. Verify user can login
     \    ${username_name}=  Evaluate  str('bigUser') + str(${INDEX}) 
     \    rest delete user   ${username_name}
     \    Sleep  1  
-    [Tags]  scale
-
+    [Tags]  scaling  full
 
 TC14: Create 2000 users and assign each user to unique group. Verify user can login
     : FOR    ${INDEX}    IN RANGE    0    2000
@@ -183,8 +182,9 @@ TC14: Create 2000 users and assign each user to unique group. Verify user can lo
     \    rest delete rbac permission  ${group_view}
     \    rest delete user   ${username_name}            
     \    Sleep  1  
-    [Tags]  scale  skipped
-                
+    [Tags]  scaling  full  skipped
+    ##  The above testcase takes 3-4 hours
+
 * Keyword
 rbac suite setup
     base suite setup
@@ -248,6 +248,14 @@ rbac suite setup
     sleep  15
 
 rbac test setup
+    ${config1}=  cli enable interface  s1  ${filter_1}
+    Should be true  ${config1}
+    ${config2}=  cli enable interface  s1  ${delivery_1}
+    Should be true  ${config2}
+    ${config3}=  cli enable interface  s2  ${filter_2}
+    Should be true  ${config3}
+    ${config4}=  cli enable interface  s2  ${delivery_2}
+    Should be true  ${config4}
     ${result1}=  write version to file
     Should be true  ${result1}
     ${result}=  start syslog monitor

@@ -1,0 +1,85 @@
+*Settings
+Documentation               Switch Light SN Test Suite
+Suite Setup                 environment suite setup
+Suite Teardown              environment suite teardown
+Force Tags                  corsair-450 switch snmp 
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
+
+* Variable
+${read_only}                ro
+${read_write}               rw
+${snmp_community_1}         public
+${snmp_community_2}         bsn 
+${snmp_community_3}         private 
+${snmp_contact_1}           bigdog@bigswitch.com
+${snmp_location_1}          'Santa Clara'
+
+
+
+* Test Case
+TC1: Verify switch SN is reported correctly in SNMP Get Output read only community
+    ${switch_dict}=  cli show version  s1  
+    ${cli_value}=  Convert To String  ${switch_dict['SerialNumber']}
+    ${snmp_value}=  snmp cmd   s1   snmpget    ${snmp_community_1}   .1.3.6.1.4.1.37538.2.1000.1.1.3
+    Should Contain  ${snmp_value}  ${cli_value}
+    [Tags]            
+
+TC2: Verify switch SN is reported correctly in SNMP Walk Output read only community
+    ${switch_dict}=  cli show version  s1
+    ${cli_value}=  Convert To String  ${switch_dict['SerialNumber']}
+    ${snmp_value}=  snmp cmd   s1   snmpwalk   ${snmp_community_1}   .1.3.6.1.4.1.37538.2.1000.1.1.3
+    Should Contain  ${snmp_value}  ${cli_value}
+    [Tags]  
+
+TC3: Verify switch SN is reported correctly in SNMP Get Output read/write community
+    ${switch_dict}=  cli show version  s1
+    ${cli_value}=  Convert To String  ${switch_dict['SerialNumber']}
+    ${snmp_value}=  snmp cmd   s1   snmpget   ${snmp_community_3}   .1.3.6.1.4.1.37538.2.1000.1.1.3
+    Should Contain  ${snmp_value}  ${cli_value}
+    [Tags]
+
+TC4: Verify switch SN is reported correctly in SNMP Get Output read only community change
+    cli delete snmp keyword   s1   community   ${read_only} ${snmp_community_1}
+    cli add snmp keyword   s1   community   ${read_only} ${snmp_community_2}
+    ${switch_dict}=  cli show version  s1
+    ${cli_value}=  Convert To String  ${switch_dict['SerialNumber']}
+    ${snmp_value}=  snmp cmd   s1   snmpget   ${snmp_community_2}   .1.3.6.1.4.1.37538.2.1000.1.1.3
+    Should Contain  ${snmp_value}  ${cli_value}
+    [Tags]  
+
+TC5: Verify switch SN is reported correctly in SNMP Get Output read only community reboot
+    cli execute command  s1  copy running-config startup-config
+    cli restart switch  s1
+    Sleep   90
+    ${switch_dict}=  cli show version  s1
+    ${cli_value}=  Convert To String  ${switch_dict['SerialNumber']}
+    ${snmp_value}=  snmp cmd   s1   snmpget    ${snmp_community_2}   .1.3.6.1.4.1.37538.2.1000.1.1.3
+    Should Contain  ${snmp_value}  ${cli_value}
+    [Tags]  reboot  
+
+
+    
+                   
+*Keywords
+environment suite setup
+    base suite setup        
+    cli enable snmp   s1              
+    cli add snmp keyword   s1   community   ${read_only} ${snmp_community_1}       
+    cli add snmp keyword   s1   community   ${read_write} ${snmp_community_3}
+    cli add snmp keyword   s1   location    ${snmp_location_1}       
+    cli add snmp keyword   s1   contact     ${snmp_contact_1}       
+    Sleep   30
+    
+environment suite teardown
+    cli disable switch snmp   s1
+    cli delete snmp keyword   s1   community   ${read_only} ${snmp_community_2}  
+    cli delete snmp keyword   s1   community   ${read_write} ${snmp_community_3} 
+    cli delete snmp keyword   s1   location   ${snmp_location_1}
+    cli delete snmp keyword   s1   contact   ${snmp_contact_1}

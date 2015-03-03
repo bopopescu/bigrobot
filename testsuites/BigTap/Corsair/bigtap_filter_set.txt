@@ -137,7 +137,7 @@ Verify filter-set can be added to a bigtap policy
     Should be equal as integers   ${filterset_dictionary[0]['dst-tp-port']}  80 
     ${filterset_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name=${policy_name_1}]/rule
     Should be equal as integers   ${filterset_dictionary[0]['ip-proto']}  6
-    [Tags]  feature  run     
+    [Tags]  feature       
             
                                     
 * Keyword

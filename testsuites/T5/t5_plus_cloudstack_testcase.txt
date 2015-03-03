@@ -116,7 +116,7 @@ seperate storage VLAN workflow while deploying cloudstack
 	[Tags]  solution  cloudstack    manual	 
 	manual passed
 identify service insertion workflow for cloudstack
-	[Tags]  solution  cloudstack    manual-untested 
+	[Tags]  solution  cloudstack    manual-untested  skipped
 	manual untested 
 	
 verify fabric setting global mode
@@ -148,8 +148,8 @@ restart mysql database service
 	manual passed
 
 Upgrade cloudstack package without restarting mysql database
-	[Tags]  solution  cloudstack    manual-untested
-	manual untested 
+	[Tags]  solution  cloudstack    manual
+	manual passed 
 
 Replacing server workflow with same host name and IP
 	[Tags]  solution  cloudstack    manual
@@ -200,7 +200,7 @@ T2.7 Verify floating IP assignment to each VM
 	
 T2.8 migrate a VM to different host workflow
 	[Tags]  feature  cloudstack    manual  JIRA-BVS-2589  Xenserver
-	manual failed
+	manual passed
 	
 T2.9 delete a VM 
 	[Tags]  feature  cloudstack    manual  Xenserver
@@ -224,7 +224,7 @@ T2.13 check the VM connectivity within VPC
 	[Tags]  feature  cloudstack    manual  Xenserver
 	log  able to ping from router vm to other vms ip
 	log   unable to ping if vms are in different hosts
-	manual failed 
+	manual passed 
 	
 T2.14 adding a new pod workflow 
 	[Tags]  feature  cloudstack    manual  Xenserver

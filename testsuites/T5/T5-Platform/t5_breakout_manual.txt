@@ -119,7 +119,7 @@ TC11 Verify breakout cable detection show link on controller
 
 TC12 Verify interface shutdown for spine port 40G breakout cable sub interfaces one-by-one
     [Tags]  feature  T5
-    Log     Step 1 - verify 40G port port shutdown and bring up 
+    Log     Step 1 - verify 40G port port shutdown 
     Log     Step 2 - Verify interface state shows admin shutdown
     Manual Passed
 
@@ -156,14 +156,14 @@ TC17 Verify the 40G breakout cable breakout configured taken out and reinserted 
     [Tags]  manual 
     Log     Step 1 - Verify interface detection 
     Log     Step 2 - verify show interface status for leaf and spine 
-    Manual Failed 
+    Manual Passed
     
 TC18 Verify the 40G breakout cable sub-interface port taken out and reinserted back on leaf side
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Verify interface detection 
     Log     Step 2 - verify show interface status for leaf and spine 
-    Manual Failed
+    Manual Passed
 
 TC19 Verify the same segment member port breakout interface configuration 
     [Tags]  feature  T5
@@ -174,24 +174,24 @@ TC19 Verify the same segment member port breakout interface configuration
 
 TC20 Verify the different segment member port breakout interface configuration 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify interface configuration for the different segment interface using breakout cable  
     Log     Step 2 - verify show interface status for leaf and spine 
-    Manual untested
+    Manual Passed
 
 TC21 Verify the different segment member port with Vlan breakout interface configuration 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify interface configuration for the different segment interface with Vlan using breakout cable  
     Log     Step 2 - verify show interface status for leaf and spine 
-    Manual untested
+    Manual Passed
 
 TC22 Verify the different tenant segment member port breakout interface configuration 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify interface configuration for the different tenant interface with Vlan using breakout cable  
     Log     Step 2 - verify show interface status for leaf and spine 
-    Manual untested
+    Manual Passed
 
 TC23 Verify the port group configuration with all breakout interfaces 
     [Tags]  feature  T5
@@ -228,41 +228,42 @@ TC27 Verify the the breakout interfaces configuration delete in segment and and 
 
 TC28 Verify bpdu guard protection when breakout interface is connected with Arista switch 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual  
     Log     Step 1 - Verify when STP is enabled on thirdparty vendor 
     Log     Step 2 - Verify when bpdu comes to the breakout interface the interface is shutdown with bpdu error message  
-    Manual untested
+    Manual Passed
 
 ### Suppported HCL and Non supported HCL breakout cable 
 TC29 verify the supported HCL breakout cable interface and inventory auto-detection 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - verify the supported HCL breakout cable interface and inventory auto-detection
-    Manual Failed
+    Manual Passed
 
 TC30 verify the supported HCL breakout cable removed and inserted non-supported HCL cable 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - verify the supported HCL breakout cable removed and inserted non-supported HCL cable
-    Manual Failed
+    Manual Passed
 
 TC31 verify the non-supported HCL breakout cable inserted and not auto detected 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - verify the non-supported HCL breakout cable inserted and not auto detected
-    Manual Failed   
+    Log     Step 2 - Arista not in HCL list is being detected 
+    Manual Passed   
 
 TC32 verify the non-supported HCL breakout cable inserted and force CLI configuration 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - verify the non-supported HCL breakout cable inserted and force CLI configuration
-    Manual Failed 
+    Manual Passed
     
 TC33 verify the non-supported HCL breakout cable configuration, remove and put the regular DAC cable 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - verify the non-supported HCL breakout cable configuration, remove and put the regular DAC cable
-    Manual Failed
+    Manual Passed
 
    
 #### Traffic test : Topology - Leaf- spine-Leaf [ leaf 10G breakoutport- Spine 40G port ]
@@ -305,15 +306,15 @@ TC39 Verify jumbo frame same segment L2 traffic bidirectional
 
 TC40 Verify same segment L2 traffic with vlan bidirectional  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify bidirectional same segment L2 traffic        
-    Manual untested
+    Manual Passed
     
 TC41 Verify jumbo frame same segment L2 traffic with vlan bidirectional  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify jumbo frame unidirectional same segment L2 traffic with vlan         
-    Manual untested   
+    Manual Passed   
 
 TC42 Verify interface stats incoming same segment L2 traffic unidirectional  
     [Tags]  feature  T5
@@ -353,15 +354,15 @@ TC47 Verify interface stats outgoing jumbo frame same segment L2 traffic with vl
   
 TC48 Verify interface stats drops with traffic   
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify interface stats Verify interface stats drops with traffic          
-    Manual untested
+    Manual Passed
 
 TC49 Verify interface stats errors with traffic   
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify interface stats Verify interface stats errors with traffic          
-    Manual untested
+    Manual Passed
   
 ## Adding Deleting, Controller Failover, HA, Reboot, Failure, Upgrade test  
 TC50 Bring up the leaf switch with breakout cable 
@@ -374,176 +375,176 @@ TC51 Remove the breakout cable and plugged in back on the same interfaces
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Remove the breakout cable and plugged in back on the same interfaces         
-    Manual Failed   
+    Manual Passed  
  
 TC52 Remove the breakout cable and plugged in back on the different interfaces - continuous or non-continuos interfaces 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Remove the breakout cable and plugged in back on the different interfaces - continuous or non-continuos interfaces         
-    Manual Failed   
+    Manual Passed   
  
 TC53 Insert first Breakout cable -Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side         
-    Manual untested
+    Manual Passed
      
 TC54 Insert first 40G DAC cable -Remove the DAC cable and insert the breakout cable - same interface on spine side 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Remove the breakout cable and insert the regular 40G DAC cable - same interface on spine side         
-    Manual untested   
+    Manual Passed   
 
 TC55 Breakout cable plugged-in reboot the switch leaf/spine 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Breakout cable plugged-in reboot the switch leaf/spine         
-    Manual Failed
+    Manual Passed
 
 TC56 Breakout cable plugged-in reboot the switch and change the cable to regular DAC cable  
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Breakout cable plugged-in reboot the switch and change the cable to regular DAC cable         
-    Manual Failed  
+    Manual Passed  
 
 TC57 Breakout cable plugged-in failover the controller with traffic  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in failover the controller with traffic         
-    Manual untested
+    Manual Passed
  
 TC58 Controller Failover- Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in failover the controller         
-    Manual untested
+    Manual Passed
 
 TC59 Active Controller reboot- Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in reboot active controller         
-    Manual untested
+    Manual Passed
     
 TC60 Controller Failover- Breakout cable plugged-in taken out and later plugged in non-breakout cable 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in failover the controller   
     Log     Step 2 - while failover change to non breakout cable       
-    Manual untested
+    Manual Passed
 
 TC61 Controller Failover- Non-Breakout cable pluggedin taken out and plugged in breakout cable 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in failover the controller   
     Log     Step 2 - while failover change to non breakout cable       
-    Manual untested  
+    Manual Passed  
      
 TC62 Active Controller reboot- Non-Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Non-Breakout cable plugged-in reboot active controller 
     Log     Step 2 - while failover change to breakout cable             
-    Manual untested
+    Manual Passed
 
 TC63 Active Controller reboot- Breakout cable plugged-in 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in reboot active controller 
     Log     Step 2 - while failover change to non breakout cable             
-    Manual untested
+    Manual Passed
     
 TC64 Upgrade Controller Breakout cable auto detection case 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Upgrade Controller Breakout cable auto detection case 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Failed
+    Manual Passed
 
 TC65 Upgrade Controller Breakout cable forced configuration case 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Upgrade Controller Breakout cable forced configuration case 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Failed
+    Manual Passed
 
 TC66 Upgrade Controller Breakout cable plugged-in then while upgrade change to non-breakout cable
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Breakout cable plugged-in then while upgrade change to non-breakout cable 
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual Failed
+    Manual Passed
 
 TC67 Upgrade Controller while upgrade change from non-breakout cable to breakout cable 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - while upgrade change from non-breakout cable to breakout cable  
     Log     Step 2 - Verify configuration and traffic after upgrade             
-    Manual untested
+    Manual Failed
 
 TC68 Breakout cable plugged-in upgrade the controller - supported software package to another one 
     [Tags]  feature  T5
     [Tags]  manual  
     Log     Step 1 - Breakout cable plugged-in upgrade the controller         
-    Manual Failed
+    Manual Failed 
 
 TC69 Breakout cable plugged-in upgrade the controller - from not-supported software package to supported software package 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in upgrade the controller - From BCF 2.0.1 IronHorse to BCF 2.1.0 IronHorse Plus         
-    Manual untested 
+    Manual Passed
      
 #### Misconfiguration cable - two rack connections, loopback on leaf , Dell S6000 etc. 
 
 TC70 Breakout cable plugged-in between two racks 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in between two racks         
-    Manual untested 
+    Manual Passed 
 
 TC71 Breakout cable plugged-in loopback on leaf  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Breakout cable plugged-in loopback on leaf         
-    Manual untested 
+    Manual Passed 
 
       
 #### Extended Feature verification may be interface specific SPAN, ACL 
 
 TC72 Verify SPAN configuration for breakout cable - Ingress  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify SPAN configuration for breakout cable - Ingress         
-    Manual untested   
+    Manual Passed   
 
 TC73 Verify SPAN configuration for breakout cable - Egress  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify SPAN configuration for breakout cable - Egress         
-    Manual untested 
+    Manual Passed 
 
 TC74 Verify SPAN traffic statistics for breakout cable - Ingree, Egress  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify SPAN traffic statistics for breakout cable - Ingree, Egress         
-    Manual untested   
+    Manual Passed   
 
 TC75 Verify ACL configuration for breakout cable - Ingress  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify ACL configuration for breakout cable - Ingress permit deny          
-    Manual untested   
+    Manual Passed   
 
 TC76 Verify ACL configuration for breakout cable - Egress  
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - Verify ACL configuration for breakout cable Egress permit deny       
-    Manual untested 
+    Manual Passed 
  
 TC77 verify the server host side LACP 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - verify the server host side LACP     
-    Manual untested 
+    Manual Passed 
     
 TC78 verify the server host side static Lag
     [Tags]  feature  T5
@@ -552,19 +553,50 @@ TC78 verify the server host side static Lag
     Manual Passed 
  
 TC79 verify the server host side LLDP 
-    [Tags]  feature  T5
-    [Tags]  manual-untested
-    Log     Step 1 - verify the server host side LLDP     
+    [Tags]  feature  T5  skipped 
+    [Tags]  manual
+    Log     Step 1 - verify the server host side LLDP  , Only supported with Openstack     
     Manual untested
 
 TC80 verify the server host side STP 
     [Tags]  feature  T5
-    [Tags]  manual-untested
+    [Tags]  manual
     Log     Step 1 - verify the server host side STP     
-    Manual untested
+    Manual Passed
 
-  
-        
+### GUI Test Cases 
+TC81 GUI- verify the breakout interfaces status link down for all HCL supported cable  
+    [Tags]  feature  T5
+    [Tags]  manual
+    Log     Step 1 - GUI- verify the breakout interfaces status link down for all HCL supported cable     
+    Manual Passed
+
+TC82 GUI- verify the breakout interfaces status link up for all HCL supported cable  
+    [Tags]  feature  T5
+    [Tags]  manual
+    Log     Step 1 - GUI- verify the breakout interfaces status link up for all HCL supported cable     
+    Manual Passed        
+
+TC83 GUI- verify the breakout interfaces status admin shutdown link down for all HCL supported cable  
+    [Tags]  feature  T5
+    [Tags]  manual
+    Log     Step 1 - GUI- verify the breakout interfaces status admin shutdown link down for all HCL supported cable     
+    Manual Passed    
+    
+TC84 GUI- verify the breakout interfaces status after admin noshutdown link up for all HCL supported cable  
+    [Tags]  feature  T5
+    [Tags]  manual
+    Log     Step 1 - GUI- verify the breakout interfaces status after admin noshutdown link up for all HCL supported cable     
+    Manual Passed       
+
+TC85 GUI- verify the Fabric error and warnings for breakout interfaces   
+    [Tags]  feature  T5
+    [Tags]  manual
+    Log     Step 1 - GUI- verify the Fabric error and warnings for breakout interfaces 
+    Log     Step 2 - GUI- verify the Fabric error when not supported breakout inetrfaces are configured.    
+    Manual Passed         
+
+
 *Keywords 
 
 T5 traffic interface stats test setup

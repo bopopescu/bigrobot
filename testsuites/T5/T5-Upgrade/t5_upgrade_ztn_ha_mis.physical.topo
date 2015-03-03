@@ -1,0 +1,230 @@
+ # Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: 10.8.28.14 
+  monitor_reauth: false  # default=true, set to false to disable  
+  pdu:
+    ip: pdu-116-a.bigswitch.com
+    port: 4
+  
+c2:
+  ip: 10.8.28.15 
+  monitor_reauth: false  # default=true, set to false to disable  
+  pdu:
+    ip: pdu-116-a.bigswitch.com
+    port: 5
+
+s1:
+#  ip: 10.195.0.33
+  alias: leaf0-a
+  leaf-group: rack0
+  mac: 70:72:CF:B7:6E:84
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7001
+    protocol: telnet
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 15
+    user: apc
+    password: apc
+  interfaces:
+    spine0_int0: ethernet49
+    leaf0b_int0: ethernet39
+    ixia1_int0: ethernet24
+    spine1_int0: ethernet52
+  set_session_ssh: false
+  set_init_ping: false
+s2:
+#  ip: 10.195.0.34
+  alias: leaf0-b
+  leaf-group: rack0
+  mac: 70:72:CF:B5:EB:66
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7002
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 17
+    user: apc
+    password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet49
+    spine1_int0: ethernet52
+  set_session_ssh: false
+  set_init_ping: false
+s3:
+#  ip: 10.195.0.35
+  alias: leaf1-a
+  leaf-group: rack1
+  mac: 70:72:CF:B7:6C:C8
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7003
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 18
+    user: apc
+    password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    spine1_int0: ethernet52
+    leaf1b_int0: ethernet40
+    leaf1b_int1: ethernet39
+    spine0_int0: ethernet49
+  set_session_ssh: false
+  set_init_ping: false
+s4:
+#  ip: 10.195.0.36
+  alias: leaf1-b
+  leaf-group: rack1
+  mac: 70:72:CF:B6:00:36
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7004
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 19
+    user: apc
+    password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet49
+    spine1_int0: ethernet52
+  set_session_ssh: false
+  set_init_ping: false
+s5:
+#  ip: 10.195.0.31
+  alias: leaf2-a
+  leaf-group: rack2
+  mac: 70:72:CF:BD:DA:B6
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7005
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 20
+    user: apc
+    password: apc
+  interfaces:
+    leaf2b_int0: ethernet39
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet49
+    spine1_int0: ethernet52
+  set_session_ssh: false
+  set_init_ping: false
+s6:
+#  ip: 10.195.0.32
+  alias: leaf2-b
+  leaf-group: rack2
+  mac: 70:72:cf:b5:ef:bc
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7006
+  pdu:
+    ip: pdu-314-a.bigswitch.com
+    port: 21
+    user: apc
+    password: apc
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet49
+    spine1_int0: ethernet52
+  set_session_ssh: false
+  set_init_ping: false
+s7:
+#  ip: 10.195.0.21
+  alias: spine0
+  fabric-role: spine
+  mac: 70:72:cf:a3:c4:e0
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7007
+  pdu:
+    ip: pdu-314-b.bigswitch.com
+    port: 19
+  interfaces:
+    leaf0a_int0: ethernet1
+    leaf1a_int0: ethernet9
+    leaf0b_int0: ethernet22
+    leaf1b_int0: ethernet26
+    leaf2a_int0: ethernet31
+    leaf2b_int0: ethernet32
+  set_session_ssh: false
+  set_init_ping: false
+s8:
+#  ip: 10.195.0.22
+  alias: spine1
+  fabric-role: spine
+  mac: 70:72:cf:bd:45:6a
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.46
+    port: 7008
+  pdu:
+    ip: pdu-314-b.bigswitch.com
+    port: 20
+  interfaces:
+    leaf0a_int0: ethernet1
+    leaf0b_int0: ethernet2
+    leaf1a_int0: ethernet9
+    leaf1b_int0: ethernet10
+    leaf2a_int0: ethernet16
+    leaf2b_int0: ethernet15
+  set_session_ssh: false
+  set_init_ping: false
+  
+h1:
+   ip: 10.9.16.15
+   user: root
+   password: bsn
+      
+h2:
+  ip: 10.9.16.16
+  user: root
+  password: bsn
+
+h3:
+   ip: 10.9.16.15
+   user: root
+   password: bsn
+         
+h4:
+  ip: 10.9.16.16
+  user: root
+  password: bsn
+
+h5:
+#1G Hosts
+   ip: 10.9.16.15
+   user: root
+   password: bsn
+         
+h6:
+#1G Hosts
+  ip: 10.9.16.16
+  user: root
+  password: bsn
+  
+ 

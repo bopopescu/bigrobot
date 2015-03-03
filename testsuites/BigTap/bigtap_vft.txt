@@ -4,7 +4,7 @@ Suite Setup             bigtap suite setup
 Suite Teardown          bigtap suite teardown
 Test Setup              bigtap test setup
 Test Teardown           bigtap test teardown 
-Force Tags              platform  sanity  blackbird
+Force Tags              BigTap  blackbird-300  Quanta-LB9  VFT
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -40,7 +40,8 @@ TC1: Verify Basic Policy
     Should be true  ${verify_policy1}
     ${verify_policy2}=  rest verify bigtap policy  ${policy2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy2}    
-
+    [Tags]  sanity  feature
+    
 TC2 : Add a new match condition and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
@@ -53,7 +54,7 @@ TC2 : Add a new match condition and verify no traffic drop
     stop traffic  ${stream}
     Sleep  2
     verify results  a  transmitted_frames  b  received_valid_frames
-    [Tags]  traffic  TC1 
+    [Tags]  sanity  feature
 
 TC3 : Delete previously added match condition and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
@@ -66,7 +67,7 @@ TC3 : Delete previously added match condition and verify no traffic drop
     stop traffic  ${stream}
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
-    [Tags]  traffic  TC2
+    [Tags]  sanity  feature
 
 TC4 : Add a new filter interface to policy and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
@@ -80,7 +81,7 @@ TC4 : Add a new filter interface to policy and verify no traffic drop
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
     rest delete policy interface   admin-view  ${policy1}  ${fnick_vft}   filter
-    [Tags]  traffic  TC3 
+    [Tags]  sanity  feature
 
 TC5 : Add a new delivery interface to policy and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
@@ -93,7 +94,7 @@ TC5 : Add a new delivery interface to policy and verify no traffic drop
     stop traffic  ${stream}
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
-    [Tags]  traffic  TC4 
+    [Tags]  sanity  feature
 
 TC6 : Delete the delivery interface added in previous testcase and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
@@ -106,7 +107,7 @@ TC6 : Delete the delivery interface added in previous testcase and verify no tra
     stop traffic  ${stream}
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
-    [Tags]  traffic  TC5 
+    [Tags]  sanity  feature
 
 TC7 : Add a new service interface to policy and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
@@ -120,7 +121,7 @@ TC7 : Add a new service interface to policy and verify no traffic drop
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
     rest delete service from policy  admin-view  ${policy1}  S1
-    [Tags]  traffic  TC6
+    [Tags]  full  feature
     
 TC8 : Add a filter interface to unrelated policy and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
@@ -133,7 +134,7 @@ TC8 : Add a filter interface to unrelated policy and verify no traffic drop
     stop traffic  ${stream}
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
-    [Tags]  traffic  TC7
+    [Tags]  full  feature
 
 TC9 : Delete the previously added filter interface from the unrelated policy and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
@@ -146,7 +147,7 @@ TC9 : Delete the previously added filter interface from the unrelated policy and
     stop traffic  ${stream}
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
-    [Tags]  traffic  TC8
+    [Tags]  full  feature
 
     
 TC10 : Add a delivery interface to unrelated policy and verify no traffic drop
@@ -160,7 +161,7 @@ TC10 : Add a delivery interface to unrelated policy and verify no traffic drop
     stop traffic  ${stream}
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
-    [Tags]  traffic  TC9
+    [Tags]  full  feature
 
 TC11 : Delete the previously added delivery interface from the unrelated policy and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
@@ -173,7 +174,7 @@ TC11 : Delete the previously added delivery interface from the unrelated policy 
     stop traffic  ${stream}
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
-    [Tags]  traffic  TC10
+    [Tags]  full  feature
 
 TC12 : Add a service to unrelated policy and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
@@ -186,7 +187,7 @@ TC12 : Add a service to unrelated policy and verify no traffic drop
     stop traffic  ${stream}
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
-    [Tags]  traffic  TC11
+    [Tags]  full  feature
 
 TC13 : Delete the previously added service from the unrelated policy and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
@@ -199,7 +200,7 @@ TC13 : Delete the previously added service from the unrelated policy and verify 
     stop traffic  ${stream}
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
-    [Tags]  traffic  TC12
+    [Tags]  full  feature
 
 TC14 : Flap management interface on switch and verify no traffic drop
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
@@ -213,7 +214,7 @@ TC14 : Flap management interface on switch and verify no traffic drop
     stop traffic  ${stream}
     Sleep  2    
     verify results  a  transmitted_frames  b  received_valid_frames   
-    [Tags]  traffic  TC13  skipped
+    [Tags]  full  feature  skipped
 
 * Keywords
 bigtap suite setup

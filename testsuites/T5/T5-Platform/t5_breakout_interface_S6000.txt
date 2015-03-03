@@ -1,0 +1,152 @@
+* Settings
+Documentation      T5 Breakout Cable Interface Test suite- Iron Horse Plus 
+Suite Setup        T5 breakout cable test setup
+Suite Teardown     T5 breakout cable test teardown
+#Test Teardown     traffic teardown
+Force Tags         T5  IronHorse-plus  
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords/T5Switch.py
+Resource        testsuites/T5/T5-Platform/t5_breakout_interface_S6000_variables.txt
+#Library         keywords_dev/kranti/ironhorse/T5Switch.py
+#Resource        testsuites_dev/kranti/ironhorse/t5_breakout_interface_S6000_variables.txt
+
+
+### Link to the Functional spec wiki page
+### https://bigswitch.atlassian.net/wiki/display/BSC/Splitter-Breakout+cable+support+in+BCF+controller
+### DELL Switch S6000 ( 40G Breakout )  and AS5710 ( 4x 10G ports Peer link) 
+
+
+*Test Case 
+#### Topology 1 - DELL S6000 4x 10G - leaf 10G ports
+TC01 Verify breakout cable interface up on Dell S6000   
+    [Tags]  feature  T5  breakout  test1       
+    Log     Step 1 - verify 40G port breakout interface 
+    Log     Step 2 - verify 40G as 4x 10G interface port status
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf1}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf2}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf3}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf4}
+
+TC02 Verify breakout cable interface peer link up on leaf AS5710  
+    [Tags]  feature  T5  breakout        
+    Log     Step 1 - Verify peer link up on the leaf AS5710 
+    verify breakout interface status  ${switch3_name}  ${leaf1a_intf1}
+    verify breakout interface status  ${switch3_name}  ${leaf1a_intf2}
+    verify breakout interface status  ${switch3_name}  ${leaf1a_intf3}
+    verify breakout interface status  ${switch3_name}  ${leaf1a_intf4}
+
+TC03 Configure force breakout interface on Dell S6000 on the breakout port and breakout cable inserted
+    [Tags]  feature  T5  breakout    
+    Log     Step 1 - verify 40G as 4x 10G interface port status with force breakout
+    config breakout interface  ${switch4_name}  ${leaf1b_intf}    
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf1}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf2}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf3}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf4}
+
+TC04 Delete force breakout interface on Dell S6000 on the breakout port and breakout cable inserted
+    [Tags]  feature  T5  breakout    
+    Log     Step 1- verify 40G as 4x 10G interface port status with force breakout
+    delete breakout interface  ${switch4_name}  ${leaf1b_intf}    
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf1}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf2}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf3}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf4}
+
+TC05 Configure force breakout interface on Dell S6000 on the breakout port and breakout cable not inserted
+    [Tags]  feature  T5  breakout
+    Log     Step 1 - verify 40G as 4x 10G interface port status with force breakout
+    config breakout interface  ${switch4_name}  ${leaf1b_intf5}    
+    verify breakout interface state  ${switch4_name}  ${leaf1b_intf6}  down
+    verify breakout interface state  ${switch4_name}  ${leaf1b_intf7}  down
+    verify breakout interface state  ${switch4_name}  ${leaf1b_intf8}  down
+    verify breakout interface state  ${switch4_name}  ${leaf1b_intf9}  down
+    delete breakout interface  ${switch4_name}  ${leaf1b_intf5}
+
+TC06 Admin shutdown on one breakout port Dell S6000 and leaf AS5710
+    [Tags]  feature  T5  breakout 
+    Log     Step 1 - Admin shutdomw on onpe ort of breakout port
+    config breakout interface  ${switch4_name}  ${leaf1b_intf}     
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf1}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf2}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf3}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf4}
+    shutdown breakout interface  ${switch4_name}  ${leaf1b_intf1}
+    verify breakout interface state  ${switch4_name}  ${leaf1b_intf1}  down
+    delete shutdown breakout interface  ${switch4_name}  ${leaf1b_intf1}
+    verify breakout interface state  ${switch4_name}  ${leaf1b_intf1}  up 
+    
+TC07 Admin shutdown for two breakout ports Dell S6000 and leaf AS5710
+    [Tags]  feature  T5  breakout  
+    Log     Step 1 - Admin shutdomw on onpe ort of breakout port
+    config breakout interface  ${switch4_name}  ${leaf1b_intf}     
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf1}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf2}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf3}
+    verify breakout interface status  ${switch4_name}  ${leaf1b_intf4}
+    shutdown breakout interface  ${switch4_name}  ${leaf1b_intf1}
+    shutdown breakout interface  ${switch4_name}  ${leaf1b_intf2}
+    verify breakout interface state  ${switch4_name}  ${leaf1b_intf1}  down
+    verify breakout interface state  ${switch4_name}  ${leaf1b_intf2}  down    
+    delete shutdown breakout interface  ${switch4_name}  ${leaf1b_intf1}
+    delete shutdown breakout interface  ${switch4_name}  ${leaf1b_intf2}
+    verify breakout interface state  ${switch4_name}  ${leaf1b_intf1}  up
+    verify breakout interface state  ${switch4_name}  ${leaf1b_intf1}  up
+
+     
+*Keywords 
+
+T5 breakout cable test setup
+   base suite setup
+   sleep  5
+   
+T5 breakout cable test teardown  
+   base suite teardown
+   sleep  5   
+
+verify breakout interface status  [Arguments]  ${switch}  ${intf}
+   ${result1}=  rest verify fabric interface  ${switch}  ${intf} 
+   Should Be True  ${result1}    
+   
+config breakout interface  [Arguments]  ${switch}  ${intf}
+    ${result1}=  rest config breakout interface  ${switch}  ${intf}
+    Should Be True  ${result1}
+
+delete breakout interface  [Arguments]  ${switch}  ${intf}
+    ${result1}=  rest delete breakout interface  ${switch}  ${intf}
+    Should Be True  ${result1}    
+  
+
+get dictionary  [Arguments]  ${url}     
+   ${result1}=  rest return dictionary from get  ${url}
+   Log  ${result1}  
+   ${status1}=  Get From Dictionary  ${result1}  status
+   Log  ${status1}    
+   Should Contain  ${status1}  up 
+   
+get breakout interface state  [Arguments]  ${switch}  ${intf}   
+   ${output1}=  rest show fabric interface  ${switch}  ${intf}
+   Log  ${output1} 
+         
+verify breakout interface state  [Arguments]  ${switch}  ${intf}  ${expstate}
+   ${output1}=  rest compare interface state  ${switch}  ${intf}  ${expstate}
+   Should be True  ${output1}  
+   
+shutdown breakout interface  [Arguments]  ${switch}  ${intf}
+   ${result1}=  rest disable fabric interface  ${switch}  ${intf}
+   Should Be True  ${result1}
+   
+delete shutdown breakout interface  [Arguments]  ${switch}  ${intf}
+   ${result1}=  rest enable fabric interface  ${switch}  ${intf}
+   Should Be True  ${result1}
+   
+   
+

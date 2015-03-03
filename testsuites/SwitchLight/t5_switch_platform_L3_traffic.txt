@@ -15,6 +15,7 @@ Library         keywords/T5.py
 Library         keywords/T5L3.py     
 Library         String
 Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 ## Jumbo Frame traffic - 9220 in BigTap, 9216 in T5.
 
 *Variables
@@ -32,8 +33,7 @@ ${ip2}=            10.200.16.1
 ${mask1}=           24
 ${mask2}=           24
 ${vlan}=          -1
-${intf_1}=        ethernet24
-${intf_2}=        ethernet24
+
 ${src_mac}=       00:11:01:00:00:01
 ${dst_mac}=       00:12:01:00:00:02
 
@@ -76,7 +76,7 @@ Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 64
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}
         
-    [Tags]  switch-platform  L3  traffic  feature             
+    [Tags]  switch-platform  L3  traffic  feature    daily-sanity         
 
 Uni-Directional L3 Traffic flow=a->c traffic framerate 10000 pktsize 256 
     ${stream}=   L3 add  name=a_c_flow  flow=a->c  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -137,7 +137,7 @@ Bi-Directional L3 Traffic flow=a<->c traffic linerate 10% pktsize 64
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  switch-platform  L3  traffic  feature   
+    [Tags]  switch-platform  L3  traffic  feature   daily-sanity
 
 Bi-Directional L3 Traffic flow=a<->c traffic framerate 10000 pktsize 64 
     ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -186,7 +186,7 @@ Bi-Directional L3 Traffic flow=a<->c traffic linerate 25% pktsize 256
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  switch-platform  L3  traffic  feature
+    [Tags]  switch-platform  L3  traffic  feature  daily-sanity
 
 
 Bi-Directional L3 Traffic flow=a<->c traffic linerate 50% pktsize 512 
@@ -262,7 +262,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 25% pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  switch-platform  L3  traffic  feature  
+    [Tags]  switch-platform  L3  traffic  feature  daily-sanity
 
 Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 50% pktsize 9216 
     ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -286,7 +286,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 100% pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  switch-platform  L3  traffic  feature 
+    [Tags]  switch-platform  L3  traffic  feature  daily-sanity
 
 #Process restart L3 Traffic linerate 100% pktsize 1518
 #    ${stream}=   L3 add  name=a_c_flow  flow=a<->c  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -309,6 +309,8 @@ Bi-Directional L3 Traffic Jumbo flow=a<->c traffic linerate 100% pktsize 9216
       
 T5 switch platform test setup
    base suite setup
+   fabric infra suite setup
+   Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common  2
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
    #rest add dpid  ${switch1_name}   ${swDpid1}
@@ -324,6 +326,10 @@ T5 switch platform test setup
    #rest add dpid  ${switch7_name}   ${swDpid7}
    #rest add fabric role  ${switch7_name}  spine
    #sleep  2   
+   ${intf_1}=  get_switch_int_topo  s1  ixia1_int0
+   Set Suite Variable  ${intf_1}
+   ${intf_2}=  get_switch_int_topo  s3  ixia1_int0
+   Set Suite Variable  ${intf_1}
    rest add tenant  ${tenant}
    rest add vns  ${tenant}  ${vns1}
    rest add vns  ${tenant}  ${vns2}  
@@ -350,6 +356,7 @@ T5 switch platform test teardown
    sleep  5   
 
 traffic teardown
+    base test teardown
     delete traffic
 
 verify results traffic   [Arguments]  ${transmitted_frame_rate}  ${received_valid_frame_rate}  ${tolerance}

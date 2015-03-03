@@ -109,13 +109,11 @@ config suite setup
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
     Start Selenium Server  -trustAllSSLCertificates
-    #CLI Start Mininet Server  tree,3
-    #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin
     
 	
 config suite teardown
 	Close Browser
-    #Stop Selenium Server
+    Stop Selenium Server
     base suite teardown

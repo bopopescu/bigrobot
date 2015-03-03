@@ -4,7 +4,7 @@ Suite Setup         lag suite setup
 Suite Teardown      lag suite teardown 
 Test Setup          base test setup
 Test Teardown       base test teardown
-Force Tags          SwitchLight  bigtap 
+Force Tags          SwitchLight  bigtap  Dell-S4810  Accton-AS5610  Accton-AS6700  portchannel  switch-platform
 Library             keywords/BsnCommon.py
 Library             keywords/AppController.py
 Library             keywords/BigTap.py
@@ -56,15 +56,15 @@ ${s4810_10G40G_mismatch_pc_members}     ethernet29 ethernet49
 *Test Case
 TC1: Verify port-channel (hash-mode:L2) interface (1G links) is up on switch  
     verify portchannel interface is up  s1  ${s4810_arista_1G_pc_name}
-    [Tags]  portchannel  bigtap              
+    [Tags]  sanity  feature              
 
 TC2: Verify port-channel (hash-mode:L2) interface shows correct 1G member links on switch  
     verify portchannel correctly reports member name  s1  ${s4810_arista_1G_pc_number}  ${s4810_arista_1G_pc_members}
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
 TC3: Verify port-channel (hash-mode:L2) interface 1G member links are up on switch  
     verify portchannel correctly reports member interfaces  s1  ${s4810_arista_1G_pc_number}  ${s4810_arista_1G_pc_members}
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
 TC4: Verify port-channel (hash-mode:L3) interface (1G links) is up on switch  
     ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L3
@@ -74,7 +74,7 @@ TC4: Verify port-channel (hash-mode:L3) interface (1G links) is up on switch
     ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L2
     Should be true  ${s4810_lag_1G}
     sleep  2
-    [Tags]  portchannel  bigtap              
+    [Tags]  sanity  feature              
 
 TC5: Verify port-channel (hash-mode:L3) interface shows correct 1G member links on switch  
     ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L3
@@ -84,7 +84,7 @@ TC5: Verify port-channel (hash-mode:L3) interface shows correct 1G member links 
     ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L2
     Should be true  ${s4810_lag_1G}
     sleep  2
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
 TC6: Verify port-channel (hash-mode:L3) interface 1G member links are up on switch  
     ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L3
@@ -94,19 +94,19 @@ TC6: Verify port-channel (hash-mode:L3) interface 1G member links are up on swit
     ${s4810_lag_1G}=  cli add portchannel  s1  ${s4810_arista_1G_pc_number}   ${s4810_arista_1G_port_range}  L2
     Should be true  ${s4810_lag_1G}
     sleep  2
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
  
 TC7: Verify port-channel (hash-mode:L2) interface (10G links) is up on switch  
     verify portchannel interface is up  s1  ${s4810_arista_10G_pc_name}
-    [Tags]  portchannel  bigtap              
+    [Tags]  sanity  feature              
 
 TC8: Verify port-channel (hash-mode:L2) interface shows correct 10G member links on switch  
     verify portchannel correctly reports member name  s1  ${s4810_arista_10G_pc_number}  ${s4810_arista_10G_pc_members}
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
 TC9: Verify port-channel (hash-mode:L2) interface 10G member links are up on switch  
     verify portchannel correctly reports member interfaces  s1  ${s4810_arista_10G_pc_number}  ${s4810_arista_10G_pc_members}
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
 TC10: Verify port-channel (hash-mode:L3) interface (10G links) is up on switch  
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L3
@@ -116,7 +116,7 @@ TC10: Verify port-channel (hash-mode:L3) interface (10G links) is up on switch
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
     Should be true  ${s4810_lag_10G}
     sleep  2
-    [Tags]  portchannel  bigtap              
+    [Tags]  sanity  feature              
 
 TC11: Verify port-channel (hash-mode:L3) interface shows correct 10G member links on switch  
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L3
@@ -126,7 +126,7 @@ TC11: Verify port-channel (hash-mode:L3) interface shows correct 10G member link
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
     Should be true  ${s4810_lag_10G}
     sleep  2
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
 TC12: Verify port-channel (hash-mode:L3) interface 10G member links are up on switch  
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L3
@@ -136,20 +136,20 @@ TC12: Verify port-channel (hash-mode:L3) interface 10G member links are up on sw
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
     Should be true  ${s4810_lag_10G}
     sleep  2
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
  
 TC13: Verify port-channel (hash-mode:L2) interface (40G links) is up on switch  
     verify portchannel interface is up  s3  ${as6700_40G_pc_name}
-    [Tags]  portchannel  bigtap              
+    [Tags]  sanity  feature              
 
 TC14: Verify port-channel (hash-mode:L2) interface shows correct 40G member links on switch  
     verify portchannel correctly reports member name  s3  ${as6700_40G_pc_number}  ${as6700_40G_pc_members}
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
 TC15: Verify port-channel (hash-mode:L2) interface 40G member links are up on switch  
     verify portchannel correctly reports member interfaces  s3  ${as6700_40G_pc_number}  ${as6700_40G_pc_members}
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
 TC16: Verify port-channel (hash-mode:L3) interface (40G links) is up on switch  
     ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L3
@@ -159,7 +159,7 @@ TC16: Verify port-channel (hash-mode:L3) interface (40G links) is up on switch
     ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L2
     Should be true  ${as6700_lag_40G}
     sleep  2
-    [Tags]  portchannel  bigtap              
+    [Tags]  sanity  feature              
 
 TC17: Verify port-channel (hash-mode:L3) interface shows correct 40G member links on switch  
     ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L3
@@ -169,7 +169,7 @@ TC17: Verify port-channel (hash-mode:L3) interface shows correct 40G member link
     ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L2
     Should be true  ${as6700_lag_40G}
     sleep  2
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
 TC18: Verify port-channel (hash-mode:L3) interface 40G member links are up on switch  
     ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L3
@@ -179,7 +179,7 @@ TC18: Verify port-channel (hash-mode:L3) interface 40G member links are up on sw
     ${as6700_lag_40G}=  cli add portchannel  s3  ${as6700_40G_pc_number}   ${as6700_40G_port_range}  L2
     Should be true  ${as6700_lag_40G}
     sleep  2
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
 TC19: Verify that when portchannel (hash-mode:L2) interface cannot be formed if member links have mismatched speeds (1G and 10G)
     cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
@@ -193,7 +193,7 @@ TC19: Verify that when portchannel (hash-mode:L2) interface cannot be formed if 
     sleep  1
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
     Should be true  ${s4810_lag_10G}
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  negative
 
 TC20: Verify that when portchannel (hash-mode:L3) interface cannot be formed if member links have mismatched speeds (1G and 10G)
     cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
@@ -207,7 +207,7 @@ TC20: Verify that when portchannel (hash-mode:L3) interface cannot be formed if 
     sleep  1
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
     Should be true  ${s4810_lag_10G}
-    [Tags]  portchannel  bigtap     
+    [Tags]  sanity  negative
 
 TC21: Verify that when portchannel (hash-mode:L2) interface cannot be formed if member links have mismatched speeds (10G and 40G)
     cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
@@ -221,7 +221,7 @@ TC21: Verify that when portchannel (hash-mode:L2) interface cannot be formed if 
     sleep  1
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
     Should be true  ${s4810_lag_10G}
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  negative
 
 TC22: Verify that when portchannel (hash-mode:L3) interface cannot be formed if member links have mismatched speeds (10G and 40G)
     cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
@@ -235,7 +235,7 @@ TC22: Verify that when portchannel (hash-mode:L3) interface cannot be formed if 
     sleep  1
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
     Should be true  ${s4810_lag_10G}
-    [Tags]  portchannel  bigtap         
+    [Tags]  sanity  feature         
 
 TC23: Disable all member links. Verify that lag interface shows as "down" on both switch and controller
     cli delete portchannel  s2  ${as5610_arista_10G_pc_number}
@@ -256,7 +256,7 @@ TC23: Disable all member links. Verify that lag interface shows as "down" on bot
     Should be true  ${as5610_lag_10G}
     sleep  1
     verify portchannel interface is up  s2  ${as5610_arista_10G_pc_name}
-    [Tags]  portchannel  bigtap           
+    [Tags]  sanity  feature           
 
 TC24: Verify log messages are generated for link up/link down events for LAG interfaces
     clear log message  s1
@@ -267,7 +267,7 @@ TC24: Verify log messages are generated for link up/link down events for LAG int
     enable portchannel interface  s1  ${s4810_arista_10G_pc_name}  
     sleep  3
     verify log message  s1  'Enabling port port-channel1 (61)'
-    [Tags]  portchannel   bigtap      
+    [Tags]  sanity  feature      
 
 TC25: Verify switch CLI does not allow member interfaces to be outside the range (1-54)
     cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
@@ -280,7 +280,7 @@ TC25: Verify switch CLI does not allow member interfaces to be outside the range
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
     Should be true  ${s4810_lag_10G}
     sleep  1
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
 
 TC26: Verify LAG interface can be formed with odd number of member links
     cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
@@ -293,7 +293,7 @@ TC26: Verify LAG interface can be formed with odd number of member links
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
     Should be true  ${s4810_lag_10G}
     sleep  1
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
     
 TC27: Verify LAG interface can be formed with even number of member links
     cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
@@ -306,7 +306,7 @@ TC27: Verify LAG interface can be formed with even number of member links
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
     Should be true  ${s4810_lag_10G}
     sleep  1
-    [Tags]  portchannel  bigtap
+    [Tags]  sanity  feature
     
 TC28: Verify LAG interface can be formed with one member link
     cli delete portchannel  s1  ${s4810_arista_10G_pc_number}
@@ -319,11 +319,11 @@ TC28: Verify LAG interface can be formed with one member link
     ${s4810_lag_10G}=  cli add portchannel  s1  ${s4810_arista_10G_pc_number}   ${s4810_arista_10G_port_range}  L2
     Should be true  ${s4810_lag_10G}
     sleep  1
-    [Tags]  portchannel  bigtap 
+    [Tags]  sanity  feature 
     
 TC29: Verify LAG interface can be formed with maximum number of links
     verify portchannel interface is up  s2  ${as5610_arista_10G_pc_name}
-    [Tags]  portchannel  bigtap 
+    [Tags]  sanity  feature 
 
 TC30: Restart process OFAD and verify LAG interface shows up correctly
     verify portchannel interface is up  s1  ${s4810_arista_10G_pc_name}
@@ -332,7 +332,7 @@ TC30: Restart process OFAD and verify LAG interface shows up correctly
     Sleep  45
     verify portchannel interface is up  s1  ${s4810_arista_10G_pc_name}
     verify portchannel interface is up  s1  ${s4810_arista_1G_pc_name}
-    [Tags]  portchannel  bigtap   
+    [Tags]  sanity  feature   
        
 
 TC31: Save running-config to startup-config. Reboot switch and verify that LAG interface comes up correctly.
@@ -345,7 +345,7 @@ TC31: Save running-config to startup-config. Reboot switch and verify that LAG i
     cli restart switch  s2
     Sleep  90
     verify portchannel interface is up  s2  ${as5610_arista_10G_pc_name}
-    [Tags]  portchannel  bigtap  run 
+    [Tags]  sanity  feature 
 
                                                
 * Keywords  

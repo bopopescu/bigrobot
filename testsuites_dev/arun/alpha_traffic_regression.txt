@@ -1,0 +1,157 @@
+* Settings
+Documentation    T5 Test Suite
+Suite Setup      base suite setup
+Suite Teardown   T5 longevity suite teardown
+Test Setup       base test setup 
+Test Teardown    base test teardown 
+Force Tags       IronHorse   T5   longevity
+Library		keywords/BsnCommon.py
+Library		keywords/Controller.py
+Library		keywords/Mininet.py
+Library		keywords/Host.py
+Library		keywords/Ixia.py
+Library		keywords/T5.py
+Library		keywords/T5L3.py
+Library		keywords/T5Platform.py
+Library		keywords/Controller.py
+Library		keywords/SwitchLight.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library        OperatingSystem
+ 
+* Variable
+${short}  1
+${medium}  3
+${long}   30
+${verylong}      120 
+${linkflap}   120
+${inevent}       300
+${betweenevent}  600
+ 
+${last}     1200
+${count}    4000
+${rate}     10000
+${sw1}      leaf1-b
+${int1}     ethernet24
+${sw2}      leaf2-b
+${int2}     ethernet24
+  
+* Test Case
+#####  testbed and traffic setup   
+
+
+	
+T2 setup traffic make sure all traffic can be forwarded without loss after learning
+     #### d to f  L3 traffic 
+     Log To Console   \n******* Adding ixia traffic *******   
+     ${L3_1}=    L3 add  name=L3_1   flow=f<->d   frame_size=128    frame_rate=${rate}   
+    ...    src_mac=00:10:10:10:00:00  src_mac_step=00:00:00:00:00:01 
+    ...    dst_mac=00:44:44:44:00:00  dst_mac_step=00:00:00:00:00:01  
+    ...    src_ip=10.201.16.2   src_ip_step=0.0.0.1  src_gw_prefix=20  src_cnt=${count}   src_gw=10.201.16.1  src_gw_step=0.0.0.0
+    ...    dst_ip=10.201.0.2    dst_ip_step=0.0.0.1  dst_gw_prefix=20  dst_cnt=${count}   dst_gw=10.201.0.1  dst_gw_step=0.0.0.0
+    
+	Log To Console   \n******* finish add ixia traffic *******  
+	log  finishing creating the traffic
+ 		traffic endpoint learning	      60
+ 		
+	Log To Console   \n******* verify all end point learned *******  
+ 	log  verify forwarding table
+		verify endpoint in group  	  44:44:44		  ${count}
+		verify endpoint in group  	  10:10:10		  ${count}	
+
+
+	Log To Console   \n******* start traffic *******  
+		
+ 		start traffic 
+ 		sleep  300
+ 		 : FOR    ${index}   IN RANGE    1   ${last}   
+ 		\   Log To Console   \n******* traffic verification : ${index} out of ${last}*******    
+#		\   #verify ixia stream rate       ${L3_1}   L3_1  
+		\   Get ixia stream rate   ${L3_1}   L3_1
+		\   ${result}=  rest_get_fabric_interface_stats            ${sw1}   ${int1}
+		\ 	Log to file     log_interface_counter    switch:${sw1} interface: ${int1} stats    ${result} 
+		\   ${result}=  rest_get_fabric_interface_rate            ${sw1}   ${int1}
+		\ 	Log to file     log_interface_counter    switch:${sw1} interface: ${int1} rate    ${result} 
+		\   ${result}=  rest_get_fabric_interface_stats            ${sw2}   ${int2}
+		\ 	Log to file     log_interface_counter    switch:${sw2} interface: ${int2} stats    ${result} 		
+		\   ${result}=  rest_get_fabric_interface_rate            ${sw2}   ${int2} 
+		\   Log to file     log_interface_counter    switch:${sw2} interface: ${int2} rate   ${result} 
+		\   sleep  60
+		
+	[Tags]      full   setup     traffic
+ 	
+ 
+ 
+* Keywords
+###### setup the system
+
+Get ixia stream rate   [Arguments]   ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  received_frame_rate
+    Log To Console   \n*******stream:${stream_name} - tx: ${tx_value} rx: ${rx_value}******* 
+	Log to file     log_interface_counter   ixia TX and Rx rate    stream:${stream_name} - tx: ${tx_value} rx: ${rx_value}
+ 
+verify ixia packet   [Arguments]    ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}     100
+    Should be true  ${in_range}
+
+verify ixia stream rate    [Arguments]   ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  received_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}     100
+    Should be true  ${in_range}
+
+verify ixia port rate   [Arguments]  ${port_1}   ${port_2}  
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frame_rate
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}     100
+    Should be true  ${in_range} 
+ 
+ 
+ 
+test ixia traffic   [Arguments]   ${stream}   ${stream_name}   ${during} 
+    start traffic   
+    sleep            ${during}     
+    stop traffic    
+    sleep           3
+    verify ixia packet    ${stream}  ${stream_name}
+
+verify ixia traffic rate  [Arguments]   ${port_1}   ${port_2}        
+    verify results rate    ${port_1}   ${port_2} 
+           
+  		
+verify endpoint in group  	 [Arguments]   ${pattern}   ${num}
+  	${macs}=  cli_show_endpoint_pattern    ${pattern}	 
+     Should Be Equal As Integers   ${macs}   ${num}
+ 
+
+Log to file    [Arguments]    ${File}     ${title}    ${content}
+	Append To File    ${File}    ******************* START **************************\n
+    ${time}=	Get Time    
+    Append To File    ${File}     ${time}\n	
+	Append To File    ${File}     ${title}\n  
+	Append To File    ${File}	  ${content} \n
+ 	Append To File    ${File}    ******************** END *****************************\n	
+		
+traffic endpoint learning   [Arguments]    ${during}   
+  	start traffic   
+    sleep          ${during} 
+    stop traffic    
+    sleep         3
+ 	
+T5 longevity suite teardown
+#   base suite teardown
+	stop traffic
+	delete traffic
+	sleep  1
+   

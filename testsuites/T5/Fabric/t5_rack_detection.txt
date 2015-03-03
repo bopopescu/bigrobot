@@ -22,45 +22,46 @@ ${rack2_name}  rack2
 
 *Test Case
 add Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature  IronHorse              
+	[Tags]  Fabric  feature  IronHorse    daily-sanity          
 	base suite setup  
-    add fabric switch
+    fabric infra suite setup
     Set swith int variables
     Set switch dpid variables
+    Set host int variables
     sleep  15
     rest verify fabric switch all
-    rest verify fabric link common
+    Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
    
 Verify rack1 connectivity from rack0 
-	[Tags]	 Fabric  feature  IronHorse      
+	[Tags]	 Fabric  feature  IronHorse      daily-sanity
 	rest verify forwarding rack lag  leaf0-a  ${rack1_name}  ${leaf0a_spine0_intf0}  
 	rest verify forwarding rack lag  leaf0-a  ${rack1_name}  ${leaf0a_spine1_intf0}  
 	rest verify forwarding rack lag  leaf0-b  ${rack1_name}  ${leaf0b_spine0_intf0}  
 	rest verify forwarding rack lag  leaf0-b  ${rack1_name}  ${leaf0b_spine1_intf0}  
 	
 verify rack2 connectivity from rack0
-	[Tags]	 Fabric  feature  IronHorse    
+	[Tags]	 Fabric  feature  IronHorse    daily-sanity
     rest verify forwarding rack lag  leaf0-a  ${rack2_name}  ${leaf0a_spine0_intf0}  
 	rest verify forwarding rack lag  leaf0-a  ${rack2_name}  ${leaf0a_spine1_intf0}  
 	rest verify forwarding rack lag  leaf0-b  ${rack2_name}  ${leaf0b_spine0_intf0}  
 	rest verify forwarding rack lag  leaf0-b  ${rack2_name}  ${leaf0b_spine1_intf0}  
 	
 Verify rack1 connectivity from rack2 
-	[Tags]	 Fabric  feature  IronHorse    
+	[Tags]	 Fabric  feature  IronHorse    daily-sanity
 	rest verify forwarding rack lag  leaf2-a  ${rack1_name}  ${leaf2a_spine0_intf0}  
 	rest verify forwarding rack lag  leaf2-a  ${rack1_name}  ${leaf2a_spine1_intf0}  
 	rest verify forwarding rack lag  leaf2-b  ${rack1_name}  ${leaf2b_spine0_intf0}  
 	rest verify forwarding rack lag  leaf2-b  ${rack1_name}  ${leaf2b_spine1_intf0}  
 	
 verify rack0 connectivity from rack2
-	[Tags]	 Fabric  feature  IronHorse    
+	[Tags]	 Fabric  feature  IronHorse    daily-sanity
     rest verify forwarding rack lag  leaf2-a  ${rack0_name}  ${leaf2a_spine0_intf0}  
 	rest verify forwarding rack lag  leaf2-a  ${rack0_name}  ${leaf2a_spine1_intf0}  
 	rest verify forwarding rack lag  leaf2-b  ${rack0_name}  ${leaf2b_spine0_intf0}  
 	rest verify forwarding rack lag  leaf2-b  ${rack0_name}  ${leaf2b_spine1_intf0}
 
 Verify rack0 connectivity from rack1 
-	[Tags]	 Fabric  feature  IronHorse    
+	[Tags]	 Fabric  feature  IronHorse    daily-sanity
 	rest verify forwarding rack lag  leaf1-a  ${rack0_name}  ${leaf1a_spine0_intf0}  
 	rest verify forwarding rack lag  leaf1-a  ${rack0_name}  ${leaf1a_spine1_intf0}  
 	rest verify forwarding rack lag  leaf1-b  ${rack0_name}  ${leaf1b_spine0_intf0}  

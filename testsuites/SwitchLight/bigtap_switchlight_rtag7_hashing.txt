@@ -1,0 +1,1316 @@
+*Settings
+Documentation                           Port Channel RTAG7 Hashing Test Suite
+Suite Setup                             lag suite setup
+Suite Teardown                          lag suite teardown
+Test Setup                              lag test setup
+Test Teardown                           lag test teardown
+Force Tags                              SwitchLight  corsair-450  accton-AS5710  portchannel  hashing  rtag7  bigtap
+Library                                 keywords/AppController.py
+Library                                 keywords/BsnCommon.py
+Library                                 keywords/BigTap.py
+Library                                 keywords/SwitchLight.py
+Library                                 keywords/Ixia.py
+
+* Variable
+${switch1_alias}                        app-ras5710-1
+${switch2_alias}                        app-ras4600-1
+
+${s2s1_10g_name}                        port-channel1  
+${s2s1_10g_port_range}                  49-52
+${s2s1_10g_port_range_small1}           49-50
+${s2s1_10g_port_range_small2}           51-52
+${s2s1_10g_number}                      1
+${s2_lag_mem_1}                         50          #Broadcom portmapping is off by 1. This could change in future leading to script failures
+${s2_lag_mem_2}                         51          #Broadcom portmapping is off by 1. This could change in future leading to script failures   
+${s2_lag_mem_3}                         52          #Broadcom portmapping is off by 1. This could change in future leading to script failures
+${s2_lag_mem_4}                         53          #Broadcom portmapping is off by 1. This could change in future leading to script failures
+${s2s1_3}                               ethernet51
+${s2s1_4}                               ethernet52
+${s2_dummy_filter}                      ethernet13
+${s2_dummy_fnick}                       F1
+${s2_dummy_delivery}                    ethernet14
+${s2_dummy_dnick}                       D1
+
+${s1s2_10g_name}                        port-channel1
+${s1s2_10g_port_range}                  45-48
+${s1s2_10g_number}                      1
+
+${s1s2_10g_name_2}                      port-channel2
+${s1s2_10g_port_range_2}                13,15,17,21
+${s1s2_10g_number_2}                    2
+${s1s2_10g_name_3}                      port-channel3
+${s1s2_10g_port_range_3}                14,16,18,22
+${s1s2_10g_number_3}                    3
+${s1_service_intf_alias_1}              PCSERV1
+${s1_service_intf_alias_2}              PCSERV2
+${s1_service_name_1}                    S1
+${s1_service_name_2}                    S2
+
+
+${filter_1}                             ethernet12
+${filter_nick_1}                        ixia-3-2
+${filter_2}                             ethernet2
+${filter_nick_2}                        ixia-1-6
+${filter_3}                             ethernet24
+${filter_nick_3}                        dummy-F1
+${delivery_1}                           ethernet1
+${delivery_nick_1}                      ixia-2-1
+${delivery_2}                           ethernet2
+${delivery_nick_2}                      ixia-2-2
+${delivery_3}                           ethernet1
+${delivery_nick_3}                      ixia-1-5
+${delivery_4}                           ethernet23
+${delivery_nick_4}                      dummy-D1
+
+
+${src_mac}                              00:11:01:01:01:01  
+${src_mac_step}                         00:00:00:00:01:00
+${src_cnt}                              28
+${dst_mac}                              00:12:01:01:01:01
+${dst_cnt}                              28
+${dst_mac_step}                         00:00:00:00:01:00
+${frame_rate}                           1000
+${frame_cnt}                            10000
+${frame_size}                           64
+${src_port}                             8101
+${dst_port}                             8201
+${range}                                16
+
+
+${hash_seed_1}                          1234  
+${hash_seed_2}                          8848
+${hash_seed_3}                          1942
+${hash_seed_4}                          1980
+
+* Test Case
+TC001: Verify Source MAC address hashing for L2 packets
+    ${stream}=  L2 add  name=atoc  flow=a->c  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}  
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  
+    send and verify traffic  True  True  True  True  
+    [Tags]  full  feature
+
+TC002: Verify Destination MAC address hashing for L2 packets
+    ${stream}=  L2 add  name=atoc  flow=a->c  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  
+    send and verify traffic  True  True  True  True  
+    [Tags]  full  feature
+
+TC003: Verify Ethertype hashing for L2 packets
+    ${stream}=  L2 add  name=atoc  flow=a->c  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic  True  True  True  True  
+    [Tags]  full  feature
+    
+TC004: Verify VLAN Id hashing for L2 packets
+    ${stream}=  L2 add  name=atoc  flow=a->c  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  vlan_id=2  vlan_step=20  vlan_cnt=${src_cnt}
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic  True  True  True  True  
+    [Tags]  full  feature  
+
+TC005: Verify source IPv4 address hashing
+    ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=atoc
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.1.0  src_cnt=28  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    send and verify traffic  True  True  True  True  
+    [Tags]  full  feature
+
+TC006: Verify destination IPv4 address hashing
+    ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=atoc
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=100.2.1.1  dst_ip_step=0.0.1.0  dst_cnt=28  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    send and verify traffic  True  True  True  True
+    [Tags]  full  feature
+
+TC007: Verify TCP source port hashing
+    :FOR    ${port}  IN RANGE  1001  33001  2000
+    \   ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True
+    \   ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    \   ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    \   ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    \   ...     protocol=TCP  src_port=${port}  dst_port=8080  name=atoc
+    cli execute command  s1  clear interface statistics
+    cli execute command  s2  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    ${member1_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet45  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${member2_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet46  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${member3_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet47  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    ${member4_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet48  tx
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    ${member1_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet49  rx
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    ${member2_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet50  rx
+    Should Not Be Equal As Integers  ${member2_s2}  0
+    ${member3_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet51  rx
+    Should Not Be Equal As Integers  ${member3_s2}  0
+    ${member4_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet52  rx
+    Should Not Be Equal As Integers  ${member4_s2}  0
+    ${range_1}=   Evaluate  ${member1_s1} - ${member1_s2}
+    ${range_2}=   Evaluate  ${member2_s1} - ${member2_s2}
+    ${range_3}=   Evaluate  ${member3_s1} - ${member3_s2}
+    ${range_4}=   Evaluate  ${member4_s1} - ${member4_s2}
+    ${result1}=  verify value is in range  ${range_1}  -10  10
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${range_2}  -10  10
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${range_3}  -10  10
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${range_4}  -10  10
+    Should be true  ${result4}
+    ${mem1s1}=  Convert to Integer  ${member1_s1}
+    ${mem2s1}=  Convert to Integer  ${member2_s1}
+    ${mem3s1}=  Convert to Integer  ${member3_s1}
+    ${mem4s1}=  Convert to Integer  ${member4_s1}
+    ${percent_1}=   Evaluate  100*(operator.truediv(int(${mem1s1}),160000))  operator
+    ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),160000))  operator
+    ${percent_3}=   Evaluate  100*(operator.truediv(int(${mem3s1}),160000))  operator
+    ${percent_4}=   Evaluate  100*(operator.truediv(int(${mem4s1}),160000))  operator
+    ${result1}=  verify value is in range  ${percent_1}  15  32
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${percent_2}  15  32
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${percent_3}  15  32
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${percent_4}  15  32
+    Should be true  ${result4}
+    [Tags]  full  feature  
+
+TC008: Verify TCP destination port hashing
+    :FOR    ${port}  IN RANGE  1001  33001  2000
+    \   ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True
+    \   ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    \   ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    \   ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    \   ...     protocol=TCP  src_port=8080  dst_port=${port}  name=atoc
+    cli execute command  s1  clear interface statistics
+    cli execute command  s2  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    ${member1_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet45  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${member2_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet46  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${member3_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet47  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    ${member4_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet48  tx
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    ${member1_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet49  rx
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    ${member2_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet50  rx
+    Should Not Be Equal As Integers  ${member2_s2}  0
+    ${member3_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet51  rx
+    Should Not Be Equal As Integers  ${member3_s2}  0
+    ${member4_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet52  rx
+    Should Not Be Equal As Integers  ${member4_s2}  0
+    ${range_1}=   Evaluate  ${member1_s1} - ${member1_s2}
+    ${range_2}=   Evaluate  ${member2_s1} - ${member2_s2}
+    ${range_3}=   Evaluate  ${member3_s1} - ${member3_s2}
+    ${range_4}=   Evaluate  ${member4_s1} - ${member4_s2}
+    ${result1}=  verify value is in range  ${range_1}  -10  10
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${range_2}  -10  10
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${range_3}  -10  10
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${range_4}  -10  10
+    Should be true  ${result4}
+    ${mem1s1}=  Convert to Integer  ${member1_s1}
+    ${mem2s1}=  Convert to Integer  ${member2_s1}
+    ${mem3s1}=  Convert to Integer  ${member3_s1}
+    ${mem4s1}=  Convert to Integer  ${member4_s1}
+    ${percent_1}=   Evaluate  100*(operator.truediv(int(${mem1s1}),160000))  operator
+    ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),160000))  operator
+    ${percent_3}=   Evaluate  100*(operator.truediv(int(${mem3s1}),160000))  operator
+    ${percent_4}=   Evaluate  100*(operator.truediv(int(${mem4s1}),160000))  operator
+    ${result1}=  verify value is in range  ${percent_1}  15  32
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${percent_2}  15  32
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${percent_3}  15  32
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${percent_4}  15  32
+    Should be true  ${result4}
+    [Tags]  full  feature  
+
+TC009: Verify UDP source port hashing
+    :FOR    ${port}  IN RANGE  1001  33001  2000
+    \   ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True
+    \   ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    \   ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    \   ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    \   ...     protocol=UDP  src_port=${port}  dst_port=8080  name=atoc
+    cli execute command  s1  clear interface statistics
+    cli execute command  s2  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    ${member1_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet45  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${member2_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet46  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${member3_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet47  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    ${member4_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet48  tx
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    ${member1_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet49  rx
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    ${member2_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet50  rx
+    Should Not Be Equal As Integers  ${member2_s2}  0
+    ${member3_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet51  rx
+    Should Not Be Equal As Integers  ${member3_s2}  0
+    ${member4_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet52  rx
+    Should Not Be Equal As Integers  ${member4_s2}  0
+    ${range_1}=   Evaluate  ${member1_s1} - ${member1_s2}
+    ${range_2}=   Evaluate  ${member2_s1} - ${member2_s2}
+    ${range_3}=   Evaluate  ${member3_s1} - ${member3_s2}
+    ${range_4}=   Evaluate  ${member4_s1} - ${member4_s2}
+    ${result1}=  verify value is in range  ${range_1}  -10  10
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${range_2}  -10  10
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${range_3}  -10  10
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${range_4}  -10  10
+    Should be true  ${result4}
+    ${mem1s1}=  Convert to Integer  ${member1_s1}
+    ${mem2s1}=  Convert to Integer  ${member2_s1}
+    ${mem3s1}=  Convert to Integer  ${member3_s1}
+    ${mem4s1}=  Convert to Integer  ${member4_s1}
+    ${percent_1}=   Evaluate  100*(operator.truediv(int(${mem1s1}),160000))  operator
+    ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),160000))  operator
+    ${percent_3}=   Evaluate  100*(operator.truediv(int(${mem3s1}),160000))  operator
+    ${percent_4}=   Evaluate  100*(operator.truediv(int(${mem4s1}),160000))  operator
+    ${result1}=  verify value is in range  ${percent_1}  15  32
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${percent_2}  15  32
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${percent_3}  15  32
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${percent_4}  15  32
+    Should be true  ${result4}
+    [Tags]  full  feature  
+
+TC010: Verify UDP destination port hashing
+    :FOR    ${port}  IN RANGE  1001  33001  2000
+    \   ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True
+    \   ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    \   ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    \   ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    \   ...     protocol=UDP  src_port=8080  dst_port=${port}  name=atoc
+    cli execute command  s1  clear interface statistics
+    cli execute command  s2  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    ${member1_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet45  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${member2_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet46  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${member3_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet47  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    ${member4_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet48  tx
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    ${member1_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet49  rx
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    ${member2_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet50  rx
+    Should Not Be Equal As Integers  ${member2_s2}  0
+    ${member3_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet51  rx
+    Should Not Be Equal As Integers  ${member3_s2}  0
+    ${member4_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet52  rx
+    Should Not Be Equal As Integers  ${member4_s2}  0
+    ${range_1}=   Evaluate  ${member1_s1} - ${member1_s2}
+    ${range_2}=   Evaluate  ${member2_s1} - ${member2_s2}
+    ${range_3}=   Evaluate  ${member3_s1} - ${member3_s2}
+    ${range_4}=   Evaluate  ${member4_s1} - ${member4_s2}
+    ${result1}=  verify value is in range  ${range_1}  -10  10
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${range_2}  -10  10
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${range_3}  -10  10
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${range_4}  -10  10
+    Should be true  ${result4}
+    ${mem1s1}=  Convert to Integer  ${member1_s1}
+    ${mem2s1}=  Convert to Integer  ${member2_s1}
+    ${mem3s1}=  Convert to Integer  ${member3_s1}
+    ${mem4s1}=  Convert to Integer  ${member4_s1}
+    ${percent_1}=   Evaluate  100*(operator.truediv(int(${mem1s1}),160000))  operator
+    ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),160000))  operator
+    ${percent_3}=   Evaluate  100*(operator.truediv(int(${mem3s1}),160000))  operator
+    ${percent_4}=   Evaluate  100*(operator.truediv(int(${mem4s1}),160000))  operator
+    ${result1}=  verify value is in range  ${percent_1}  15  32
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${percent_2}  15  32
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${percent_3}  15  32
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${percent_4}  15  32
+    Should be true  ${result4}
+    [Tags]  full  feature
+
+TC011: Verify source IPv6 address hashing
+    ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=atoc
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00  ethertype=86dd
+    ...     src_ip=2001:2001:0:0:0:0:0:1  src_ip_step=0:0:0:0:0:0:0:1  src_cnt=28  src_gw_prefix=128  src_gw=2002:2002:0:0:0:0:0:1  src_gw_step=0:0:0:0:0:0:0:0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=2002:2002:0:0:0:0:0:1  dst_ip_step=0:0:0:0:0:0:0:0  dst_cnt=1  dst_gw_prefix=128  dst_gw=2001:2001:0:0:0:0:0:1  dst_gw_step=0:0:0:0:0:0:0:1
+    send and verify traffic  True  True  True  True  
+    [Tags]  full  feature
+
+TC012: Verify destination IPv6 address hashing
+    ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=atoc
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00  ethertype=86dd
+    ...     src_ip=2001:2001:0:0:0:0:0:1  src_ip_step=0:0:0:0:0:0:0:0  src_cnt=1  src_gw_prefix=128  src_gw=2002:2002:0:0:0:0:0:1  src_gw_step=0:0:0:0:0:0:0:1
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=2002:2002:0:0:0:0:0:1  dst_ip_step=0:0:0:0:0:0:0:1  dst_cnt=28  dst_gw_prefix=128  dst_gw=2001:2001:0:0:0:0:0:1  dst_gw_step=0:0:0:0:0:0:0:0
+    send and verify traffic  True  True  True  True
+    [Tags]  full  feature 
+
+TC013: Verify TCP source port hashing
+    :FOR    ${port}  IN RANGE  1001  33001  2000
+    \   ${ntype}=  Convert to String  ${port}
+    \   ${sname}=  Catenate  atoc  ${ntype}
+    \   ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=${sname}
+    \   ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00  ethertype=86dd
+    \   ...     src_ip=2001:2001:0:0:0:0:0:1  src_ip_step=0:0:0:0:0:0:0:0  src_cnt=1  src_gw_prefix=128  src_gw=2002:2002:0:0:0:0:0:1  src_gw_step=0:0:0:0:0:0:0:0
+    \   ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    \   ...     dst_ip=2002:2002:0:0:0:0:0:1  dst_ip_step=0:0:0:0:0:0:0:0  dst_cnt=1  dst_gw_prefix=128  dst_gw=2001:2001:0:0:0:0:0:1  dst_gw_step=0:0:0:0:0:0:0:0
+    \   ...     protocol=TCP  src_port=${port}  dst_port=8080
+    cli execute command  s1  clear interface statistics
+    cli execute command  s2  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    ${member1_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet45  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${member2_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet46  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${member3_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet47  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    ${member4_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet48  tx
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    ${member1_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet49  rx
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    ${member2_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet50  rx
+    Should Not Be Equal As Integers  ${member2_s2}  0
+    ${member3_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet51  rx
+    Should Not Be Equal As Integers  ${member3_s2}  0
+    ${member4_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet52  rx
+    Should Not Be Equal As Integers  ${member4_s2}  0
+    ${range_1}=   Evaluate  ${member1_s1} - ${member1_s2}
+    ${range_2}=   Evaluate  ${member2_s1} - ${member2_s2}
+    ${range_3}=   Evaluate  ${member3_s1} - ${member3_s2}
+    ${range_4}=   Evaluate  ${member4_s1} - ${member4_s2}
+    ${result1}=  verify value is in range  ${range_1}  -10  10
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${range_2}  -10  10
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${range_3}  -10  10
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${range_4}  -10  10
+    Should be true  ${result4}
+    ${mem1s1}=  Convert to Integer  ${member1_s1}
+    ${mem2s1}=  Convert to Integer  ${member2_s1}
+    ${mem3s1}=  Convert to Integer  ${member3_s1}
+    ${mem4s1}=  Convert to Integer  ${member4_s1}
+    ${percent_1}=   Evaluate  100*(operator.truediv(int(${mem1s1}),160000))  operator
+    ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),160000))  operator
+    ${percent_3}=   Evaluate  100*(operator.truediv(int(${mem3s1}),160000))  operator
+    ${percent_4}=   Evaluate  100*(operator.truediv(int(${mem4s1}),160000))  operator
+    ${result1}=  verify value is in range  ${percent_1}  15  32
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${percent_2}  15  32
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${percent_3}  15  32
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${percent_4}  15  32
+    Should be true  ${result4}
+    [Tags]  full  feature  
+
+TC014: Verify TCP destination port hashing
+    :FOR    ${port}  IN RANGE  1001  33001  2000
+    \   ${ntype}=  Convert to String  ${port}
+    \   ${sname}=  Catenate  atoc  ${ntype}
+    \   ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=${sname}
+    \   ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00  ethertype=86dd
+    \   ...     src_ip=2001:2001:0:0:0:0:0:1  src_ip_step=0:0:0:0:0:0:0:0  src_cnt=1  src_gw_prefix=128  src_gw=2002:2002:0:0:0:0:0:1  src_gw_step=0:0:0:0:0:0:0:0
+    \   ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    \   ...     dst_ip=2002:2002:0:0:0:0:0:1  dst_ip_step=0:0:0:0:0:0:0:0  dst_cnt=1  dst_gw_prefix=128  dst_gw=2001:2001:0:0:0:0:0:1  dst_gw_step=0:0:0:0:0:0:0:0
+    \   ...     protocol=TCP  src_port=8080  dst_port=${port}
+    cli execute command  s1  clear interface statistics
+    cli execute command  s2  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    ${member1_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet45  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${member2_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet46  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${member3_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet47  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    ${member4_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet48  tx
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    ${member1_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet49  rx
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    ${member2_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet50  rx
+    Should Not Be Equal As Integers  ${member2_s2}  0
+    ${member3_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet51  rx
+    Should Not Be Equal As Integers  ${member3_s2}  0
+    ${member4_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet52  rx
+    Should Not Be Equal As Integers  ${member4_s2}  0
+    ${range_1}=   Evaluate  ${member1_s1} - ${member1_s2}
+    ${range_2}=   Evaluate  ${member2_s1} - ${member2_s2}
+    ${range_3}=   Evaluate  ${member3_s1} - ${member3_s2}
+    ${range_4}=   Evaluate  ${member4_s1} - ${member4_s2}
+    ${result1}=  verify value is in range  ${range_1}  -10  10
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${range_2}  -10  10
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${range_3}  -10  10
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${range_4}  -10  10
+    Should be true  ${result4}
+    ${mem1s1}=  Convert to Integer  ${member1_s1}
+    ${mem2s1}=  Convert to Integer  ${member2_s1}
+    ${mem3s1}=  Convert to Integer  ${member3_s1}
+    ${mem4s1}=  Convert to Integer  ${member4_s1}
+    ${percent_1}=   Evaluate  100*(operator.truediv(int(${mem1s1}),160000))  operator
+    ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),160000))  operator
+    ${percent_3}=   Evaluate  100*(operator.truediv(int(${mem3s1}),160000))  operator
+    ${percent_4}=   Evaluate  100*(operator.truediv(int(${mem4s1}),160000))  operator
+    ${result1}=  verify value is in range  ${percent_1}  15  32
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${percent_2}  15  32
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${percent_3}  15  32
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${percent_4}  15  32
+    Should be true  ${result4}
+    [Tags]  full  feature  
+
+TC015: Verify UDP source port hashing
+    :FOR    ${port}  IN RANGE  1001  33001  2000
+    \   ${ntype}=  Convert to String  ${port}
+    \   ${sname}=  Catenate  atoc  ${ntype}
+    \   ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=${sname}
+    \   ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00  ethertype=86dd
+    \   ...     src_ip=2001:2001:0:0:0:0:0:1  src_ip_step=0:0:0:0:0:0:0:0  src_cnt=1  src_gw_prefix=128  src_gw=2002:2002:0:0:0:0:0:1  src_gw_step=0:0:0:0:0:0:0:0
+    \   ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    \   ...     dst_ip=2002:2002:0:0:0:0:0:1  dst_ip_step=0:0:0:0:0:0:0:0  dst_cnt=1  dst_gw_prefix=128  dst_gw=2001:2001:0:0:0:0:0:1  dst_gw_step=0:0:0:0:0:0:0:0
+    \   ...     protocol=UDP  src_port=${port}  dst_port=8080
+    cli execute command  s1  clear interface statistics
+    cli execute command  s2  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    ${member1_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet45  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${member2_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet46  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${member3_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet47  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    ${member4_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet48  tx
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    ${member1_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet49  rx
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    ${member2_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet50  rx
+    Should Not Be Equal As Integers  ${member2_s2}  0
+    ${member3_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet51  rx
+    Should Not Be Equal As Integers  ${member3_s2}  0
+    ${member4_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet52  rx
+    Should Not Be Equal As Integers  ${member4_s2}  0
+    ${range_1}=   Evaluate  ${member1_s1} - ${member1_s2}
+    ${range_2}=   Evaluate  ${member2_s1} - ${member2_s2}
+    ${range_3}=   Evaluate  ${member3_s1} - ${member3_s2}
+    ${range_4}=   Evaluate  ${member4_s1} - ${member4_s2}
+    ${result1}=  verify value is in range  ${range_1}  -10  10
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${range_2}  -10  10
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${range_3}  -10  10
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${range_4}  -10  10
+    Should be true  ${result4}
+    ${mem1s1}=  Convert to Integer  ${member1_s1}
+    ${mem2s1}=  Convert to Integer  ${member2_s1}
+    ${mem3s1}=  Convert to Integer  ${member3_s1}
+    ${mem4s1}=  Convert to Integer  ${member4_s1}
+    ${percent_1}=   Evaluate  100*(operator.truediv(int(${mem1s1}),160000))  operator
+    ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),160000))  operator
+    ${percent_3}=   Evaluate  100*(operator.truediv(int(${mem3s1}),160000))  operator
+    ${percent_4}=   Evaluate  100*(operator.truediv(int(${mem4s1}),160000))  operator
+    ${result1}=  verify value is in range  ${percent_1}  15  32
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${percent_2}  15  32
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${percent_3}  15  32
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${percent_4}  15  32
+    Should be true  ${result4}
+    [Tags]  full  feature  
+
+TC016: Verify UDP destination port hashing
+    :FOR    ${port}  IN RANGE  1001  33001  2000
+    \   ${ntype}=  Convert to String  ${port}
+    \   ${sname}=  Catenate  atoc  ${ntype}
+    \   ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=${sname}
+    \   ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00  ethertype=86dd
+    \   ...     src_ip=2001:2001:0:0:0:0:0:1  src_ip_step=0:0:0:0:0:0:0:0  src_cnt=1  src_gw_prefix=128  src_gw=2002:2002:0:0:0:0:0:1  src_gw_step=0:0:0:0:0:0:0:0
+    \   ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    \   ...     dst_ip=2002:2002:0:0:0:0:0:1  dst_ip_step=0:0:0:0:0:0:0:0  dst_cnt=1  dst_gw_prefix=128  dst_gw=2001:2001:0:0:0:0:0:1  dst_gw_step=0:0:0:0:0:0:0:0
+    \   ...     protocol=UDP  src_port=8080  dst_port=${port}
+    cli execute command  s1  clear interface statistics
+    cli execute command  s2  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    ${member1_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet45  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${member2_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet46  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${member3_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet47  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    ${member4_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet48  tx
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    ${member1_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet49  rx
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    ${member2_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet50  rx
+    Should Not Be Equal As Integers  ${member2_s2}  0
+    ${member3_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet51  rx
+    Should Not Be Equal As Integers  ${member3_s2}  0
+    ${member4_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet52  rx
+    Should Not Be Equal As Integers  ${member4_s2}  0
+    ${range_1}=   Evaluate  ${member1_s1} - ${member1_s2}
+    ${range_2}=   Evaluate  ${member2_s1} - ${member2_s2}
+    ${range_3}=   Evaluate  ${member3_s1} - ${member3_s2}
+    ${range_4}=   Evaluate  ${member4_s1} - ${member4_s2}
+    ${result1}=  verify value is in range  ${range_1}  -10  10
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${range_2}  -10  10
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${range_3}  -10  10
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${range_4}  -10  10
+    Should be true  ${result4}
+    ${mem1s1}=  Convert to Integer  ${member1_s1}
+    ${mem2s1}=  Convert to Integer  ${member2_s1}
+    ${mem3s1}=  Convert to Integer  ${member3_s1}
+    ${mem4s1}=  Convert to Integer  ${member4_s1}
+    ${percent_1}=   Evaluate  100*(operator.truediv(int(${mem1s1}),160000))  operator
+    ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),160000))  operator
+    ${percent_3}=   Evaluate  100*(operator.truediv(int(${mem3s1}),160000))  operator
+    ${percent_4}=   Evaluate  100*(operator.truediv(int(${mem4s1}),160000))  operator
+    ${result1}=  verify value is in range  ${percent_1}  15  32
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${percent_2}  15  32
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${percent_3}  15  32
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${percent_4}  15  32
+    Should be true  ${result4}
+    [Tags]  full  feature  
+
+TC017: Verify hashing does not work when only SRC Mac is changed in L3 Packets
+    ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=atoc
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:01:00  src_cnt=28
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    clear stats
+    cli execute command  s1  clear interface statistics
+    cli execute command  s2  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    ${testpass}=  Set Variable  FAIL
+    ${member1_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet45  tx
+    ${member2_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet46  tx
+    ${member3_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet47  tx
+    ${member4_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet48  tx
+    ${member1_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet49  rx
+    ${member2_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet50  rx
+    ${member3_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet51  rx
+    ${member4_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet52  rx
+    ${testpass}=  Set Variable If
+    ...   ${member1_s2} > 9990  PASS
+    ...   ${member2_s2} > 9990  PASS
+    ...   ${member3_s2} > 9990  PASS
+    ...   ${member4_s2} > 9990  PASS
+    Should be equal as strings  ${testpass}  PASS
+    [Tags]  full  negative
+
+TC018: Change hash seeds and verify source MAC address hashing for L2 packets
+    cli delete portchannel  s1  ${s1s2_10g_number}
+    cli delete portchannel  s2  ${s2s1_10g_number}
+    sleep  5
+    cli add hashseed  s1  ${hash_seed_3}  ${hash_seed_3}
+    configure lag interfaces with hash mode  enhanced
+    sleep  5
+    ${stream}=  L2 add  name=atoc  flow=a->c  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}  
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  
+    send and verify traffic  True  True  True  True  
+    [Tags]  full  negative
+
+TC019: Change hash seeds and verify source IPv4 address hashing for L3 packets
+    cli delete portchannel  s1  ${s1s2_10g_number}
+    cli delete portchannel  s2  ${s2s1_10g_number}
+    sleep  5
+    cli add hashseed  s1  ${hash_seed_3}  ${hash_seed_3}
+    configure lag interfaces with hash mode  enhanced
+    sleep  5
+    ${stream}=  L3 add  flow=a->c  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=atoc
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.1.0  src_cnt=28  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    send and verify traffic  True  True  True  True  
+    [Tags]  full  negative
+
+TC020: Verify symmetric source/dst IP address hashing with L3 Traffic
+    # Configure LAG on s1
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    cli add portchannel  s1  ${s1s2_10g_number_2}  ${s1s2_10g_port_range_2}  ENHANCED
+    cli add portchannel  s1  ${s1s2_10g_number_3}  ${s1s2_10g_port_range_3}  ENHANCED
+    Sleep   10
+    ${result5}=  rest add policy  admin-view  P1  forward
+    Should be True  ${result5}
+    ${result6}=  rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result6}
+    ${result7}=  rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    Should be True  ${result7}
+    ${result8}=  rest add policy interface  admin-view  P1  ${delivery_nick_4}  delivery
+    Should be True  ${result8}
+    ${result9}=  rest add service to policy  admin-view  P1  ${s1_service_name_1}   1
+    Should be True  ${result9}
+    ${result10}=  rest add policy  admin-view  P2  forward
+    Should be True  ${result10}
+    ${result11}=  rest add policy match  admin-view  P2  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result11}
+    ${result12}=  rest add policy interface  admin-view  P2  ${filter_nick_3}  filter
+    Should be True  ${result12}
+    ${result13}=  rest add policy interface  admin-view  P2  ${delivery_nick_3}  delivery
+    Should be True  ${result13}
+    ${result14}=  rest add service to policy  admin-view  P2  ${s1_service_name_2}   1
+    Should be True  ${result14}
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream}=  L3 add  flow=a->e  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=atoe
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.2.1.1  src_gw_step=0.0.0.0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=100.2.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    clear stats
+    cli execute command  s1  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    sleep  5
+    ${testpass}=  Set Variable  FAIL
+    ${member1_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  tx
+    ${member2_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  tx
+    ${member3_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  tx
+    ${member4_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  tx
+    ${member1_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  rx
+    ${member2_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  rx
+    ${member3_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  rx
+    ${member4_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  rx
+    ${mem1rx}=  Convert To Integer  ${member1_rx}
+    ${mem2rx}=  Convert To Integer  ${member2_rx}
+    ${mem3rx}=  Convert To Integer  ${member3_rx}
+    ${mem4rx}=  Convert To Integer  ${member4_rx}
+    ${frmcnt}=  Convert To Integer  ${frame_cnt}
+    ${link1tx}=  Set Variable If  ${member1_tx} > 100  TRUE  FALSE
+    ${link2tx}=  Set Variable If  ${member2_tx} > 100  TRUE  FALSE
+    ${link3tx}=  Set Variable If  ${member3_tx} > 100  TRUE  FALSE
+    ${link4tx}=  Set Variable If  ${member4_tx} > 100  TRUE  FALSE
+    Run keyword if  '${link1tx}' == 'TRUE'  Should Be Equal As Integers  ${mem1rx}  ${frmcnt}
+    Run keyword if  '${link2tx}' == 'TRUE'  Should Be Equal As Integers  ${mem2rx}  ${frmcnt}
+    Run keyword if  '${link3tx}' == 'TRUE'  Should Be Equal As Integers  ${mem3rx}  ${frmcnt}
+    Run keyword if  '${link4tx}' == 'TRUE'  Should Be Equal As Integers  ${mem4rx}  ${frmcnt}
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    rest add policy  admin-view  P1  forward
+    rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  P1  ${delivery_nick_1}  delivery
+    Sleep  10    
+    [Tags]  full  feature
+    
+TC021: Verify symmetric TCP SRC/DST Port hashing with L3 Traffic
+    # Configure LAG on s1
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    cli add portchannel  s1  ${s1s2_10g_number_2}  ${s1s2_10g_port_range_2}  ENHANCED
+    cli add portchannel  s1  ${s1s2_10g_number_3}  ${s1s2_10g_port_range_3}  ENHANCED
+    Sleep   10
+    ${result5}=  rest add policy  admin-view  P1  forward
+    Should be True  ${result5}
+    ${result6}=  rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result6}
+    ${result7}=  rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    Should be True  ${result7}
+    ${result8}=  rest add policy interface  admin-view  P1  ${delivery_nick_4}  delivery
+    Should be True  ${result8}
+    ${result9}=  rest add service to policy  admin-view  P1  ${s1_service_name_1}   1
+    Should be True  ${result9}
+    ${result10}=  rest add policy  admin-view  P2  forward
+    Should be True  ${result10}
+    ${result11}=  rest add policy match  admin-view  P2  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result11}
+    ${result12}=  rest add policy interface  admin-view  P2  ${filter_nick_3}  filter
+    Should be True  ${result12}
+    ${result13}=  rest add policy interface  admin-view  P2  ${delivery_nick_3}  delivery
+    Should be True  ${result13}
+    ${result14}=  rest add service to policy  admin-view  P2  ${s1_service_name_2}   1
+    Should be True  ${result14}
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream}=  L3 add  flow=a->e  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.1.1.1  src_gw_step=0.0.0.0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=100.1.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    ...     protocol=TCP  src_port=8101  dst_port=8001  name=a_e_flow    
+    clear stats
+    cli execute command  s1  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    sleep  5
+    ${testpass}=  Set Variable  FAIL
+    ${member1_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  tx
+    ${member2_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  tx
+    ${member3_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  tx
+    ${member4_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  tx
+    ${member1_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  rx
+    ${member2_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  rx
+    ${member3_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  rx
+    ${member4_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  rx
+    ${mem1rx}=  Convert To Integer  ${member1_rx}
+    ${mem2rx}=  Convert To Integer  ${member2_rx}
+    ${mem3rx}=  Convert To Integer  ${member3_rx}
+    ${mem4rx}=  Convert To Integer  ${member4_rx}
+    ${frmcnt}=  Convert To Integer  ${frame_cnt}
+    ${link1tx}=  Set Variable If  ${member1_tx} > 100  TRUE  FALSE
+    ${link2tx}=  Set Variable If  ${member2_tx} > 100  TRUE  FALSE
+    ${link3tx}=  Set Variable If  ${member3_tx} > 100  TRUE  FALSE
+    ${link4tx}=  Set Variable If  ${member4_tx} > 100  TRUE  FALSE
+    Run keyword if  '${link1tx}' == 'TRUE'  Should Be Equal As Integers  ${mem1rx}  ${frmcnt}
+    Run keyword if  '${link2tx}' == 'TRUE'  Should Be Equal As Integers  ${mem2rx}  ${frmcnt}
+    Run keyword if  '${link3tx}' == 'TRUE'  Should Be Equal As Integers  ${mem3rx}  ${frmcnt}
+    Run keyword if  '${link4tx}' == 'TRUE'  Should Be Equal As Integers  ${mem4rx}  ${frmcnt}
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    rest add policy  admin-view  P1  forward
+    rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  P1  ${delivery_nick_1}  delivery
+    Sleep  10    
+    [Tags]  full  feature
+
+TC022: Verify symmetric UDP SRC/DST Port hashing with L3 Traffic
+    # Configure LAG on s1
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    cli add portchannel  s1  ${s1s2_10g_number_2}  ${s1s2_10g_port_range_2}  ENHANCED
+    cli add portchannel  s1  ${s1s2_10g_number_3}  ${s1s2_10g_port_range_3}  ENHANCED
+    Sleep   10
+    ${result5}=  rest add policy  admin-view  P1  forward
+    Should be True  ${result5}
+    ${result6}=  rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result6}
+    ${result7}=  rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    Should be True  ${result7}
+    ${result8}=  rest add policy interface  admin-view  P1  ${delivery_nick_4}  delivery
+    Should be True  ${result8}
+    ${result9}=  rest add service to policy  admin-view  P1  ${s1_service_name_1}   1
+    Should be True  ${result9}
+    ${result10}=  rest add policy  admin-view  P2  forward
+    Should be True  ${result10}
+    ${result11}=  rest add policy match  admin-view  P2  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result11}
+    ${result12}=  rest add policy interface  admin-view  P2  ${filter_nick_3}  filter
+    Should be True  ${result12}
+    ${result13}=  rest add policy interface  admin-view  P2  ${delivery_nick_3}  delivery
+    Should be True  ${result13}
+    ${result14}=  rest add service to policy  admin-view  P2  ${s1_service_name_2}   1
+    Should be True  ${result14}
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream}=  L3 add  flow=a->e  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00
+    ...     src_ip=100.1.1.1  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.1.1.1  src_gw_step=0.0.0.0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=100.1.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=100.1.1.1  dst_gw_step=0.0.0.0
+    ...     protocol=UDP  src_port=1974  dst_port=320  name=a_e_flow    
+    clear stats
+    cli execute command  s1  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    sleep  5
+    ${testpass}=  Set Variable  FAIL
+    ${member1_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  tx
+    ${member2_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  tx
+    ${member3_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  tx
+    ${member4_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  tx
+    ${member1_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  rx
+    ${member2_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  rx
+    ${member3_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  rx
+    ${member4_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  rx
+    ${mem1rx}=  Convert To Integer  ${member1_rx}
+    ${mem2rx}=  Convert To Integer  ${member2_rx}
+    ${mem3rx}=  Convert To Integer  ${member3_rx}
+    ${mem4rx}=  Convert To Integer  ${member4_rx}
+    ${frmcnt}=  Convert To Integer  ${frame_cnt}
+    ${link1tx}=  Set Variable If  ${member1_tx} > 100  TRUE  FALSE
+    ${link2tx}=  Set Variable If  ${member2_tx} > 100  TRUE  FALSE
+    ${link3tx}=  Set Variable If  ${member3_tx} > 100  TRUE  FALSE
+    ${link4tx}=  Set Variable If  ${member4_tx} > 100  TRUE  FALSE
+    Run keyword if  '${link1tx}' == 'TRUE'  Should Be Equal As Integers  ${mem1rx}  ${frmcnt}
+    Run keyword if  '${link2tx}' == 'TRUE'  Should Be Equal As Integers  ${mem2rx}  ${frmcnt}
+    Run keyword if  '${link3tx}' == 'TRUE'  Should Be Equal As Integers  ${mem3rx}  ${frmcnt}
+    Run keyword if  '${link4tx}' == 'TRUE'  Should Be Equal As Integers  ${mem4rx}  ${frmcnt}
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    rest add policy  admin-view  P1  forward
+    rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  P1  ${delivery_nick_1}  delivery
+    Sleep  10    
+    [Tags]  full  feature
+
+TC023: Verify symmetric source/dst IPv6 address hashing with L3 Traffic
+    # Configure LAG on s1
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    cli add portchannel  s1  ${s1s2_10g_number_2}  ${s1s2_10g_port_range_2}  ENHANCED
+    cli add portchannel  s1  ${s1s2_10g_number_3}  ${s1s2_10g_port_range_3}  ENHANCED
+    Sleep   10
+    ${result5}=  rest add policy  admin-view  P1  forward
+    Should be True  ${result5}
+    ${result6}=  rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result6}
+    ${result7}=  rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    Should be True  ${result7}
+    ${result8}=  rest add policy interface  admin-view  P1  ${delivery_nick_4}  delivery
+    Should be True  ${result8}
+    ${result9}=  rest add service to policy  admin-view  P1  ${s1_service_name_1}   1
+    Should be True  ${result9}
+    ${result10}=  rest add policy  admin-view  P2  forward
+    Should be True  ${result10}
+    ${result11}=  rest add policy match  admin-view  P2  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result11}
+    ${result12}=  rest add policy interface  admin-view  P2  ${filter_nick_3}  filter
+    Should be True  ${result12}
+    ${result13}=  rest add policy interface  admin-view  P2  ${delivery_nick_3}  delivery
+    Should be True  ${result13}
+    ${result14}=  rest add service to policy  admin-view  P2  ${s1_service_name_2}   1
+    Should be True  ${result14}
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True   name=atob
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00  ethertype=86dd
+    ...     src_ip=2001:2001:0:0:0:0:0:1  src_ip_step=0:0:0:0:0:0:0:0  src_cnt=1  src_gw_prefix=128  src_gw=2002:2002:0:0:0:0:0:1  src_gw_step=0:0:0:0:0:0:0:0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=2002:2002:0:0:0:0:0:1  dst_ip_step=0:0:0:0:0:0:0:0  dst_cnt=1  dst_gw_prefix=128  dst_gw=2001:2001:0:0:0:0:0:1  dst_gw_step=0:0:0:0:0:0:0:0
+    clear stats
+    cli execute command  s1  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    sleep  5
+    ${testpass}=  Set Variable  FAIL
+    ${member1_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  tx
+    ${member2_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  tx
+    ${member3_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  tx
+    ${member4_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  tx
+    ${member1_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  rx
+    ${member2_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  rx
+    ${member3_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  rx
+    ${member4_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  rx
+    ${mem1rx}=  Convert To Integer  ${member1_rx}
+    ${mem2rx}=  Convert To Integer  ${member2_rx}
+    ${mem3rx}=  Convert To Integer  ${member3_rx}
+    ${mem4rx}=  Convert To Integer  ${member4_rx}
+    ${frmcnt}=  Convert To Integer  ${frame_cnt}
+    ${link1tx}=  Set Variable If  ${member1_tx} > 100  TRUE  FALSE
+    ${link2tx}=  Set Variable If  ${member2_tx} > 100  TRUE  FALSE
+    ${link3tx}=  Set Variable If  ${member3_tx} > 100  TRUE  FALSE
+    ${link4tx}=  Set Variable If  ${member4_tx} > 100  TRUE  FALSE
+    Run keyword if  '${link1tx}' == 'TRUE'  Should Be Equal As Integers  ${mem1rx}  ${frmcnt}
+    Run keyword if  '${link2tx}' == 'TRUE'  Should Be Equal As Integers  ${mem2rx}  ${frmcnt}
+    Run keyword if  '${link3tx}' == 'TRUE'  Should Be Equal As Integers  ${mem3rx}  ${frmcnt}
+    Run keyword if  '${link4tx}' == 'TRUE'  Should Be Equal As Integers  ${mem4rx}  ${frmcnt}
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    rest add policy  admin-view  P1  forward
+    rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  P1  ${delivery_nick_1}  delivery
+    Sleep  10    
+    [Tags]  full  feature  
+
+TC024: Verify symmetric TCP6 SRC/DST Port hashing with L3 Traffic
+    # Configure LAG on s1
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    cli add portchannel  s1  ${s1s2_10g_number_2}  ${s1s2_10g_port_range_2}  ENHANCED
+    cli add portchannel  s1  ${s1s2_10g_number_3}  ${s1s2_10g_port_range_3}  ENHANCED
+    Sleep   10
+    ${result5}=  rest add policy  admin-view  P1  forward
+    Should be True  ${result5}
+    ${result6}=  rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result6}
+    ${result7}=  rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    Should be True  ${result7}
+    ${result8}=  rest add policy interface  admin-view  P1  ${delivery_nick_4}  delivery
+    Should be True  ${result8}
+    ${result9}=  rest add service to policy  admin-view  P1  ${s1_service_name_1}   1
+    Should be True  ${result9}
+    ${result10}=  rest add policy  admin-view  P2  forward
+    Should be True  ${result10}
+    ${result11}=  rest add policy match  admin-view  P2  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result11}
+    ${result12}=  rest add policy interface  admin-view  P2  ${filter_nick_3}  filter
+    Should be True  ${result12}
+    ${result13}=  rest add policy interface  admin-view  P2  ${delivery_nick_3}  delivery
+    Should be True  ${result13}
+    ${result14}=  rest add service to policy  admin-view  P2  ${s1_service_name_2}   1
+    Should be True  ${result14}
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00  ethertype=86dd
+    ...     src_ip=2001:2001:0:0:0:0:0:1  src_ip_step=0:0:0:0:0:0:0:0  src_cnt=1  src_gw_prefix=128  src_gw=2001:2001:0:0:0:0:0:1  src_gw_step=0:0:0:0:0:0:0:0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=2001:2001:0:0:0:0:0:1  dst_ip_step=0:0:0:0:0:0:0:0  dst_cnt=1  dst_gw_prefix=128  dst_gw=2001:2001:0:0:0:0:0:1  dst_gw_step=0:0:0:0:0:0:0:0
+    ...     protocol=TCP  src_port=8101  dst_port=8001  name=a_b_flow    
+    clear stats
+    cli execute command  s1  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    sleep  5
+    ${testpass}=  Set Variable  FAIL
+    ${member1_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  tx
+    ${member2_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  tx
+    ${member3_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  tx
+    ${member4_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  tx
+    ${member1_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  rx
+    ${member2_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  rx
+    ${member3_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  rx
+    ${member4_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  rx
+    ${mem1rx}=  Convert To Integer  ${member1_rx}
+    ${mem2rx}=  Convert To Integer  ${member2_rx}
+    ${mem3rx}=  Convert To Integer  ${member3_rx}
+    ${mem4rx}=  Convert To Integer  ${member4_rx}
+    ${frmcnt}=  Convert To Integer  ${frame_cnt}
+    ${link1tx}=  Set Variable If  ${member1_tx} > 100  TRUE  FALSE
+    ${link2tx}=  Set Variable If  ${member2_tx} > 100  TRUE  FALSE
+    ${link3tx}=  Set Variable If  ${member3_tx} > 100  TRUE  FALSE
+    ${link4tx}=  Set Variable If  ${member4_tx} > 100  TRUE  FALSE
+    Run keyword if  '${link1tx}' == 'TRUE'  Should Be Equal As Integers  ${mem1rx}  ${frmcnt}
+    Run keyword if  '${link2tx}' == 'TRUE'  Should Be Equal As Integers  ${mem2rx}  ${frmcnt}
+    Run keyword if  '${link3tx}' == 'TRUE'  Should Be Equal As Integers  ${mem3rx}  ${frmcnt}
+    Run keyword if  '${link4tx}' == 'TRUE'  Should Be Equal As Integers  ${mem4rx}  ${frmcnt}
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    rest add policy  admin-view  P1  forward
+    rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  P1  ${delivery_nick_1}  delivery
+    Sleep  10
+    [Tags]  full  feature  
+
+TC025: Verify symmetric UDP SRC/DST Port hashing with L3 Traffic
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    cli add portchannel  s1  ${s1s2_10g_number_2}  ${s1s2_10g_port_range_2}  ENHANCED
+    cli add portchannel  s1  ${s1s2_10g_number_3}  ${s1s2_10g_port_range_3}  ENHANCED
+    Sleep   10
+    ${result5}=  rest add policy  admin-view  P1  forward
+    Should be True  ${result5}
+    ${result6}=  rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result6}
+    ${result7}=  rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    Should be True  ${result7}
+    ${result8}=  rest add policy interface  admin-view  P1  ${delivery_nick_4}  delivery
+    Should be True  ${result8}
+    ${result9}=  rest add service to policy  admin-view  P1  ${s1_service_name_1}   1
+    Should be True  ${result9}
+    ${result10}=  rest add policy  admin-view  P2  forward
+    Should be True  ${result10}
+    ${result11}=  rest add policy match  admin-view  P2  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result11}
+    ${result12}=  rest add policy interface  admin-view  P2  ${filter_nick_3}  filter
+    Should be True  ${result12}
+    ${result13}=  rest add policy interface  admin-view  P2  ${delivery_nick_3}  delivery
+    Should be True  ${result13}
+    ${result14}=  rest add service to policy  admin-view  P2  ${s1_service_name_2}   1
+    Should be True  ${result14}
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  no_arp=True
+    ...     src_mac=${src_mac}  src_mac_step=00:00:00:00:00:00  ethertype=86dd
+    ...     src_ip=2001:2001:0:0:0:0:0:1  src_ip_step=0:0:0:0:0:0:0:0  src_cnt=1  src_gw_prefix=128  src_gw=2001:2001:0:0:0:0:0:1  src_gw_step=0:0:0:0:0:0:0:0
+    ...     dst_mac=${dst_mac}  dst_mac_step=00:00:00:00:00:00
+    ...     dst_ip=2001:2001:0:0:0:0:0:1  dst_ip_step=0:0:0:0:0:0:0:0  dst_cnt=1  dst_gw_prefix=128  dst_gw=2001:2001:0:0:0:0:0:1  dst_gw_step=0:0:0:0:0:0:0:0
+    ...     protocol=UDP  src_port=1974  dst_port=320  name=a_b_flow
+    clear stats
+    cli execute command  s1  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    sleep  5
+    ${testpass}=  Set Variable  FAIL
+    ${member1_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  tx
+    ${member2_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  tx
+    ${member3_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  tx
+    ${member4_tx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  tx
+    ${member1_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet13  rx
+    ${member2_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet15  rx
+    ${member3_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet17  rx
+    ${member4_rx}=  cli return member interface stats  s1  ${s1s2_10g_number_2}  ethernet21  rx
+    ${mem1rx}=  Convert To Integer  ${member1_rx}
+    ${mem2rx}=  Convert To Integer  ${member2_rx}
+    ${mem3rx}=  Convert To Integer  ${member3_rx}
+    ${mem4rx}=  Convert To Integer  ${member4_rx}
+    ${frmcnt}=  Convert To Integer  ${frame_cnt}
+    ${link1tx}=  Set Variable If  ${member1_tx} > 100  TRUE  FALSE
+    ${link2tx}=  Set Variable If  ${member2_tx} > 100  TRUE  FALSE
+    ${link3tx}=  Set Variable If  ${member3_tx} > 100  TRUE  FALSE
+    ${link4tx}=  Set Variable If  ${member4_tx} > 100  TRUE  FALSE
+    Run keyword if  '${link1tx}' == 'TRUE'  Should Be Equal As Integers  ${mem1rx}  ${frmcnt}
+    Run keyword if  '${link2tx}' == 'TRUE'  Should Be Equal As Integers  ${mem2rx}  ${frmcnt}
+    Run keyword if  '${link3tx}' == 'TRUE'  Should Be Equal As Integers  ${mem3rx}  ${frmcnt}
+    Run keyword if  '${link4tx}' == 'TRUE'  Should Be Equal As Integers  ${mem4rx}  ${frmcnt}
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    rest add policy  admin-view  P1  forward
+    rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  P1  ${delivery_nick_1}  delivery
+    Sleep  10
+    [Tags]  full  feature
+
+TC026: Flap port-channel interface and verify Source MAC address hashing for L2 packets
+    ${stream}=  L2 add  name=atoc  flow=a->c  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}  
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  
+    send and verify traffic  True  True  True  True  
+    ${ret_value_1}=  cli disable interface  s1  ${s1s2_10g_name}
+    Should Be True  ${ret_value_1}        
+    Sleep  30
+    ${ret_value_1}=  cli enable interface  s1  ${s1s2_10g_name}
+    Should Be True  ${ret_value_1}        
+    Sleep  30    
+    send and verify traffic  True  True  True  True  
+    [Tags]  ha  robustness
+
+TC027: Restart process OFAD and verify Source MAC address hashing for L2 packets
+    ${stream}=  L2 add  name=atoc  flow=a->c  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}  
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  
+    send and verify traffic  True  True  True  True  
+    bash restart process  s1  ofad
+    Sleep  30
+    send and verify traffic  True  True  True  True  
+    [Tags]  ha  robustness
+    
+TC028: Reboot switch and verify Source MAC address hashing for L2 packets
+    ${stream}=  L2 add  name=atoc  flow=a->c  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}  
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  
+    send and verify traffic  True  True  True  True  
+    cli restart switch  s1  save_config="yes"
+    Sleep  30
+    send and verify traffic  True  True  True  True  
+    [Tags]  ha  robustness
+
+* Keywords
+
+configure lag interfaces with hash mode  [Arguments]  ${lag_mode}  
+    # Configure LAG on s1
+    cli add portchannel  s1  ${s1s2_10g_number}  ${s1s2_10g_port_range}  ${lag_mode}
+    # Configure LAG on s2    
+    cli add portchannel  s2  ${s2s1_10g_number}  ${s2s1_10g_port_range}  ${lag_mode}
+    Sleep   10
+
+lag suite setup
+    base suite setup
+    cli add hashseed  s1  ${hash_seed_1}  ${hash_seed_2}
+    configure lag interfaces with hash mode  enhanced
+    ${result1}=  rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}
+    Should be True  ${result1}
+    ${result2}=  rest add interface role  s1  ${filter_2}  filter  ${filter_nick_2}
+    Should be True  ${result2}
+    ${result3}=  rest add interface role  s1  ${delivery_3}  delivery  ${delivery_nick_3}
+    Should be True  ${result3}
+    ${result4}=  rest add interface role  s1  ${filter_3}  filter  ${filter_nick_3}
+    Should be True  ${result4}
+    ${result5}=  rest add interface role  s1  ${delivery_4}  delivery  ${delivery_nick_4}
+    Should be True  ${result5}
+    ${result6}=  rest add interface role  s2  ${delivery_1}  delivery  ${delivery_nick_1}
+    Should be True  ${result6}
+    ${result7}=  rest add interface role  s2  ${s2_dummy_filter}    filter    ${s2_dummy_fnick}
+    Should be True  ${result7}
+    ${result8}=  rest add interface role  s2  ${s2_dummy_delivery}  delivery  ${s2_dummy_dnick}
+    Should be True  ${result8}
+    ${result9}=  rest add interface role  s1  ${s1s2_10g_name_2}  service  ${s1_service_intf_alias_1}
+    Should be True  ${result9}
+    ${result10}=  rest add interface role  s1  ${s1s2_10g_name_3}  service  ${s1_service_intf_alias_2}
+    Should be True  ${result10}
+    ${result11}=  rest add service  ${s1_service_name_1}  ${s1_service_intf_alias_1}  ${s1_service_intf_alias_2}
+    Should be True  ${result11}
+    ${result12}=  rest add service  ${s1_service_name_2}  ${s1_service_intf_alias_2}  ${s1_service_intf_alias_1}
+    Should be True  ${result12}
+    sleep  10
+    ${result13}=  rest add policy  admin-view  P1  forward
+    Should be True  ${result13}
+    ${result14}=  rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${result14}
+    ${result15}=  rest add policy interface  admin-view  P1  ${filter_nick_1}  filter
+    Should be True  ${result15}
+    ${result16}=  rest add policy interface  admin-view  P1  ${delivery_nick_1}  delivery
+    Should be True  ${result16}
+    Sleep  10
+    
+verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
+    ${inft_state}=  cli show interface state  ${switch}  ${interface_name}
+    Should Contain  ${inft_state}  up
+
+send and verify traffic  [Arguments]  ${member1s2}  ${member2s2}  ${member3s2}  ${member4s2}
+    clear stats
+    cli execute command  s1  clear interface statistics
+    cli execute command  s2  clear interface statistics
+    start traffic
+    sleep  10
+    stop traffic
+    ${member1_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet45  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${member2_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet46  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${member3_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet47  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    ${member4_s1}=  cli return member interface stats  s1  ${s1s2_10g_number}  ethernet48  tx
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    ${member1_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet49  rx
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    ${member2_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet50  rx
+    Should Not Be Equal As Integers  ${member2_s2}  0
+    ${member3_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet51  rx
+    Should Not Be Equal As Integers  ${member3_s2}  0
+    ${member4_s2}=  cli return member interface stats  s2  ${s2s1_10g_number}  ethernet52  rx
+    Should Not Be Equal As Integers  ${member4_s2}  0
+    ${range_1}=   Evaluate  ${member1_s1} - ${member1_s2}
+    ${range_2}=   Evaluate  ${member2_s1} - ${member2_s2}
+    ${range_3}=   Evaluate  ${member3_s1} - ${member3_s2}
+    ${range_4}=   Evaluate  ${member4_s1} - ${member4_s2}
+    ${result1}=  verify value is in range  ${range_1}  -10  10
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${range_2}  -10  10
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${range_3}  -10  10
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${range_4}  -10  10
+    Should be true  ${result4}
+    ${mem1s1}=  Convert to Integer  ${member1_s1}
+    ${mem2s1}=  Convert to Integer  ${member2_s1}
+    ${mem3s1}=  Convert to Integer  ${member3_s1}
+    ${mem4s1}=  Convert to Integer  ${member4_s1}
+    ${percent_1}=   Evaluate  100*(operator.truediv(int(${mem1s1}),${frame_cnt}))  operator
+    ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),${frame_cnt}))  operator
+    ${percent_3}=   Evaluate  100*(operator.truediv(int(${mem3s1}),${frame_cnt}))  operator
+    ${percent_4}=   Evaluate  100*(operator.truediv(int(${mem4s1}),${frame_cnt}))  operator
+    ${result1}=  verify value is in range  ${percent_1}  15  32
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${percent_2}  15  32
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${percent_3}  15  32
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${percent_4}  15  32
+    Should be true  ${result4}
+
+lag test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
+    ixia initialize  tg1  init=true
+
+lag test teardown
+    delete traffic
+    sleep  2
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+    
+lag suite teardown
+    cli delete portchannel  s1  ${s1s2_10g_number}
+    cli delete portchannel  s1  ${s1s2_10g_number_2}
+    cli delete portchannel  s1  ${s1s2_10g_number_3}
+    cli delete portchannel  s2  ${s2s1_10g_number}
+    rest delete service  ${s1_service_name_1}
+    rest delete service  ${s1_service_name_1}
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  P2
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_nick_1} 
+    rest delete interface role  s1  ${filter_2}  filter  ${filter_nick_2} 
+    rest delete interface role  s1  ${delivery_3}  delivery  ${delivery_nick_3}
+    rest delete interface role  s1  ${filter_3}  filter  ${filter_nick_3} 
+    rest delete interface role  s1  ${delivery_4}  delivery  ${delivery_nick_4}
+    rest delete interface role  s2  ${s1_service_intf_alias_1}   service
+    rest delete interface role  s2  ${s1_service_intf_alias_2}   service
+    rest delete interface role  s2  ${delivery_1}  delivery  ${delivery_nick_1}
+    rest delete interface role  s2  ${s2_dummy_filter}  filter  ${s2_dummy_fnick}
+    rest delete interface role  s2  ${s2_dummy_delivery}  delivery  ${s2_dummy_dnick}
+    rest delete interface  s1  ${filter_1}
+    rest delete interface  s1  ${filter_2}    
+    rest delete interface  s1  ${filter_3}
+    rest delete interface  s1  ${delivery_3}
+    rest delete interface  s1  ${delivery_4}
+    rest delete interface  s2  ${delivery_1}
+    rest delete interface  s2  ${s2_dummy_filter}
+    rest delete interface  s2  ${s2_dummy_delivery}
+    rest delete switch  s1
+    rest delete switch  s2
+    base suite teardown

@@ -1,7 +1,50 @@
 * Setting 
 Library  keywords/BsnCommon.py
+Library	 keywords/T5ZTN.py
+Library	 keywords/T5.py
+Library	 keywords/T5Platform.py
+Library	 String
+
+* Variables
+${long}   5
 
 * Keywords
+fabric infra suite setup	
+	set fabric switches 	
+	sleep   ${long}	
+	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
+
+set fabric switches  
+ 	${switches}=  get_all_switch_nodes  
+	log   switches are ${switches}
+ 	: FOR    ${sw}   IN   @{switches}   
+	\   ${alias}=   get_node_alias   ${sw} 	
+	\	Run Keyword If	'arista' in '${alias}'	Continue For Loop
+	\   ${mac}  params  node=${sw}  key=mac
+	\   ${dpid}=  	Set Variable 	 00:00:${mac}             
+  	\   Run Keyword if   'spine' in '${alias}' 	   add fabric switch spine    ${alias}     ${dpid}
+  	\   sleep    1
+  	\ 	Run Keyword if   'spine' in '${alias}'     rest_verify_fabric_switch_role    ${dpid}   spine
+    \   Run Keyword if   'leaf' in '${alias}' 	   add fabric switch leaf     ${alias}     ${dpid}   rack${alias[4]}
+    \   sleep    1 
+    \   Run Keyword if   'leaf' in '${alias}' 	   rest_verify_fabric_switch_role    ${dpid}   leaf
+    	
+Verify all switches connected back
+ 	${switches}=  rest_get_disconnect_switch
+	log   the disconnected switches are ${switches}  	
+	Should Be Empty   ${switches}
+
+add fabric switch spine   [Arguments]   ${node}   ${dpid}  
+	rest add switch               ${node}
+	rest add dpid                 ${node}          ${dpid}  
+	rest add fabric role          ${node}          spine
+
+add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
+	rest add switch               ${node}
+	rest add dpid                 ${node}         ${dpid} 
+	rest add fabric role          ${node}         leaf
+	rest_add_leaf_group           ${node}         ${leafg} 
+	
 add fabric switch
   rest add switch  spine0
   ${spine0_dpid}=  get_switch_mac_topo  s7 
@@ -23,7 +66,8 @@ add fabric switch
   ${leaf2a_dpid}=  get_switch_mac_topo  s5 
   rest add dpid  leaf2-a  ${leaf2a_dpid}
   rest add fabric role  leaf2-a  leaf
-  BuiltIn.Sleep  155
+  sleep  45
+  Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back
   
 delete fabric switch  
   rest delete fabric switch  spine0 

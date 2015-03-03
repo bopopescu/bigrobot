@@ -1,18 +1,18 @@
 *Settings
-Documentation       BigTap High Availability Test Suite
-Suite Setup         ha suite setup
-Suite Teardown      ha suite teardown
-Test Setup          ha test setup
-Test Teardown       ha test teardown 
-Force Tags          bigtap  ha
-Library             keywords/BsnCommon.py
-Library             keywords/AppController.py
-Library             keywords/BigTap.py
-Library             keywords/SwitchLight.py
-Library             keywords/Ixia.py
-Library             Collections.py
-Library             OperatingSystem.py
-Library             String.py
+Documentation               BigTap High Availability Test Suite
+Suite Setup                 ha suite setup
+Suite Teardown              ha suite teardown
+Test Setup                  ha test setup
+Test Teardown               ha test teardown 
+Force Tags                  BigTap  blackbird-300  Quanta-LB9  Dell-S4810  Quanta-LY2
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
 
 * Variable
 
@@ -41,7 +41,7 @@ TC001: Verify configuration is successful
     verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
     stop traffic  ${stream}    
-    [Tags]  base  
+    [Tags]  ha  robustness  traffic  full
 
 TC002: Flap filter interface and verify traffic is restored        
     verify config
@@ -59,7 +59,7 @@ TC002: Flap filter interface and verify traffic is restored
     verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     verify results  a  transmitted_frame_rate  d  received_valid_frame_rate              
     stop traffic  ${stream}    
-    [Tags]  filter  
+    [Tags]  ha  robustness  traffic  full
 
 TC003: Flap delivery interfaces and verify traffic is restored        
     verify config
@@ -79,7 +79,7 @@ TC003: Flap delivery interfaces and verify traffic is restored
     verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     verify results  a  transmitted_frame_rate  d  received_valid_frame_rate              
     stop traffic  ${stream}    
-    [Tags]  delivery  
+    [Tags]  ha  robustness  traffic  full
 
 TC004: Shutdown one core interface and verify traffic is unaffected        
     verify config
@@ -100,7 +100,7 @@ TC004: Shutdown one core interface and verify traffic is unaffected
     verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     verify results  a  transmitted_frame_rate  d  received_valid_frame_rate                      
     stop traffic  ${stream}    
-    [Tags]  core 
+    [Tags]  ha  robustness  traffic  full
 
 TC005: Rename filter interface and verify traffic flow
     delete bigtap configuration
@@ -116,7 +116,7 @@ TC005: Rename filter interface and verify traffic flow
     rest delete policy  admin-view  P1
     rest delete policy  admin-view  ZP1
     base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}    
-    [Tags]  renameFilter
+    [Tags]  ha  robustness  traffic  full
 
 TC006: Rename delivery interface and verify traffic flow
     delete bigtap configuration
@@ -131,7 +131,7 @@ TC006: Rename delivery interface and verify traffic flow
     stop traffic  ${stream}
     delete bigtap configuration
     base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}    
-    [Tags]  renameDelivery
+    [Tags]  ha  robustness  traffic  full
 
 
 TC007: Add and remove an additional filter interface to policy and verify no traffic drop is seen
@@ -147,7 +147,7 @@ TC007: Add and remove an additional filter interface to policy and verify no tra
     verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  add-delete-filter
+    [Tags]  ha  robustness  traffic  full
     
 TC008: Deactivate and activate bigtap policy 50 times
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
@@ -170,7 +170,7 @@ TC008: Deactivate and activate bigtap policy 50 times
     \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  activate-deactivate                    
+    [Tags]  ha  robustness  traffic  full
 
 TC009: Flap between action active and rate-measure in a bigtap policy 50 times
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
@@ -193,7 +193,7 @@ TC009: Flap between action active and rate-measure in a bigtap policy 50 times
     \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  active-ratemeasure                   
+    [Tags]  ha  robustness  traffic  full
 
 
 TC010: Delete and re-add bigtap policy 50 times
@@ -212,7 +212,7 @@ TC010: Delete and re-add bigtap policy 50 times
     \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  delete-add                   
+    [Tags]  ha  robustness  traffic  full
 
 TC011: Enable and disable feature overlap 50 times     
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
@@ -229,7 +229,7 @@ TC011: Enable and disable feature overlap 50 times
     \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  enable-disable-overlap      
+    [Tags]  ha  robustness  traffic  full
 
 TC012: Enable and disable feature inport-mask 50 times     
     ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
@@ -246,16 +246,20 @@ TC012: Enable and disable feature inport-mask 50 times
     \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
     \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
     stop traffic  ${stream}
-    [Tags]  enable-disable-inport   
-                        
+    [Tags]  ha  robustness  traffic  full
+
 * Keyword
 
 ha suite setup
     base suite setup
-    rest add switch alias  s1  app-rlb9-2
-    rest add switch alias  s2  app-rlb9-3
-    rest add switch alias  s3  app-rly2-1
-    rest add switch alias  s4  app-rs4810-1    
+    ${config1}=  rest add switch alias  s1  app-rlb9-2
+    Should be true  ${config1}
+    ${config2}=  rest add switch alias  s2  app-rlb9-3
+    Should be true  ${config2}
+    ${config3}=  rest add switch alias  s3  app-rly2-1
+    Should be true  ${config3}
+    ${config4}=  rest add switch alias  s4  app-rs4810-1
+    Should be true  ${config4}
     base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}      
     
 ha test setup
@@ -265,20 +269,32 @@ ha test setup
     Should be true  ${result2}
 
 base policy config   [Arguments]  ${filter_interface_1}  ${filter_interface_2}  ${delivery_interface_1}  ${delivery_interface_2}  ${filterNick1}  ${filterNick2}  ${deliveryNick1}  ${deliveryNick2}  
-    rest add interface role  s1  ${filter_interface_1}  filter  ${filterNick1}
-    rest add interface role  s2  ${filter_interface_2}  filter  ${filterNick2}          
-    rest add interface role  s1  ${delivery_interface_1}  delivery  ${deliveryNick1}
-    rest add interface role  s2  ${delivery_interface_2}  delivery  ${deliveryNick2}
+    ${config1}=  rest add interface role  s1  ${filter_interface_1}  filter  ${filterNick1}
+    Should be true  ${config1}
+    ${config2}=  rest add interface role  s2  ${filter_interface_2}  filter  ${filterNick2}
+    Should be true  ${config2}
+    ${config3}=  rest add interface role  s1  ${delivery_interface_1}  delivery  ${deliveryNick1}
+    Should be true  ${config3}
+    ${config4}=  rest add interface role  s2  ${delivery_interface_2}  delivery  ${deliveryNick2}
+    Should be true  ${config4}
     Sleep  2
-    rest add policy  admin-view  P1  forward
-    rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
-    rest add policy interface  admin-view  P1  ${filterNick1}  filter
-    rest add policy interface  admin-view  P1  ${deliveryNick1}  delivery 
+    ${config5}=  rest add policy  admin-view  P1  forward
+    Should be true  ${config5}
+    ${config6}=  rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${config6}
+    ${config7}=  rest add policy interface  admin-view  P1  ${filterNick1}  filter
+    Should be true  ${config7}
+    ${config8}=  rest add policy interface  admin-view  P1  ${deliveryNick1}  delivery
+    Should be true  ${config8}
     Sleep  2  
-    rest add policy  admin-view  ZP1  forward
-    rest add policy match  admin-view  ZP1  1  {"any-traffic": true, "sequence": 1}
-    rest add policy interface  admin-view  ZP1  ${filterNick1}  filter
-    rest add policy interface  admin-view  ZP1  ${deliveryNick2}  delivery
+    ${config9}=  rest add policy  admin-view  ZP1  forward
+    Should be true  ${config9}
+    ${config10}=  rest add policy match  admin-view  ZP1  1  {"any-traffic": true, "sequence": 1}
+    Should be true  ${config10}
+    ${config11}=  rest add policy interface  admin-view  ZP1  ${filterNick1}  filter
+    Should be true  ${config11}
+    ${config12}=  rest add policy interface  admin-view  ZP1  ${deliveryNick2}  delivery
+    Should be true  ${config12}
     Sleep  30
     
     
@@ -310,16 +326,26 @@ verify results   [Arguments]  ${port_1}  ${tx}  ${port_2}  ${rx}
     Should be true  ${in_range} 
 
 delete bigtap configuration
-    rest delete policy  admin-view  P1
-    rest delete policy  admin-view  ZP1 
-    rest delete interface role  s1  ${filter_1}    filter          
-    rest delete interface role  s2  ${filter_2}    filter        
-    rest delete interface role  s1  ${delivery_1}    delivery
-    rest delete interface role  s2  ${delivery_2}    delivery
-    rest delete interface  s1  ${filter_1}          
-    rest delete interface  s2  ${filter_2}        
-    rest delete interface  s1  ${delivery_1}          
-    rest delete interface  s2  ${delivery_2}
+    ${config1}=  rest delete policy  admin-view  P1
+    Should be true  ${config1}
+    ${config2}=  rest delete policy  admin-view  ZP1
+    Should be true  ${config2}
+    ${config3}=  rest delete interface role  s1  ${filter_1}    filter
+    Should be true  ${config3}
+    ${config4}=  rest delete interface role  s2  ${filter_2}    filter
+    Should be true  ${config4}
+    ${config5}=  rest delete interface role  s1  ${delivery_1}    delivery
+    Should be true  ${config5}
+    ${config6}=  rest delete interface role  s2  ${delivery_2}    delivery
+    Should be true  ${config6}
+    ${config7}=  rest delete interface  s1  ${filter_1}
+    Should be true  ${config7}
+    ${config8}=  rest delete interface  s2  ${filter_2}
+    Should be true  ${config8}
+    ${config9}=  rest delete interface  s1  ${delivery_1}
+    Should be true  ${config9}
+    ${config10}=  rest delete interface  s2  ${delivery_2}
+    Should be true  ${config10}
     Sleep  30
 
 ha test teardown
@@ -329,12 +355,20 @@ ha test teardown
     
 ha suite teardown
     delete bigtap configuration
-    rest delete switch alias  s1
-    rest delete switch alias  s2
-    rest delete switch alias  s3
-    rest delete switch alias  s4
-    rest delete switch  s1
-    rest delete switch  s2
-    rest delete switch  s3
-    rest delete switch  s4                           
+    ${config1}=  rest delete switch alias  s1
+    Should be true  ${config1}
+    ${config2}=  rest delete switch alias  s2
+    Should be true  ${config2}
+    ${config3}=  rest delete switch alias  s3
+    Should be true  ${config3}
+    ${config4}=  rest delete switch alias  s4
+    Should be true  ${config4}
+    ${config5}=  rest delete switch  s1
+    Should be true  ${config5}
+    ${config6}=  rest delete switch  s2
+    Should be true  ${config6}
+    ${config7}=  rest delete switch  s3
+    Should be true  ${config7}
+    ${config8}=  rest delete switch  s4
+    Should be true  ${config8}
     base suite teardown   

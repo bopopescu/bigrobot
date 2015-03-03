@@ -4,15 +4,15 @@ Suite Setup                             statistics suite setup
 Suite Teardown                          statistics suite teardown
 Test Setup                              statistics test setup
 Test Teardown                           statistics test teardown 
-Force Tags                              BigTap  SwitchLight  Statistics  blackbird
-Library                     keywords/BsnCommon.py
-Library                     keywords/AppController.py
-Library                     keywords/BigTap.py
-Library                     keywords/SwitchLight.py
-Library                     keywords/Ixia.py
-Library                     Collections.py
-Library                     OperatingSystem.py
-Library                     String.py
+Force Tags                              BigTap  blackbird-300  Accton-AS6700  Accton-AS5710  Accton-AS4600  Accton-AS5610  statistics
+Library                                 keywords/BsnCommon.py
+Library                                 keywords/AppController.py
+Library                                 keywords/BigTap.py
+Library                                 keywords/SwitchLight.py
+Library                                 keywords/Ixia.py
+Library                                 Collections.py
+Library                                 OperatingSystem.py
+Library                                 String.py
 
 * Variables
 #### Switch 1: app-ras4600-1
@@ -165,7 +165,7 @@ TC001: Verify policy interface statistics on controller, when filter and deliver
     Should be true  ${in_range}
     ${in_range}=  ixia verify traffic rate  ${tx_policy_value}  ${tx_value}  rangev=10
     Should be true  ${in_range}
-    [Tags]  policy-stats  single-switch  single-policy             
+    [Tags]  full  feature  traffic
 
 TC002: Verify switch interface statistics when filter and delivery interface are on same switch
     ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
@@ -197,7 +197,7 @@ TC002: Verify switch interface statistics when filter and delivery interface are
     Should be true  ${in_range}
     ${in_range}=  ixia verify traffic rate  ${tx_switch_value}  ${tx_value}     rangev=10
     Should be true  ${in_range}
-    [Tags]  switch-stats  single-switch  single-policy             
+    [Tags]  full  feature  traffic
 
 TC003: Verify policy interface statistics on controller, when filter and delivery interface are on different switches 
     ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
@@ -273,7 +273,7 @@ TC003: Verify policy interface statistics on controller, when filter and deliver
     ${s5_policy_value}=    rest return policy stats  ${statistics_policy_1}   interface_type=delivery   interface_name=${sw5_tgdelivery_alias_1}     stat_info=packet-count
     ${in_range}=  ixia verify traffic rate  ${s5_policy_value}  ${rx_value}  rangev=10
     Should be true  ${in_range}
-    [Tags]  policy-stats  multi-switch  single-policy             
+    [Tags]  full  feature  traffic
 
 TC004: Verify policy interface statistics across fabric, when multiple policies traverse the core. 
     change interface role to  filter    ${sw1_tgfilter_intf_2}      ${sw1_tgfilter_alias_2}         s1
@@ -420,7 +420,7 @@ TC004: Verify policy interface statistics across fabric, when multiple policies 
     Should be True      ${return_value}
     change interface role to  delivery      ${sw1_tgdelivery_intf_1}        ${sw1_tgdelivery_alias_1}           s1
     change interface role to  filter        ${sw5_tgfilter_intf_1}          ${sw5_tgfilter_alias_1}             s5        
-    [Tags]  policy-stats  multi-switch  multi-policy
+    [Tags]  full  feature  traffic
 
 TC005: Verify policy statistics across monitoring fabric when policy has one service on core switch S3 
     ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
@@ -506,7 +506,7 @@ TC005: Verify policy statistics across monitoring fabric when policy has one ser
     ${s5_policy_value}=    rest return policy stats  ${statistics_policy_1}   interface_type=delivery   interface_name=${sw5_tgdelivery_alias_1}     stat_info=packet-count
     ${in_range}=  ixia verify traffic rate  ${s5_policy_value}  ${s5s4_core_value}  rangev=10
     Should be true  ${in_range}
-    [Tags]  policy-stats  multi-switch  single-policy  single-service 
+    [Tags]  full  feature  traffic
 
 TC006: Verify policy statistics across monitoring fabric when policy has two services chained on filter switch S1 and delivery switch S5
     ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
@@ -604,8 +604,7 @@ TC006: Verify policy statistics across monitoring fabric when policy has two ser
     ${s5_policy_value}=    rest return policy stats  ${statistics_policy_1}   interface_type=delivery   interface_name=${sw5_tgdelivery_alias_1}     stat_info=packet-count
     ${in_range}=  ixia verify traffic rate  ${s5_policy_value}  ${s5s4_core_value}  rangev=10
     Should be true  ${in_range}
-         
-    [Tags]  policy-stats  multi-switch  single-policy  multi-service
+    [Tags]  full  feature  traffic
 
 TC007: Verify policy statistics across monitoring fabric two policies use same mandatory service.
     change interface role to  filter    ${sw1_tgfilter_intf_2}      ${sw1_tgfilter_alias_2}         s1
@@ -738,8 +737,7 @@ TC007: Verify policy statistics across monitoring fabric two policies use same m
     Should be True      ${return_value}
     change interface role to  delivery      ${sw1_tgdelivery_intf_1}        ${sw1_tgdelivery_alias_1}           s1
     change interface role to  filter        ${sw2_tgfilter_intf_1}          ${sw2_tgfilter_alias_1}             s2      
-         
-    [Tags]  policy-stats  multi-switch  multi-policy  single-service  
+    [Tags]  full  feature  traffic
     
 TC008: Verify policy statistics across monitoring fabric with a overlapping policy
     change interface role to  delivery  ${sw2_tgdelivery_intf_2}    ${sw2_tgdelivery_alias_2}       s2
@@ -857,7 +855,7 @@ TC008: Verify policy statistics across monitoring fabric with a overlapping poli
     change interface role to  filter        ${sw2_tgdelivery_intf_2}          ${sw2_tgfilter_alias_1}             s2                   
     ${return_value}=    rest disable feature    overlap
     Should be True      ${return_value}
-    [Tags]  policy-stats  multi-switch  multi-policy  overlap  
+    [Tags]  full  feature  traffic
 
 TC009: Verify drop counters work when core interface is over-subscribed
     ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
@@ -889,7 +887,7 @@ TC009: Verify drop counters work when core interface is over-subscribed
     ${output_value}=  Convert To Integer  ${s5_delivery_value}
     ${return_value}=  verify value is in range  ${output_value}  100000  100000000      
     Should be True  ${return_value}                                                                        
-    [Tags]  policy-stats  multi-switch  single-policy
+    [Tags]  full  feature  traffic
                 
 TC010: Verify drop counters work when delivery interface is over-subscribed
     ## Drop is seen on filter interface
@@ -926,7 +924,7 @@ TC010: Verify drop counters work when delivery interface is over-subscribed
     ${output_value}=  Convert To Integer  ${s5_filter_value}
     ${return_value}=  verify value is in range  ${output_value}  100000  100000000      
     Should be True  ${return_value}                                                                        
-    [Tags]  policy-stats  multi-switch  single-policy  drop  
+    [Tags]  full  feature  traffic
 
 TC011: Verify switch interface statistics on controller, when filter and delivery interface are on same switch     
     ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
@@ -960,7 +958,7 @@ TC011: Verify switch interface statistics on controller, when filter and deliver
     Should be true  ${in_range}
     ${in_range}=  ixia verify traffic rate  ${tx_switch_value}  ${tx_value}  rangev=10
     Should be true  ${in_range}
-    [Tags]  switch-stats  single-switch  single-policy             
+    [Tags]  full  feature  traffic
 
 TC012: Verify switch interface statistics on controller, when filter and delivery interface are on different switches       
     ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
@@ -1048,7 +1046,7 @@ TC012: Verify switch interface statistics on controller, when filter and deliver
     ${tx_switch_value}=  rest return switch interface stats  ${s5_dpid}     ${sw5_tgdelivery_intf_1}     transmit-packets    
     ${in_range}=  ixia verify traffic rate  ${tx_switch_value}              ${sw5sw4_core_switch_value}  rangev=10
     Should be true  ${in_range}
-    [Tags]  switch-stats  multi-switch  single-policy    
+    [Tags]  full  feature  traffic
                 
 TC013: Verify switch interface statistics on controller, when multiple policies traverse the core.       
     change interface role to  filter    ${sw1_tgfilter_intf_2}      ${sw1_tgfilter_alias_2}         s1
@@ -1190,8 +1188,7 @@ TC013: Verify switch interface statistics on controller, when multiple policies 
     ${tx_switch_value}=  rest return switch interface stats  ${s5_dpid}     ${sw5_tgdelivery_intf_2}     transmit-packets    
     ${in_range}=  ixia verify traffic rate  ${tx_switch_value}              ${sw5sw4_core_switch_value}  rangev=10
     Should be true  ${in_range}
-        
-    [Tags]  switch-stats  multi-switch  single-policy  
+    [Tags]  full  feature  traffic
     
 TC014: Verify switch interface statistics on controller, when policy has one service on core switch S3       
     ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
@@ -1290,7 +1287,7 @@ TC014: Verify switch interface statistics on controller, when policy has one ser
     Should be true  ${in_range}
     ${in_range}=  ixia verify traffic rate  ${tx_switch_value}  ${tx_value}  rangev=10
     Should be true  ${in_range}
-    [Tags]  switch-stats  multi-switch  single-policy  single-service   
+    [Tags]  full  feature  traffic
         
 TC015: Verify switch interface statistics on controller, when policy has two services chained on filter switch S1 and delivery switch S5        
     ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
@@ -1403,7 +1400,7 @@ TC015: Verify switch interface statistics on controller, when policy has two ser
     Should be true  ${in_range}
     ${in_range}=  ixia verify traffic rate  ${tx_switch_value}  ${tx_value}  rangev=10
     Should be true  ${in_range}
-    [Tags]  switch-stats  multi-switch  single-policy  multi-service   
+    [Tags]  full  feature  traffic
 
  
 TC016: Verify switch interface statistics on controller, when two policies use same mandatory service.       
@@ -1584,8 +1581,7 @@ TC016: Verify switch interface statistics on controller, when two policies use s
     ${tx_switch_value}=  rest return switch interface stats  ${s5_dpid}     ${sw5_tgdelivery_intf_2}     transmit-packets    
     ${in_range}=  ixia verify traffic rate  ${tx_switch_value}              ${sw5sw4_core_switch_value}  rangev=10
     Should be true  ${in_range}
-    
-    [Tags]  switch-stats  multi-switch  multi-policy  single-service   
+    [Tags]  full  feature  traffic
         
 TC017: Verify switch interface statistics on controller, with an overlapping policy       
     change interface role to  delivery  ${sw2_tgdelivery_intf_2}    ${sw2_tgdelivery_alias_2}       s2
@@ -1680,7 +1676,7 @@ TC017: Verify switch interface statistics on controller, with an overlapping pol
     Should be true  ${in_range}
     ${in_range}=            ixia verify traffic rate                ${s2_dintf_value2}          ${tx_value_2}             rangev=10
     Should be true  ${in_range}   
-    [Tags]  switch-stats  multi-switch  multi-policy  overlap  runthis
+    [Tags]  full  feature  traffic
     
 
                                                       

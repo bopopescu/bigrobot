@@ -1,0 +1,652 @@
+*Settings
+Documentation  BigTap SwitchLight Traffic Test Suite
+Suite Setup  bigtap suite setup
+Suite Teardown   bigtap suite teardown
+Test Setup   base test setup
+Test Teardown  traffic teardown 
+Force Tags  SwitchLight  BigTap  switch-platform
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+${policy_name_1}  QLY2-D4810
+${filter_1}  ethernet1  
+${filter_nick_1}  ixia-4-3
+${delivery_1}  ethernet2  
+${delivery_nick_1}  ixia-4-20
+
+#Core Links being tested
+#LY2                        #Type          Vendor            Model
+${core_ly2_1}   ethernet13  #1GBASE-LX     AVAGO             AFCT-5715PZ-JU1
+${core_ly2_2}   ethernet14  #1GBASE-LX     HotLava Systems   HLZX1G2A
+${core_ly2_3}   ethernet15  #1GBASE-SX     CISCO-FINISAR     FTLF8519P2BCL-CS
+${core_ly2_4}   ethernet16  #1GBASE-SX     FINISAR CORP.     FTLF8524P2BNV
+${core_ly2_5}   ethernet17  #1GBASE-SX     JDS UNIPHASE      JSM-12S0AA1
+${core_ly2_6}   ethernet18  #1GBASE-SX     FINISAR CORP.     FTLF8519P2BNL-ES
+${core_ly2_7}   ethernet19  #10GBASE-SR    JDSU              PLRXPLSCS4322N
+${core_ly2_8}   ethernet20  #10GBASE-SR    FINISAR CORP.     FTLX8571D3BCL
+${core_ly2_9}   ethernet21  #10GBASE-LR    HotLava Systems   HLLR10G2A
+${core_ly2_10}  ethernet22  #10GBASE-SR    Arista Networks   SFP-10G-SRL
+${core_ly2_11}  ethernet23  #10GBASE-SR    AVAGO             AFBR-703SDDZ
+${core_ly2_12}  ethernet24  #10GBASE-LR    FINISAR CORP.     FTLX1471D3BCL
+${core_ly2_13}  ethernet25  #1GBASE-T      HotLava Systems   HLTA1G2A
+${core_ly2_14}  ethernet26  #1GBASE-T      Arista Networks   SFP-1G-T
+${core_ly2_15}  ethernet27  #1GBASE-LX     FINISAR CORP.     FTRJ1319P1BTL-MD
+${core_ly2_16}  ethernet28  #1GBASE-SX     FINISAR CORP.     FTLF8519P2BNL
+${core_ly2_17}  ethernet29  #1GBASE-SX     FINISAR CORP.     FTRJ8519P1BNL
+${core_ly2_18}  ethernet30  #10GBASE-SR    OEM               SFP-10G85-3M-QU
+${core_ly2_19}  ethernet50  #40GBASE-SR4   AVAGO             AFBR-79E4Z-D
+${core_ly2_20}  ethernet51  #40GBASE-SR4   FINISAR           FTL410QE1C-G1
+
+#DELL S4810                   #Type          Vendor            Model
+${core_d4810_1}   ethernet13  #1GBASE-LX     AVAGO             AFCT-5715PZ-JU1
+${core_d4810_2}   ethernet14  #1GBASE-LX     HotLava Systems   HLZX1G2A
+${core_d4810_3}   ethernet15  #1GBASE-SX     CISCO-FINISAR     FTLF8519P2BCL-CS
+${core_d4810_4}   ethernet16  #1GBASE-SX     FINISAR CORP.     FTLF8524P2BNV
+${core_d4810_5}   ethernet17  #1GBASE-SX     JDS UNIPHASE      JSM-12S0AA1
+${core_d4810_6}   ethernet18  #1GBASE-SX     FINISAR CORP.     FTLF8519P2BNL-ES
+${core_d4810_7}   ethernet19  #10GBASE-SR    JDSU              PLRXPLSCS4322N
+${core_d4810_8}   ethernet20  #10GBASE-SR    FINISAR CORP.     FTLX8571D3BCL
+${core_d4810_9}   ethernet21  #10GBASE-LR    HotLava Systems   HLLR10G2A
+${core_d4810_10}  ethernet22  #10GBASE-SR    Arista Networks   SFP-10G-SRL
+${core_d4810_11}  ethernet23  #10GBASE-SR    AVAGO             AFBR-703SDDZ
+${core_d4810_12}  ethernet24  #10GBASE-LR    FINISAR CORP.     FTLX1471D3BCL
+${core_d4810_13}  ethernet25  #1GBASE-T      HotLava Systems   HLTA1G2A
+${core_d4810_14}  ethernet26  #1GBASE-T      Arista Networks   SFP-1G-T
+${core_d4810_15}  ethernet27  #1GBASE-LX     FINISAR CORP.     FTRJ1319P1BTL-MD
+${core_d4810_16}  ethernet28  #1GBASE-SX     FINISAR CORP.     FTLF8519P2BNL
+${core_d4810_17}  ethernet29  #1GBASE-SX     FINISAR CORP.     FTRJ8519P1BNL
+${core_d4810_18}  ethernet30  #10GBASE-SR    OEM               SFP-10G85-3M-QU
+${core_d4810_19}  ethernet52  #40GBASE-SR4   AVAGO             AFBR-79E4Z-D
+${core_d4810_20}  ethernet51  #40GBASE-SR4   FINISAR           FTL410QE1C-G1
+${core_d4810_21}  ethernet49  #40GBASE-CR4   Amphenol          624410003  (This is the link to APP-RLY2-5)
+${core_d4810_22}  ethernet50  #40GBASE-SR4   AVAGO             AFBR-79EQDZ  (This is the link to APP-RLY2-5)
+
+*Test Case
+
+Verify SFP Type:1GBASE-LX Vendor:AVAGO Model:AFCT-5715PZ-JU1
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_1}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_1}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_1}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_1}  down        
+    [Tags]  l2  1GBASE-LX  avago     
+
+Verify SFP Type:1GBASE-LX Vendor:HotLava Systems Model:HLZX1G2A
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_2}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_2}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_2}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_2}  down     
+    [Tags]  l2  1GBASE-LX  hotlava 
+
+Verify SFP Type:1GBASE-SX Vendor:CISCO-FINISAR Model:FTLF8519P2BCL-CS
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_3}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_3}  up    
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_3}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_3}  down     
+    [Tags]  l2  1GBASE-SX  finisar 
+
+Verify SFP Type:1GBASE-SX Vendor:FINISAR CORP. Model:FTLF8524P2BNV
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_4}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_4}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_4}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_4}  down    
+    [Tags]  l2  1GBASE-SX  finisar 
+
+Verify SFP Type:1GBASE-SX Vendor:JDS UNIPHASE Model:JSM-12S0AA1
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_5}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_5}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_5}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_5}  down
+    [Tags]  l2  1GBASE-SX  jds-uniphase 
+
+
+Verify SFP Type:1GBASE-SX Vendor:FINISAR CORP. Model:FTLF8519P2BNL-ES
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_6}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_6}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_6}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_6}  down
+    [Tags]  l2  1GBASE-SX  finisar                                 
+
+Verify SFP Type:10GBASE-SR Vendor:JDSU Model:PLRXPLSCS4322N
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_7}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_7}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_7}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_7}  down
+    [Tags]  l2  10GBASE-SR  jdsu
+
+Verify SFP Type:10GBASE-SR Vendor:FINISAR CORP. Model:FTLX8571D3BCL
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_8}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_8}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_8}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_8}  down
+    [Tags]  l2  10GBASE-SR  finisar    
+
+Verify SFP Type:10GBASE-LR Vendor:HotLava Systems Model:HLLR10G2A
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_9}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_9}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_9}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_9}  down
+    [Tags]  l2  10GBASE-LR  hotlava
+
+
+Verify SFP Type:10GBASE-SR Vendor:Arista Networks Model:SFP-10G-SRL
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_10}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_10}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_10}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_10}  down
+    [Tags]  l2  10GBASE-SR  arista
+
+Verify SFP Type:10GBASE-SR Vendor:AVAGO Model:AFBR-703SDDZ
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_11}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_11}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_11}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_11}  down
+    [Tags]  l2  10GBASE-SR  avago
+
+Verify SFP Type:10GBASE-LR Vendor:FINISAR CORP. Model:FTLX1471D3BCL
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_12}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_12}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_12}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_12}  down
+    [Tags]  l2  10GBASE-LR  FINISAR
+
+Verify SFP Type:1GBASE-T Vendor:HotLava Systems Model:HLTA1G2A
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_13}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_13}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_13}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_13}  down        
+    [Tags]  l2  1GBASE-T  hotlava
+
+Verify SFP Type:1GBASE-T Vendor:Arista Networks Model:SFP-1G-T
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_14}
+    Sleep  90
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_14}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_14}
+    Sleep  200
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_14}  down        
+    [Tags]  l2  1GBASE-T  arista 
+    
+Verify SFP Type:1GBASE-LX Vendor:FINISAR CORP. Model:FTRJ1319P1BTL-MD
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_15}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_15}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_15}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_15}  down        
+    [Tags]  l2  1GBASE-LX  finisar 
+    
+ Verify SFP Type:1GBASE-SX Vendor:FINISAR CORP Model:FTLF8519P2BNL
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_16}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_16}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_16}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_16}  down        
+    [Tags]  l2  1GBASE-SX  finisar             
+    
+ Verify SFP Type:1GBASE-SX Vendor:FINISAR CORP Model:FTRJ8519P1BNL
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_17}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_17}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_17}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_17}  down        
+    [Tags]  l2  1GBASE-SX  finisar
+
+Verify SFP Type:10GBASE-LR Vendor:FibreStore/OEM Model:SFP-10G85-3M-QU
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_18}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_18}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_18}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_18}  down
+    [Tags]  l2  10GBASE-LR  OEM
+            
+Verify SFP Type:40GBASE-SR4 Vendor:AVAGO Model:AFBR-79E4Z-D
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_19}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_19}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_19}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_19}  down
+    [Tags]  l2  40GBASE-SR4   AVAGO  AFBR-79E4Z-D
+
+            
+Verify SFP Type:40GBASE-SR4 Vendor:FINISAR Model:FTL410QE1C-G1
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_20}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_20}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_20}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_20}  down
+    [Tags]  l2  40GBASE-SR4   FINISAR  FTL410QE1C-G1
+                                                                     
+* Keywords
+
+bigtap suite setup
+    base suite setup         
+    rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}   
+    rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
+    Sleep  5
+    rest add policy  admin-view  ${policy_name_1}  forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${delivery_nick_1}  delivery
+    #Delete existing port-channel on s1
+    cli delete portchannel  s1  8
+    cli delete portchannel  s1  9 
+    cli delete portchannel  s2  8
+    cli delete portchannel  s2  9            
+    Sleep  5
+    #First verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+    #Now Disable all core-links going out Dell S4810
+    cli disable interface  s1  ${core_d4810_1}
+    cli disable interface  s1  ${core_d4810_2}
+    cli disable interface  s1  ${core_d4810_3}
+    cli disable interface  s1  ${core_d4810_4}            
+    cli disable interface  s1  ${core_d4810_5}
+    cli disable interface  s1  ${core_d4810_6}
+    cli disable interface  s1  ${core_d4810_7}
+    cli disable interface  s1  ${core_d4810_8}
+    cli disable interface  s1  ${core_d4810_9}
+    cli disable interface  s1  ${core_d4810_10}
+    cli disable interface  s1  ${core_d4810_11}
+    cli disable interface  s1  ${core_d4810_12}
+    cli disable interface  s1  ${core_d4810_13}
+    cli disable interface  s1  ${core_d4810_14}
+    cli disable interface  s1  ${core_d4810_15}
+    cli disable interface  s1  ${core_d4810_16}
+    cli disable interface  s1  ${core_d4810_17}
+    cli disable interface  s1  ${core_d4810_18}
+    cli disable interface  s1  ${core_d4810_19}
+    cli disable interface  s1  ${core_d4810_20}
+    cli disable interface  s1  ${core_d4810_21}
+    cli disable interface  s1  ${core_d4810_22}                                
+    Sleep  30
+    #Verify inteface have indeed been disabled
+    verify interface state  s1  ${core_d4810_1}  down
+    verify interface state  s1  ${core_d4810_2}  down
+    verify interface state  s1  ${core_d4810_3}  down
+    verify interface state  s1  ${core_d4810_4}  down
+    verify interface state  s1  ${core_d4810_5}  down
+    verify interface state  s1  ${core_d4810_6}  down
+    verify interface state  s1  ${core_d4810_7}  down
+    verify interface state  s1  ${core_d4810_8}  down
+    verify interface state  s1  ${core_d4810_9}  down
+    verify interface state  s1  ${core_d4810_10}  down
+    verify interface state  s1  ${core_d4810_11}  down
+    verify interface state  s1  ${core_d4810_12}  down
+    verify interface state  s1  ${core_d4810_13}  down
+    verify interface state  s1  ${core_d4810_14}  down
+    verify interface state  s1  ${core_d4810_15}  down
+    verify interface state  s1  ${core_d4810_16}  down
+    verify interface state  s1  ${core_d4810_17}  down
+    verify interface state  s1  ${core_d4810_18}  down
+    verify interface state  s1  ${core_d4810_19}  down
+    verify interface state  s1  ${core_d4810_20}  down
+    verify interface state  s1  ${core_d4810_21}  down
+    verify interface state  s1  ${core_d4810_22}  down                                                                                
+
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  500
+    Should be true  ${in_range}
+    
+traffic teardown 
+    delete traffic
+    sleep  30
+            
+verify interface state  [Arguments]  ${switch}  ${interface}  ${state}
+    ${ret_value_1}=  cli return interface counter brief  s1  ${interface}  state
+    Should Be Equal As Strings  ${ret_value_1}  ${state}
+    ${ret_value_2}=  cli show interface state  ${switch}  ${interface}
+    Should Contain  ${ret_value_2}  ${state}
+    
+bigtap suite teardown
+    rest delete policy  admin-view  ${policy_name_1}   
+    cli enable interface  s1  ${core_d4810_1}
+    cli enable interface  s1  ${core_d4810_2}
+    cli enable interface  s1  ${core_d4810_3}
+    cli enable interface  s1  ${core_d4810_4}            
+    cli enable interface  s1  ${core_d4810_5}
+    cli enable interface  s1  ${core_d4810_6}
+    cli enable interface  s1  ${core_d4810_7}
+    cli enable interface  s1  ${core_d4810_8}
+    cli enable interface  s1  ${core_d4810_9}
+    cli enable interface  s1  ${core_d4810_10}
+    cli enable interface  s1  ${core_d4810_11}
+    cli enable interface  s1  ${core_d4810_12}
+    cli enable interface  s1  ${core_d4810_13}
+    cli enable interface  s1  ${core_d4810_14}
+    cli enable interface  s1  ${core_d4810_15}
+    cli enable interface  s1  ${core_d4810_16}
+    cli enable interface  s1  ${core_d4810_17}
+    cli enable interface  s1  ${core_d4810_18}
+    cli enable interface  s1  ${core_d4810_19}
+    cli enable interface  s1  ${core_d4810_20}
+    cli enable interface  s1  ${core_d4810_21}
+    cli enable interface  s1  ${core_d4810_22}                                
+    sleep  10
+    #Verify inteface have indeed been disabled
+    verify interface state  s1  ${core_d4810_1}  up
+    verify interface state  s1  ${core_d4810_2}  up
+    verify interface state  s1  ${core_d4810_3}  up
+    verify interface state  s1  ${core_d4810_4}  up
+    verify interface state  s1  ${core_d4810_5}  up
+    verify interface state  s1  ${core_d4810_6}  up
+    verify interface state  s1  ${core_d4810_7}  up
+    verify interface state  s1  ${core_d4810_8}  up
+    verify interface state  s1  ${core_d4810_9}  up
+    verify interface state  s1  ${core_d4810_10}  up
+    verify interface state  s1  ${core_d4810_11}  up
+    verify interface state  s1  ${core_d4810_12}  up
+    verify interface state  s1  ${core_d4810_13}  up
+    verify interface state  s1  ${core_d4810_14}  up
+    verify interface state  s1  ${core_d4810_15}  up
+    verify interface state  s1  ${core_d4810_16}  up
+    verify interface state  s1  ${core_d4810_17}  up
+    verify interface state  s1  ${core_d4810_18}  up
+    verify interface state  s1  ${core_d4810_19}  up
+    verify interface state  s1  ${core_d4810_20}  up
+    verify interface state  s1  ${core_d4810_21}  up
+    verify interface state  s1  ${core_d4810_22}  up    
+    sleep  10    
+    #Delete existing port-channel on s1
+    cli add portchannel  s1  8  13,14,15,16,17,18,25,26,27,28,29  L2
+    cli add portchannel  s1  9  19,20,21,22,23,24,30  L3
+    cli add portchannel  s2  8  13,14,15,16,17,18,25,26,27,28,29  L2
+    cli add portchannel  s2  9  19,20,21,22,23,24,30  L3                                                                  

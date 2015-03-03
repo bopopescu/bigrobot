@@ -59,7 +59,7 @@ Verify ONIE installed switch gets switchLite installer
     Log     Step 1 - Verify ONIE gets switchLite installer image
     Log     Step 2 - Verify that after the installer you get loader prompt    
     [Tags]  switch-platform  install  feature  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
 
 Verify that installer can be upgraded on leaf and spine
@@ -71,33 +71,33 @@ Verify that installer can be upgraded on leaf and spine
 Verify that switchLight image can be installed first time 
     Log   Step 1 - Verify that switchLight image can be installed first time
     [Tags]  switch-platform  install  feature  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
 
 Interrupt the switchLight installer and verify that it can be reinstalled 
     Log   Step 1 - Interrupt the switchLight install and verify that it can be re-installed. 
     [Tags]  switch-platform  install  feature  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed    
 
 Interrupt switchLight image upgrade and verify that it can be upgraded 
     Log   Step 1 - Interrupt the switchLight install and verify that it can be re-installed. 
     [Tags]  switch-platform  install  feature  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
    
 Verify the Installer URL check for leaf and spine
     Log   Step 1 - Verify the Url settings for leaf and spine. 
     [Tags]  switch-platform  install  feature  
-    [Tags]  Manual 
+    [Tags]  Manual  skipped 
     Manual passed   
 
 Verify switchLight Installer can upgrade another switchLite image
     Log     Step 1 - Verify switchLight Installer can upgrade to another swithcLigh image
     [Tags]  switch-platform  install  feature 
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
-    
+     
 ## Check Uboot version  ( minimum required version )
 Verify Uboot version  
     Log    Step 1 - Verify the minimum Uboot version 
@@ -109,7 +109,7 @@ Verify uboot configuration Static ip address, gateway, netmask, server ip
     Log    Step 1 - Verify the configuration of static Ip address, gateway, netmask and server ip
     Log    Step 2 - Verify that this can be saved and after reboot it is persisted   
     [Tags]  switch-platform  install  feature 
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
 
 ## Switch flash card verification 4GB/ 8GB 
@@ -117,7 +117,7 @@ Verify the switch flash card memory
     Log    Step 1 - Verify the switch flash card memory 2GB / 4GB 
     Log    Step 2 - From data sheet AS5710 and AS6700 have 2GB flash memory
     [Tags]  switch-platform  install  feature 
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed      
 
 Reboot Switch and verify the loader parameters like IP, gateway, server ip,default gateway etc
@@ -126,13 +126,13 @@ Reboot Switch and verify the loader parameters like IP, gateway, server ip,defau
     Log    Step 3 - Verify after reboot the configuration of server ip  
     Log    Step 4 - Verify invalid gateway fails and report network unreachable  
     [Tags]  switch-platform  install  feature 
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
 
 Verify after loader env configuration Ping to Switch 
     Log    Step 1 - Verify after loader env config , Ping to Switch works   
     [Tags]  switch-platform  install  feature 
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
 
 Verify DHCP address configuration, IP address allocation and PING
@@ -140,20 +140,20 @@ Verify DHCP address configuration, IP address allocation and PING
     Log    Step 2 - Verify the IP address allocation 
     Log    Step 3 - Verify the PING 
     [Tags]  switch-platform  install  feature 
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed 
     
 Reboot box and Verify the IP address through DHCP server and Ping 
     Log    Step 1 - Verify after reboot IP address allocation thru DHCP 
     Log    Step 1 - Verify the PING connectivity 
     [Tags]  switch-platform  install  feature 
-    [Tags]  Manual 
+    [Tags]  Manual  skipped 
     Manual passed 
    
 Verify environmental variables for CPU, RAM, PCI, Ethernet at loader 
     Log    Step 1 - Verify the environmental variables for CPU, RAM etc. 
     [Tags]  switch-platform  install  feature 
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
 
 ## Installer did not install
@@ -165,13 +165,13 @@ Verify environmental variables for CPU, RAM, PCI, Ethernet at loader
 Verify the recovery procedure of Switch when SwLight installer fails  
     Log    Step 1 - verify that the Switch can be recovered by the defined procedure 
     [Tags]  switch-platform  install  feature 
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed 
 
 Verify the procedure of switch upgrade when the switchLight image upgrade fails
     Log    Step 1 - verify that the Switch can be recovered by the defined procedure
     [Tags]  switch-platform  install  feature 
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed
 
 ## Add for the verification of factory default settings 
@@ -195,13 +195,13 @@ Verify the Switch configuration after ZTN verify the running config
 Verify Switch connectivity after ZTN Dhcp address allocation  
     Log    Step 1 - Verify Switch is pingable after it is connected through ZTN
     [Tags]  switch-platform  ZTN  feature  
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed 
     
 Verify Switch Configuration Modification gets lost after reboot switch 
     Log    Step 1 - Verify that Switch Configuration modification gets lost and controller sends the startup-config for switch
     [Tags]  switch-platform  ZTN  feature  
-    [Tags]  Manual 
+    [Tags]  Manual  skipped 
     Manual Passed 
     
 ## Management Port configuration, default gateway etc
@@ -209,55 +209,55 @@ Verify Switch Configuration Modification gets lost after reboot switch
 Verify management port ma1 static IP configuration 
     Log    Step 1 - Verify the Management Port ma1 ip address can be configured
     [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
        
 Verify default gateway configuration on switch 
     Log    Step 1 - Verify default gateway can be configured on switch 
     [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
 
 Verify that invalid static IP configuration for ma1 can be deleted and corrected
     Log    Step 1 - Verify the Management Port ma1 ip address after misconfiguration can be deleted and corrected
     [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
 
 Verify management port comes up after removing and reinserting cable 
     Log    Step 1 - Verify the Management Port config after cable remove and re-insertion
     [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
 
 Verify show command for management interface ma1 
     Log    Step 1 - Verify the show command for managmenet interface ma1 , ip address, subnet mask
     [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
 
 Enable SSH configuration and verify connectivity 
     Log    Step 1 - Enable SSH configuration and verify connectivity 
     [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
 
 Enable telnet configuration and verify connectivity 
     Log    Step 1 - Enable telnet configuration and verify connectivity 
     [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
 
 Verify multiple SSH connections to Management Port 
     Log    Step 1 - Verify multiple SSH connections to Management Port
     [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual 
+    [Tags]  Manual  skipped 
     Manual Passed
     
 Verify multiple telnet connections to Management Port 
     Log    Step 1 - Verify multiple telnet connections to Management Port
     [Tags]  switch-platform  InitialConfig  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual Passed
     
 
@@ -267,60 +267,60 @@ PSU failure test Bring up the PSU and Fail back up PSU AC
     Log    Step 1 - PSU failure test - Bring up PSU1 and PSU2, Fail back up PSU
     [Tags]  switch-platform  Environment  feature
     [Tags]  Manual
-    Manual passed
+    Manual Passed
     
 Verify power output when DUT use two AC power supplies
     Log    Step 1 - Verify power output when DUT use two power supplies
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  
-    Manual passed    
+    [Tags]  Manual
+    Manual Passed   
 
 With both AC power supplies and system up and running, remove one power supply and verify
     Log    Step 1 - With both power supplies and system up and running, remove one power supply and verify
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  
-    Manual passed    
+    [Tags]  Manual 
+    Manual Passed    
 
 Repeat previous testcase with the other AC power supply
     Log    Step 1 - Repeat previous testcase with the other power supply
     [Tags]  switch-platform  Environment  feature
     [Tags]  Manual  
-    Manual passed    
+    Manual Passed    
 
 With one AC power supply and system up and running, add second power supply and verify
     Log    Step 1 - With one power supply and system up and running, add second power supply and verify
     [Tags]  switch-platform  Environment  feature
     [Tags]  Manual  
-    Manual passed    
+    Manual Passed    
 
 Verify power output when DUT use one DC power supply
     Log    Step 1 - Verify power output when DUT use one power supply
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed    
 
 Verify power output when DUT use two DC power supplies
     Log    Step 1 - Verify power output when DUT use two power supplies
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed    
 
 With both DC power supplies and system up and running, remove one power supply and verify
     Log    Step 1 - With both power supplies and system up and running, remove one power supply and verify
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed   
 
 Repeat previous testcase with the other DC power supply
     Log    Step 1 - Repeat previous testcase with the other power supply
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed   
 
 With one DC power supply and system up and running, add second power supply and verify
     Log    Step 1 - With one power supply and system up and running, add second power supply and verify
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed    
 
 
@@ -331,16 +331,16 @@ Verify LED behavior during and after boot up
     Log    Step 1 - Verify the LED behavior during and after boot up 
     Log    Step 2 - All LEDs should flash and then only link up LED should be green after boot up
     [Tags]  switch-platform  LED  feature  
-    [Tags]  Manual  
-    Manual passed    
+    [Tags]  Manual 
+    Manual Passed   
 
 Verify LED behavior when link is up and down of 10G link   
     Log    Step 1 - Verify the LED behavior when link is up 
     Log    Step 1 - Verify the LED behavior when link is down
     Log    Step 1 - Verify the LED behavior when link is admin disable 
     [Tags]  switch-platform  LED  feature  
-    [Tags]  Manual  
-    Manual passed
+    [Tags]  Manual 
+    Manual Passed
 
 Verify LED behavior when link is up and down of 1G copper link   
     Log    Step 1 - Verify the LED behavior when link is up 
@@ -355,14 +355,14 @@ Verify LED behavior when link is up and down of 40G link on leaf and Spine
     Log    Step 1 - Verify the LED behavior when link is down
     Log    Step 1 - Verify the LED behavior when link is admin disable 
     [Tags]  switch-platform  LED  feature  
-    [Tags]  Manual  
-    Manual passed
+    [Tags]  Manual 
+    Manual Passed
     
 Verify LED behavior when link is disable 
     Log    Step 1 - Verify the LED behavior when link is admin disable 
     [Tags]  switch-platform  LED  feature  
-    [Tags]  Manual  
-    Manual passed
+    [Tags]  Manual 
+    Manual Passed
 
 Verify LED status for MGMT Port 
     Log    Step 1 - Verify LED status for Mgmt port when link is connected and up 
@@ -370,15 +370,15 @@ Verify LED status for MGMT Port
     Log    Step 3 - Verify LED status when some mgmt traffic is going through mgmt port 
     [Tags]  switch-platform  LED  feature
     [Tags]  Manual  
-    Manual passed   
+    Manual Passed  
 
 Verify LED status for console Port 
     Log    Step 1 - Verify LED status for console port when link is connected and up 
     Log    Step 2 - Verify LED status for console port when cable is taken out from the other end
-    Log    Step 3 - For Leaf and Spine there is no LED for console
+    Log    Step 3 - For Leaf and Spine there is no LED for console - Skip test 
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual  
-    Manual passed
+    [Tags]  Manual 
+    Manual Passed
 
 Verify LED status for data ports 
     Log    Step 1 - Verify LED status data ports when Link is down
@@ -387,7 +387,7 @@ Verify LED status for data ports
     
     [Tags]  switch-platform  LED  feature
     [Tags]  Manual  
-    Manual passed    
+    Manual Passed   
 
 Verify LED status for PSU 
     Log    Step 1 - Verify LED status for PSU 1 and 2  
@@ -399,20 +399,20 @@ Verify LED status for Fan
     Log    Step 1 - Verify LED status for Fan  
     [Tags]  switch-platform  LED  feature
     [Tags]  Manual  
-    Manual passed  
+    Manual Passed  
 
 Verify LED Beacon feature on leaf and spine 
     Log   Step 1- Verify that LED beacon feature is working (locate command on CLI)
     Log   Step 2- Verify the CLI command feature, timeout etc. 
     [Tags]  switch-platform  LED  feature
     [Tags]  Manual  
-    Manual passed   
+    Manual Passed   
 
 Verify the LED state when system is halted 
     Log    Step 1 - Verify that when systems is halted without reboot, LED stays the same
     Log    Step 2 - Verify the system is halted with reboot, then LED comes backup when the power is up.
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual
+    [Tags]  Manual  skipped
     Manual passed    
 
 ### Different Switch Platforms 
@@ -423,7 +423,8 @@ Verify the LED state when system is halted
         
 Verify all interfaces show up after sw installation 
     Log    Step 1 - Verify all interfaces show up after sw installation
-    [Tags]  Manual  interface  feature
+    [Tags]  interface  feature
+    [Tags]  Manual
     Manual Passed
 
 Verify that the supported copper and optics are detected in the data ports
@@ -483,37 +484,44 @@ Verify the SNMP traps configured and generated for link up down of switch interf
 Verify the SNMP traps generated for the PSU sensor threshold crossed 
     Log    Step 1 - Verify the SNMP traps generated for the PSU sensor failure
     [Tags]  switch-platform  Manual  SNMP  feature
+    [Tags]  Manual  skipped
     Manual Passed
 
 Verify the SNMP traps generated for the chassis Fan failure 
     Log    Step 1 - Verify the SNMP traps generated for the chassis Fan failure
     [Tags]  switch-platform  Manual  SNMP  feature
+    [Tags]  Manual  skipped
     Manual Passed
 
 Verify the SNMP traps generated for the temp sensors threshold value crossed 
     Log    Step 1 - Verify the SNMP traps generated for the temp sensors threshold value crossed
     [Tags]  switch-platform  Manual  SNMP  feature
+    [Tags]  Manual  skipped
     Manual Passed
 
 Verify the SNMP traps generated for the CPU load threshold value crossed 
     Log    Step 1 - Verify the SNMP traps generated for the CPU load threshold value crossed
     [Tags]  switch-platform  Manual  SNMP  feature
+    [Tags]  Manual  skipped
     Manual Passed
 
 Verify the PSU1 and PSU2 SNMPwalk and after removal of the PSU1 
     Log    Step 1 - Verify the SNMPwalk for the PSU1 and PSU2 
     Log    Step 2 - remove PSU1 and verify the snmpwalk again
     [Tags]  switch-platform  Manual  SNMP  feature
+    [Tags]  Manual  skipped
     Manual Passed
 
 Verify the repeatitive snmpwalk of the interface MIB and confirm the consistent value
     Log    Step 1 - Verify repeatitive snmpwalk of the interface MIB and confirm the consistent value 
     [Tags]  switch-platform  Manual  SNMP  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Verify after reboot the snmpwalk for the consistent IfIndex value 
     Log    Step 1 - Verify after reboot the consistent value of IfIndex  
     [Tags]  switch-platform  Manual  SNMP  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 
@@ -544,48 +552,57 @@ Verify system state after the process faultd restart
 Test the hashing algorithm between the leaf and spine with multiple links for L2 traffic changing Src Mac 
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
     [Tags]  switch-platform  Manual  hashing  traffic  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Test the hashing algorithm between the leaf and spine with multiple links for L2 traffic changing Dst Mac 
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
     [Tags]  switch-platform  Manual  hashing  traffic  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Test the hashing algorithm between the leaf and spine with multiple links for L2 traffic Ip Packet changing src ip dst ip  
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
     [Tags]  switch-platform  Manual  hashing  traffic  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Test the hashing algorithm between the leaf and spine with multiple links for L2 traffic changing Tcp port   
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
     [Tags]  switch-platform  Manual  hashing  traffic  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Test the hashing algorithm between the leaf and spine with multiple links for L2 traffic changing Udp port   
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
     [Tags]  switch-platform  Manual  hashing  traffic  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Test the hashing algorithm between the leaf and spine for L3 traffic changing src ip   
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
     [Tags]  switch-platform  Manual  hashing  traffic  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Test the hashing algorithm between the leaf and spine for L3 traffic changing dst ip
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
     [Tags]  switch-platform  Manual  hashing  traffic  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Test the hashing algorithm between the leaf and spine for L3 traffic TCP changing source port  
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
     Log    Step 2 - Send traffic with different tcp source port 
     [Tags]  switch-platform  Manual  hashing  traffic  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Test the hashing algorithm between the leaf and spine for L3 traffic TCP changing dest port  
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
     Log    Step 2 - Send traffic with different tcp source port 
     [Tags]  switch-platform  Manual  hashing  traffic  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 ### Logging and Debugging
@@ -593,43 +610,51 @@ Test the hashing algorithm between the leaf and spine for L3 traffic TCP changin
 Verify the logging of openflow events in the Switch 
     Log    Step 1 - Verify the openflow events are being Logged in switch syslog 
     [Tags]  switch-platform  Manual  Logging  Debug  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Verify the syslog server configuration can be added and deleted 
     Log    Step 1 - Verify the syslog server configuration in the switch 
     Log    Step 2 - Verify the syslog server configuration can de deleted and readded 
     [Tags]  switch-platform  Manual  Logging  Debug  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Verify the syslog server misconfiguration that can be removed and the correct syslog server can be configured  
     Log    Step 1 - Verify the inaccessible syslog server configuration and then corrected syslog server configuration   
     [Tags]  switch-platform  Manual  Logging  Debug  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Verify the logging options on the switch 
     Log    Step 1 - Verify the logging options on the switch   
     [Tags]  switch-platform  Manual  Logging  Debug  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Verify the max size of the syslog and rollover of the syslog file 
     Log    Step 1 - Verify the max size of the syslog and rollover of the syslog   
     Log    Step 2 - Verify that syslog on switch rollover after 1M of file size 
     [Tags]  switch-platform  Manual  Logging  Debug  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Verify the logging of interface events up down status in the Switch 
     Log    Step 1 - Verify the interface events are being Logged in switch syslog 
     [Tags]  switch-platform  Manual  Logging  Debug  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Verify the logging of process events restart in the Switch 
     Log    Step 1 - Verify the process events are being Logged in switch syslog 
     [Tags]  switch-platform  Manual  Logging  Debug  feature
+    [Tags]  Manual  skipped
     Manual passed
 
 Verify the logging of PSU insertion and removal events in the Switch 
     Log    Step 1 - Verify the PSU insertion and removal events are being Logged in switch syslog 
     [Tags]  switch-platform  Manual  Logging  Debug  feature
+    [Tags]  Manual  skipped
     Manual passed
     
 * Keywords

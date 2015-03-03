@@ -23,17 +23,17 @@ ${mac2}		00:00:06:00:00:00
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  scaling  IronHorse   
+   [Tags]  L2  scaling  IronHorse   daily-sanity
   	base suite setup
-  	add fabric switch
-  	#bring up 1 gig interface
+    fabric infra suite setup
+  	Set host int variables
   	reconnect switch ips
   	sleep  50
   	rest verify fabric switch all
-  	rest verify fabric link common
+  	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
    
 Add 1000 dynamic mac into the system and check forwarding and make sure aging also works for 1000 mac
-	[Tags]  L2  scaling  IronHorse    
+	[Tags]  L2  scaling  IronHorse    daily-sanity
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=500  dst_cnt=500   frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
     rest verify endpoint in system  1000
@@ -63,7 +63,7 @@ Add 1000 dynamic mac into the system and check forwarding and make sure aging al
     Should be True  ${count} < 8
 	    
 Add 4000 dynamic mac into the system and check forwarding and make sure aging also works for 4000 mac
-	[Tags]  L2  scaling  IronHorse     
+	[Tags]  L2  scaling  IronHorse     daily-sanity
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=2000  dst_cnt=2000   frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
     rest verify endpoint in system  4000
@@ -94,7 +94,7 @@ Add 4000 dynamic mac into the system and check forwarding and make sure aging al
 
 
 Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac
-	[Tags]  L2  scaling  IronHorse  
+	[Tags]  L2  scaling  IronHorse   daily-sanity
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=5000  dst_cnt=5000   frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
     sleep  20

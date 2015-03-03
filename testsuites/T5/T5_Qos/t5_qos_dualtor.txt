@@ -74,61 +74,61 @@ Library         Dialogs
 	
 #FUNCTIONALITY:
 ##ONLY DATA TRAFFIC NO CONTROL TRAFFIC
-T1 With default QoS verify flow mappings to queues
-	[Tags]  manual  feature
-	Manual passed
+#T1 With default QoS verify flow mappings to queues
+#	[Tags]  manual  feature
+#	Manual passed
 
-T2 With default QoS verify Weights
-	[Tags]  manual  feature
-	Manual passed
+#T2 With default QoS verify Weights
+#	[Tags]  manual  feature
+#	Manual passed
 
 T3 with default QoS local leaf traffic
 	[Tags]  manual  feature
 	Manual passed
 	
-T4 with default QoS leaf to leaf traffic in a rack  #Data pkt flooding ratelimiters --->
-	[Tags]  manual  feature
-	Manual passed
+#T4 with default QoS leaf to leaf traffic in a rack  #Data pkt flooding ratelimiters --->
+#	[Tags]  manual  feature
+#	Manual passed
 
-T5 With default QoS leaf to Spine traffic
-	[Tags]  manual  feature
-	Manual passed
+#T5 With default QoS leaf to Spine traffic
+#	[Tags]  manual  feature
+#	Manual passed
 
-T6 With default QoS leaf to leaf traffic with 90% low priority and 10% High priority
-	[Tags]  manual  feature
-	Manual passed
+#T6 With default QoS leaf to leaf traffic with 90% low priority and 10% High priority
+#	[Tags]  manual  feature
+#	Manual passed
 
-T7 With default QoS leaf to spine traffic with 90% low priority and 10% High priority
-	[Tags]  manual  feature
-	Manual passed
+#T7 With default QoS leaf to spine traffic with 90% low priority and 10% High priority
+#	[Tags]  manual  feature
+#	Manual passed
 
-T8 Mix T6 and T7
-	[Tags]  manual  feature
-	Manual passed
+#T8 Mix T6 and T7
+#	[Tags]  manual  feature
+#	Manual passed
 
-T9 With default QoS leaf to leaf start each priority traffic one by one #same interface sending and receiving --->
-	[Tags]  manual  feature
-	Manual passed
+#T9 With default QoS leaf to leaf start each priority traffic one by one #same interface sending and receiving --->
+#	[Tags]  manual  feature
+#	Manual passed
 
-T10 Repeat T9 with leaf to spine
-	[Tags]  manual  feature
-	Manual passed
+#T10 Repeat T9 with leaf to spine
+#	[Tags]  manual  feature
+#	Manual passed
 
-T11 Mix T10 and T9
-	[Tags]  manual  feature
-	Manual passed
+#T11 Mix T10 and T9
+#	[Tags]  manual  feature
+#	Manual passed
 	
-T12 Repeat T1 to T11 with frame sizes starting from 64 to 9216, (cell boundries 208/209/210 bytes)
-	[Tags]  manual  feature
-	Manual passed
+#T12 Repeat T1 to T11 with frame sizes starting from 64 to 9216, (cell boundries 208/209/210 bytes)
+#	[Tags]  manual  feature
+#	Manual passed
 	
-T13 Mix and match flows with random frame sizes with multiple flows
-	[Tags]  manual  feature
-	Manual passed
+#T13 Mix and match flows with random frame sizes with multiple flows
+#	[Tags]  manual  feature
+#	Manual passed
 	
-T14 Repeat above all with two spines and 4 leafs, each source is from different leaf sending to one destination leaf
-	[Tags]  manual  feature
-	Manual passed
+#T14 Repeat above all with two spines and 4 leafs, each source is from different leaf sending to one destination leaf
+#	[Tags]  manual  feature
+#	Manual passed
 
 ## WITH CONTROL TRAFFIC 
 T15 Repeat above all with CONTROL TRAFFIC (from T1 to T14)
@@ -136,29 +136,29 @@ T15 Repeat above all with CONTROL TRAFFIC (from T1 to T14)
 	Manual passed
 ## WITH QoS
 ##ONLY DATA TRAFFIC NO CONTROL TRAFFIC
-T16 With QoS verify flow mappings to queues
-	[Tags]  manual  feature
-	Manual passed
+#T16 With QoS verify flow mappings to queues
+#	[Tags]  manual  feature
+#	Manual passed
 
-T17 With QoS verify Weights
-	[Tags]  manual  feature
-	Manual passed
+#T17 With QoS verify Weights
+#	[Tags]  manual  feature
+#	Manual passed
 
-T18 with QoS local leaf traffic
-	[Tags]  manual  feature
-	Manual passed
+#T18 with QoS local leaf traffic
+#	[Tags]  manual  feature
+#	Manual passed
 	
-T19 with QoS leaf to leaf traffic in a rack
-	[Tags]  manual  feature
-	Manual passed
+#T19 with QoS leaf to leaf traffic in a rack
+#	[Tags]  manual  feature
+#	Manual passed
 
-T20 With QoS leaf to Spine traffic
-	[Tags]  manual  feature
-	Manual passed
+#T20 With QoS leaf to Spine traffic
+#	[Tags]  manual  feature
+#	Manual passed
 
-T21 With QoS leaf to leaf traffic with 90% low priority and 10% High priority
-	[Tags]  manual  feature
-	Manual passed
+#T21 With QoS leaf to leaf traffic with 90% low priority and 10% High priority
+#	[Tags]  manual  feature
+#	Manual passed
 
 T22 With QoS leaf to spine traffic with 90% low priority and 10% High priority
 	[Tags]  manual  feature
@@ -199,19 +199,19 @@ T30 Repeat above all with CONTROL TRAFFIC (from T1 to T14)
 	
 T31 shut no shut switch interface
 	[Tags]  manual  feature
-	Manual passed
+	Manual skipped
 
 T32 Remove Add tenant interface
 	[Tags]  manual  feature
-	Manual passed
+	Manual skipped
 
 T33 Remove Add vns interface
 	[Tags]  manual  feature
-	Manual passed
+	Manual skipped
 
 T34 Remove Add switch
 	[Tags]  manual  feature
-	Manual passed
+	Manual skipped
 
 #Add a new switch
 #counters. .1p data pkt counters and control pkts

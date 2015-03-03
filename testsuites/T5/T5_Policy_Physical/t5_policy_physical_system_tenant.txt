@@ -1,0 +1,1549 @@
+* Setting
+Documentation   T5 Policy with two spine three leaf rack with dual-tor Test Suite
+Suite Setup     test setup topology
+Suite Teardown  test teardown topology
+Test Setup      base test setup
+Test Teardown   test teardown
+Force Tags      IronHorse  T5  Policy
+Library         keywords/BsnCommon.py
+Library         keywords/Host.py
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords/T5Platform.py
+Library			keywords/SwitchLight.py
+Library 		keywords/T5Utilities.py
+Library         keywords/BsnCommon.py
+Library	        Collections.py
+Library         keywords/Ixia.py
+Resource		testsuites/T5/T5_Policy_Physical/t5_policy_physical_inter_variables_regression.txt
+Resource        testsuites/T5/t5_physical_variables.txt
+Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Library         OperatingSystem
+Library         Collections
+Library         Dialogs
+
+
+
+* Test Cases
+
+
+
+
+###### Policy at default system tenant interface ############
+#---------------------------------------------
+
+T48 Interface system tenant add/remove permit policy src-ip to dest-ip 
+	[Tags]  feature  systemt  deny
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+
+T49 Interface system tenant add/remove deny policy src-ip to dest-ip 
+	[Tags]  feature  deny  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+
+
+T50 Interface system tenant add/remove permit policy src-ip to dest-vns
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	#Re-initializing IXIA
+	ixia initialize  tg1  init=True
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+   	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1 
+
+T51 Interface system tenant add/remove deny policy src-ip to dest-vns
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+   	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1 
+T52 Interface system tenant add/remove permit policy src-ip to dest-tenant
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+
+T53 Interface system tenant add/remove deny policy src-ip to dest-tenant
+	[Tags]  feature  systemt  T6
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+    delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+######  **  ANY **  ########	
+T54 Interface system tenant add/remove permit policy src-ip to any
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
+	#${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+######  **  ANY **  ########	
+T55 Interface system tenant add/remove deny policy src-ip to any
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
+	#${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T56 Interface system tenant add/remove permit policy src-tenant to dest-ip
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+
+T57 Interface system tenant add/remove deny policy src-tenant to dest-ip
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T58 Interface system tenant add/remove permit policy src-tenant to dest-tenant
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T59 Interface system tenant add/remove deny policy src-tenant to dest-tenant
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+
+T60 Interface system tenant add/remove permit policy src-tenant to dest-vns
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T61 Interface system tenant add/remove deny policy src-tenant to dest-vns
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+######  **  ANY need more investigation  **  ########	
+T62 Interface system tenant add/remove permit policy src-tenant to any
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  tenant  ${tenantY} 
+	#${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+
+
+######  **  ANY need more investigation  **  ########	
+T63 Interface system tenant add/remove deny policy src-tenant to any
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  tenant  ${tenantX} 
+	#${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+
+T64 Interface system tenant add/remove permit policy src-vns to dest-ip
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T65 Interface system tenant add/remove deny policy src-vns to dest-ip
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T66 Interface system tenant add/remove permit policy src-vns to dest-tenant
+	[Tags]  smoke  feature  systemt
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T67 Interface system tenant add/remove deny policy src-vns to dest-tenant
+	[Tags]  smoke  feature  systemt
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T68 Interface system tenant add/remove permit policy src-vns to dest-vns
+	[Tags]  smoke  feature  systemt
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T69 Interface system tenant add/remove deny policy src-vns to dest-vns
+	[Tags]  smoke  feature  systemt
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+######  **  ANY need more investigation  **  ########	
+T70 Interface system tenant add/remove permit policy src-vns to any
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY} 
+	#${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  srcdata=${src_dict}
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T71 Interface system tenant add/remove deny policy src-vns to any
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY} 
+	#${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+######  **  ANY need more investigation  **  ########	
+T72 Interface system tenant add/remove permit policy any to dest-ip
+	[Tags]  feature  systemt
+	#${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX} 
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+######  **  ANY need more investigation  **  ########	
+T73 Interface system tenant add/remove deny policy any to dest-ip
+	[Tags]  feature  systemt
+	#${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX} 
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+
+######  **  ANY need more investigation  **  ########	
+T74 Interface system tenant add/remove permit policy any to dest-tenant
+	[Tags]  feature  systemt
+	#${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX} 
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+######  **  ANY need more investigation  **  ########	
+T75 Interface system tenant add/remove deny policy any to dest-tenant
+	[Tags]  feature  systemt
+	#${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX} 
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+######  **  ANY need more investigation  **  ########	
+T76 Interface system tenant add/remove permit policy any to dest-vns
+	[Tags]  feature  systemT29
+	#${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX} 
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+######  **  ANY need more investigation  **  ########	
+T77 Interface system tenant add/remove deny policy any to dest-vns
+	[Tags]  feature  systemt
+	#${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX} 
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  dstdata=${dst_dict} 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+######  **  ANY need more investigation  **  ########	
+T78 Interface system tenant add/remove permit policy any to any
+	[Tags]  feature  systemt
+	#${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX} 
+	#${dst_dict}=  Create Dictionary  segment  ${vnsX3}  
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+
+
+######  **  ANY need more investigation  **  ########	
+T79 Interface system tenant add/remove deny policy any to any
+	[Tags]  feature  systemt
+	#${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX} 
+	#${dst_dict}=  Create Dictionary  segment  ${vnsX3}  
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+##Below are for ip and port combination specified at tenant interface
+##-------------------------------------##
+
+T80 Interface system tenant add/remove permit policy src-ip-port to dest-ip-port
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	#Re-initializing IXIA
+	ixia initialize  tg1  init=True
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T81 Interface system tenant add/remove deny policy src-ip-port to dest-ip-port
+	[Tags]  smoke  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T82 Interface system tenant add/remove permit policy src-ip-port to dest-vns
+	[Tags]  smoke  feature  systemT88
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T83 Interface system tenant add/remove deny policy src-ip-port to dest-vns
+	[Tags]  smoke  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix4-to-ix1  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
+T84 Interface system tenant add/remove permit src-ip-port to dest-tenant
+	[Tags]  smoke  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+T85 Interface system tenant add/remove deny src-ip-port to dest-tenant
+	[Tags]  smoke  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+######  **  ANY need more investigation  **  ########	
+T86 Interface system tenant add/remove permit policy src-ip-port to any
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  port  ${tcp_port}
+	#${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  
+	...								srcdata=${src_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+######  **  ANY need more investigation  **  ########	
+T87 Interface system tenant add/remove deny policy src-ip-port to any
+	[Tags]  feature  systemt
+	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  port  ${tcp_port}
+	#${dst_dict}=  Create Dictionary  tenant  ${tenantX}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
+	...								srcdata=${src_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+T88 Interface system tenant add/remove permit policy src-tenant to dest-ip-port
+	[Tags]  smoke  feature  systemT94
+	${src_dict}=  Create Dictionary  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+T89 Interface system tenant add/remove deny policy src-tenant to dest-ip-port
+	[Tags]  smoke  feature  systemt
+	${src_dict}=  Create Dictionary  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+
+T90 Interface system tenant add/remove permit policy src-vns to dest-ip-port
+	[Tags]  smoke  feature  T96  systemT96
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+T91 Interface system tenant add/remove deny policy src-vns to dest-ip-port
+	[Tags]  smoke  feature  systemt
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+######  **  ANY need more investigation  **  ########	
+T92 Interface system tenant add/remove permit policy any to dest-ip-port
+	[Tags]  feature  systemt
+	#${src_dict}=  Create Dictionary  segment  ${vnsX3}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  
+	...								dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+######  **  ANY need more investigation  **  ########	
+T93 Interface system tenant add/remove deny policy any to dest-ip-port
+	[Tags]  feature  systemt
+	#${src_dict}=  Create Dictionary  segment  ${vnsX3}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
+	rest add policy							${tenant_system}		${tenant2_polname}		
+	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
+	...								dstdata=${dst_dict}  proto=6 
+	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+	delete traffic
+	sleep  2
+	rest remove policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+
+* Keywords
+verify stats true   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  1
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  10
+    Should be true  ${in_range}
+    
+verify stats false   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  1
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  10
+    Should not be true  ${in_range}
+
+
+Policy vns interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
+	#add inter tenant routing
+	#mininet host config
+	REST add policy								X		${tenant1_polname}		
+	REST add policy item						X		${tenant1_polname}		${seq}		${action}		${src}		${dst}
+	REST apply policy on vns					X		${vnsX1}				${tenant1_polname}
+
+Policy vns interface any  [Arguments]  ${seq}  ${action}  ${src} 
+	#add inter tenant routing
+	#mininet host config
+	REST add policy								X		${tenant1_polname}		
+	REST add policy item						X		${tenant1_polname}		${seq}		${action}		${src}		
+	REST apply policy on vns					X		${vnsX1}				${tenant1_polname}
+
+
+test setup topology
+	add fabric switch
+    BuiltIn.Sleep  125
+    rest verify fabric switch all
+    BuiltIn.Sleep  25
+    Set swith int variables
+    Set switch dpid variables	
+	T5 base suite setup
+	REST add tenant 								X
+	REST add tenant									Y
+	REST add tenant									Z
+	REST add tenant									system
+	REST add vns									X							X1
+	REST add vns									X							X2
+	REST add vns									X							X3
+	REST add vns									Y							Y1
+	REST add vns									Z							Z1
+	REST add router intf							X							X1
+	REST add router intf							X							X2
+	REST add router intf							X							X3
+	REST add router intf							Y							Y1
+	REST add router intf							Z							Z1
+	REST add vns ip  								X							X1				10.251.1.1				24	
+	REST add vns ip  								X							X2				10.251.2.1				24	
+	REST add vns ip  								X							X3				10.251.3.1				24	
+	REST add vns ip  								Y							Y1				10.252.1.1				24	
+	REST add vns ip  								Z							Z1				10.253.1.1				24	
+	REST add interface to vns						X							X1				leaf0-a					${leaf0a_ixia_intf}	-1
+	REST add interface to vns						X							X2				leaf0-b					${leaf0b_ixia_intf}	-1
+	REST add interface to vns						X							X3				leaf1-a					${leaf1a_ixia_intf}	-1
+	REST add interface to vns						Y							Y1				leaf1-b					${leaf1b_ixia_intf}	-1
+	REST add interface to vns						Z							Z1				leaf2-a					${leaf2a_ixia_intf}	-1
+	
+	REST add tenant routers intf to system			X
+	REST add tenant routers intf to system			Y
+	REST add tenant routers intf to system			Z
+	REST add system intf to tenant routers 			X
+	REST add system intf to tenant routers 			Y
+	REST add system intf to tenant routers 			Z
+
+	REST add static routes							X							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Y							0.0.0.0/0			 {"tenant": "system"}
+	REST add static routes							Z							0.0.0.0/0			 {"tenant": "system"}	
+	
+
+test teardown topology
+	delete fabric switch
+	REST delete vns ip  							X							X1				10.251.1.1				24	
+	REST delete vns ip  							X							X2				10.251.2.1				24	
+	REST delete vns ip  							X							X3				10.251.3.1				24	
+	REST delete vns ip  							Y							Y1				10.252.1.1				24	
+	REST delete vns ip  							Z							Z1				10.253.1.1				24	
+	REST delete vns									X							X1
+	REST delete vns									X							X2
+	REST delete vns									X							X3
+	REST delete vns									Y							Y1
+	REST delete vns									Z							Z1
+	REST delete tenant								X
+	REST delete tenant								Y
+	REST delete tenant								Z
+	REST delete tenant routers intf to system		X
+	REST delete tenant routers intf to system		Y
+	REST delete tenant routers intf to system		Z
+	T5 base suite teardown
+	
+
+T5 base suite setup
+	base suite setup
+	reconnect_switch_ips
+	sleep 											5
+	${result} = 									CLI verify controller		s1							c1		
+	Should Be True									${result}
+	${result} = 									CLI verify controller   	s1							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s2							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s2							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s3							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s3							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s4							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s4							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s5							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s5							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s6							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s6							c2
+	Should Be True									${result}		
+
+
+  
+T5 base suite teardown
+	delete fabric switch
+	base suite teardown
+	
+verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}	
+
+
+test teardown
+  base test teardown
+  delete traffic

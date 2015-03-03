@@ -17,13 +17,14 @@ import robot
 # the bin/ directory.
 bigrobot_path = os.path.dirname(__file__) + '/..'
 exscript_path = bigrobot_path + '/vendors/exscript/src'
+marvin_path = bigrobot_path + '/vendors/marvin'
+sys.path.insert(0, marvin_path)
+sys.path.insert(0, exscript_path)
 sys.path.insert(0, bigrobot_path)
-sys.path.insert(1, exscript_path)
 
 
 import autobot.setup_env as setup_env
 import autobot.helpers as helpers
-
 
 setup_env.big_setup()
 
@@ -102,9 +103,11 @@ def warn_if_topology_not_defined():
     """
     Create warning log if topology is not defined.
     """
-    if not is_topology_defined():
+    status = is_topology_defined()
+    if status == False:
         helpers.debug("Topology file (%s) is not defined.\n"
-                     % helpers.bigrobot_topology(), level=None)
+                      % helpers.bigrobot_topology(), level=None)
+    return status
 
 
 def is_suite_defined():
@@ -127,6 +130,7 @@ def exit_if_suite_not_defined():
     f = ''.join((helpers.bigrobot_suite(), '.txt'))
     if not os.path.exists(f):
         helpers.error_exit("Test suite file '%s' does not exist." % f)
+    return True
 
 
 def run(cmd, cwd=None, shell=True, quiet=False):
@@ -305,18 +309,21 @@ def test_command(*args):
         for tc in args.testmatch:
             options['test'].append("*" + tc + "*")
 
-    if re.match(r'.*\.virtual\.topo$', helpers.bigrobot_topology()):
-        options['settag'] = 'virtual'
-    elif re.match(r'.*\.physical\.topo$', helpers.bigrobot_topology()):
-        options['settag'] = 'physical'
+    exit_if_suite_not_defined()
+    status = warn_if_topology_not_defined()
+
+    if status:
+        if re.match(r'.*\.virtual\.topo$', helpers.bigrobot_topology()):
+            options['settag'] = 'virtual'
+        elif re.match(r'.*\.physical\.topo$', helpers.bigrobot_topology()):
+            options['settag'] = 'physical'
+        else:
+            options['settag'] = 'generic-topology'
     else:
-        # If not specified, assume it is physical
-        options['settag'] = 'physical'
+        options['settag'] = 'missing-topology'
 
     print("Robot options:\n%s" % helpers.prettify(options))
 
-    exit_if_suite_not_defined()
-    warn_if_topology_not_defined()
     copy_suite(helpers.bigrobot_suite(),
                helpers.bigrobot_log_path_exec_instance())
 

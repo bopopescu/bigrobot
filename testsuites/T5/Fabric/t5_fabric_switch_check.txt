@@ -22,44 +22,43 @@ Resource	    testsuites/T5/t5_physical_variables.txt
 * Test Case   
 
 Add Fabric Switch Spine and Verify the Status 
-  [Tags]  Fabric  feature  IronHorse   	
+  [Tags]  Fabric  feature  IronHorse  daily-sanity
   REST show fabric switch     
   # Check the fabric switch connection status once the physical switch is connected
   add switch  spine0 
   add dpid  spine0  ${spine0_dpid} 
   add fabric role  spine0  spine
-  sleep  125
+  Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  spine0
   rest verify fabric switch  spine0
   
 Add Fabric Switch Leaf Group and Verify the status
-  [Tags]  Fabric  feature  IronHorse   
+  [Tags]  Fabric  feature  IronHorse   daily-sanity
   add switch  leaf0-a
   add dpid  leaf0-a  ${leaf0a_dpid} 
   add fabric role  leaf0-a  leaf
   add leaf group  leaf0-a  rack0
-  sleep  125
+  Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-a
   verify fabric switch  leaf0-a
   add switch  leaf0-b
   add dpid  leaf0-b  ${leaf0b_dpid} 
   add fabric role  leaf0-b  leaf
   add leaf group  leaf0-b  rack0
-  sleep  125
+  Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-b
   verify fabric switch  leaf0-b 
  
 Add leaf group from 2 different rack and verify the status and check the fabric error
-	[Tags]	Fabric  feature  IronHorse  
+	[Tags]	Fabric  feature  IronHorse  run
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add fabric role  leaf0-a  leaf
 	add leaf group  leaf0-a  rack0
-	sleep  125 
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-a
 	add switch  leaf1-a
 	add dpid  leaf1-a  ${leaf1a_dpid}
 	add fabric role  leaf1-a  leaf
 	add leaf group  leaf1-a  rack0
-	sleep  125
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf1-a
 	rest verify fabric link
-	sleep  125
 	rest verify fabric error missing link  leaf0-a  leaf1-a  rack0
 	
 add 2 different leaf groups with peer link added
@@ -68,27 +67,27 @@ add 2 different leaf groups with peer link added
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add fabric role  leaf0-a  leaf
 	add leaf group  leaf0-a  rack0
-	sleep  125 
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-a 
 	add switch  leaf1-a
 	add dpid  leaf0-a  ${leaf0b_dpid}
 	add fabric role  leaf0-b  leaf
 	add leaf group  leaf0-b  rack1
-	sleep  125
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-a
 	rest verify fabric link 
 #	rest verify fabric error
    	rest verify forwarding port table  leaf0-a  
 
 source mac check verification on spine and leaf switches
-	[Tags]  Fabric  feature  IronHorse    
+	[Tags]  Fabric  feature  IronHorse   daily-sanity 
 	add switch  spine0  
 	add dpid  spine0  ${spine0_dpid}
 	add fabric role  spine0  spine
-	sleep  125
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  spine0
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add fabric role  leaf0-a  leaf
 	add leaf group  leaf0-a  rack0
-	sleep  125
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-a
 	add switch  leaf0-b
 	add dpid  leaf0-b  ${leaf0b_dpid}
 	add fabric role  leaf0-b  leaf
@@ -108,9 +107,9 @@ add host port into spine switch and check the fabric error
 	add switch  leaf2-a
 	add dpid  leaf2-a  ${leaf2a_dpid} 
 	add fabric role  leaf2-a  spine
-	sleep  125
-	rest show fabric interface  leaf2-a  ${leaf2a_ixia_intf}
-	${result}=  rest verify fabric interface  leaf2-a  ${leaf2a_ixia_intf}
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf2-a
+	rest show fabric interface  leaf2-a  ${h4_intf1}
+	${result}=  rest verify fabric interface  leaf2-a  ${h4_intf1}
 	Should not be True  ${result}  
 
 Delete Fabric switch and verify the status
@@ -119,14 +118,13 @@ Delete Fabric switch and verify the status
   	add dpid  leaf0-a  ${leaf0a_dpid} 
   	add fabric role  leaf0-a  leaf
   	add leaf group  leaf0-a  rack0
-  	sleep  125
+  	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-a
   	verify fabric switch  leaf0-a
     REST delete fabric switch  leaf0-a
-  	sleep  125
   	add switch  spine0
   	add dpid  spine0  ${spine0_dpid} 
   	add fabric role  spine0  spine
-  	sleep  125
+  	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  spine0
   	verify fabric switch  spine0
   	REST delete fabric switch  spine0
   	
@@ -136,13 +134,13 @@ Test invalid link status in fabric error
   	add dpid  leaf0-a  ${leaf0a_dpid} 
   	add fabric role  leaf0-a  leaf
   	add leaf group  leaf0-a  rack0
-  	sleep  125
+  	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-a
   	verify fabric switch  leaf0-a
   	add switch  leaf0-b
 	add dpid  leaf0-b  ${leaf0b_dpid}
 	add fabric role  leaf0-b  leaf
 	add leaf group  leaf0-b  rack1
-	sleep  125
+	Wait Until Keyword Succeeds   10 min  30 sec   rest_verify_fabric_switch  leaf0-b
 	rest verify fabric error invalid link  rack0  rack1
 
 
@@ -150,13 +148,17 @@ Test invalid link status in fabric error
 T5 base test setup
    Set swith int variables
    Set switch dpid variables
+   #fabric infra suite setup
+   Set swith int variables
+   Set switch dpid variables
+   Set host int variables
    bigrobot test ztn  False
    base test setup
       
 T5 base test teardown
    base test teardown
    delete fabric switch
-   sleep  5   
+   Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back   
 
 verify fabric switch  [Arguments]  ${switch} 
   REST verify fabric switch  ${switch} 

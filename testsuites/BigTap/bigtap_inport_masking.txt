@@ -4,7 +4,7 @@ Suite Setup             inport suite setup
 Suite Teardown          inport suite teardown
 Test Setup              inportmask test setup
 Test Teardown           inportmask test teardown 
-Force Tags              feature  bigtap  inport-mask  Blackbird
+Force Tags              BigTap  blackbird-300  Quanta-LB9  Dell-S4810  Quanta-LY2  inport-mask
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -99,694 +99,863 @@ ${policy_name_1}                    inport_policy
 *Test Case
 TC1:Verify # of flows with and without Inport Mask
     ${version_string}=  return version number
-    REST verify bigtap policy  policy_name=${policy_name_1}  num_filter_intf=4  num_delivery_intf=1
-    REST disable feature  inport-mask
+    ${config1}=  REST verify bigtap policy  policy_name=${policy_name_1}  num_filter_intf=4  num_delivery_intf=1
+    Should be true  ${config1}
+    ${config2}=  REST disable feature  inport-mask
+    Should be true  ${config2}
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
-    REST enable feature  inport-mask
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    ${config3}=  REST enable feature  inport-mask
+    Should be true  ${config3}
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
-    [Tags]  bigtap  inport-mask       
-    
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    [Tags]  sanity  feature
+
 TC2:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2
     ${version_string}=  return version number
-    REST disable feature  inport-mask
-    REST delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
-    REST add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    ${config1}=  REST disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  REST delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
+    ${config3}=  REST add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config3}
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  5      
     ${switchFlowVa1l}=   REST show switch flow  s2
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
     ${switchFlowVa12}=  REST show switch flow  s5
     ${switchFlowVa13}=  REST show switch flow  s6
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
     
     #rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0    
-    REST enable feature  inport-mask
+    ${config4}=  REST enable feature  inport-mask
+    Should be true  ${config4}
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l}=  REST show switch flow  s2
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
     ${switchFlowVa12}=  REST show switch flow  s5
     ${switchFlowVa13}=  REST show switch flow  s6
     #rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
-    [Tags]  bigtap  inport-mask    
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
+    [Tags]  full  feature
         
 TC3:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2 and service node on S5
     ${version_string}=  return version number
-    REST disable feature  inport-mask
-    REST delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
-    REST add service to policy      admin-view  ${policy_name_1}  ${s5_name}  1
-    REST add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    ${config1}=  REST disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  REST delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
+    ${config3}=  REST add service to policy      admin-view  ${policy_name_1}  ${s5_name}  1
+    Should be true  ${config3}
+    ${config4}=  REST add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config4}
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  5      
     ${switchFlowVa1l}=   REST show switch flow  s2
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
     ${switchFlowVa12}=  REST show switch flow  s5  
     ${switchFlowVa13}=  REST show switch flow  s6
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  3  0      
-    REST enable feature  inport-mask
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  3  0      
+    ${config5}=  REST enable feature  inport-mask
+    Should be true  ${config5}
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l}=  REST show switch flow  s2
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
     ${switchFlowVa12}=  REST show switch flow  s5  
     ${switchFlowVa13}=  REST show switch flow  s6
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
-    [Tags]  bigtap  inport-mask       
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
+    [Tags]  full  feature
 
 TC4:Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2 and service node on S2
     ${version_string}=  return version number
-    REST disable feature  inport-mask 
-    REST add service to policy      admin-view  ${policy_name_1}  ${s2_name}  1
-    REST delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
-    REST add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
+    ${config1}=  REST disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  REST add service to policy      admin-view  ${policy_name_1}  ${s2_name}  1
+    Should be true  ${config2}
+    ${config3}=  REST delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config3}
+    ${config4}=  REST add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
+    Should be true  ${config4}
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  5      
     ${switchFlowVa1l}=   REST show switch flow  s2
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
     ${switchFlowVa12}=   REST show switch flow  s5  
     ${switchFlowVa13}=   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
-    REST enable feature  inport-mask
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
+    ${config5}=  REST enable feature  inport-mask
+    Should be true  ${config5}
     Sleep  2
     ${switchFlowVal}=   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l}=   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
     ${switchFlowVa12}=   REST show switch flow  s5  
     ${switchFlowVa13}=   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
-    [Tags]  bigtap  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0      
+    [Tags]  full  feature     
     
 TC5:Verify inport masking with 1 filter interfaces on S1 and 4 delivery interface on S2
     ${version_string}=  return version number
-    rest disable feature  inport-mask 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter
+    Should be true  ${config2}
+    ${config3}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
+    Should be true  ${config3}
+    ${config4}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
+    Should be true  ${config4}
+    ${config5}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config5}
     Sleep  3
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery 
+    ${config6}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config6}
+    ${config7}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery
+    Should be true  ${config7}
+    ${config8}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery
+    Should be true  ${config8}
+    ${config9}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery
+    Should be true  ${config9}
     Sleep  3
     ${switchFlowVal}=  REST show switch flow  s1
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l}=   REST show switch flow  s2
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2   
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  2   
     ${switchFlowVa12}=  REST show switch flow  s5  
     ${switchFlowVa13}=  REST show switch flow  s6
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    rest enable feature  inport-mask
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
+    ${config10}=  rest enable feature  inport-mask
+    Should be true  ${config10}
     Sleep  2
     ${switchFlowVal} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2 
     ${switchFlowVa1l} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  2 
     ${switchFlowVa12} =   REST show switch flow  s5   
     ${switchFlowVa13} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    [Tags]  bigtap  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
+    [Tags]  full  feature     
     
 TC6:Verify inport masking with 1 filter interfaces on S1 and 4 delivery interface on S2 and service node on S2
     ${version_string}=  return version number
-    rest disable feature  inport-mask 
-    rest delete service from policy     admin-view  ${policy_name_1}  ${s2_name}  
-    rest delete policy interface        admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter
-    rest delete policy interface        admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
-    rest delete policy interface        admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
-    rest delete policy interface        admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete service from policy     admin-view  ${policy_name_1}  ${s2_name}
+    Should be true  ${config2}
+    ${config3}=  rest delete policy interface        admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter
+    Should be true  ${config3}
+    ${config4}=  rest delete policy interface        admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
+    Should be true  ${config4}
+    ${config5}=  rest delete policy interface        admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
+    Should be true  ${config5}
+    ${config6}=  rest delete policy interface        admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config6}
     Sleep  3
-    rest add service to policy  admin-view  ${policy_name_1}  ${s2_name}  1
-    rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
-    rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery 
-    rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery 
-    rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery 
+    ${config7}=  rest add service to policy  admin-view  ${policy_name_1}  ${s2_name}  1
+    Should be true  ${config7}
+    ${config8}=  rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config8}
+    ${config9}=  rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery
+    Should be true  ${config9}
+    ${config10}=  rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery
+    Should be true  ${config10}
+    ${config11}=  rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery
+    Should be true  ${config11}
     Sleep  3
     ${switchFlowVal} =   rest show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l} =   rest show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
     ${switchFlowVa12} =   rest show switch flow  s5  
     ${switchFlowVa13} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    rest enable feature  inport-mask
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
+    ${config12}=  rest enable feature  inport-mask
+    Should be true  ${config12}
     Sleep  2
-    ${switchFlowVal} =   rest show switch flow  s1  
+    ${switchFlowVal} =   rest show switch flow  s1
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l} =   rest show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
     ${switchFlowVa12} =   rest show switch flow  s5  
     ${switchFlowVa13} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    [Tags]  bigtap  inport-mask   
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
+    [Tags]  full  feature   
     
 TC7:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2
     ${version_string}=  return version number
-    rest disable feature  inport-mask 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
     Sleep  3
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery 
+    ${config3}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config3}
+    ${config4}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery
+    Should be true  ${config4}
+    ${config5}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery
+    Should be true  ${config6}
     sleep  3
     ${switchFlowVal}=  REST show switch flow  s1
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  5      
     ${switchFlowVa1l}=   REST show switch flow  s2
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  2      
     ${switchFlowVa12} =   REST show switch flow  s5  
     ${switchFlowVa13} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    rest enable feature  inport-mask
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
+    ${config7}=  rest enable feature  inport-mask
+    Should be true  ${config7}
     Sleep  2
     ${switchFlowVal} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2 
     ${switchFlowVa1l} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  2 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  2 
     ${switchFlowVa12} =   REST show switch flow  s5   
     ${switchFlowVa13} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    [Tags]  bigtap  inport-mask   
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
+    [Tags]  full  feature   
     
 TC8:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2 and service node on S2
     ${version_string}=  return version number
-    rest disable feature  inport-mask 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
     Sleep  3
-    rest add service to policy  admin-view  ${policy_name_1}  ${s2_name}   1
-    rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
-    rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery 
-    rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery 
-    rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery 
+    ${config3}=  rest add service to policy  admin-view  ${policy_name_1}  ${s2_name}   1
+    Should be true  ${config3}
+    ${config4}=  rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config4}
+    ${config5}=  rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery
+    Should be true  ${config6}
+    ${config7}=  rest add policy interface   admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery
+    Should be true  ${config7}
     Sleep  3
     ${switchFlowVal}=  REST show switch flow  s1
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  5      
     ${switchFlowVa1l}=   REST show switch flow  s2
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
     ${switchFlowVa12}=   REST show switch flow  s5  
     ${switchFlowVa13}=   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0    
-    rest enable feature  inport-mask
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0    
+    ${config8}=  rest enable feature  inport-mask
+    Should be true  ${config8}
     Sleep  2
     ${switchFlowVal} =   rest show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l} =   rest show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
     ${switchFlowVa12} =   rest show switch flow  s5  
     ${switchFlowVa13} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    [Tags]  bigtap  inport-mask   
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
+    [Tags]  full  feature   
     
 TC9:Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2 and service nodes on S2 and S5
     ${version_string}=  return version number
-    rest disable feature  inport-mask  
-    rest delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
-    rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
-    rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery 
-    rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery 
-    rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery 
-    rest add service to policy      admin-view  ${policy_name_1}  ${s5_name}   1
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
+    ${config3}=  rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config3}
+    ${config4}=  rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery
+    Should be true  ${config4}
+    ${config5}=  rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_3}  delivery
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_4}  delivery
+    Should be true  ${config6}
+    ${config7}=  rest add service to policy      admin-view  ${policy_name_1}  ${s5_name}   1
+    Should be true  ${config7}
     Sleep  1
     rest add service to policy  admin-view  ${policy_name_1}  ${s2_name}   2
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  4  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  5      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  5      
     ${switchFlowVa1l}=   REST show switch flow  s2
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
     ${switchFlowVa12}=   REST show switch flow  s5  
     ${switchFlowVa13}=   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  3  0   
-    rest enable feature  inport-mask
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  3  0   
+    ${config8}=  rest enable feature  inport-mask
+    Should be true  ${config8}
     Sleep  2
     ${switchFlowVal} =   rest show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVa1l} =   rest show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVa1l}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVa1l}  3 
     ${switchFlowVa12} =   rest show switch flow  s5  
     ${switchFlowVa13} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  3  0  
-    [Tags]  bigtap  inport-mask
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  3  0  
+    [Tags]  full  feature
     
 TC10:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2
     ${version_string}=  return version number
-    rest disable feature  inport-mask     
-    rest delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
-    rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter 
-    rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
-    rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter 
-    rest add policy interface       admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter 
-    rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
+    ${config3}=  rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter
+    Should be true  ${config3}
+    ${config4}=  rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
+    Should be true  ${config4}
+    ${config5}=  rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface       admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter
+    Should be true  ${config6}
+    ${config7}=  rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config7}
     Sleep  2     
     ${switchFlowVal} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   REST show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0   
-    rest enable feature  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0   
+    ${config8}=  rest enable feature  inport-mask
+    Should be true  ${config8}
     Sleep  2     
     ${switchFlowVal} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   REST show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0   
-    [Tags]  bigtap  inport-mask  T6098    
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0   
+    [Tags]  full  feature
     
 TC11:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and service nodes on S2 and S5
     ${version_string}=  return version number
-    rest disable feature  inport-mask     
-    rest delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
-    rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter 
-    rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
-    rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter  
-    rest add policy interface       admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter 
-    rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
-    rest add service to policy      admin-view  ${policy_name_1}  ${s2_name}   1
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface    admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
+    ${config3}=  rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter
+    Should be true  ${config3}
+    ${config4}=  rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
+    Should be true  ${config4}
+    ${config5}=  rest delete policy interface    admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface       admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter
+    Should be true  ${config6}
+    ${config7}=  rest add policy interface       admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config7}
+    ${config8}=  rest add service to policy      admin-view  ${policy_name_1}  ${s2_name}   1
+    Should be true  ${config8}
     Sleep  2         
     ${switchFlowVal} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  3      
     ${switchFlowVal2} =   REST show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0   
-    rest enable feature  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0   
+    ${config9}=  rest enable feature  inport-mask
+    Should be true  ${config9}
     Sleep  2     
     ${switchFlowVal} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  3      
     ${switchFlowVal2} =   REST show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0   
-    [Tags]  bigtap  inport-mask    
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0   
+    [Tags]  full  feature    
     
 TC12:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3
     ${version_string}=  return version number
-    rest disable feature  inport-mask     
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter  
-    rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_1}  delivery 
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
+    ${config3}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter
+    Should be true  ${config3}
+    ${config4}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
+    Should be true  ${config4}
+    ${config5}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter
+    Should be true  ${config6}
+    ${config7}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config7}
+    ${config8}=  rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_1}  delivery
+    Should be true  ${config8}
     Sleep  2      
     ${switchFlowVal1} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s3  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal3}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal3}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal3}  2      
     ${switchFlowVal4} =   REST show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal4}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal4}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal4}  2      
     ${switchFlowVal5} =   REST show switch flow  s5  
     ${switchFlowVal6} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0   
-    rest enable feature  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0   
+    ${config9}=  rest enable feature  inport-mask
+    Should be true  ${config9}
     Sleep  2     
     ${switchFlowVal1} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s3  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal3}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal3}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal3}  2      
     ${switchFlowVal4} =   REST show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal4}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal4}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal4}  2      
     ${switchFlowVal5} =   REST show switch flow  s5  
     ${switchFlowVal6} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0   
-    [Tags]  bigtap  inport-mask  T6101    
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0   
+    [Tags]  full  feature
         
 TC13:Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3 and service nodes on S5
     ${version_string}=  return version number
-    rest disable feature  inport-mask     
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter  
-    rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_1}  delivery 
-    rest add service to policy  admin-view  ${policy_name_1}  ${s5_name}   1
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
+    ${config3}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter
+    Should be true  ${config3}
+    ${config4}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
+    Should be true  ${config4}
+    ${config5}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter
+    Should be true  ${config6}
+    ${config7}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config7}
+    ${config8}=  rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_1}  delivery
+    Should be true  ${config8}
+    ${config9}=  rest add service to policy  admin-view  ${policy_name_1}  ${s5_name}   1
+    Should be true  ${config9}
     Sleep  2     
     ${switchFlowVal1} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s3  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal3}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal3}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal3}  2      
     ${switchFlowVal4} =   REST show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal4}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal4}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal4}  2      
     ${switchFlowVal5} =   REST show switch flow  s5  
     ${switchFlowVal6} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  4  0   
-    rest enable feature  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  4  0   
+    ${config10}=  rest enable feature  inport-mask
+    Should be true  ${config10}
     Sleep  2     
     ${switchFlowVal1} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s3  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal3}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal3}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal3}  2      
     ${switchFlowVal4} =   REST show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal4}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal4}  2      
-    ${switchFlowVal5} =   REST show switch flow  s5  
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal4}  2      
+    ${switchFlowVal5} =   REST show switch flow  s5
     ${switchFlowVal6} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0   
-    [Tags]  bigtap  inport-mask  T6102 
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal5}  ${switchFlowVal6}  3  0   
+    [Tags]  full  feature
     
 TC14:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2
     ${version_string}=  return version number
-    rest disable feature  inport-mask     
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_2}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
+    ${config3}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
+    Should be true  ${config3}
+    ${config4}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
+    Should be true  ${config4}
+    ${config5}=  rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_2}  filter
+    Should be true  ${config6}
+    ${config7}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config7}
     Sleep  2     
     ${switchFlowVal} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  3      
     ${switchFlowVal1} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   REST show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  3      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
-    rest enable feature  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
+    ${config8}=  rest enable feature  inport-mask
+    Should be true  ${config8}
     Sleep  2     
     ${switchFlowVal} =   REST show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   REST show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   REST show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6 
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
-    [Tags]  bigtap  inport-mask  T6103  
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
+    [Tags]  full  feature
     
 TC15:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and service nodes on S2
     ${version_string}=  return version number
-    rest disable feature  inport-mask     
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_2}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
-    rest add service to policy  admin-view  ${policy_name_1}  ${s2_name}   2
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
+    ${config3}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
+    Should be true  ${config3}
+    ${config4}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
+    Should be true  ${config4}
+    ${config5}=  rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_2}  filter
+    Should be true  ${config6}
+    ${config7}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config7}
+    ${config8}=  rest add service to policy  admin-view  ${policy_name_1}  ${s2_name}   2
+    Should be true  ${config8}
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  3      
     ${switchFlowVal1} =   rest show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  3      
     ${switchFlowVal2} =   rest show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  3      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
-    rest enable feature  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
+    ${config9}=  rest enable feature  inport-mask
+    Should be true  ${config9}
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   rest show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  3      
     ${switchFlowVal2} =   rest show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  2  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
-    [Tags]  bigtap  inport-mask  T6104   
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0      
+    [Tags]  full  feature
     
 TC16:Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3 and service nodes on S5
     ${version_string}=  return version number
-    rest disable feature  inport-mask     
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_2}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
-    rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_1}  delivery 
-    rest add service to policy  admin-view  ${policy_name_1}  ${s5_name}   1
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
+    ${config3}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
+    Should be true  ${config3}
+    ${config4}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
+    Should be true  ${config4}
+    ${config5}=  rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_2}  filter
+    Should be true  ${config6}
+    ${config7}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config7}
+    ${config8}=  rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_1}  delivery
+    Should be true  ${config8}
+    ${config9}=  rest add service to policy  admin-view  ${policy_name_1}  ${s5_name}   1
+    Should be true  ${config9}
     #rest add service to policy  admin-view  ${policy_name_1}  ${s2_name}   2
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  3      
     ${switchFlowVal1} =   rest show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   rest show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  3      
     ${switchFlowVal21} =   rest show switch flow  s3  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal21}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal21}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal21}  2      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
-    rest enable feature  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
+    ${config10}=  rest enable feature  inport-mask
+    Should be true  ${config10}
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   rest show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal21} =   rest show switch flow  s3  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal21}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal21}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal21}  2      
     ${switchFlowVal22} =   rest show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal22}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal22}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal22}  2      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
-    [Tags]  bigtap  inport-mask   
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
+    [Tags]  full  feature
         
 TC17:Verify inport masking with 2 filter interfaces on S1 and S4 and 2 delivery interfaces on S2 and S3
     ${version_string}=  return version number
-    rest disable feature  inport-mask     
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
-    rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_2}  filter  
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery 
-    rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_1}  delivery  
-    rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_2}  delivery 
+    ${config1}=  rest disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config2}
+    ${config3}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
+    Should be true  ${config3}
+    ${config4}=  rest delete policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
+    Should be true  ${config4}
+    ${config5}=  rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_1}  filter
+    Should be true  ${config5}
+    ${config6}=  rest add policy interface  admin-view  ${policy_name_1}  ${s4_filter_alias_2}  filter
+    Should be true  ${config6}
+    ${config7}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_1}  delivery
+    Should be true  ${config7}
+    ${config8}=  rest add policy interface  admin-view  ${policy_name_1}  ${s2_delivery_alias_2}  delivery
+    Should be true  ${config8}
+    ${config9}=  rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_1}  delivery
+    Should be true  ${config9}
+    ${config10}=  rest add policy interface  admin-view  ${policy_name_1}  ${s3_delivery_alias_2}  delivery
+    Should be true  ${config10}
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  3      
     ${switchFlowVal1} =   rest show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   rest show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  2  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  3      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  3      
     ${switchFlowVal5} =   rest show switch flow  s3  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal5}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal5}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal5}  2      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
-    rest enable feature  inport-mask     
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
+    ${config11}=  rest enable feature  inport-mask
+    Should be true  ${config11}
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal}  2      
     ${switchFlowVal1} =   rest show switch flow  s2  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal1}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal1}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal1}  2      
     ${switchFlowVal2} =   rest show switch flow  s4  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal2}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal2}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal2}  2      
     ${switchFlowVal5} =   rest show switch flow  s3  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  Should Be Equal As Integers  ${switchFlowVal5}  1  
-    Run Keyword If  '${version_string}' == '4.1.1'  Should Be Equal As Integers  ${switchFlowVal5}  2      
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  Should Be Equal As Integers  ${switchFlowVal5}  2      
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
     Run Keyword If  '${version_string}' == '4.1.0'  or  '${version_string}' == '4.0.0'  or  '${version_string}' == '4.0.2'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  3  0  
-    Run Keyword If  '${version_string}' == '4.1.1'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
-    [Tags]  bigtap  inport-mask  
+    Run Keyword If  '${version_string}' == '4.1.1'  or  '${version_string}' == '4.5.0'  rest verify coreswitch flows  ${switchFlowVal3}  ${switchFlowVal4}  4  0      
+    [Tags]  full  feature  
     
 * Keywords
 
 inport suite setup
     base suite setup
-    rest add switch alias  s1  app-rlb9-1
-    rest add switch alias  s2  app-rlb9-4
-    rest add switch alias  s3  app-rlb9-2
-    rest add switch alias  s4  app-rlb9-3
-    rest add switch alias  s5  app-rs4810-1    
-    rest add switch alias  s6  app-rly2-1
-    rest add interface role  s1  ${s1_filter_intf_1}            filter          ${s1_filter_alias_1}  
-    rest add interface role  s1  ${s1_filter_intf_2}            filter          ${s1_filter_alias_2}
-    rest add interface role  s1  ${s1_filter_intf_3}            filter          ${s1_filter_alias_3}
-    rest add interface role  s1  ${s1_filter_intf_4}            filter          ${s1_filter_alias_4}
-    rest add interface role  s1  ${s1_delivery_intf_1}          delivery        ${s1_delivery_alias_1}
-    rest add interface role  s1  ${s1_pre_service_intf_1}       service         ${s1_pre_service_alias_1}
-    rest add interface role  s1  ${s1_post_service_intf_1}      service         ${s1_post_service_alias_1}
+    ${config1}=  rest add switch alias  s1  app-rlb9-1
+    Should be true  ${config1}
+    ${config2}=  rest add switch alias  s2  app-rlb9-4
+    Should be true  ${config2}
+    ${config3}=  rest add switch alias  s3  app-rlb9-2
+    Should be true  ${config3}
+    ${config4}=  rest add switch alias  s4  app-rlb9-3
+    Should be true  ${config4}
+    ${config5}=  rest add switch alias  s5  app-rs4810-1
+    Should be true  ${config5}
+    ${config6}=  rest add switch alias  s6  app-rly2-1
+    Should be true  ${config6}
+    ${config7}=  rest add interface role  s1  ${s1_filter_intf_1}            filter          ${s1_filter_alias_1}
+    Should be true  ${config7}
+    ${config8}=  rest add interface role  s1  ${s1_filter_intf_2}            filter          ${s1_filter_alias_2}
+    Should be true  ${config8}
+    ${config9}=  rest add interface role  s1  ${s1_filter_intf_3}            filter          ${s1_filter_alias_3}
+    Should be true  ${config9}
+    ${config10}=  rest add interface role  s1  ${s1_filter_intf_4}            filter          ${s1_filter_alias_4}
+    Should be true  ${config10}
+    ${config11}=  rest add interface role  s1  ${s1_delivery_intf_1}          delivery        ${s1_delivery_alias_1}
+    Should be true  ${config11}
+    ${config12}=  rest add interface role  s1  ${s1_pre_service_intf_1}       service         ${s1_pre_service_alias_1}
+    Should be true  ${config12}
+    ${config13}=  rest add interface role  s1  ${s1_post_service_intf_1}      service         ${s1_post_service_alias_1}
+    Should be true  ${config13}
     
-    rest add interface role  s2  ${s2_delivery_intf_1}      delivery      ${s2_delivery_alias_1}
-    rest add interface role  s2  ${s2_delivery_intf_2}      delivery      ${s2_delivery_alias_2}
-    rest add interface role  s2  ${s2_delivery_intf_3}      delivery      ${s2_delivery_alias_3}
-    rest add interface role  s2  ${s2_delivery_intf_4}      delivery      ${s2_delivery_alias_4}
-    rest add interface role  s2  ${s2_pre_service_intf_1}   service       ${s2_pre_service_alias_1}
-    rest add interface role  s2  ${s2_post_service_intf_1}  service       ${s2_post_service_alias_1}
+    ${config14}=  rest add interface role  s2  ${s2_delivery_intf_1}      delivery      ${s2_delivery_alias_1}
+    Should be true  ${config14}
+    ${config15}=  rest add interface role  s2  ${s2_delivery_intf_2}      delivery      ${s2_delivery_alias_2}
+    Should be true  ${config15}
+    ${config16}=  rest add interface role  s2  ${s2_delivery_intf_3}      delivery      ${s2_delivery_alias_3}
+    Should be true  ${config16}
+    ${config17}=  rest add interface role  s2  ${s2_delivery_intf_4}      delivery      ${s2_delivery_alias_4}
+    Should be true  ${config17}
+    ${config18}=  rest add interface role  s2  ${s2_pre_service_intf_1}   service       ${s2_pre_service_alias_1}
+    Should be true  ${config18}
+    ${config19}=  rest add interface role  s2  ${s2_post_service_intf_1}  service       ${s2_post_service_alias_1}
+    Should be true  ${config19}
     
-    rest add interface role  s3  ${s3_delivery_intf_1}      delivery      ${s3_delivery_alias_1}
-    rest add interface role  s3  ${s3_delivery_intf_2}      delivery      ${s3_delivery_alias_2}
-    rest add interface role  s3  ${s3_delivery_intf_3}      delivery      ${s3_delivery_alias_3}
-    rest add interface role  s3  ${s3_delivery_intf_4}      delivery      ${s3_delivery_alias_4}
-    rest add interface role  s3  ${s3_pre_service_intf_1}   service       ${s3_pre_service_alias_1}
-    rest add interface role  s3  ${s3_post_service_intf_1}  service       ${s3_post_service_alias_1}
-
-    rest add interface role  s4  ${s4_filter_intf_1}        filter        ${s4_filter_alias_1}
-    rest add interface role  s4  ${s4_filter_intf_2}        filter        ${s4_filter_alias_2}
-    rest add interface role  s4  ${s4_delivery_intf_1}      delivery      ${s4_delivery_alias_1}
-    rest add interface role  s4  ${s4_delivery_intf_2}      delivery      ${s4_delivery_alias_2}    
-    rest add interface role  s4  ${s4_pre_service_intf_1}   service       ${s4_pre_service_alias_1}
-    rest add interface role  s4  ${s4_post_service_intf_1}  service       ${s4_post_service_alias_1}
+    ${config20}=  rest add interface role  s3  ${s3_delivery_intf_1}      delivery      ${s3_delivery_alias_1}
+    Should be true  ${config20}
+    ${config21}=  rest add interface role  s3  ${s3_delivery_intf_2}      delivery      ${s3_delivery_alias_2}
+    Should be true  ${config22}
+    ${config23}=  rest add interface role  s3  ${s3_delivery_intf_3}      delivery      ${s3_delivery_alias_3}
+    Should be true  ${config23}
+    ${config24}=  rest add interface role  s3  ${s3_delivery_intf_4}      delivery      ${s3_delivery_alias_4}
+    Should be true  ${config24}
+    ${config25}=  rest add interface role  s3  ${s3_pre_service_intf_1}   service       ${s3_pre_service_alias_1}
+    Should be true  ${config25}
+    ${config26}=  rest add interface role  s3  ${s3_post_service_intf_1}  service       ${s3_post_service_alias_1}
+    Should be true  ${config26}
+    ${config27}=  rest add interface role  s4  ${s4_filter_intf_1}        filter        ${s4_filter_alias_1}
+    Should be true  ${config27}
+    ${config28}=  rest add interface role  s4  ${s4_filter_intf_2}        filter        ${s4_filter_alias_2}
+    Should be true  ${config28}
+    ${config29}=  rest add interface role  s4  ${s4_delivery_intf_1}      delivery      ${s4_delivery_alias_1}
+    Should be true  ${config29}
+    ${config30}=  rest add interface role  s4  ${s4_delivery_intf_2}      delivery      ${s4_delivery_alias_2}
+    Should be true  ${config30}
+    ${config31}=  rest add interface role  s4  ${s4_pre_service_intf_1}   service       ${s4_pre_service_alias_1}
+    Should be true  ${config31}
+    ${config32}=  rest add interface role  s4  ${s4_post_service_intf_1}  service       ${s4_post_service_alias_1}
+    Should be true  ${config32}
  
-    rest add interface role  s5  ${s5_pre_service_intf_1}   service       ${s5_pre_service_alias_1}
-    rest add interface role  s5  ${s6_post_service_intf_1}  service       ${s5_post_service_alias_1}
- 
-    rest add interface role  s6  ${s6_pre_service_intf_1}   service       ${s6_pre_service_alias_1}
-    rest add interface role  s6  ${s6_post_service_intf_1}  service       ${s6_post_service_alias_1}
+    ${config33}=  rest add interface role  s5  ${s5_pre_service_intf_1}   service       ${s5_pre_service_alias_1}
+    Should be true  ${config33}
+    ${config34}=  rest add interface role  s5  ${s6_post_service_intf_1}  service       ${s5_post_service_alias_1}
+    Should be true  ${config34}
+    ${config35}=  rest add interface role  s6  ${s6_pre_service_intf_1}   service       ${s6_pre_service_alias_1}
+    Should be true  ${config35}
+    ${config36}=  rest add interface role  s6  ${s6_post_service_intf_1}  service       ${s6_post_service_alias_1}
+    Should be true  ${config36}
 
     
 inportmask test setup
@@ -794,16 +963,26 @@ inportmask test setup
     Should be true  ${result1}
     ${result}=  start syslog monitor
     Should be true  ${result}
-    REST disable feature  inport-mask
-    REST add policy  admin-view  ${policy_name_1}  forward
-    REST add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} 
-    REST add policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_1}  filter 
-    REST add policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter 
-    REST add policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter 
-    REST add policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter 
-    REST add policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery 
-    REST add service  ${s5_name}  ${s5_pre_service_alias_1}  ${s5_post_service_alias_1}  
-    REST add service  ${s2_name}  ${s2_pre_service_alias_1}  ${s2_post_service_alias_1}  
+    ${config1}=  REST disable feature  inport-mask
+    Should be true  ${config1}
+    ${config2}=  REST add policy  admin-view  ${policy_name_1}  forward
+    Should be true  ${config2}
+    ${config3}=  REST add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    Should be true  ${config3}
+    ${config4}=  REST add policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_1}  filter
+    Should be true  ${config4}
+    ${config5}=  REST add policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_2}  filter
+    Should be true  ${config5}
+    ${config6}=  REST add policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_3}  filter
+    Should be true  ${config6}
+    ${config7}=  REST add policy interface  admin-view  ${policy_name_1}  ${s1_filter_alias_4}  filter
+    Should be true  ${config7}
+    ${config8}=  REST add policy interface  admin-view  ${policy_name_1}  ${s1_delivery_alias_1}  delivery
+    Should be true  ${config8}
+    ${config9}=  REST add service  ${s5_name}  ${s5_pre_service_alias_1}  ${s5_post_service_alias_1}
+    Should be true  ${config9}
+    ${config10}=  REST add service  ${s2_name}  ${s2_pre_service_alias_1}  ${s2_post_service_alias_1}
+    Should be true  ${config10}
     Sleep  3
 
 inportmask test teardown
@@ -812,88 +991,162 @@ inportmask test teardown
 
 
 Verify Inport Mask
-    REST verify bigtap policy  policy_name=${policy_name_1}  num_filter_intf=4  num_delivery_intf=1
-    REST disable feature  inport-mask
+    ${config1}=  REST verify bigtap policy  policy_name=${policy_name_1}  num_filter_intf=4  num_delivery_intf=1
+    Should be true  ${config1}
+    ${config2}=  REST disable feature  inport-mask
+    Should be true  ${config2}
     Sleep  2
-    ${switchFlowVal}=  REST show switch flow  s1  
+    ${switchFlowVal}=  REST show switch flow  s1
     Should Be Equal As Integers  ${switchFlowVal}  4
-    REST enable feature  inport-mask
+    ${config3}=  REST enable feature  inport-mask
+    Should be true  ${config3}
     Sleep  2
     ${switchFlowVal}=  REST show switch flow  s1  
     Should Be Equal As Integers  ${switchFlowVal}  1
 
 inport suite teardown
-    REST delete policy  admin-view  ${policy_name_1}
-    REST delete service  ${s5_name}
-    REST delete service  ${s2_name}
-    rest delete interface role  s1  ${s1_filter_intf_1}    filter          
-    rest delete interface role  s1  ${s1_filter_intf_2}    filter        
-    rest delete interface role  s1  ${s1_filter_intf_3}    filter
-    rest delete interface role  s1  ${s1_filter_intf_4}    filter
-    rest delete interface role  s1  ${s1_delivery_intf_1}     delivery
-    rest delete interface role  s1  ${s1_pre_service_intf_1}   service
-    rest delete interface role  s1  ${s1_post_service_intf_1}   service
-    rest delete interface role  s2  ${s2_delivery_intf_1}     delivery
-    rest delete interface role  s2  ${s2_delivery_intf_2}     delivery
-    rest delete interface role  s2  ${s2_delivery_intf_3}     delivery
-    rest delete interface role  s2  ${s2_delivery_intf_4}     delivery
-    rest delete interface role  s2  ${s2_pre_service_intf_1}   service
-    rest delete interface role  s2  ${s2_post_service_intf_1}   service
-    rest delete interface role  s3  ${s3_delivery_intf_1}     delivery
-    rest delete interface role  s3  ${s3_delivery_intf_2}    delivery
-    rest delete interface role  s3  ${s3_delivery_intf_3}    delivery
-    rest delete interface role  s3  ${s3_delivery_intf_4}    delivery
-    rest delete interface role  s3  ${s3_pre_service_intf_1}   service
-    rest delete interface role  s3  ${s3_post_service_intf_1}   service  
-    rest delete interface role  s4  ${s4_filter_intf_1}     filter  
-    rest delete interface role  s4  ${s4_filter_intf_2}     filter 
-    rest delete interface role  s4  ${s4_delivery_intf_1}    delivery
-    rest delete interface role  s4  ${s4_delivery_intf_2}    delivery
-    rest delete interface role  s4  ${s4_pre_service_intf_1}   service
-    rest delete interface role  s4  ${s4_post_service_intf_1}   service 
-    rest delete interface role  s5  ${s5_pre_service_intf_1}   service
-    rest delete interface role  s5  ${s5_post_service_intf_1}   service
-    rest delete interface role  s6  ${s6_pre_service_intf_1}   service 
-    rest delete interface role  s6  ${s6_post_service_intf_1}   service    
-    rest delete interface  s1  ${s1_filter_intf_1}          
-    rest delete interface  s1  ${s1_filter_intf_2}        
-    rest delete interface  s1  ${s1_filter_intf_3}
-    rest delete interface  s1  ${s1_filter_intf_4}
-    rest delete interface  s1  ${s1_delivery_intf_1} 
-    rest delete interface  s1  ${s1_pre_service_intf_1}
-    rest delete interface  s1  ${s1_post_service_intf_1}
-    rest delete interface  s2  ${s2_delivery_intf_1}
-    rest delete interface  s2  ${s2_delivery_intf_2}
-    rest delete interface  s2  ${s2_delivery_intf_3}
-    rest delete interface  s2  ${s2_delivery_intf_4}
-    rest delete interface  s2  ${s2_pre_service_intf_1}
-    rest delete interface  s2  ${s2_post_service_intf_1}
-    rest delete interface  s3  ${s3_delivery_intf_1}
-    rest delete interface  s3  ${s3_delivery_intf_2}
-    rest delete interface  s3  ${s3_delivery_intf_3}
-    rest delete interface  s3  ${s3_delivery_intf_4}
-    rest delete interface  s3  ${s3_pre_service_intf_1}
-    rest delete interface  s3  ${s3_post_service_intf_1}  
-    rest delete interface  s4  ${s4_filter_intf_1}  
-    rest delete interface  s4  ${s4_filter_intf_2} 
-    rest delete interface  s4  ${s4_delivery_intf_1}
-    rest delete interface  s4  ${s4_delivery_intf_2} 
-    rest delete interface  s4  ${s4_pre_service_intf_1}
-    rest delete interface  s4  ${s4_post_service_intf_1} 
-    rest delete interface  s5  ${s5_pre_service_intf_1}
-    rest delete interface  s5  ${s5_post_service_intf_1}
-    rest delete interface  s6  ${s6_pre_service_intf_1} 
-    rest delete interface  s6  ${s6_post_service_intf_1}
-    rest delete switch alias  s1
-    rest delete switch alias  s2
-    rest delete switch alias  s3
-    rest delete switch alias  s4
-    rest delete switch alias  s5
-    rest delete switch alias  s6                          
-    rest delete switch  s1
-    rest delete switch  s2
-    rest delete switch  s3
-    rest delete switch  s4
-    rest delete switch  s5
-    rest delete switch  s6
-    base suite teardown                    
+    ${config1}=  REST delete policy  admin-view  ${policy_name_1}
+    Should be true  ${config1}
+    ${config2}=  REST delete service  ${s5_name}
+    Should be true  ${config2}
+    ${config3}=  REST delete service  ${s2_name}
+    Should be true  ${config3}
+    ${config4}=  rest delete interface role  s1  ${s1_filter_intf_1}    filter
+    Should be true  ${config4}
+    ${config5}=  rest delete interface role  s1  ${s1_filter_intf_2}    filter
+    Should be true  ${config5}
+    ${config6}=  rest delete interface role  s1  ${s1_filter_intf_3}    filter
+    Should be true  ${config6}
+    ${config7}=  rest delete interface role  s1  ${s1_filter_intf_4}    filter
+    Should be true  ${config7}
+    ${config8}=  rest delete interface role  s1  ${s1_delivery_intf_1}     delivery
+    Should be true  ${config8}
+    ${config9}=  rest delete interface role  s1  ${s1_pre_service_intf_1}   service
+    Should be true  ${config9}
+    ${config10}=  rest delete interface role  s1  ${s1_post_service_intf_1}   service
+    Should be true  ${config10}
+    ${config11}=  rest delete interface role  s2  ${s2_delivery_intf_1}     delivery
+    Should be true  ${config11}
+    ${config12}=  rest delete interface role  s2  ${s2_delivery_intf_2}     delivery
+    Should be true  ${config12}
+    ${config13}=  rest delete interface role  s2  ${s2_delivery_intf_3}     delivery
+    Should be true  ${config13}
+    ${config14}=  rest delete interface role  s2  ${s2_delivery_intf_4}     delivery
+    Should be true  ${config14}
+    ${config15}=  rest delete interface role  s2  ${s2_pre_service_intf_1}   service
+    Should be true  ${config15}
+    ${config16}=  rest delete interface role  s2  ${s2_post_service_intf_1}   service
+    Should be true  ${config16}
+    ${config17}=  rest delete interface role  s3  ${s3_delivery_intf_1}     delivery
+    Should be true  ${config17}
+    ${config18}=  rest delete interface role  s3  ${s3_delivery_intf_2}    delivery
+    Should be true  ${config18}
+    ${config19}=  rest delete interface role  s3  ${s3_delivery_intf_3}    delivery
+    Should be true  ${config19}
+    ${config20}=  rest delete interface role  s3  ${s3_delivery_intf_4}    delivery
+    Should be true  ${config20}
+    ${config21}=  rest delete interface role  s3  ${s3_pre_service_intf_1}   service
+    Should be true  ${config21}
+    ${config22}=  rest delete interface role  s3  ${s3_post_service_intf_1}   service
+    Should be true  ${config22}
+    ${config23}=  rest delete interface role  s4  ${s4_filter_intf_1}     filter
+    Should be true  ${config23}
+    ${config24}=  rest delete interface role  s4  ${s4_filter_intf_2}     filter
+    Should be true  ${config24}
+    ${config25}=  rest delete interface role  s4  ${s4_delivery_intf_1}    delivery
+    Should be true  ${config25}
+    ${config26}=  rest delete interface role  s4  ${s4_delivery_intf_2}    delivery
+    Should be true  ${config26}
+    ${config27}=  rest delete interface role  s4  ${s4_pre_service_intf_1}   service
+    Should be true  ${config27}
+    ${config28}=  rest delete interface role  s4  ${s4_post_service_intf_1}   service
+    Should be true  ${config28}
+    ${config29}=  rest delete interface role  s5  ${s5_pre_service_intf_1}   service
+    Should be true  ${config29}
+    ${config30}=  rest delete interface role  s5  ${s5_post_service_intf_1}   service
+    Should be true  ${config30}
+    ${config31}=  rest delete interface role  s6  ${s6_pre_service_intf_1}   service
+    Should be true  ${config31}
+    ${config32}=  rest delete interface role  s6  ${s6_post_service_intf_1}   service
+    Should be true  ${config32}
+    ${config33}=  rest delete interface  s1  ${s1_filter_intf_1}
+    Should be true  ${config33}
+    ${config34}=  rest delete interface  s1  ${s1_filter_intf_2}
+    Should be true  ${config34}
+    ${config35}=  rest delete interface  s1  ${s1_filter_intf_3}
+    Should be true  ${config35}
+    ${config36}=  rest delete interface  s1  ${s1_filter_intf_4}
+    Should be true  ${config36}
+    ${config37}=  rest delete interface  s1  ${s1_delivery_intf_1}
+    Should be true  ${config37}
+    ${config38}=  rest delete interface  s1  ${s1_pre_service_intf_1}
+    Should be true  ${config38}
+    ${config39}=  rest delete interface  s1  ${s1_post_service_intf_1}
+    Should be true  ${config39}
+    ${config40}=  rest delete interface  s2  ${s2_delivery_intf_1}
+    Should be true  ${config40}
+    ${config41}=  rest delete interface  s2  ${s2_delivery_intf_2}
+    Should be true  ${config41}
+    ${config42}=  rest delete interface  s2  ${s2_delivery_intf_3}
+    Should be true  ${config42}
+    ${config43}=  rest delete interface  s2  ${s2_delivery_intf_4}
+    Should be true  ${config43}
+    ${config44}=  rest delete interface  s2  ${s2_pre_service_intf_1}
+    Should be true  ${config44}
+    ${config45}=  rest delete interface  s2  ${s2_post_service_intf_1}
+    Should be true  ${config45}
+    ${config46}=  rest delete interface  s3  ${s3_delivery_intf_1}
+    Should be true  ${config46}
+    ${config47}=  rest delete interface  s3  ${s3_delivery_intf_2}
+    Should be true  ${config47}
+    ${config48}=  rest delete interface  s3  ${s3_delivery_intf_3}
+    Should be true  ${config48}
+    ${config49}=  rest delete interface  s3  ${s3_delivery_intf_4}
+    Should be true  ${config49}
+    ${config50}=  rest delete interface  s3  ${s3_pre_service_intf_1}
+    Should be true  ${config50}
+    ${config51}=  rest delete interface  s3  ${s3_post_service_intf_1}
+    Should be true  ${config51}
+    ${config52}=  rest delete interface  s4  ${s4_filter_intf_1}
+    Should be true  ${config52}
+    ${config53}=  rest delete interface  s4  ${s4_filter_intf_2}
+    Should be true  ${config53}
+    ${config54}=  rest delete interface  s4  ${s4_delivery_intf_1}
+    Should be true  ${config54}
+    ${config55}=  rest delete interface  s4  ${s4_delivery_intf_2}
+    Should be true  ${config55}
+    ${config56}=  rest delete interface  s4  ${s4_pre_service_intf_1}
+    Should be true  ${config56}
+    ${config57}=  rest delete interface  s4  ${s4_post_service_intf_1}
+    Should be true  ${config57}
+    ${config58}=  rest delete interface  s5  ${s5_pre_service_intf_1}
+    Should be true  ${config58}
+    ${config59}=  rest delete interface  s5  ${s5_post_service_intf_1}
+    Should be true  ${config59}
+    ${config60}=  rest delete interface  s6  ${s6_post_service_intf_1}
+    Should be true  ${config60}
+    ${config61}=  rest delete switch alias  s1
+    Should be true  ${config61}
+    ${config62}=  rest delete switch alias  s2
+    Should be true  ${config62}
+    ${config63}=  rest delete switch alias  s3
+    Should be true  ${config63}
+    ${config64}=  rest delete switch alias  s4
+    Should be true  ${config64}
+    ${config65}=  rest delete switch alias  s5
+    Should be true  ${config65}
+    ${config66}=  rest delete switch alias  s6
+    Should be true  ${config66}
+    ${config67}=  rest delete switch  s1
+    Should be true  ${config67}
+    ${config68}=  rest delete switch  s2
+    Should be true  ${config68}
+    ${config69}=  rest delete switch  s3
+    Should be true  ${config69}
+    ${config70}=  rest delete switch  s4
+    Should be true  ${config70}
+    ${config71}=  rest delete switch  s5
+    Should be true  ${config71}
+    ${config72}=  rest delete switch  s6
+    Should be true  ${config72}
+    base suite teardown

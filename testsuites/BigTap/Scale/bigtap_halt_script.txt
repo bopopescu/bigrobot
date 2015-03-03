@@ -1,15 +1,15 @@
 *Settings
-Documentation  High Availability and Longevity Test
-Suite Setup  halt suite setup
-#Suite Teardown   halt suite teardown
-Test Setup   base test setup
-Test Teardown  base test teardown 
-Force Tags   bigtap  scale
-Library  keywords/BsnCommon.py
-Library  keywords/AppController.py
-Library  keywords/BigTap.py
-Library  keywords/SwitchLight.py
-Library  keywords/Ixia.py
+Documentation                   High Availability and Longevity Test
+Suite Setup                     halt suite setup
+#Suite Teardown                 halt suite teardown
+Test Setup                      base test setup
+Test Teardown                   base test teardown 
+Force Tags                      BigTap  Blackbird   3.0.0  Quanta-LB9  Quanta-LY2
+Library                         keywords/BsnCommon.py
+Library                         keywords/AppController.py
+Library                         keywords/BigTap.py
+Library                         keywords/SwitchLight.py
+Library                         keywords/Ixia.py
 
 * Variable
 ### Switch Aliases
@@ -38,7 +38,7 @@ ${DINDEX}                                        1
 * Test Case
 TC1: Verify Configuration
     verify policies
-    [Tags]  skipped
+    [Tags]  scaling  longevity  full
 
 TC2: Flap a random filter interface
     : FOR    ${INDEX}    IN RANGE   1  100   
@@ -58,7 +58,7 @@ TC2: Flap a random filter interface
     \    ${random_sleep_2}=  Evaluate  random.randint(60, 240)  random,sys    
     \    Log  ${random_sleep_2}
     \    sleep  ${random_sleep_2}         
-    [Tags]  flap-filter          
+    [Tags]  scaling  longevity  ha  robustness  full
 
 TC3: Flap a random delivery interface
     : FOR    ${INDEX}    IN RANGE   1  100   
@@ -78,7 +78,7 @@ TC3: Flap a random delivery interface
     \    ${random_sleep_2}=  Evaluate  random.randint(60, 240)  random,sys    
     \    Log  ${random_sleep_2}
     \    sleep  ${random_sleep_2}         
-    [Tags]  flap-delivery 
+    [Tags]  scaling  longevity  ha  robustness  full
 
 
 TC4: Flap a random core interface
@@ -96,7 +96,7 @@ TC4: Flap a random core interface
     \    ${random_sleep_2}=  Evaluate  random.randint(60, 240)  random,sys    
     \    Log  ${random_sleep_2}
     \    sleep  ${random_sleep_2}         
-    [Tags]  flap-core 
+    [Tags]  scaling  longevity  ha  robustness  full
 
 TC5: Reboot random filter switch at random interval between 5 and 10 minutes
     : FOR    ${INDEX}    IN RANGE   1  100   
@@ -109,7 +109,7 @@ TC5: Reboot random filter switch at random interval between 5 and 10 minutes
     \    cli restart switch  ${switch_name}  save_config=yes
     \    sleep  ${random_sleep_1}
     \    verify policies
-    [Tags]  filter-switch-restart 
+    [Tags]  scaling  longevity  ha  robustness  full
 
 TC6: Reboot random delivery switch at random interval between 5 and 10 minutes
     : FOR    ${INDEX}    IN RANGE   1  20   
@@ -122,7 +122,7 @@ TC6: Reboot random delivery switch at random interval between 5 and 10 minutes
     \    cli restart switch  ${switch_name}  save_config=yes
     \    sleep  ${random_sleep_1}
     \    verify policies
-    [Tags]  filter-switch-restart
+    [Tags]  scaling  longevity  ha  robustness  full
 
 TC7: Execute HA Failover at random interval between 5 and 10 minutes
     : FOR    ${INDEX}    IN RANGE   1  100   
@@ -133,7 +133,7 @@ TC7: Execute HA Failover at random interval between 5 and 10 minutes
     \    sleep  ${random_sleep_1}
     \    verify policies
     sleep  600    
-    [Tags]  failover 
+    [Tags]  scaling  longevity  ha  robustness  full
 
 TC8: Reboot master controller at random interval between 5 and 10 minutes
     : FOR    ${INDEX}    IN RANGE   1  100   
@@ -144,7 +144,7 @@ TC8: Reboot master controller at random interval between 5 and 10 minutes
     \    sleep  ${random_sleep_1}
     \    verify policies
     sleep  600    
-    [Tags]  master-restart 
+    [Tags]  scaling  longevity  ha  robustness  full
 
 
 * Keyword

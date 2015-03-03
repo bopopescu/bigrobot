@@ -1,0 +1,804 @@
+*Settings
+Documentation               BigTap SwitchLight Platform Test Suite
+Suite Setup                 rtag6 suite setup
+Suite Teardown              rtag6 suite teardown
+Test Setup                  rtag6 test setup
+Test Teardown               rtag6 test teardown
+Force Tags                  BigTap  SwitchLight  quanta-lb9  switch-platform  RTAG6  lag  hashing
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
+
+* Variable
+${switchlight_version}                  Switch Light OS SWL-BT-
+${s1_1g_name_1}                         port-channel1  
+${s1_1g_port_range_1}                   13,15,17,19
+${s1_1g_number_1}                       1
+${s1_lag_mem_1_1}                       13
+${s1_lag_mem_1_2}                       15
+${s1_lag_mem_1_3}                       17
+${s1_lag_mem_1_4}                       19
+
+${s1_1g_name_2}                         port-channel2
+${s1_1g_port_range_2}                   14,16,18,20
+${s1_1g_number_2}                       2
+${s1_lag_mem_2_1}                       14
+${s1_lag_mem_2_2}                       16
+${s1_lag_mem_2_3}                       18
+${s1_lag_mem_2_4}                       20
+
+${policy_name_1}                        RTAG6_POLICY_1
+${filter_1}                             ethernet1
+${filter_nick_1}                        ixia-2-3
+${delivery_1}                           port-channel1
+${delivery_nick_1}                      rtag6_delivery
+
+${policy_name_2}                        RTAG6_POLICY_2
+${filter_2}                             port-channel2
+${filter_nick_2}                        rtag6_filter
+${delivery_2}                           ethernet2
+${delivery_nick_2}                      ixia-2-4
+
+*Test Case
+TC001: Verify Configuration
+    verify portchannel interface is up   s1  ${s1_1g_name_1}
+    verify portchannel interface is up   s1  ${s1_1g_name_2}
+
+TC002: Verify source IP address hashing
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=101.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=102.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=103.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv4
+
+TC003: Disable two links and Verify source IP address hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=101.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=102.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=103.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv4
+
+TC004: Verify destination IP address hashing
+
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=102.1.1.2  ethertype=0800  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=103.1.1.2  ethertype=0800  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=104.1.1.2  ethertype=0800  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv4
+
+TC005: Disable two links and Verify destination IP address hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=102.1.1.2  ethertype=0800  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=103.1.1.2  ethertype=0800  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=104.1.1.2  ethertype=0800  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv4
+
+TC006: Verify TCP source port hashing
+
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8104  dst_port=8002  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv4
+
+TC007: Disable two links and Verify TCP source port hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8104  dst_port=8002  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv4
+
+TC008: Verify TCP destination port hashing
+
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8004  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv4
+
+TC009: Disable two links and Verify TCP destination port hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=TCP  src_port=8101  dst_port=8004  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv4
+
+TC010: Verify UDP source port hashing
+
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8104  dst_port=8002  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv4
+
+TC011: Disable two links and Verify UDP source port hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8104  dst_port=8002  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv4
+
+TC012: Verify UDP destination port hashing
+
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv4
+
+TC013: Disable two links and Verify UDP destination port hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv4
+
+TC014: Verify hashing by varying all fields in an L3 Packet
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.2  dst_ip=102.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.3  dst_ip=103.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8103  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.4  dst_ip=104.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv4
+
+TC015: Disable two links and verify hashing by varying all fields in an L3 Packet
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=101.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.2  dst_ip=102.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.3  dst_ip=103.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8103  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=100.1.1.4  dst_ip=104.1.1.2  ethertype=0800  
+    ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv4
+
+
+TC016: Verify source IPv6 address hashing
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:02  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:03  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:04  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv6
+
+TC017: Disable two links and Verify source IPv6 address hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a0  ethertype=86dd  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c1  dst_ip=2001:2004:0:0:0:0:0:a0  ethertype=86dd  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c2  dst_ip=2001:2004:0:0:0:0:0:a0  ethertype=86dd  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c3  dst_ip=2001:2004:0:0:0:0:0:a0  ethertype=86dd  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv6
+
+TC018: Verify destination IPv6 address hashing
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a2  ethertype=86dd  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a3  ethertype=86dd  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a4  ethertype=86dd  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv6
+
+TC019: Disable two links and Verify destination IPv6 address hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a2  ethertype=86dd  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a3  ethertype=86dd  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a4  ethertype=86dd  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv6
+
+TC020: Verify TCPv6 source port hashing
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8104  dst_port=8002  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv6
+
+TC021: Disable two links and Verify TCPv6 source port hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8104  dst_port=8002  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv6
+
+TC022: Verify TCPv6 destination port hashing
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8101  dst_port=8004  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv6
+
+TC023: Disable two links and Verify TCPv6 destination port hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=TCP  src_port=8101  dst_port=8004  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv6
+
+TC024: Verify UDPv6 source port hashing
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8104  dst_port=8002  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv6
+
+TC025: Disable two links and Verify UDPv6 source port hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8103  dst_port=8002  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8104  dst_port=8002  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv6
+
+TC026: Verify UDPv6 destination port hashing
+
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv4
+
+TC027: Disable two links and Verify UDPv6 destination port hashing
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8101  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8101  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c0  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd
+    ...     protocol=UDP  src_port=8101  dst_port=8004  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv6
+
+TC028: Verify hashing by varying all fields in an IPv6 L3 Packet
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c1  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd  
+    ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c2  dst_ip=2001:2004:0:0:0:0:0:a2  ethertype=86dd  
+    ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c3  dst_ip=2001:2004:0:0:0:0:0:a3  ethertype=86dd  
+    ...     protocol=UDP  src_port=8103  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:a4  ethertype=86dd  
+    ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
+    send and verify traffic
+    [Tags]  full  feature  traffic  ipv6
+
+TC029: Disable two links and verify hashing by varying all fields in an IPv6 L3 Packet
+    bash execute command  s1  ofad-ctl debug smuckers-enable
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c1  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd  
+    ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c2  dst_ip=2001:2004:0:0:0:0:0:a2  ethertype=86dd  
+    ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c3  dst_ip=2001:2004:0:0:0:0:0:a3  ethertype=86dd  
+    ...     protocol=UDP  src_port=8103  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:a4  ethertype=86dd  
+    ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  ipv6
+
+TC030: Restart process OFAD and verify RTAG6 hashing
+    ${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c1  dst_ip=2001:2004:0:0:0:0:0:a1  ethertype=86dd  
+    ...     protocol=UDP  src_port=8101  dst_port=8001  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c2  dst_ip=2001:2004:0:0:0:0:0:a2  ethertype=86dd  
+    ...     protocol=UDP  src_port=8102  dst_port=8002  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c3  dst_ip=2001:2004:0:0:0:0:0:a3  ethertype=86dd  
+    ...     protocol=UDP  src_port=8103  dst_port=8003  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:00  no_arp=True
+    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:a4  ethertype=86dd  
+    ...     protocol=UDP  src_port=8104  dst_port=8004  name=a3_b_flow
+    send and verify traffic
+    bash restart process  s1  ofad
+    Sleep  90
+    send and verify traffic
+    [Tags]  full  ha  traffic  ipv6
+
+* Keywords 
+rtag6 suite setup
+    base suite setup
+    cli add portchannel  s1  ${s1_1g_number_1}  ${s1_1g_port_range_1}  L3
+    cli add portchannel  s1  ${s1_1g_number_2}  ${s1_1g_port_range_2}  L3
+    rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}
+    rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
+    rest add interface role  s1  ${filter_2}  filter  ${filter_nick_2}
+    rest add interface role  s1  ${delivery_2}  delivery  ${delivery_nick_2}
+    rest add policy  admin-view  ${policy_name_1}  forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${delivery_nick_1}  delivery
+    rest add policy  admin-view  ${policy_name_2}  forward
+    rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_2}  ${filter_nick_2}  filter
+    rest add policy interface  admin-view  ${policy_name_2}  ${delivery_nick_2}  delivery
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+
+rtag6 test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
+
+verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
+    ${inft_state}=  cli show interface state  ${switch}  ${interface_name}
+    Should Contain  ${inft_state}  up
+
+send and verify traffic
+    clear stats  
+    cli execute command  s1  clear interface statistics
+    start traffic    
+    sleep  10
+    stop traffic
+    sleep  2
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  transmitted_frames
+    ${rx_value}=  verify dict key  ${report}  b  received_valid_frames
+    ${in_range_0}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range_0}
+    ${in_range_1}=  ixia verify traffic rate  ${tx_value}  40000  50
+    Should be true  ${in_range_1}
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value}  40000  50
+    Should be true  ${in_range_2}
+
+    ${member1_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet13  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${range_mem1}=  ixia verify traffic rate  ${member1_s1}  10000  50
+    Should Be True  ${range_mem1}
+    ${member2_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet15  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${range_mem2}=  ixia verify traffic rate  ${member2_s1}  10000  50
+    Should Be True  ${range_mem2}
+    ${member3_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet17  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    ${range_mem3}=  ixia verify traffic rate  ${member3_s1}  10000  50
+    Should Be True  ${range_mem3}
+    ${member4_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet19  tx    
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    ${range_mem4}=  ixia verify traffic rate  ${member4_s1}  10000  50
+    Should Be True  ${range_mem4}
+
+    ${member1_s4}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet14  rx
+    Should Not Be Equal As Integers  ${member1_s4}  0
+    ${range_mem5}=  ixia verify traffic rate  ${member1_s4}  10000  50
+    Should Be True  ${range_mem5}
+    ${member2_s4}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet16  rx
+    Should Not Be Equal As Integers  ${member2_s4}  0
+    ${range_mem6}=  ixia verify traffic rate  ${member2_s4}  10000  50
+    Should Be True  ${range_mem6}
+    ${member3_s4}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet18  rx
+    Should Not Be Equal As Integers  ${member3_s4}  0
+    ${range_mem7}=  ixia verify traffic rate  ${member3_s4}  10000  50
+    Should Be True  ${range_mem7}
+    ${member4_s4}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet20  rx
+    Should Not Be Equal As Integers  ${member4_s4}  0
+    ${range_mem8}=  ixia verify traffic rate  ${member4_s4}  10000  50
+    Should Be True  ${range_mem8}
+    ${range_1}=   Evaluate  ${member1_s4} - ${member1_s1}
+    ${range_2}=   Evaluate  ${member2_s4} - ${member2_s1}
+    ${range_3}=   Evaluate  ${member3_s4} - ${member3_s1}
+    ${range_4}=   Evaluate  ${member4_s4} - ${member4_s1}
+    verify value is in range  ${range_1}  -10  10
+    verify value is in range  ${range_2}  -10  10
+    verify value is in range  ${range_3}  -10  10
+    verify value is in range  ${range_4}  -10  10
+
+send and verify traffic for disabled interfaces
+    clear stats  
+    cli execute command  s1  clear interface statistics
+    start traffic    
+    sleep  10
+    stop traffic
+    sleep  2
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  transmitted_frames
+    ${rx_value}=  verify dict key  ${report}  b  received_valid_frames
+    ${in_range_0}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range_0}
+    ${in_range_1}=  ixia verify traffic rate  ${tx_value}  40000  50
+    Should be true  ${in_range_1}
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value}  40000  50
+    Should be true  ${in_range_2}
+    ${member1_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet13  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${range_mem1}=  ixia verify traffic rate  ${member1_s1}  20000  50
+    Should Be True  ${range_mem1}
+    ${member2_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet15  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${range_mem2}=  ixia verify traffic rate  ${member2_s1}  20000  50
+    Should Be True  ${range_mem2}
+    ${member1_s4}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet14  rx
+    Should Not Be Equal As Integers  ${member1_s4}  0
+    ${range_mem3}=  ixia verify traffic rate  ${member1_s4}  20000  50
+    Should Be True  ${range_mem3}
+    ${member2_s4}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet16  rx
+    Should Not Be Equal As Integers  ${member2_s4}  0
+    ${range_mem4}=  ixia verify traffic rate  ${member2_s4}  20000  50
+    Should Be True  ${range_mem4}
+    ${range_1}=   Evaluate  ${member1_s4} - ${member1_s1}
+    ${range_2}=   Evaluate  ${member2_s4} - ${member2_s1}
+    verify value is in range  ${range_1}  -10  10
+    verify value is in range  ${range_2}  -10  10
+
+
+rtag6 test teardown
+    delete traffic
+    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
+    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
+    sleep  5
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+    
+rtag6 suite teardown
+    rest delete policy  admin-view  ${policy_name_1}
+    rest delete policy  admin-view  ${policy_name_2}
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_nick_1} 
+    rest delete interface role  s1  ${filter_2}  filter  ${filter_nick_2} 
+    rest delete interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
+    rest delete interface role  s1  ${delivery_2}  delivery  ${delivery_nick_2}
+    rest delete interface  s1  ${filter_1}
+    rest delete interface  s1  ${filter_2}
+    rest delete interface  s1  ${delivery_1}
+    rest delete interface  s1  ${delivery_2}
+    cli delete portchannel  s1  ${s1_1g_number_1}
+    cli delete portchannel  s1  ${s1_1g_number_2}
+    rest delete switch  s1
+    base suite teardown

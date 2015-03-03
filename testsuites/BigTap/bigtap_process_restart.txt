@@ -4,7 +4,7 @@ Suite Setup         ha suite setup
 Suite Teardown      ha suite teardown
 Test Setup          ha test setup
 Test Teardown       ha test teardown 
-Force Tags          platform  ha  blackbird
+Force Tags          BigTap  blackbird-300  Quanta-LB9  Dell-S4810  Quanta-LY2
 Library             keywords/BsnCommon.py
 Library             keywords/AppController.py
 Library             keywords/BigTap.py
@@ -33,218 +33,225 @@ ${delivery_nick_2}  D2
 *Test Case
 TC001: Verify configuration is successful
     verify config
-    [Tags]  bigtap  ha  
+    [Tags]  ha  robustness  full
      
 TC002: Switch HA: Restart Process OFAD on filter switch
     verify config 
     bash restart process  s1  ofad
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha       
+    [Tags]  ha  robustness  full  process-restart  switch
 
 TC003: Switch HA: Restart Process OFAD on delivery switch
     verify config 
     bash restart process  s2  ofad
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  
+    [Tags]  ha  robustness  full  process-restart  switch
 
 TC004: Switch HA: Restart Process snmpd on filter switch
     verify config 
     bash restart process  s1  snmpd
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha    
+    [Tags]  ha  robustness  full  process-restart  switch
 
 TC005: Switch HA: Restart Process ntp on filter switch
     verify config 
     bash restart process  s1  ntp
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha    
+    [Tags]  ha  robustness  full  process-restart  switch
 
 TC006: Switch HA: Restart Process fancontrol on filter switch
     verify config 
     bash restart process  s1  fancontrol
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  process-restart  switch
     
 TC007: Switch HA: Restart Process fancontrol on delivery switch
     verify config 
     bash restart process  s2  fancontrol
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha    
+    [Tags]  ha  robustness  full  process-restart  switch
 
 TC008: Switch HA: Restart Process RSYSLOG on filter switch
     verify config 
     bash restart process  s1  rsyslog
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha    
+    [Tags]  ha  robustness  full  process-restart  switch
 
 TC009: Switch HA: Restart Process networking on filter switch
     verify config 
     bash restart process  s1  networking
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha   
+    [Tags]  ha  robustness  full  process-restart  switch
 
 TC010: Switch HA: Restart Process networking on delivery switch
     verify config 
     bash restart process  s2  networking
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  process-restart  switch
 
 TC011: Switch HA: Restart Process ssh on filter switch
     verify config 
     bash restart process  s1  ssh
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  process-restart  switch
 
 TC012: Switch HA: Restart filter switch
     verify config 
     cli restart switch  s1  save_config="yes"
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  reboot  switch
 
 TC013: Switch HA: Restart delivery switch
     verify config 
     cli restart switch  s2  save_config="yes"
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  reboot  switch
   
 TC014: Controller HA: Restart Process Floodlight on Master Controller:
     verify config 
     restart process on controller  floodlight  Master
     Sleep  90
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  process-restart  controller
 
 TC015: Controller HA: Restart Process Floodlight on Slave Controller:
     verify config 
     restart process on controller  floodlight  Slave
     Sleep  90
     verify config    
-    [Tags]  bigtap  ha 
+    [Tags]  ha  robustness  full  process-restart  controller
 
 TC016: Controller HA: Restart Process keepalived on Master Controller:
     verify config 
     restart process on controller  keepalived  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  process-restart  controller
 
 TC017: Controller HA: Restart Process keepalived on Slave Controller:
     verify config 
     restart process on controller  keepalived  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha         
+    [Tags]  ha  robustness  full  process-restart  controller
     
 TC018: Controller HA: Restart Process snmpd on Master Controller:
     verify config 
     restart process on controller  snmpd  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  process-restart  controller
 
 TC019: Controller HA: Restart Process snmpd on Slave Controller:
     verify config 
     restart process on controller  snmpd  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha    
+    [Tags]  ha  robustness  full  process-restart  controller
  
 TC020: Controller HA: Restart Process rsyslogd on Master Controller:
     verify config 
     restart process on controller  rsyslogd  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  process-restart  controller
 
 TC021: Controller HA: Restart Process rsyslogd on Slave Controller:
     verify config 
     restart process on controller  rsyslogd  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha     
+    [Tags]  ha  robustness  full  process-restart  controller
  
 TC022: Controller HA: Restart Process ntp on Master Controller:
     verify config 
     restart process on controller  ntp  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  process-restart  controller
 
 TC023: Controller HA: Restart Process ntp on Slave Controller:
     verify config 
     restart process on controller  ntp  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  
+    [Tags]  ha  robustness  full  process-restart  controller
  
 TC024: Controller HA: Restart Process collectd on Master Controller:
     verify config 
     restart process on controller  collectd  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  process-restart  controller
 
 TC025: Controller HA: Restart Process collectd on Slave Controller:
     verify config 
     restart process on controller  collectd  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  
+    [Tags]  ha  robustness  full  process-restart  controller
 
 TC026: Controller HA: Restart Process tacacs_plus on Master Controller:
     verify config 
     restart process on controller  tacacs_plus  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  process-restart  controller
  
 TC027: Controller HA: Restart Process apache2 on Master Controller:
     verify config 
     restart process on controller  apache2  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  process-restart  controller
 
 TC028: Controller HA: Restart Process apache2 on Slave Controller:
     verify config 
     restart process on controller  apache2  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha 
+    [Tags]  ha  robustness  full  process-restart  controller
 
 TC029: Controller HA: Reboot Slave Controller:
     verify config 
     restart controller  Slave
     Sleep  120
     verify config    
-    [Tags]  bigtap  ha  
+    [Tags]  ha  robustness  full  reboot  controller
     
 TC030: Controller HA: Reboot Master Controller:
     verify config 
     restart controller  Master
     Sleep  120    
     verify config    
-    [Tags]  bigtap  ha
+    [Tags]  ha  robustness  full  reboot  controller
 
 TC031: Controller HA: Flap eth0 on Master Controller
     verify config
     flap eth0 controller  Master
     Sleep  60
     verify config    
-    [Tags]  bigtap  ha
-                  
+    [Tags]  ha  robustness  full  controller
+
+TC032: Controller HA: Flap eth0 on Slave Controller
+    verify config
+    flap eth0 controller  Slave
+    Sleep  60
+    verify config    
+    [Tags]  ha  robustness  full  controller
+
 * Keyword
 
 ha suite setup

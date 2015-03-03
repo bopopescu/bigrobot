@@ -4,7 +4,7 @@ Suite Setup             corsair suite setup
 Suite Teardown          corsair suite teardown
 Test Setup              corsair test setup
 Test Teardown           corsair test teardown 
-Force Tags              corsair  bigtap  sanity  tunnelling
+Force Tags              BigTap  corsair-400  tunnel  Accton-AS4600  Accton-AS5710  Accton-AS6700
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -206,63 +206,63 @@ ${policy_overlap}                       _ZP1_o_P1
 *Test Case
 
 TC1:AS4600:Verify bidirectional tunnel interface
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip} 
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip} 
     Should be true  ${verify_tun_sw1}         
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip} 
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip} 
     Should be true  ${verify_tun_sw2}
-    [Tags]  feature  as4600  
+    [Tags]  sanity  feature  Accton-AS4600  run
 
 TC2:AS4600:Verify receive-only tunnel interface
-    ${verify_tun_sw3}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
+    ${verify_tun_sw3}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=377  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
     Should be true  ${verify_tun_sw3}
-    [Tags]  feature  as4600
+    [Tags]  sanity  feature  Accton-AS4600
 
 TC3:AS4600:Verify transmit-only tunnel interface
-    ${verify_tun_sw4}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}      
+    ${verify_tun_sw4}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=377  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}      
     Should be true  ${verify_tun_sw4}
-    [Tags]  feature  as4600
+    [Tags]  sanity  feature  Accton-AS4600
 
 TC4:AS5710:Verify bidirectional tunnel interface
-    ${verify_tun_sw5}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
+    ${verify_tun_sw5}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
     Should be true  ${verify_tun_sw5}
-    [Tags]  feature  as5710
+    [Tags]  sanity  feature  Accton-AS5710
 
 TC5:AS5710:Verify receive-only tunnel interface
-    ${verify_tun_sw6}=  rest verify tunnel status  s3  ${tunnel_sw3_name_ixia_filter}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw3_sip_ixia_filter}  dip=${tunnel_sw3_dip_ixia_filter}  mask=${tunnel_sw3_mask_ixia_filter}  gip=${tunnel_sw3_gip_ixia_filter}      
+    ${verify_tun_sw6}=  rest verify tunnel status  s3  ${tunnel_sw3_name_ixia_filter}  tunnel_number=377  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw3_sip_ixia_filter}  dip=${tunnel_sw3_dip_ixia_filter}  mask=${tunnel_sw3_mask_ixia_filter}  gip=${tunnel_sw3_gip_ixia_filter}      
     Should be true  ${verify_tun_sw6}
-    [Tags]  feature  as5710
+    [Tags]  sanity  feature  Accton-AS5710
 
 TC6:AS5710:Verify transmit-only tunnel interface
-    ${verify_tun_sw7}=  rest verify tunnel status  s3  ${tunnel_sw3_name_ixia_delivery}  tunnel_number=202  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw3_sip_ixia_delivery}  dip=${tunnel_sw3_dip_ixia_delivery}  mask=${tunnel_sw3_mask_ixia_delivery}  gip=${tunnel_sw3_gip_ixiadelivery}      
+    ${verify_tun_sw7}=  rest verify tunnel status  s3  ${tunnel_sw3_name_ixia_delivery}  tunnel_number=378  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw3_sip_ixia_delivery}  dip=${tunnel_sw3_dip_ixia_delivery}  mask=${tunnel_sw3_mask_ixia_delivery}  gip=${tunnel_sw3_gip_ixiadelivery}      
     Should be true  ${verify_tun_sw7}
-    [Tags]  feature  as5710
+    [Tags]  sanity  feature  Accton-AS5710
     
 TC7:AS6700:Verify bidirectional tunnel interface   
-    ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
     Should be true  ${verify_tun_sw8}
-    [Tags]  feature  as6700  
+    [Tags]  sanity  feature  Accton-AS6700  
     
 TC8:AS6700:Verify receive-only tunnel interface   
     ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  pinterface=${tunnel_sw4_parent_intf}  tdirection=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
     Should be true  ${verify_add_tun_sw4}          
     sleep  5
-    ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
     Should be true  ${verify_tun_sw8}
     ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
     Should be true  ${verify_add_tun_sw4}          
     sleep  5    
-    [Tags]  feature  as6700  
+    [Tags]  sanity  feature  Accton-AS6700  
     
 TC9:AS6700:Verify transmit-only tunnel interface
     ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=tx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
     Should be true  ${verify_add_tun_sw4}          
     sleep  5       
-    ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
+    ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
     Should be true  ${verify_tun_sw8}
     ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
     Should be true  ${verify_add_tun_sw4}          
     sleep  5    
-    [Tags]  feature  as6700  
+    [Tags]  sanity  feature  Accton-AS6700  
 
 #### START OF GROUP RUN. These testcases to be run as a group
 
@@ -280,7 +280,7 @@ TC10:Verify BigTap policy with tunnel as a bidirectional delivery interface
     sleep   3
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}                                
-    [Tags]  feature 
+    [Tags]  sanity  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC11:Verify BigTap policy with tunnel as a bidirectional filter interface
     ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name_ixia_delivery}  
@@ -296,7 +296,7 @@ TC11:Verify BigTap policy with tunnel as a bidirectional filter interface
     sleep   3
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_3}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}                                
-    [Tags]  feature
+    [Tags]  sanity  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC12:Verify traffic across policies in TC10 and TC11
     delete traffic
@@ -311,7 +311,7 @@ TC12:Verify traffic across policies in TC10 and TC11
     verify results  a  d  transmitted_frames  received_data_integrity_frames            
     sleep  5
     delete traffic  
-    [Tags]  feature
+    [Tags]  sanity  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 
 TC13:Verify BigTap policy with tunnel as a transmit-only delivery interface
@@ -328,7 +328,7 @@ TC13:Verify BigTap policy with tunnel as a transmit-only delivery interface
     sleep   3
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}                                
-    [Tags]  feature
+    [Tags]  sanity  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC14:Verify BigTap policy with tunnel as a receive-only filter interface
     ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
@@ -344,7 +344,7 @@ TC14:Verify BigTap policy with tunnel as a receive-only filter interface
     sleep   3
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_3}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}                                
-    [Tags]  feature
+    [Tags]  sanity  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC15:Verify traffic across policies in TC13 and TC14
     delete traffic
@@ -359,7 +359,7 @@ TC15:Verify traffic across policies in TC13 and TC14
     verify results  a  d  transmitted_frames  received_data_integrity_frames            
     sleep  5
     delete traffic  
-    [Tags]  feature
+    [Tags]  sanity  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC16:Verify BigTap policy where core and delivery are both tunnels on same switch
     rest delete interface role  s2  ${switch2_delivery_intf}   delivery
@@ -371,7 +371,7 @@ TC16:Verify BigTap policy where core and delivery are both tunnels on same switc
     ${result}=  L3 chk gw arp
     should be true  ${result}
     sleep  5
-    ${verify_tun_sw4}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}      
+    ${verify_tun_sw4}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=377  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}      
     Should be true  ${verify_tun_sw4}    
     REST delete policy  admin-view  ${policy_name_3}          
     sleep  3
@@ -397,7 +397,7 @@ TC16:Verify BigTap policy where core and delivery are both tunnels on same switc
     verify results  a  d  transmitted_frames  received_data_integrity_frames            
     sleep  5
     delete traffic
-    [Tags]  feature
+    [Tags]  sanity  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700
     
 TC17:Verify a rewrite vlan can be done on a tunnel interface
     ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_ixia_delivery}  loopback=${tunnel_sw2_loopback_ixia_delivery}  pinterface=${tunnel_sw2_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}
@@ -407,7 +407,7 @@ TC17:Verify a rewrite vlan can be done on a tunnel interface
     ${result}=  L3 chk gw arp
     should be true  ${result}
     sleep  5
-    ${verify_tun_sw4}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}      
+    ${verify_tun_sw4}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=377  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}      
     Should be true  ${verify_tun_sw4}    
     rest add interface role  s2  ${tunnel_sw2_name}  filter  intf_nickname=${tunnel_sw2_alias}  rewrite_vlan=1001
     sleep   3
@@ -431,17 +431,17 @@ TC17:Verify a rewrite vlan can be done on a tunnel interface
     rest delete interface role  s1  ${tunnel_sw1_name}   delivery    
     rest delete interface role  s2  ${tunnel_sw2_name}  filter 
     rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery        
-    [Tags]  feature 
+    [Tags]  sanity  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 #### END OF GROUP RUN
 
 TC18:Verify with policy level vlan rewrite and core and delivery interfaces being tunnel interface.
     clean config to suite setup state
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
-    ${verify_tun_sw4}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=201  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}      
+    ${verify_tun_sw4}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=377  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}      
     Should be true  ${verify_tun_sw4}    
     ${add_is_success}=  rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
     should be true  ${add_is_success}
@@ -471,7 +471,7 @@ TC18:Verify with policy level vlan rewrite and core and delivery interfaces bein
     REST delete policy  admin-view  ${policy_name_2} 
     rest delete interface role  s1  ${switch1_filter_alias}  filter 
     rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery        
-    [Tags]  feature 
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 ### RUN THESE FOUR TESTCASES AS A GROUP: START
 TC19:Verify txrx tunnel interface can be configured as a pre-service interface
@@ -482,7 +482,7 @@ TC19:Verify txrx tunnel interface can be configured as a pre-service interface
     sleep  3        
     ${add_intf_preservice}=  rest add interface role  s1  ${tunnel_sw1_name}  service  ${tunnel_pre_service}
     Should be true  ${add_intf_preservice}      
-    [Tags]  feature  group2
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC20:Verify txrx tunnel interface can be configured as a post-service interface
     ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
@@ -490,7 +490,7 @@ TC20:Verify txrx tunnel interface can be configured as a post-service interface
     sleep  3          
     ${add_intf_postservice}=  rest add interface role  s2  ${tunnel_sw2_name}  service  ${tunnel_post_service}
     Should be true  ${add_intf_postservice}      
-    [Tags]  feature  group2
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
     
 TC21:Verify txrx tunnel interface configured as pre-service and post-service interfaces can be added to a service.
     ${add_intf_to_service}=  rest add service  ${tunnel_service_name}  ${tunnel_pre_service}  ${tunnel_post_service}   
@@ -518,7 +518,7 @@ TC21:Verify txrx tunnel interface configured as pre-service and post-service int
     Should be true  ${verify_preservice}          
     ${verify_postservice}=  rest verify service interface state in policy  s1  ${policy_name_2}  ${tunnel_service_name}  service_post_interface=${tunnel_post_service}
     Should be true  ${verify_postservice}     
-    [Tags]  feature  group2
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC22:Verify traffic across service interfaces that are txrx tunnels.
     ${verify_policy}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -543,7 +543,7 @@ TC22:Verify traffic across service interfaces that are txrx tunnels.
     rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery 
     rest delete interface role  s1  ${tunnel_sw1_name}  service 
     rest delete interface role  s2  ${tunnel_sw2_name}  service 
-    [Tags]  feature  group2
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
         
 ### RUN THESE FOUR TESTCASES AS A GROUP:  END
 
@@ -557,7 +557,7 @@ TC23:Verify bidirectional tunnel interface can be configured as a pre-service in
     sleep  3        
     ${add_intf_preservice}=  rest add interface role  s1  ${tunnel_sw1_name}  service  ${tunnel_pre_service}
     Should be true  ${add_intf_preservice}      
-    [Tags]  feature  group3
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC24:Verify bidirectional tunnel interface can be configured as a post-service interface
     ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
@@ -565,7 +565,7 @@ TC24:Verify bidirectional tunnel interface can be configured as a post-service i
     sleep  3          
     ${add_intf_postservice}=  rest add interface role  s2  ${tunnel_sw2_name}  service  ${tunnel_post_service}
     Should be true  ${add_intf_postservice}      
-    [Tags]  feature  group3
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
     
 TC25:Verify bidirectional tunnel interface configured as pre-service and post-service interfaces can be added to a service.
     ${add_intf_to_service}=  rest add service  ${tunnel_service_name}  ${tunnel_pre_service}  ${tunnel_post_service}   
@@ -593,7 +593,7 @@ TC25:Verify bidirectional tunnel interface configured as pre-service and post-se
     Should be true  ${verify_preservice}          
     ${verify_postservice}=  rest verify service interface state in policy  s1  ${policy_name_2}  ${tunnel_service_name}  service_post_interface=${tunnel_post_service}
     Should be true  ${verify_postservice}     
-    [Tags]  feature  group3
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC26:Verify traffic across service interfaces that are bidirectional tunnels.
     ${verify_policy}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
@@ -618,7 +618,7 @@ TC26:Verify traffic across service interfaces that are bidirectional tunnels.
     rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery 
     rest delete interface role  s1  ${tunnel_sw1_name}  service 
     rest delete interface role  s2  ${tunnel_sw2_name}  service 
-    [Tags]  feature  group3
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
         
 ### RUN THESE FOUR TESTCASES AS A GROUP:  END
 
@@ -664,7 +664,7 @@ TC27:Verify that disabling inport-masking has no affect on tunnel based policy.
     REST delete policy  admin-view  ${policy_name_2} 
     rest delete interface role  s1  ${switch1_filter_alias}  filter 
     rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery        
-    [Tags]  feature  
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 
 TC28:Verify that changing match-mode no affect on tunnel based policy. .
@@ -714,7 +714,7 @@ TC28:Verify that changing match-mode no affect on tunnel based policy. .
     REST delete policy  admin-view  ${policy_name_2} 
     rest delete interface role  s1  ${switch1_filter_alias}  filter 
     rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery        
-    [Tags]  feature
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 
 TC29:Verify that overlapping feature works on tunnel based policy
@@ -768,14 +768,14 @@ TC29:Verify that overlapping feature works on tunnel based policy
     rest delete interface role  s1  ${tunnel_sw1_name_ixia_delivery}   delivery     
     rest delete interface role  s2  ${tunnel_sw2_name_ixia_delivery}   delivery
     delete traffic  
-    [Tags]  feature     
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
  
 TC30:Delete and restore complete configuration. Verify tunnel gets re-established.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
     config  master  switch ${switch1_alias}
     config  master  no interface ${tunnel_sw1_name}
     sleep  3    
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
@@ -784,16 +784,16 @@ TC30:Delete and restore complete configuration. Verify tunnel gets re-establishe
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    [Tags]  negative  now
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC31:Delete and restore partial configuration. Do not add tunnel-destination. Verify tunnel is down.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
     config  master  switch ${switch1_alias}
     config  master  no interface ${tunnel_sw1_name}
     sleep  3    
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-encap-type gre
@@ -801,22 +801,22 @@ TC31:Delete and restore partial configuration. Do not add tunnel-destination. Ve
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
     #Restore configuration for next testcase
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1}
     sleep  10          
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    [Tags]  negative
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC32:Delete and restore partial configuration. Do not add tunnel-type. Verify tunnel is down.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
     config  master  switch ${switch1_alias}
     config  master  no interface ${tunnel_sw1_name}
     sleep  3    
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
@@ -824,22 +824,22 @@ TC32:Delete and restore partial configuration. Do not add tunnel-type. Verify tu
     config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
     #Restore configuration for next testcase
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1}    
     sleep  10      
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    [Tags]  negative
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC33:Delete and restore partial configuration. Do not add tunnel-encap-type. Verify tunnel is down.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
     config  master  switch ${switch1_alias}
     config  master  no interface ${tunnel_sw1_name}
     sleep  3    
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
@@ -847,22 +847,22 @@ TC33:Delete and restore partial configuration. Do not add tunnel-encap-type. Ver
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
     #Restore configuration for next testcase
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1}
     sleep  10          
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    [Tags]  negative
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC34:Delete and restore partial configuration. Do not add tunnel-interface parent-interface. Verify tunnel is down.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
     config  master  switch ${switch1_alias}
     config  master  no interface ${tunnel_sw1_name}
     sleep  3    
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
@@ -870,22 +870,22 @@ TC34:Delete and restore partial configuration. Do not add tunnel-interface paren
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
     #Restore configuration for next testcase
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1}   
     sleep  10       
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    [Tags]  negative
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC35:Delete and restore partial configuration. Do not add tunnel-source. Verify tunnel is down.
     #${switch_1_dpid}=  rest return switch dpid from alias  ${switch1_alias}   
     config  master  switch ${switch1_alias}
     config  master  no interface ${tunnel_sw1_name}
     sleep  3    
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
@@ -893,52 +893,52 @@ TC35:Delete and restore partial configuration. Do not add tunnel-source. Verify 
     config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
     #Restore configuration for next testcase
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
-    [Tags]  negative
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC36:Change tunnel parent interface to a different but valid interface. Verify tunnel gets re-established
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     config  master  switch ${switch1_alias}
     config  master  interface ${tunnel_sw1_name}                
     ${output}=  config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf_alternate} 
     sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_alternate}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_alternate}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}     
     #Restore configuration for next testcase
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC37:Change tunnel parent interface to a different but invalid interface. Verify tunnel is down
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
     config  master  switch ${switch1_alias}
     config  master  interface ${tunnel_sw1_name}         
     ${output}=  config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf_invalid} 
     sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_invalid}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_invalid}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}     
     #Restore configuration for next testcase
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC38:Verify tunnel interface configuration does NOT allow invalid destination IP address.
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
     config  master  switch ${switch1_alias}
     config  master  interface ${tunnel_sw1_name}         
@@ -949,12 +949,12 @@ TC38:Verify tunnel interface configuration does NOT allow invalid destination IP
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC39:Verify tunnel interface configuration does NOT allow invalid source IP address.
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
     config  master  switch ${switch1_alias}
     config  master  interface ${tunnel_sw1_name}         
@@ -965,12 +965,12 @@ TC39:Verify tunnel interface configuration does NOT allow invalid source IP addr
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative      
+    [Tags]  sanity  negative  Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC40:Verify tunnel interface configuration does NOT allow invalid source IP mask.
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
     config  master  switch ${switch1_alias}
     config  master  interface ${tunnel_sw1_name}         
@@ -981,12 +981,12 @@ TC40:Verify tunnel interface configuration does NOT allow invalid source IP mask
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative                                                            
+    [Tags]  sanity  negative  Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC41:Verify tunnel interface configuration does NOT allow invalid gateway IP.
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
     config  master  switch ${switch1_alias}
     config  master  interface ${tunnel_sw1_name}         
@@ -997,12 +997,12 @@ TC41:Verify tunnel interface configuration does NOT allow invalid gateway IP.
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
     
 TC42:Verify tunnel interface configuration does NOT allow IPv6 address as destination IP
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
     config  master  switch ${switch1_alias}
     config  master  interface ${tunnel_sw1_name}         
@@ -1013,12 +1013,12 @@ TC42:Verify tunnel interface configuration does NOT allow IPv6 address as destin
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  ipv6          
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC43:Verify tunnel interface configuration does NOT allow IPv6 address as source IP address.
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
     config  master  switch ${switch1_alias}
     config  master  interface ${tunnel_sw1_name}         
@@ -1029,12 +1029,12 @@ TC43:Verify tunnel interface configuration does NOT allow IPv6 address as source
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  ipv6   
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700   
 
 TC44:Verify tunnel interface configuration does NOT allow IPv6 address as gateway IP.
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}                
     config  master  switch ${switch1_alias}
     config  master  interface ${tunnel_sw1_name}         
@@ -1045,9 +1045,9 @@ TC44:Verify tunnel interface configuration does NOT allow IPv6 address as gatewa
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}  
-    [Tags]  negative  ipv6  
+    [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700  
 
 TC45: Verify tunnel can be setup with bidirectional on one side and receive-only on other-end
     tunnel teardown
@@ -1056,9 +1056,9 @@ TC45: Verify tunnel can be setup with bidirectional on one side and receive-only
     ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
     rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
     rest add interface role  s2  ${switch2_delivery_intf}   delivery    intf_nickname=${switch2_delivery_alias} 
@@ -1070,7 +1070,7 @@ TC45: Verify tunnel can be setup with bidirectional on one side and receive-only
     sleep   5
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}            
-    [Tags]  feature  
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC46: Verify bigtap policy is installed with transmit only tunnel on one side and receive-only on other-end
     tunnel teardown
@@ -1079,9 +1079,9 @@ TC46: Verify bigtap policy is installed with transmit only tunnel on one side an
     ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
     rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
     rest add interface role  s2  ${switch2_delivery_intf}   delivery    intf_nickname=${switch2_delivery_alias} 
@@ -1093,7 +1093,7 @@ TC46: Verify bigtap policy is installed with transmit only tunnel on one side an
     sleep   5
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}            
-    [Tags]  feature  
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC47: With bigtap policy installed with transmit only tunnel on one side and receive-only on other-end, flap interface on extreme
     tunnel teardown
@@ -1102,9 +1102,9 @@ TC47: With bigtap policy installed with transmit only tunnel on one side and rec
     ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
     rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
     rest add interface role  s2  ${switch2_delivery_intf}   delivery    intf_nickname=${switch2_delivery_alias} 
@@ -1128,7 +1128,7 @@ TC47: With bigtap policy installed with transmit only tunnel on one side and rec
     sleep  20 
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}                        
-    [Tags]  feature  runthis  
+    [Tags]  sanity  feature      Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC48: With bigtap policy installed with bidirectional tunnel on one side and receive-only on other-end, flap interface on extreme
     tunnel teardown
@@ -1137,9 +1137,9 @@ TC48: With bigtap policy installed with bidirectional tunnel on one side and rec
     ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
     rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
     rest add interface role  s2  ${switch2_delivery_intf}   delivery    intf_nickname=${switch2_delivery_alias} 
@@ -1163,7 +1163,7 @@ TC48: With bigtap policy installed with bidirectional tunnel on one side and rec
     sleep  20 
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}                        
-    [Tags]  feature  
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC49: With bigtap policy installed with bidirectional tunnels, flap interface on extreme
     tunnel teardown
@@ -1172,9 +1172,9 @@ TC49: With bigtap policy installed with bidirectional tunnels, flap interface on
     ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  10
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
-    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+    ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
     rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
     rest add interface role  s2  ${switch2_delivery_intf}   delivery    intf_nickname=${switch2_delivery_alias} 
@@ -1198,7 +1198,7 @@ TC49: With bigtap policy installed with bidirectional tunnels, flap interface on
     sleep  20 
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}                        
-    [Tags]  feature  
+    [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
     
 * Keyword
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
@@ -1273,7 +1273,10 @@ corsair suite setup
     rest add switch alias  s2  ${switch2_alias}
     rest add switch alias  s3  ${switch3_alias}
     rest add switch alias  s4  ${switch4_alias}
-    rest add switch alias  s8  ${switch8_alias}    
+    rest add switch alias  s8  ${switch8_alias}
+    # Clear unwanted config on extreme
+    Run Keyword and Ignore Error  config  s6  delete vlan ${extreme1_sw1_tunnel_name}
+    Run Keyword and Ignore Error  config  s6  delete vlan ${extreme1_sw2_tunnel_name}
     #CRC packets to be dropped
     bash  s1  ofad-ctl crc enable
     bash  s2  ofad-ctl crc enable

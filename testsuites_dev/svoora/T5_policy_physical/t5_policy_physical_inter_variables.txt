@@ -35,10 +35,10 @@ ${z3_subnet}		24
 ${spine0_dpid}		00:00:70:72:CF:AE:B4:AE 
 ${spine1_dpid}		00:00:70:72:CF:AE:B5:30
 ${leaf0a_dpid}		00:00:70:72:CF:AB:37:58
-${leaf0b_dpid}		00:00:70:72:CF:AB:39:58
+${leaf0b_dpid}		00:00:70:72:cf:c7:cd:33
 ${leaf1a_dpid}		00:00:70:72:CF:B5:E5:54
 ${leaf1b_dpid}		00:00:70:72:CF:B5:E7:10
-${leaf2a_dpid}		00:00:70:72:CF:B5:F1:C2
+${leaf2a_dpid}		00:00:70:72:cf:c7:ca:e3
 ${leaf2b_dpid}		00:00:70:72:CF:B5:E9:60
 
 
@@ -57,7 +57,7 @@ ${ixia3}                        ethernet18
 #leaf0a
 ${ixia4}                        ethernet17 
 #leaf1a
-${ixia7}                        ethernet17 
+${ixia7}                        ethernet18 
 #leaf1a
 ${ixia6}                        ethernet17 
 #leaf1b
@@ -72,6 +72,11 @@ ${ixia7_ip}			10.253.1.2/32
 ${ixia6_ip}			
 ${tcp_port}			1234
 ${udp_port}			5678
+${zero_ip}          0.0.0.0/0
+
+${ixia1_ipsubnet}         10.251.1.0/24
+${ixia2_ipsubnet}         10.251.3.0/24
+${ixia3_ipsubnet}         10.251.2.0/24
 
 ${ixia1_mac}		00:11:01:00:00:00
 ${ixia2_mac}		00:22:01:00:00:00

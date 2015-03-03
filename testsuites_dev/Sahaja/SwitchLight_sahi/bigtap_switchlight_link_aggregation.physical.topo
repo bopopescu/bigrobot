@@ -1,0 +1,32 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+    ip: 10.9.18.7
+c2:
+    ip: 10.9.18.8
+
+### Dell S4810
+s1:
+    ip: 10.9.19.4
+
+### Accton AS5610
+s2:
+    ip: 10.9.19.2
+
+### Accton AS6700
+s3:
+    ip: 10.9.19.8
+
+### Arista app-arista-1
+s4:
+    ip: 10.9.19.3
+    console_ip: 10.1.8.97
+    console_port: 6003
+    user: admin
+    password: arastra
+    

@@ -1,0 +1,121 @@
+* Settings
+Documentation   	Test suite with tests to check pages, hover over menu and check elements. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Force Tags              T5  GUI  BCF  Feature  IronHorse
+Library         	keywords/BsnCommon.py
+Library        		keywords/BsnSelenium.py
+Library         	keywords_dev/tomasz/BigTap.py
+Library         	keywords/AppController.py
+Library        		SeleniumLibrary
+Resource        	bcf_resource.txt
+Library       		String
+
+
+*Test Case
+### Check Pages		
+T1.1 Check Main Landing Page
+	Go To Landing Page
+T1.2 Check Controller Switches Page
+    Go To Controller Switches Page
+T1.3 Check Controller Interfaces Page
+    Go To Controller Interfaces Page
+T1.4 Check Port Groups Page
+    Go To Port Groups Page
+T1.5 Check Topology Page
+    Go To Topology Page
+T1.6 Check Tenants Page
+    Go To Tenants Page
+T1.7 Check Endpoints Page
+    Go To Endpoints Page
+T1.8 Check Fabric Summary Page
+    Go To Fabric Summary Page
+T1.9 Check Testpath Page
+    Go To Testpath Page
+T1.10 Check Support Bundles Page
+    Go To Support Bundles Page
+T1.11 Check Monitor Sessions Page
+    Go To Monitor Sessions Page 
+T1.12 Check Fabric Settings Page
+    Go To Fabric Settings Page
+T1.13 Check Clock Page
+    Go To Clock Page 
+T1.14 Check SNMP Page
+    Go To SNMP Page
+T1.15 Check Tacacs Page
+    Go To Tacacs Page
+T1.16 Check Logging Page
+    Go To Logging Page  
+T1.17 Check Users Page
+    Go To Security Users Page  
+T1.18 Check Signout Page
+    Go To Signout Page 
+
+
+### Check Hover					Menu						Label					Destination					Title
+T2 Setup
+    Go To Login Page
+    Valid Login  admin  adminadmin
+    Sleep  1 sec
+T2.1 Controller Switches	
+	Check Hover					${FABRIC MENU}				${SWITCHES LABEL}				${SWITCHES URL}				${SWITCHES TITLE}
+T2.2 Controller Interfaces
+	Check Hover					${FABRIC MENU}				${INTERFACES LABEL}				${INTERFACES URL}			${INTERFACES TITLE}
+T2.3 Controller Portgroups	
+	Check Hover					${FABRIC MENU}				${PORT GROUPS LABEL}			${PORT GROUPS URL}			${PORT GROUPS TITLE}
+T2.4 Fabric Summary			
+	Check Hover					${VISIBILITY MENU}			${FABRIC SUMMARY LABEL}			${FABRIC SUMMARY URL}		${FABRIC SUMMARY TITLE}
+T2.5 Test Path			
+	Check Hover					${VISIBILITY MENU}			${TEST PATH LABEL}				${TEST PATH URL}			${TEST PATH TITLE}
+T2.6 Support Bundles			
+	Check Hover					${VISIBILITY MENU}			${SUPPORT BUNDLES LABEL}		${SUPPORT BUNDLES URL}		${SUPPORT BUNDLES TITLE}
+T2.7 Monitor Sessions		
+	Check Hover					${VISIBILITY MENU}			${MONITOR SESSIONS LABEL} 		${MONITOR SESSIONS URL}		${MONITOR SESSIONS TITLE}
+T2.8 Logging			
+	Check Hover					${SETTINGS MENU}			${LOGGING LABEL}				${LOGGING URL}				${LOGGING TITLE}
+T2.8 Clock			
+	Check Hover					${SETTINGS MENU}			${CLOCK LABEL}					${CLOCK URL}				${CLOCK TITLE}
+T2.9 Users			
+	Check Hover					${SECURITY MENU}			${USERS LABEL}					${USERS URL}				${USERS TITLE}
+T2.10 Sign Out		
+	Check Hover					${ADMIN MENU}				${SIGN OUT LABEL} 				${LOG IN URL}				${LOG IN TITLE}
+
+
+###  Check Element			Element 
+T3 Setup
+    Go To Login Page
+    Valid Login  admin  adminadmin
+    Sleep  5 sec
+T3.1 Controller Info Pane		
+	Check Element			${CONTROLLER INFO PANE}
+T3.2 Inventory Pane			
+	Check Element			${INVENTORY PANE}
+T3.3 Controller Stats Pane	
+	Check Element			${CONTROLLER STATS PANE}
+T3.4 Controller Segments Pane
+	Check Element			${CONTROLLER SEGMENTS PANE}
+T3.5 Controller Tenants Pane	
+	Check Element			${CONTROLLER TENANTS PANE}
+T3.6 Controller Interfaces Pane
+	Check Element			${CONTROLLER INTERFACES PANE}
+
+
+			
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}=            get node ip   master
+    set suite variable  ${SERVER}  ${c1_ip}
+    Set URLs
+    #Start Selenium Server  -trustAllSSLCertificates
+    Start Selenium Server  -trustAllSSLCertificates   -firefoxProfileTemplate   /Users/vui/Downloads/regression_firefox_profile
+    #Start Selenium Server  -trustAllSSLCertificates   -profilesLocation   /tmp/ybm56dpa.default
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+    
+	
+config suite teardown
+	Close Browser
+    Stop Selenium Server
+    base suite teardown

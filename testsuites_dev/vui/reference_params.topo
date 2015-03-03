@@ -1,22 +1,26 @@
 c1:
   #ip: 10.8.1.214      # vui_c1_09091021
   #ip: 10.9.16.46      # Reg-HW-C1 (hardware appliance)
-  ip: 10.8.1.224      # vui_c1_09160942 (build# 3338)
+  #ip: 10.8.1.224      # vui_c1_09160942 (build# 3338)
+  ip: 10.8.3.195      # vui_c1_session_01201758 (build# 3819)
+  #ip: 10.9.18.7        # Animesh's bigtap controller (also .5, .6, .8)
 c2:
   #ip: 10.8.1.215      # vui_c2_09091025
   ip: 10.8.1.225      # vui_c2_09160946 (build# 3338)
 mn:
   ip: 10.8.1.172      # vui_mn_08251811
 s1:
-  ip: 10.9.16.132
+  ip: 10.9.19.1
+#  ip: 10.9.19.24
+#  ip: 10.9.16.104
   alias: leaf0-a
   #alias: ixia
   set_session_ssh: false
   set_init_ping: false
-  interfaces:
-    ixia_1: ethernet2
-    ixia_2: ethernet3
-    s2: ethernet3
+#  interfaces:
+#    ixia_1: ethernet2
+#    ixia_2: ethernet3
+#    s2: ethernet3
 h1:
   #ip: 10.192.20.6    # jenkins-w6
   #ip: 10.9.16.23      # Song's 14.0.4

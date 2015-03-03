@@ -270,8 +270,8 @@ Test REST commands
     #patch             c1   /api/v1/data/controller/core/aaa/local-user%5Buser-name%3D%22vui%22%5D   {"full-name": "Vui Bob Le"}
 
 Test controller cli ping (simple)
-    [Tags]  skipped
-    ${loss_pct}=      cli ping          c1   qa-tools1.qa.bigswitch.com
+    #[Tags]  skipped
+    ${loss_pct}=      cli ping          c1   qa-tools1.qa.bigswitch.com   count=3
     log               Packet loss % is ${loss_pct}
 
 Test controller cli ping (complete stats)
@@ -314,7 +314,7 @@ Test bash command line editing
     cli add controller idle and reauth timeout    c1    reconfig_reauth=${false}
 
 Test common Params
-    #[Tags]  skipped
+    [Tags]  skipped
     #${val}=         params    common    my_image
     #log             Value = ${val}
 
@@ -322,4 +322,10 @@ Test common Params
     log             Value = ${val}
 
     #test common params
+
+Test run_cmd
+    [Tags]  skipped
+    ${out} =        run cmd   ls -la /etc/
+    pretty log      ${out}   format_newline=${true}
+
 

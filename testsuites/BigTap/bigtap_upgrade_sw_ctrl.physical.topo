@@ -1,0 +1,111 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+### Console: telnet cs-215 6010
+  ip: 10.9.18.7
+
+c2:
+### Console: telnet cs-215 6026
+  ip: 10.9.18.8
+
+### Accton AS4600 (app-ras4600-1)  
+### Console: telnet cs-214 6001
+### Ixia Ports
+### ethernet1:  2/1
+### ethernet2:  2/2
+s1:
+  ip: 10.9.19.1
+  
+### Accton AS5610 (app-ras5610-1)  
+### Console: telnet cs-214 6002
+### Ixia Ports
+### ethernet1:  1/1
+### ethernet2:  1/2
+s2:
+  ip: 10.9.19.2
+
+### Dell S4810 (app-ras4810-1)  
+### Console: telnet cs-214 6004
+### Ixia Ports
+### ethernet1:  1/4
+### ethernet2:  1/3  
+s3:
+  ip: 10.9.19.4
+
+### Quanta LB9 (app-rlb9-1)  
+### Console: telnet cs-214 6005
+### Ixia Ports
+### ethernet1:  2/3
+### ethernet2:  2/4    
+s4:
+  ip: 10.9.19.5
+
+### Accton AS5710 (R0B) (app-ras5710-1)  
+### Console: telnet cs-214 6007
+### Ixia Ports
+### ethernet1:  1/5
+### ethernet2:  1/6  
+### ethernet9:  1/9
+### ethernet12:  3/2  
+s5:
+  ip: 10.9.19.7
+
+### Accton AS6700 (app-ras6700-1)  
+### Console: telnet cs-214 6008    
+s6:
+  ip: 10.9.19.8
+
+### Accton AS4600 (app-ras4600-2)  
+### Console: telnet cs-214 6010    
+s7:
+  ip: 10.9.19.10
+
+### Dell S6000 (app-rs6000-1)  
+### Console: telnet cs-214 6012      
+s8:
+  ip: 10.9.19.12
+
+### Quanta LY2 (app-rly2-1)  
+### Console: telnet cs-214 6013 
+### Ixia Ports
+### ethernet1:  4/2
+### ethernet2:  4/3  
+### ethernet3:  1/21
+### ethernet4:  1/23     
+s9:
+  ip: 10.9.19.13
+
+### Dell S4000 (app-rs4000-1)  
+### Console: telnet cs-214 6014        
+#s10:
+#  ip: 10.9.19.14
+
+### Quanta LB9 (app-rlb9-2)  
+### Console: telnet cs-214 6018
+### Ixia Ports
+### ethernet1:  4/4
+### ethernet2:  4/5  
+s11:
+  ip: 10.9.19.18
+
+### Quanta LB9 (app-rlb9-3)  
+### Console: telnet cs-214 6019   
+### Ixia Ports
+### ethernet1:  3/4
+### ethernet2:  2/14 
+s12:
+  ip: 10.9.19.19
+
+### Quanta LB9 (app-rlb9-4)  
+### Console: telnet cs-213 6013
+### Ixia Ports
+### ethernet1:  4/9
+### ethernet2:  4/10  
+s13:
+  ip: 10.9.18.93
+  

@@ -4,7 +4,7 @@ Suite Setup             dell suite setup
 Suite Teardown          dell suite teardown
 Test Setup              traffic test setup
 Test Teardown           traffic teardown 
-Force Tags              platform Sanity
+Force Tags              switch-platform  switchlight  bigtap  corsair-411  Dell-S4810  Dell-S6000
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -186,7 +186,7 @@ TC001: Verify ifInUcastPkts and ifOutUcastPkts statistics match interface statis
     Should be true  ${in_range_6}           
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  snmp 
+    [Tags]  ha  robustness  statistics  sanity  snmp
 
 TC002: SNMP: Verify ifInErrors are reported correctly
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -233,7 +233,7 @@ TC002: SNMP: Verify ifInErrors are reported correctly
 
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  snmp     
+    [Tags]  ha  robustness  statistics  snmp  sanity  
 
 TC003: SNMP: Verify ifInDiscards are reported correctly
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
@@ -262,7 +262,7 @@ TC003: SNMP: Verify ifInDiscards are reported correctly
     Should Be Equal As Strings  ${passOrfail}  PASS
     cli enable interface  s1  ${core_interface_s1s2_1}
     cli enable interface  s3  ${core_interface_s3s2_1}
-    [Tags]  bigtap  ha  stats  snmp   
+    [Tags]  ha  robustness  statistics  snmp  sanity  
 
 * Keywords
 

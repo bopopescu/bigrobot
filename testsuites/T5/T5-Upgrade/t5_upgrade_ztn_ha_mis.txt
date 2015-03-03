@@ -1,0 +1,1017 @@
+* Settings
+Documentation    T5 upgrade Test Suite
+Suite Setup      Upgrade Suite Setup
+Suite Teardown   Upgrade suite teardown
+#Test Setup       Upgrade base test setup
+Test Teardown    Upgrade base test teardown
+Force Tags       T5   Ironhorse   ha   upgrade
+Library			 OperatingSystem
+Library          keywords/BsnCommon.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library		     keywords_dev/mingtao/T5_longevity.py
+Library	         keywords/T5Platform.py
+Library	         keywords/T5Parallel.py
+Library	         keywords/T5ZTN.py 
+Library	         keywords/T5Utilities.py 
+Library	         keywords/T5.py
+Library          keywords/T5L3.py
+Library	         keywords/Controller.py
+Library	         keywords/SwitchLight.py
+Resource		 testsuites/T5/T5-Upgrade/t5_upgrade_ztn_resource.txt 
+Resource		 testsuites/T5/t5_physical_variables.txt
+
+# document: https://bigswitch.atlassian.net/wiki/display/BSC/T6+Upgrade section: 6.4
+# The purpose of this test suite is to verify ztn function with upgrade.
+# Test topology:  2 controllers,  2 spines and 6 leaves.
+# Configuration:    
+# Note: prerequisites:  ONIE installed switch 
+#       no support: ONIE install and  ONIE (u-boot) upgrade. 
+#                   loader upgrade  
+#       support:  loader install, swi upgrade
+#       upgrade commit/abort not implemented
+# In this Test Suite the following terms will be used:
+# - stand-by switch - switch configured on the controller (with MAC address) with no fabric-role specified
+# - provisioned switch - switch configured on the controller (with MAC address) with fabric role, forwarding traffic
+# - suspended switch - switch connected to fabric but not configured on the controller,
+#   or running wrong version of Swith Light, or with incorrect running-config
+#
+# Typical upgrade check:  configuration  - remain
+#                         log files     -  not wiped out
+#                         traffic       -  loss based on the test case 
+#                         fabric config -  remain
+#                         forwarding table - converged if switch need to reload
+# 
+#####################  review ##################
+#Date:  8/26/2014
+#Attendee:   Jaiprakash, Bala, Srini, Mike, Cliff
+#Note:
+#   1.  Remove revert keyword from upgrade, since revert is default behavior -    Mingtao to file the JIRA
+#   2.  Define phase II switch upgrade failure behavior  -  JP to talk to customer and file JIRA
+#   3.  Remove test case:  HAEVENT: T13.5 HA event - master vm event.
+#   4.  Remove non ZTN support test cases: 
+#   5.  MIS: T101 verify 3 node controller upgrade:   double check and see cluster can form with 3 nodes
+#   6.  MIS: T109 upgrade when controller does not have enough space <<<<<<  nothing to do upgrade
+#   7.  Define single node upgrade flow -     Mike/Srini  to discuss
+
+
+
+* Variable
+
+${short}  1
+${medium}  10
+${long}   50
+${verylong}    90 
+${upgradetime}    600 
+#${image}     bsn@jenkins:/var/lib/jenkins/jobs/bcf_master/builds/3545/archive/*.pkg
+${image}      bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
+${image1}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
+${image2}     bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/ihplus_bcf/lastSuccessful/archive/controller-*.pkg
+ 
+${qcowimage}   bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*.qcow2
+${bigtapimage}   bsn@10.8.28.6:/home/bsn/controller-upgrade-bigtap-3.0.0-SNAPSHOT.pkg
+
+${config}   scp://root@10.8.28.6:/home/mingtao/config_basic
+${h2ip}     192.168.4.21
+${h1ip}  	192.168.4.20
+${File}     script.log
+${vip}      10.9.16.55
+ 
+
+
+* Test Case
+
+
+ 
+
+###### dual nodes controller upgrade  
+ 
+UPGRADE 10G HOST PING SET UP
+	set fabric switches
+	sleep  25
+	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
+	Set host int variables
+	add host port groups
+	BASH restart networking service                 h1                          timeout=60
+	BASH restart networking service                 h2                          timeout=60
+	BASH restart networking service                 h3                          timeout=60
+	BASH restart networking service                 h4                          timeout=60
+	BASH restart networking service                 h5                          timeout=60
+	BASH restart networking service                 h6                          timeout=60
+	sleep  10    #sleep for port groups to come up
+	rest verify port group state
+	#Currently Regression Host H1 & H2 Bond interfaces are configured on Vlan 10
+	bash init intf  h1  bond0.10
+    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
+    bash ifup intf  h1  bond0
+    bash init intf  h2  bond0.10
+    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
+    bash ifup intf  h2  bond0
+    REST add tenant  A_10G 
+    REST add vns  A_10G  A_10G
+   	REST add portgroup to vns  A_10G  A_10G  p1  10 
+    REST add portgroup to vns  A_10G  A_10G  p2  10 
+   	sleep  5
+   	bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
+   	${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
+   	Should Be True  ${loss} < 50
+   	remove_no_auto_reload	
+	[Tags]    sanity   run_ping_test  daily-sanity
+	
+UPGRADE 1G HOST PING SET UP
+	#Currently Regression Host H5 & H6 Bond interfaces are configured with 1G interfaces
+	bash init intf  h5  bond0.10
+    bash add ip address  h5  ${h5_ip}/24  bond0
+    bash ifup intf  h5  bond0
+    bash init intf  h6  bond0
+    bash add ip address  h6  ${h6_ip}/24  bond0
+    bash ifup intf  h6  bond0
+    REST add tenant  A_1G 
+    REST add vns  A_1G  A_1G
+   	REST add portgroup to vns  A_1G  A_1G  p5  -1 
+    REST add portgroup to vns  A_1G  A_1G  p6  -1 
+   	sleep  5
+   	bash ping  h5  ${h6_ip}  source_if=bond0
+   	${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
+   	Should Be True  ${loss} < 50	
+	[Tags]    sanity   run_ping_test  daily-sanity
+IMAGE: T1.1 verify image download and various related show command in master
+	log  get image from external server 
+ 		copy_pkg_from_server    ${image}   master	 
+ 		cli_delete_image   master
+ 		
+	log  get image from file(file as source not supported)
+		cli_copy   scp://${image}    file://controller-upgrade.pkg   master
+		copy_pkg_from_file   file://controller-upgrade.pkg   master
+ 
+		${num}  ${imagever}=	   cli_check_image    master
+		${current}=   rest_get_ver 	  master
+    	bash   master   sudo rm controller-upgrade.pkg
+    	   	
+	log  get image from self controller(scp should work)	
+		cli_delete_image	master	 
+		${ip}=   get_node_ip   master	
+		bash_scp   	node=master   source=${image}    dest=controller-upgrade-SNAPSHOT.pkg
+ 		${localimage}=  Catenate	SEPARATOR=	 admin@  ${ip}  	 :controller-upgrade-SNAPSHOT.pkg
+		copy_pkg_from_server   ${localimage}    node=master     passwd=adminadmin
+    	bash   master   sudo rm controller-upgrade-SNAPSHOT.pkg
+		 		
+	log  get image from slow bandwidth (manual)
+	
+	log  show image clis
+		enable   master   show image
+		enable   master   show image detail
+		enable   master   show upgrade images 
+  			 	
+	[Tags] 	full  feature  upgrade_ztn    tested       
+	
+IMAGE: T1.2 verify image download and various related show command in slave
+	log  get image from external server 
+ 		copy_pkg_from_server    ${image}   slave	 
+ 		cli_delete_image   slave
+ 		
+	log  get image from file(file as source not supported)
+		cli_copy   scp://${image}    file://controller-upgrade.pkg   slave
+		copy_pkg_from_file   file://controller-upgrade.pkg  slave
+		${num}  ${imagever}=	   cli_check_image   slave
+		${current}=   rest_get_ver 	  slave
+    	bash  slave   sudo rm controller-upgrade.pkg
+     	   	
+	log  get image from self controller(scp should work)	
+		cli_delete_image	slave 
+		${ip}=   get_node_ip   slave	
+		bash_scp   	node=slave   source=${image}    dest=controller-upgrade-SNAPSHOT.pkg
+ 		${localimage}=  Catenate	SEPARATOR=	 admin@  ${ip}  	 :controller-upgrade-SNAPSHOT.pkg
+		copy_pkg_from_server   ${localimage}    node=slave    passwd=adminadmin
+    	bash   slave  sudo rm controller-upgrade-SNAPSHOT.pkg
+			 		
+	log  show image clis
+		enable   slave   show image
+		enable   slave   show image detail
+		enable   slave   show upgrade images 
+  			 	
+	[Tags] 	full  feature  upgrade_ztn      tested     
+	 
+	
+IMAGE: T1.3 verify only 1 image can be stored in system 
+	log  copy image if there is no image in system
+		Copy image if no image exist    master
+ 		 	   	
+	log  get another image from external server 
+ 		copy_pkg_from_server    ${image}    master 
+		${num}  ${_}=	   cli_check_image     master
+		Should Be Equal As Integers     ${num}    1      	   	
+    			 	
+	[Tags] 	sanity  feature  upgrade_ztn    tested   daily-sanity
+
+IMAGE: T1.4 verify delete image in master
+	log  copy image if there is no image in system
+		Copy image if no image exist    master
+  	log  delete image 
+ 		cli_delete_image    master
+		${num}  ${_}=	   cli_check_image    master
+		Should Be Equal As Integers     ${num}    -1      	   	
+    			 	
+	[Tags] 	sanity  feature  upgrade_ztn     tested  daily-sanity
+
+IMAGE: T1.4 verify delete image in slave
+	log  copy image if there is no image in system
+		Copy image if no image exist    slave
+  	log  delete image 
+ 		cli_delete_image    slave
+		${num}  ${_}=	   cli_check_image    slave
+		Should Be Equal As Integers     ${num}    -1      	   	
+    			 	
+	[Tags] 	full  feature  upgrade_ztn    tested
+
+
+STAGE: T2.1 controller upgrade launch when there is no image staged 
+ 	log  launch without image staged
+ 		${result}=   get_boot_partition   c1    Unformateed
+		Run Keyword if   ${result} == -1    Upgrade launch negative   c1
+ 		${result}=   get_boot_partition   c2    Unformateed
+		Run Keyword if   ${result} == -1    Upgrade launch negative   c2				
+ 		 		
+  	[Tags] 	full  feature  upgrade_ztn    negative    
+ 		 
+STAGE: T2.2 verify image stage and various show commands in master  
+	log  copy image if image is not available		
+		${num}  ${_}=	   cli_check_image   master
+		Run Keyword if   ${num} == -1    copy_pkg_from_server    ${image}	 master
+ 		${result}= 	cli_upgrade_stage      master
+		Should be True     ${result} 		
+		
+	log  verify related show commands
+		enable   master   show upgrade staged 
+		enable   master   show upgrade staged details 
+		enable   master   show upgrade status 
+		enable   master   show boot partition  
+		enable   master   show boot partition details
+		
+ 	[Tags] 	full  feature  upgrade_ztn   tested
+ 	
+STAGE: T2.3 verify image stage and various show commands in slave
+	log  copy image if image is not available		
+		${num}  ${_}=	   cli_check_image   slave
+		Run Keyword if   ${num} == -1    copy_pkg_from_server    ${image}	 slave
+ 						 		
+	log  stage image 
+		${result}= 	cli_upgrade_stage      slave
+		Should be True     ${result} 		
+ 		
+	log  verify related show commands
+		enable   slave   show upgrade staged 
+		enable   slave   show upgrade staged details 
+		enable   slave   show upgrade status 
+		enable   slave   show boot partition  
+		enable   slave   show boot partition details
+ 		
+ 	[Tags] 	full  feature  upgrade_ztn   tested   run
+ 	
+ 	 	
+ 	   
+STAGE: T2.4 verify image stage when there is same image in the partition
+	log  copy image if image is not available		
+		${num}  ${_}=	   cli_check_image   c1
+		Run Keyword if   ${num} == -1    copy_pkg_from_server    ${image}	 c1
+ 						 		
+	log  stage image 
+		${result}= 	cli_upgrade_stage      c1
+		Should be True     ${result} 	
+	log  stage the same image again
+		${result}= 	cli_upgrade_stage      c1
+		Should be True     ${result} 		
+ 				
+ 	[Tags] 	full  feature  upgrade_ztn      tested   run
+ 
+ 
+UPGRADE: T11.1 Verify upgrade (controller - upgrade, switch - upgrade )   	
+ 		Verify Dual nodes upgrade 	  ${image1}
+		
+ 	[Tags] 	sanity  feature  upgrade_ztn    tested     daily-sanity  
+ 	
+    
+UPGRADE: T11.2 Verify upgrade (controller - upgrade, switch - no need) 
+	Run Keyword if   '${image1}' != '${image2}' 		Verify Dual nodes upgrade 	  ${image2}
+ 		
+ 	[Tags] 	sanity  feature  upgrade_ztn     tested    daily-sanity
+   
+
+UPGRADE: T11.3 Verify upgrade with same image
+	 Verify Dual nodes upgrade 	  ${image2}
+		
+ 	[Tags] 	full  feature  upgrade_ztn     tested   
+
+   
+UPGRADE: T11.6 upgrade launch timeout
+		Verify Dual nodes upgrade     ${image}    switch-timeout 900   	
+			
+	[Tags] 	sanity  feature  upgrade_ztn      tested
+
+
+ 
+UPGRADE: T11.9 Verify upgrade rollback 
+  	log  step 1 - rollback once the upgrade is finished on both nodes 	
+ 	log  step 2 - check both controller and switch revert back to old images
+	
+	[Tags]  full   feature  upgrade_ztn    manual   
+
+
+
+UPGRADE: T11.10 standby switch behavior during upgrade (behavior change, will not continue)
+	log  step 0 - move switch to standby  		
+		Move switch from provisioned to standby     s8
+		enable  master   show running-config switch 
+		enable  master   show switch 
+				
+ 	log  step 1 - upgrade controller 	 	
+		@{nodes}=     create list   c1   c2
+ 		Dual node copy image	 ${nodes}    ${image} 
+		Dual node stage image    ${nodes}
+		${result}=     cli_upgrade_launch    node=c1   soft_error=True
+		Should Contain  ${result}     suspended switch
+		
+		${result}=     cli_upgrade_launch    node=c2   soft_error=True
+		Should Contain  ${result}     suspended switch
+ 			
+	log  step 2 - add the switch back  
+		Add switch as provisioned switch	s8
+		cli  master   show running-config switch 
+		cli  master   show switch 
+		sleep  5
+		Verify all switches connected back
+   						      	      
+	[Tags] 	full   feature  upgrade_ztn     tested
+
+UPGRADE: T11.11 suspended switch behavior during upgrade 
+	log  step 0 - prepare switch to suspended 				
+ 	log  step 1 - upgrade controller
+ 		 
+	  		      	      
+	[Tags] 	full   feature  upgrade_ztn   manual   skipped
+
+UPGRADE: T11.11 disconneted switch behavior during upgrade 
+	log  step 0 - add a nonexisting switch 	
+		config   master  switch dummy	
+		config   master  mac 70:72:cf:00:00:00 
+					
+ 	log  step 1 - upgrade controller
+		@{nodes}=     create list   c1   c2
+ 		Dual node copy image	 ${nodes}    ${image} 
+		Dual node stage image    ${nodes}		
+		${result}=   Dual node launch image   ${nodes} 
+ 		sleep  ${verylong} 	
+	log  step 2 - dummy is the only disconnected switch
+ 		${switches}=  rest_get_disconnect_switch
+		log   the disconnected switches are ${switches}  	
+		Should Contain   ${switches}	dummy   
+	log  step 3 - remove dummy, all switches are in connected state		
+		config   master  no switch dummy			 
+		sleep  5
+		Verify all switches connected back
+	 
+	  		      	      
+	[Tags] 	full   feature  upgrade_ztn     tested
+  
+
+UPGRADE: T11.12 Verify switch partition for different topology
+	log  step 1 - verify switch partition for full redundant spine and leaf
+		log  result - passed
+	log  step 2 - verify switch partition with single leaf rack
+	log  step 3 - verify switch partition with odd number spine
+		log  result - passed(with 1 spine)
+	log  step 4 - verify switch partition with 1 spine
+		log  result - passed
+	
+
+	[Tags] 	full   feature  upgrade_ztn   manual   skipped
+  
+
+UPGRADE: T11.13 upgrade with static ZTN server
+	log  step 1 - get the ip address of two controller
+		${c1ip}=  get_node_ip  c1 
+		${c2ip}=  get_node_ip  c2	
+  	log  step 2 - add ztn servers to the boot-config
+		@{sws}=     create list   s1  s2  s3  s4  s5  s6  s7  s8 
+
+ 		: FOR    ${sw}   IN   @{sws}   
+		\   console_bash_switch_add_ztnserver    ${sw}     ${c1ip},${c2ip}
+		cli_reboot_switch_all  
+		sleep  60
+		Wait Until Keyword Succeeds  	10 min	30 sec   Verify all switches connected back	
+  		
+ 	log  step 3 - upgrade the controllers
+		Verify Dual nodes upgrade     ${image} 
+	log  step 4 - remove the static ztn server
+		: FOR    ${sw}   IN   @{sws}   
+		\  console_bash_switch_default_boot_config    ${sw} 
+		cli_reboot_switch_all  
+		sleep  60
+		Wait Until Keyword Succeeds  	10 min	30 sec   Verify all switches connected back	
+		
+	[Tags] 	full   feature  upgrade_ztn    tested   
+
+UPGRADE: T11.14 upgrade with dhcp ZTN server
+	log   config dhcp server
+		log  Tomasz tested it with virtual address
+
+	[Tags] 	full   feature  upgrade_ztn   manual    skipped
+
+UPGRADE: T11.15 upgrade with not ZTN server configured
+	log   covered in test case T11.1
+	
+	[Tags] 	full   feature  upgrade_ztn   tested
+
+
+UPGRADE: T11.16 HA failover, make config changes, then do upgrade  
+	log	 step 1 perform HA failover
+		cli_cluster_take_leader
+	log  step 2 add new tenant to the system
+		tenant FLAP configuration add	
+	log  step 3 perform upgrade
+		Verify Dual nodes upgrade     ${image} 
+	log  step 4 clean up
+		tenant FLAP configuration remove	
+		
+	[Tags] 	full   feature  upgrade_ztn    tested  
+
+UPGRADE: T11.17 VIP in upgrade
+	T5Platform.rest_configure_virtual_ip   ${vip}
+ 	${result}=   cli_show_virtual_ip
+ 	Should Be Equal As Strings  ${result}  ${vip}
+	
+ 	Verify Dual nodes upgrade 	  ${image1}	
+ 	
+ 	${result}=   cli_show_virtual_ip
+ 	Should Be Equal As Strings  ${result}  ${vip}
+ 	T5Platform.rest_delete_virtual_ip
+ 	
+  	[Tags] 	full    feature  upgrade_ztn     tested    
+
+UPGRADE: T11.18 SNMP/NTP/LOGGING config in upgrade
+  	Modify ZTN related config (NTP,SNMP,LOGGING)
+ 	Verify Dual nodes upgrade 	  ${image}	
+	Default ZTN related config (NTP,SNMP,LOGGING)  	
+	
+  	[Tags] 	full    feature  upgrade_ztn      tested
+
+
+
+SYNC: T12.1 Verify switch config in master controller is pushed to swith(event trigger reload) 
+	log  step 1 - modify switch related config in controller(NTP, Logging, SNMP)
+   		Modify ZTN related config (NTP,SNMP,LOGGING) 
+   		sleep  ${long} 	
+	log  step 2 - verify switch startup config is changes for controller
+		Verify All Switch Running Config  
+		 
+	log  step 3 - verify switch running config all updated
+ 		Verify All Switch Startup Config
+ 		
+	log  step 4 - verify switch running config all updated to default
+		Default ZTN related config (NTP,SNMP,LOGGING)	
+   		sleep  ${long} 		 
+		Verify All Switch Running Config 
+ 		Verify All Switch Startup Config				
+	[Tags] 	sanity    feature  upgrade_ztn   tested   
+
+
+SYNC: T12.2 Verify switch config in controller is pushed to switch(through cli reload) 
+	log  step 1 - modify switch related config in switch(NTP, Logging, SNMP)
+		telnet_run		s1     enable;configure
+		telnet_run		s1     ntp server 0.us.pool.ntp.org
+		telnet_run		s1     exit;exit   
+		telnet_run		s1     show running-config 	
+		${sw}=  get_node_alias    s1
+	log  step 2 - perform cli reload	
+		enable   master    system config-push switch ${sw}  	 
+	log  step 3 - verify switch running config all revert back
+		Verify All Switch Running Config	
+		
+		telnet_run		s1     show running-config 	
+		       
+	[Tags]  full   feature  upgrade_ztn      tested    
+
+SYNC: T12.3 Verify controller failover with config changes in switch
+	log  step 0 - upgrade
+ 		Verify Dual nodes upgrade 	  ${image}		
+	log  step 1 - modify switch related config in controller(NTP, Logging, SNMP)
+  		Modify ZTN related config (NTP,SNMP,LOGGING)    	  	 	
+ 	log  step 2 - perform controller failover and cli reload 	
+		cli  master   show running-config 	
+		cli_cluster_take_leader		
+		cli  master   show running-config
+	log  step 3 - verify switch startup config and running config all updated
+		Verify All Switch Running Config 
+ 		Verify All Switch Startup Config				
+ 		
+	log  step 4 - verify switch running config all updated to default
+		Default ZTN related config (NTP,SNMP,LOGGING)	
+   		sleep  ${long} 		 
+		Verify All Switch Running Config 
+ 		Verify All Switch Startup Config				
+ 		 
+	[Tags] 	full     feature  upgrade_ztn    tested    
+ 
+
+HAEVENT: T13.100 HA event - combine all the testcases to save time
+	log  step 0 - upgrade controllers
+ 		Verify Dual nodes upgrade 	  ${image}		
+ 	log  step 1 - reboot standby controller
+ 		cli_verify_cluster_slave_reboot
+ 	log  step 2 - reboot active controller
+		cli_verify_cluster_master_reboot 	
+ 	log  step 3 - perform cli failover
+ 		cli_cluster_take_leader 		
+ 	log  step 4 - reload standby controller
+ 		cli_verify_cluster_slave_reload
+ 	log  step 5 - reload active controller
+		cli_verify_cluster_master_reload 	
+	 
+ 	log  step 6 - perform master power off
+ 		${active}=   get_node_name   master 
+		power_down_switch	 ${active}
+		sleep  60	
+		power_up_switch	     ${active}	
+		sleep  60 		  	
+		Wait Until Keyword Succeeds  	10 min	30 sec  rest_verify_show_cluster 
+
+ 	log  step 7 - perform slave power off
+		${standby}=  get_node_name   slave
+ 
+		power_down_switch	 ${standby}
+		sleep  60	
+		power_up_switch	     ${standby}	
+		sleep  60 		  	
+		Wait Until Keyword Succeeds  	10 min	30 sec  rest_verify_show_cluster 
+
+			
+ 	[Tags] 	full   feature  upgrade_ztn  tested    
+
+
+HAEVENT: T13.1 HA event - standby controller reboot after upgrade
+	log  step 1 - upgrade controllers
+# 		Verify Dual nodes upgrade 	  ${image}		
+ 	log  step 2 - reboot standby controller
+# 		cli_verify_cluster_slave_reboot
+	log  covered in T13.100		 
+			
+ 	[Tags] 	full   feature  upgrade_ztn  tested    
+
+HAEVENT: T13.2 HA event - active controller reboot after upgrade 
+	log  step 1 - upgrade controller
+# 		Verify Dual nodes upgrade 	  ${image}	
+ 	log  step 2 - reboot active controller
+#		cli_verify_cluster_master_reboot 
+	log  covered in T13.100		 
+			
+  	[Tags] 	full   feature  upgrade_ztn   tested
+ 
+HAEVENT: T13.3 HA event - cli failover
+	log  step 1 - upgrade controller
+# 		Verify Dual nodes upgrade 	  ${image}		
+ 	log  step 2 - perform cli failover
+# 		cli_cluster_take_leader 		
+	log  covered in T13.100		 
+ 		
+  	[Tags] 	full   feature  upgrade_ztn  tested
+
+
+HAEVENT: T13.4 HA event - standby controller rebload after upgrade
+	log  step 1 - upgrade controllers
+# 		Verify Dual nodes upgrade 	  ${image}		
+ 	log  step 2 - reload standby controller
+# 		cli_verify_cluster_slave_reload
+	log  covered in T13.100		 
+	 			
+ 	[Tags] 	full   feature  upgrade_ztn  tested
+
+HAEVENT: T13.5 HA event - active controller reload after upgrade 
+	log  step 1 - upgrade controller
+# 		Verify Dual nodes upgrade 	  ${image}	
+ 	log  step 2 - reboot active controller
+#		cli_verify_cluster_master_reload 	
+	log  covered in T13.100		 
+
+  	[Tags] 	full   feature  upgrade_ztn   tested
+
+  	      
+HAEVENT: T13.6 HA event - master power off after upgrade 
+	log  step 1 - upgrade controller
+# 		Verify Dual nodes upgrade 	  ${image}
+ 	log  step 2 - perform mastere power off
+	
+	log  covered in T13.100		 
+	      	
+  	[Tags] 	full   feature  upgrade_ztn   tested
+  	
+HAEVENT: T13.7 HA event - standeby power off after upgrade 
+	log  step 1 - upgrade controller
+# 		Verify Dual nodes upgrade 	  ${image}	
+	
+ 	log  step 2 - perform slave power off
+	log  covered in T13.100		 
+      	
+  	[Tags] 	full   feature  upgrade_ztn   tested
+ 
+ 
+
+
+EVENT: T14.1 phase 1 switch power off during upgrade with upgrade launch  
+ 	log  step 1 - upgrade controller
+	
+		@{nodes}=     create list   c1   c2
+ 		Dual node copy image	 ${nodes}    ${image} 
+		Dual node stage image    ${nodes}
+		
+		enable   master   show controller		
+ 		${active}=   get_node_name   master
+		${standby}=  get_node_name   slave
+		
+		${c1activepartition}=  get_boot_partition   c1   active
+		${c2activepartition}=  get_boot_partition   c2   active
+		
+		${result}=   Dual node launch image   ${nodes}   finish=one  
+		sleep  60
+		${state}=  cli_monitor_upgrade_launch   ${standby}   breakpoint=phase1
+		Should be True     ${state}
+		
+ 	log  step 1.5 - Enter phase 1	
+ 		Log To Console   Enter phase 1 
+ 		
+   	log  step 2 - power off phase I switch during phase I 
+		power down switch  s7
+		power down switch  s8
+		
+		${result}=  task_finish_check_parallel   ${result['results']}  ${result['result_dict']}   timeout=1200
+ 		Should Not Be True     ${result} 		
+ 		power up switch  s7
+		power up switch  s8	
+							
+ 		Wait Until Keyword Succeeds  	20 min	30 sec  rest_verify_show_cluster 		
+ 
+		Upgrade show command 		
+ 		sleep   60
+		Verify switch are booted with correct image 
+		${result}=  Verify active partition changed after upgrade	c1  ${c1activepartition}
+		Should Not Be True     ${result}		
+		${result}=   Verify active partition changed after upgrade	c2  ${c2activepartition}
+		Should Not Be True     ${result}
+		
+    	      
+  	[Tags] 	full   feature  upgrade_ztn   tested    
+	
+ 
+	
+EVENT: T14.2 phase II switch power off during upgrade with upgrade launch  
+ 	log  step 1 - upgrade controller
+ 		${active}=   get_node_name   master
+		${standby}=  get_node_name   slave
+	
+		@{nodes}=     create list   c1   c2
+ 		Dual node copy image	 ${nodes}    ${image} 
+		Dual node stage image    ${nodes}
+		
+		${c1activepartition}=  get_boot_partition   c1   active
+		${c2activepartition}=  get_boot_partition   c2   active
+		
+		${result}=   Dual node launch image   ${nodes}   finish=one  
+		sleep  60
+		${state}=  cli_monitor_upgrade_launch   ${standby}   breakpoint=phase2
+		Should be True     ${state}
+		
+ 	log  step 1.5 - Enter phase 2	
+ 	
+		Log To Console   Enter phase 2 
+   	log  step 2 - power off phase II switch during phase II 
+		
+		power down switch  s7
+		power down switch  s8
+		
+		${result}=  task_finish_check_parallel   ${result['results']}  ${result['result_dict']}   timeout=1200
+ 		Should Be True     ${result} 	
+   		power up switch  s7
+		power up switch  s8		
+ 			
+ 		Wait Until Keyword Succeeds  	20 min	30 sec  rest_verify_show_cluster 		
+		Upgrade show command 		
+   	log  step 3 - power off phase II switch during phase II 
+   		sleep   60
+		Verify switch are booted with correct image 
+		${result}=  Verify active partition changed after upgrade		c1  ${c1activepartition}
+		Should Be True     ${result}		
+		${result}=   Verify active partition changed after upgrade		c2  ${c2activepartition}
+		Should Be True     ${result}
+		
+   	    Upgrade show command   
+  	[Tags] 	full   feature  upgrade_ztn   tested   
+	
+ 		
+	
+EVENT: T14.7 new switch join as provisioned switch after upgrade (1 - swi upgrade, 1 - loader install)
+	log  step 0 - prepare the switches
+		Set switch to factory default for next reboot	  s8
+		Remove switch from controller		s7
+		Remove switch from controller		s8
+		power down switch  s7
+		power down switch  s8
+		power up switch  s7
+		power up switch  s8
+		 
+	log  step 1 - upgrade controller
+	 	Verify Dual nodes upgrade 	  ${image}	
+	
+	log  setp 2 - connect new switch as provisioned switch
+		 			
+		Add switch as provisioned switch   s7
+		Add switch as provisioned switch   s8
+				
+		Verify switch are booted with correct image
+				
+  	[Tags] 	full   feature  upgrade_ztn   tested    
+
+
+
+EVENT: T14.8 new switch join as standby switch after upgrade (1 - swi upgrade, 1 - loader install)
+	log  step 0 - prepare the switches
+		Set switch to factory default for next reboot	  s8
+		Remove switch from controller		s7
+		Remove switch from controller		s8
+		power_cycle_switch  s7  
+	    power_cycle_switch  s8    
+		 
+	log  step 1 - upgrade controller
+	 	Verify Dual nodes upgrade 	  ${image}		
+	log  setp 2 - connect new switch as standby switch
+		Add switch as standby switch   s7
+		Add switch as standby switch   s8
+		Wait Until Keyword Succeeds  	10 min	30 sec   Verify all switches connected back 
+		Add switch as provisioned switch   s7
+		Add switch as provisioned switch   s8
+		Verify switch are booted with correct image
+				
+
+  	[Tags] 	full   feature  upgrade_ztn   tested     
+  	
+EVENT: T14.9 switch link up/down during upgrade
+	log  step 1 - during upgrade, go to the switch, shut/no shut port 
+		log  shut down interface in switch, the interace is removed from lag 
+		log  unshut it or wait for config reload for it get unshut, it will not added back
+	log  step 2 - during upgrade, physical remove link
+		log  siwtch interface down is honored, but up not added
+ 
+	
+  	[Tags] 	full  feature  upgrade_ztn   manual    skipped
+	
+EVENT: T14.10 L2 miss traffic during upgrade
+	log  step 1 - during upgrade, send l2 miss traffic
+		log  result - traffic will not be forwarded
+	 
+	
+  	[Tags] 	full  feature  upgrade_ztn   manual  skipped
+ 
+EVENT: T14.11 L3 arp resolve during upgrade 
+	log  step 1 - during upgrade, send arp request from traffic gen
+		log  result - passed
+	
+  	[Tags] 	full  feature  upgrade_ztn   manual    skipped
+
+EVENT: T14.12 L3 arp request during upgrade  
+	log  step 1 - during upgrade, system need to send arp request
+		 
+	
+  	[Tags] 	full  feature  upgrade_ztn   manual    skipped
+  	
+EVENT: T14.14 config change during upgrade should be blocked 
+		${active}=   get_node_name   master
+		${standby}=  get_node_name   slave
+		@{nodes}=     create list   c1   c2
+		Dual node copy image	 ${nodes}    ${image} 
+		Dual node stage image    ${nodes}
+		${result}=   Dual node launch image   ${nodes}   finish=no	
+		 	
+	log  step 1 - during upgrade, do configuration change in old active
+		sleep    300
+ 
+		config    ${active}   tenant try
+		${content}=  cli content   ${active}
+		Should Contain	 ${content}	 Error:
+		
+	log  step 2 - during upgrade, do configuration change in new active		
+ 
+		config    ${standby}   tenant try
+		${content}=  cli content   ${standby}
+		Should Contain	 ${content}	 Error:
+		
+		task_finish_check_parallel   ${result['results']}  ${result['result_dict']}
+  	 
+  	[Tags] 	full    feature  upgrade_ztn     tested
+
+     
+NEGATIVE: T15.1 non-proper image
+	log  non bcf image(bigtap image) failed
+		${result}=  copy_pkg_from_server    ${bigtapimage}    soft_error=True 
+ 		Should Contain	${result}	 Warning:    
+	
+    log  bcf image without switch bundle
+    log  qcow2 image (not upgrade packet)
+    	${result}=  copy_pkg_from_server    ${qcowimage}    soft_error=True
+ 		Should Contain	${result}	 Error: Invalid Use: integrity validation failed: not an image bundle    
+     	
+	log  corrupted image
+	log  stop copy in the middle(manual passed)
+    log  timeout during download image 
+    log  ctl-c during image download(manual passed)
+    	     
+  	[Tags] 	full   feature  upgrade_ztn    negative    JIRA_BSC_6258       tested
+
+NEGATIVE: T15.2 upgrade stage terminated
+	log  copy image is there is none
+		Copy image if no image exist	c1	
+	log  corrupt the stage partition(not sure how)
+	log  terminate the stage in the middle by type no
+
+ 		${before}=  get_boot_partition	  c1    Boot	 
+ 		cli_upgrade_stage_negative    c1
+		${after}=   get_boot_partition	  c1    Boot	
+		
+		Should Be Equal as Strings   ${before}   ${after}	
+	log  terminate the stage by hit ctrl c
+		 
+ 		${before}=  get_boot_partition	  c1    Boot	 
+		cli_upgrade_stage_negative   c1   ctrl-c		
+		sleep   5 		
+		${after}=   get_boot_partition	  c1    Boot	
+		Should Be Equal as Strings   ${before}   ${after}	
+	  		
+	 
+  	[Tags] 	full     feature  upgrade_ztn	negative      tested
+ 
+
+	  
+NEGATIVE: T15.3 controller upgrade launch 
+ 	log  different image for active and standby, launch will be terminated
+ 		log  both sides exit immediatly
+	log  only issue launch at active, launch will not proceed, and user can terminate
+		log   passed
+	log  only issue launch at standby, launch will not proceed, user can terminate
+		log   passed
+    log  send no to terminated launch at active during prompt
+    	log   passed
+    log  send no to terminated lanuch at standby during prompt
+    	log  passed
+    log  hit ctl-c to terminated active upgrade before standby disconneted message
+    	log  passed
+    log  hit ctl-c to terminated standby upgrade standby disconneted message    
+    	log  result - user account not deleted immediately from standby/ active not terminated immediately
+    	log  failed - need to revisit
+    		
+    log  hit ctl-c to terminated active controller before standby finish phase1
+    	log  passed - new active rebooted and phase 1 switched reboot 
+    log  hit ctl-c to terminated active controller before standby finish phase2
+    	log  failed - only phase 1 switches are connected back
+       
+  	[Tags] 	full  feature  upgrade_ztn    negative  manual   skipped
+  
+   	
+
+
+### Miscellaneous
+
+ 
+MIS: T101 verify 3 node controller upgrade 
+	log  can not form controller with more than 2 nodes
+	 
+  	[Tags] 	full  feature  upgrade_ztn   manual    skipped
+
+MIS: T102 upgrade 1 controller, build another one, then join the cluster
+	 
+  	[Tags] 	full  feature  upgrade_ztn   manual   skipped
+
+   	
+MIS: T108 upgrade when controller high CPU
+	log  upgrade with high cpu	
+		log   with around 370 cpu (send l3 traffic for switch to resolve)
+		log   stage takes long time (10 minutes)
+		log   launch - cpu is reduced due to no event is handled.
+		 
+  	[Tags] 	full  feature  upgrade_ztn   manual    skipped
+
+MIS: T109 upgrade when controller does not have enough space  
+	log  upgrade when controller does not have enough space 
+		log - not applicable for this release, revisit for next release
+  	[Tags] 	full  feature  upgrade_ztn  manual-untested   skipped
+
+  	
+MIS: T111 spawn another session to do upgrade during upgrade  
+	log   2 seesions copy image the same time
+		log  reusult: tried 2 sessions, new one will overwrite old one
+	log   2 seesions stage image the same time
+		log  result: the 2nd session will give error messages:Error: Internal (bug): cmd: sudo /bin/mount /dev/sda3 /tmp/tmp7BMdNw rtn: 32
+		log  result: both gives error: Error: Internal (bug): cmd: sudo /sbin/e2fsck -fy /dev/sda3
+	log   2 session launch image the same time
+	 
+  	[Tags] 	full  feature  upgrade_ztn   manual   JIRA-BSC-6349   skipped
+  	
+  	
+MIS: T113 admin group non admin user
+	log  admin group but not user: admin
+		create user   user1   adminadmin  admin 	 
+		cli_reauth  c1   user1   adminadmin   	
+		cli_reauth  c2   user1   adminadmin 
+		@{nodes}=     create list   c1   c2
+		Dual node copy image	 ${nodes}    ${image} 
+		cli_whoami   c1
+		cli_whoami   c2			
+		Dual node stage image    ${nodes}
+		cli_whoami   c1
+		cli_whoami   c2	
+ 		
+	log  upgrade launch (manual)
+ 	 	cli_reauth  c1  admin   adminadmin   	
+	 	cli_reauth  c2  admin   adminadmin 
+		config   master   no user user1  	   	
+  	[Tags] 	full   feature  upgrade_ztn     tested
+
+MIS: T114 switch reboot options in master (switch should use image cash locally)
+	log  step 0 - check all switches are connected
+		cli    master  show switch
+		${switches}=  rest_get_suspended_switch 
+		Should Be Empty   	${switches}
+		
+ 	log  step 1 - reboot switches by ip and very switch connect back with correct image and config
+		Reboot all switches by ip 
+		sleep  ${long}
+		Verify switch are booted with correct image
+		Verify All Switch Startup Config 
+		Verify All Switch Running Config 
+		
+ 	log  step 2 - reboot switches by name and very switch connect back with correct image and config		
+ 		Reboot all switches by alias 
+		sleep  ${long}
+		Verify switch are booted with correct image
+		Verify All Switch Startup Config 
+		Verify All Switch Running Config 
+
+ 	log  step 3 - reboot switches by mac and very switch connect back with correct image and config			
+		Reboot all switches by mac
+		sleep  ${long}
+		Verify switch are booted with correct image
+		Verify All Switch Startup Config 
+		Verify All Switch Running Config 
+
+ 	log  step 4 - reboot switches all and very switch connect back with correct image and config			
+		cli_reboot_switch_all 
+		sleep  ${long}
+		Verify switch are booted with correct image
+		Verify All Switch Startup Config 
+		Verify All Switch Running Config 
+
+ 	log  step 5 - reboot switches left/right and very switch connect back with correct image and config
+  	   
+   	log  step 6 - check traffic loss
+		Verify Ping is successful    h1     ${h2_tag_ip}		
+ 
+ 		      
+	[Tags] 	sanity     feature  upgrade_ztn    
+
+MIS: T115 switch reboot options in slave (switch should use image cash locally)
+	log  step 0 - check all switches are connected
+		cli    master  show switch
+		${switches}=  rest_get_suspended_switch 
+		Should Be Empty   	${switches}
+		
+ 	log  step 1 - reboot switches by ip and very switch connect back with correct image and config
+		Reboot all switches by ip   slave
+		sleep  ${long}
+		Verify switch are booted with correct image
+		Verify All Switch Startup Config 
+		Verify All Switch Running Config 
+		
+ 	log  step 2 - reboot switches by name and very switch connect back with correct image and config		
+ 		Reboot all switches by alias    slave
+		sleep  ${long}
+		Verify switch are booted with correct image
+		Verify All Switch Startup Config 
+		Verify All Switch Running Config 
+
+ 	log  step 3 - reboot switches by mac and very switch connect back with correct image and config			
+		Reboot all switches by mac    slave
+		sleep  ${long}
+		Verify switch are booted with correct image
+		Verify All Switch Startup Config 
+		Verify All Switch Running Config 
+
+ 	log  step 4 - reboot switches all and very switch connect back with correct image and config			
+		cli_reboot_switch_all    slave
+		sleep  ${long}
+		Verify switch are booted with correct image
+		Verify All Switch Startup Config 
+		Verify All Switch Running Config 
+
+	log  step 6 - check traffic loss
+ 		Verify Ping is successful    h1     ${h2_tag_ip}		
+ 		      
+	[Tags] 	sanity     feature  upgrade_ztn     
+ 
+ 

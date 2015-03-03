@@ -1,0 +1,321 @@
+*Settings
+Documentation  BigSwitch Port Channel Test Suite
+Suite Setup  lag suite setup
+Suite Teardown   base suite teardown
+Test Setup   base test setup
+Test Teardown   base test teardown
+Force Tags  switch-platform  SwitchLight  BigTap
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/SwitchLight.py
+
+
+* Variable
+${switchlight_version}  SwitchLight 2.0.0
+
+${1glb9_name_1}  port-channel3
+${1glb9_port_range_1}  13-20
+${1glb9_pc_number_1}  3
+
+${1glb9_name_2}  port-channel1
+${1glb9_port_range_2}  13-20
+${1glb9_pc_number_2}  1
+@{1gLag8Mem}=   ethernet13  ethernet14  ethernet15  ethernet16  ethernet17  ethernet18  ethernet19  ethernet20
+
+${10glb9_name}  port-channel1
+${10glb9_port_range}  49-50
+${10glb9_pc_number}  1
+@{10gLag2Mem_lb9}=  ethernet49  ethernet50
+
+
+${10gly2_name}  port-channel2
+${10gly2_port_range}  7-8
+${10gly2_pc_number}  2
+@{10gLag2Mem_ly2}=  ethernet7  ethernet8
+
+${40gly2_name_1}  port-channel6
+${40gly2_port_range_1}  49,52
+${40gly2_pc_number_1}  6
+@{40gLag2Mem}=  ethernet49  ethernet52
+
+${40gly2_name_2}  port-channel6
+${40gly2_port_range_2}  49,52
+${40gly2_pc_number_2}  6
+
+
+${uknLag_name}  port-channel22
+@{T5829_1}=  ethernet13  ethernet49  ethernet50
+@{T5829_2}=  ethernet7  ethernet49  ethernet52    
+
+*Test Case
+
+Verify port-channel (hash-mode:L2) interface (1G links) is up on switch (LB9)  
+    verify portchannel interface is up  s1  ${1glb9_name_1}
+    [Tags]  portchannel  bigtap
+    
+Verify port-channel (hash-mode:L2) interface shows correct 1G member links on switch (LB9)  
+    verify portchannel correctly reports member name  s1  ${1glb9_pc_number_1}  @{1gLag8Mem}
+    [Tags]  portchannel  skipped   
+
+Verify port-channel (hash-mode:L2) interface 1G member links are up on switch (LB9)  
+    verify portchannel correctly reports member interfaces  s1  ${1glb9_pc_number_1}  @{1gLag8Mem}
+    [Tags]  portchannel  bigtap
+
+Verify port-channel (hash-mode:L3) interface (1G links) is up on switch (LB9)
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L3  
+    cli add portchannel  s2  ${1glb9_pc_number_2}  ${1glb9_port_range_2}  L3  
+    verify portchannel interface is up  s1  ${1glb9_name_1}
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L2  
+    cli add portchannel  s2  ${1glb9_pc_number_2}  ${1glb9_port_range_2}  L2
+    [Tags]  portchannel  bigtap 
+    
+Verify port-channel (hash-mode:L3) interface shows correct 1G member links on switch (LB9)  
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L3  
+    cli add portchannel  s2  ${1glb9_pc_number_2}  ${1glb9_port_range_2}  L3 
+    verify portchannel correctly reports member name  s1  ${1glb9_pc_number_1}  @{1gLag8Mem}
+    verify portchannel correctly reports member name  s2  ${1glb9_pc_number_2}  @{1gLag8Mem}
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L2  
+    cli add portchannel  s2  ${1glb9_pc_number_2}  ${1glb9_port_range_2}  L2
+    [Tags]  portchannel  bigtap    
+
+Verify port-channel (hash-mode:L3) interface 1G member links are up on switch (LB9)  
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L3  
+    cli add portchannel  s2  ${1glb9_pc_number_2}  ${1glb9_port_range_2}  L3 
+    verify portchannel correctly reports member interfaces  s1  ${1glb9_pc_number_1}  @{1gLag8Mem}
+    verify portchannel correctly reports member interfaces  s2  ${1glb9_pc_number_2}  @{1gLag8Mem}
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L2  
+    cli add portchannel  s2  ${1glb9_pc_number_2}  ${1glb9_port_range_2}  L2
+    [Tags]  portchannel   bigtap
+
+Verify port-channel (hash-mode:L3) interface (10G links) is up on switch (LB9)
+    verify portchannel interface is up  s1  ${10glb9_name}  
+    verify portchannel interface is up  s3  ${10gly2_name}
+    [Tags]  portchannel  skipped
+    
+Verify port-channel (hash-mode:L3) interface shows correct 10G member links on switch (LB9)  
+    verify portchannel correctly reports member name  s1  ${10glb9_pc_number}  @{10gLag2Mem_lb9} 
+    verify portchannel correctly reports member name  s3  ${10gly2_pc_number}  @{10gLag2Mem_ly2}
+    [Tags]  portchannel  bigtap  
+
+Verify port-channel (hash-mode:L3) interface 10G member links are up on switch (LB9)  
+    verify portchannel correctly reports member interfaces  s1  ${10glb9_pc_number}  @{10gLag2Mem_lb9}
+    verify portchannel correctly reports member interfaces  s3  ${10gly2_pc_number}  @{10gLag2Mem_ly2}
+    [Tags]  portchannel  bigtap
+
+Verify port-channel (hash-mode:L2) interface (10G links) is up on switch (LB9)
+    cli add portchannel  s1  ${10glb9_pc_number}  ${10glb9_port_range}  L2
+    cli add portchannel  s3  ${10gly2_pc_number}  ${10gly2_port_range}  L2  
+    verify portchannel interface is up  s1  ${10glb9_name}  
+    verify portchannel interface is up  s3  ${10gly2_name}
+    cli add portchannel  s1  ${10glb9_pc_number}  ${10glb9_port_range}  L3
+    cli add portchannel  s3  ${10gly2_pc_number}  ${10gly2_port_range}  L3
+    [Tags]  portchannel  bigtap 
+    
+Verify port-channel (hash-mode:L2) interface shows correct 10G member links on switch (LB9)  
+    cli add portchannel  s1  ${10glb9_pc_number}  ${10glb9_port_range}  L2
+    cli add portchannel  s3  ${10gly2_pc_number}  ${10gly2_port_range}  L2
+    verify portchannel correctly reports member name  s1  ${10glb9_pc_number}  @{10gLag2Mem_lb9}
+    verify portchannel correctly reports member name  s3  ${10gly2_pc_number}  @{10gLag2Mem_ly2}
+    cli add portchannel  s1  ${10glb9_pc_number}  ${10glb9_port_range}  L3
+    cli add portchannel  s3  ${10gly2_pc_number}  ${10gly2_port_range}  L3
+    [Tags]  portchannel  bigtap  
+
+Verify port-channel (hash-mode:L2) interface 10G member links are up on switch (LB9)  
+    cli add portchannel  s1  ${10glb9_pc_number}  ${10glb9_port_range}  L2
+    cli add portchannel  s3  ${10gly2_pc_number}  ${10gly2_port_range}  L2
+    verify portchannel correctly reports member interfaces  s1  ${10glb9_pc_number}  @{10gLag2Mem_lb9}
+    verify portchannel correctly reports member interfaces  s3  ${10gly2_pc_number}  @{10gLag2Mem_ly2}
+    cli add portchannel  s1  ${10glb9_pc_number}  ${10glb9_port_range}  L3
+    cli add portchannel  s3  ${10gly2_pc_number}  ${10gly2_port_range}  L3
+    [Tags]  portchannel  bigtap  
+
+Verify port-channel (hash-mode:L3) interface (40G links) is up on switch (LY2)
+    verify portchannel interface is up  s3  ${40gly2_name_1}  
+    verify portchannel interface is up  s4  ${40gly2_name_2}
+    [Tags]  portchannel  bigtap
+    
+Verify port-channel (hash-mode:L3) interface shows correct 40G member links on switch (LY2)  
+    verify portchannel correctly reports member name  s3  ${40gly2_pc_number_1}  @{40gLag2Mem} 
+    verify portchannel correctly reports member name  s4  ${40gly2_pc_number_2}  @{40gLag2Mem}
+    [Tags]  portchannel  bigtap  
+
+Verify port-channel (hash-mode:L3) interface 40G member links are up on switch (LY2)  
+    verify portchannel correctly reports member interfaces  s3  ${40gly2_pc_number_1}  @{40gLag2Mem}
+    verify portchannel correctly reports member interfaces  s4  ${40gly2_pc_number_2}  @{40gLag2Mem}
+    [Tags]  portchannel  bigtap
+
+Verify port-channel (hash-mode:L2) interface (40G links) is up on switch (LY2)
+    cli add portchannel  s3  ${40gly2_pc_number_1}  ${40gly2_port_range_1}  L2
+    cli add portchannel  s4  ${40gly2_pc_number_2}  ${40gly2_port_range_2}  L2 
+    verify portchannel interface is up  s3  ${40gly2_name_1}  
+    verify portchannel interface is up  s4  ${40gly2_name_2}
+    cli add portchannel  s3  ${40gly2_pc_number_1}  ${40gly2_port_range_1}  L3
+    cli add portchannel  s4  ${40gly2_pc_number_2}  ${40gly2_port_range_2}  L3
+    [Tags]  portchannel  bigtap
+    
+Verify port-channel (hash-mode:L2) interface shows correct 40G member links on switch (LY2)  
+    cli add portchannel  s3  ${40gly2_pc_number_1}  ${40gly2_port_range_1}  L2
+    cli add portchannel  s4  ${40gly2_pc_number_2}  ${40gly2_port_range_2}  L2
+    verify portchannel correctly reports member name  s3  ${40gly2_pc_number_1}  @{40gLag2Mem}
+    verify portchannel correctly reports member name  s4  ${40gly2_pc_number_2}  @{40gLag2Mem}
+    cli add portchannel  s3  ${40gly2_pc_number_1}  ${40gly2_port_range_1}  L3
+    cli add portchannel  s4  ${40gly2_pc_number_2}  ${40gly2_port_range_2}  L3
+    [Tags]  portchannel  bigtap 
+
+Verify port-channel (hash-mode:L2) interface 40G member links are up on switch (LY2)  
+    cli add portchannel  s3  ${40gly2_pc_number_1}  ${40gly2_port_range_1}  L2
+    cli add portchannel  s4  ${40gly2_pc_number_2}  ${40gly2_port_range_2}  L2
+    verify portchannel correctly reports member interfaces  s3  ${40gly2_pc_number_1}  @{40gLag2Mem}
+    verify portchannel correctly reports member interfaces  s4  ${40gly2_pc_number_2}  @{40gLag2Mem}
+    cli add portchannel  s3  ${40gly2_pc_number_1}  ${40gly2_port_range_1}  L3
+    cli add portchannel  s4  ${40gly2_pc_number_2}  ${40gly2_port_range_2}  L3
+    [Tags]  portchannel  bigtap
+
+T5829-1: Verify that when portchannel interface cannot be formed if member links have mismatched speeds (1G and 10G)
+    cli delete portchannel  s1  3
+    cli add portchannel  s1  ${10glb9_pc_number}  13,49,50  L2
+    ${member_isup0}=  cli verify portchannel member state  s1  ${10glb9_pc_number}  @{T5829_1}
+    Should Not Be True  ${member_isup0}
+    cli delete portchannel  s1  1
+    Sleep  5    
+    cli add portchannel  s1  ${10glb9_pc_number}  ${10glb9_port_range}  L3
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L2
+    [Tags]  portchannel  bigtap
+
+T5829-2: Verify that when portchannel interface cannot be formed if member links have mismatched speeds (10G and 40G)
+    cli delete portchannel  s3  2
+    cli add portchannel  s3  ${40gly2_pc_number_1}  7,${40gly2_port_range_1}  L2
+    ${member_isup0}=  cli verify portchannel member state  s3  ${40gly2_pc_number_2}  @{T5829_2}
+    Should Not Be True  ${member_isup0}
+    cli delete portchannel  s3  6
+    Sleep  5    
+    cli add portchannel  s3  ${10gly2_pc_number}  ${10gly2_port_range}  L3
+    cli add portchannel  s3  ${40gly2_pc_number_2}  ${40gly2_port_range_1}  L3
+    [Tags]  portchannel   bigtap   
+
+T5839: Disable all member links. Verify that lag interface shows as "down" on both switch and controller
+    cli delete portchannel  s1  3
+    shutdown all interfaces in lag  s1
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L2
+    ${inft_state}=  cli show interface state  s1  ${1glb9_name_1}
+    Should not Contain  ${inft_state}  up    
+    ${member_isup0}=  cli verify portchannel member state  s1  ${1glb9_pc_number_1}  @{1gLag8Mem}
+    Should Not Be True  ${member_isup0}
+    cli delete portchannel  s1  ${1glb9_pc_number_1}    
+    bringup all interfaces in lag  s1
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L2
+    [Tags]  portchannel  bigtap     
+
+Verify log messages are generated for link up/link down events for LAG interfaces
+    shutdown portchannel interface  s1  port-channel3
+    verify log message  s1  "brcmdriver: INFO: Disabling port port-channel3 (63)"
+    enable portchannel interface  s1  port-channel3  
+    verify log message  s1  "brcmdriver: INFO: Enabling port port-channel3 (63)"
+    [Tags]  portchannel   bigtap
+
+T5845: Verify switch CLI does not allow member interfaces to be outside the range (1-52)
+    ${return_value}   cli add portchannel  s1  ${10glb9_pc_number}  49,50,91  L3
+    Should Not Be True  ${return_value}
+    [Tags]  portchannel  bigtap
+
+T5846: Verify LAG interface can be formed with odd number of member links
+    cli delete portchannel  s1  3
+    Sleep  3
+    cli add portchannel  s1  ${1glb9_pc_number_1}  13-15  L2
+    Sleep  3
+    verify portchannel interface is up  s1  ${1glb9_name_1}
+    cli delete portchannel  s1  3
+    Sleep  3
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L2
+    [Tags]  portchannel  bigtap 
+    
+T5848: Verify LAG interface can be formed with maximum number of member links (16 in LY2)
+    cli add portchannel  s3  5  33-48  L2
+    Sleep  3
+    verify portchannel interface is up  s1  ${1glb9_name_1}
+    cli delete portchannel  s3  5
+    Sleep  3
+    [Tags]  portchannel   bigtap
+    
+T5850: Verify LAG interface with just 1 member link
+    cli delete portchannel  s1  3
+    Sleep  1
+    cli add portchannel  s1  ${1glb9_pc_number_1}  13  L2
+    verify portchannel interface is up  s1  ${1glb9_name_1}
+    cli delete portchannel  s1  3
+    Sleep  1    
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L2             
+    [Tags]  portchannel   bigtap
+    
+T5852: Save running-config to startup-config. Reboot switch and verify that LAG interface comes up correctly.
+    cli execute command  s1  copy running-config startup-config
+    cli restart switch  s1
+    Sleep  120
+    verify portchannel interface is up  s1  ${10glb9_name}
+    verify portchannel interface is up  s1  ${1glb9_name_1}
+    [Tags]  portchannel   bigtap
+    
+T5853: Restart process OFAD and verify LAG interface shows up correctly
+    verify portchannel interface is up  s1  ${1glb9_name_1}
+    bash restart process  s1  ofad
+    Sleep  5
+    verify portchannel interface is up  s1  ${1glb9_name_1}
+    [Tags]  portchannel  bigtap 
+       
+* Keywords  
+lag suite setup
+    base suite setup
+    cli add portchannel  s1  ${10glb9_pc_number}  ${10glb9_port_range}  L3
+    cli add portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L2         
+    cli add portchannel  s2  ${1glb9_pc_number_2}  ${1glb9_port_range_2}  L2
+    cli add portchannel  s3  ${10gly2_pc_number}   ${10gly2_port_range}  L3
+    cli add portchannel  s3  ${40gly2_pc_number_2}  ${40gly2_port_range_2}  L3
+    cli add portchannel  s4  ${40gly2_pc_number_2}  ${40gly2_port_range_2}  L3
+    Sleep   30
+
+    
+verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
+    ${inft_state}=  cli show interface state  ${switch}  ${interface_name}
+    Should Contain  ${inft_state}  up
+    ${cintf_state}=  rest verify interface is up  ${switch}  ${interface_name}
+    Should Be True  ${cintf_state}
+
+verify portchannel correctly reports member name  [Arguments]  ${switch}  ${portchannel_number}  @{interface_name_list}
+    ${member_exists0}=  cli verify portchannel members  ${switch}  ${portchannel_number}  @{interface_name_list}
+    Should Be True  ${member_exists0}
+ 
+verify portchannel correctly reports member interfaces  [Arguments]  ${switch}  ${portchannel_number}  @{interface_name_list}
+    ${member_isup0}=  cli verify portchannel member state   ${switch}  ${portchannel_number}  @{interface_name_list}
+    Should Be True  ${member_isup0}
+
+shutdown all interfaces in lag  [Arguments]  ${switch}
+    :for  ${interface}  in  @{1gLag8Mem}
+    \   ${cintf_state}  cli disable interface  ${switch}  ${interface}
+    \   Should Be True  ${cintf_state}
+        
+bringup all interfaces in lag  [Arguments]  ${switch}
+    :for  ${interface}  in  @{1gLag8Mem}
+    \   ${cintf_state}  cli enable interface  ${switch}  ${interface}
+    \   Should Be True  ${cintf_state}
+
+shutdown portchannel interface  [Arguments]  ${switch}  ${interface}  
+    ${cintf_state}=  cli disable interface  ${switch}  ${interface}
+    Should Be True  ${cintf_state}
+    
+enable portchannel interface  [Arguments]  ${switch}  ${interface}
+    ${cintf_state}=  cli enable interface  ${switch}  ${interface}
+    Should Be True  ${cintf_state}
+
+verify log message  [Arguments]  ${switch}  ${message}
+    ${bash_content}=  bash execute command  s1  cat /var/log/syslog | grep ${message}
+    Should Contain  ${bash_content}  ${message}
+
+lag suite teardown
+    cli delete portchannel  s1  ${10glb9_pc_number}  ${10glb9_port_range}  L3
+    cli delete portchannel  s1  ${1glb9_pc_number_1}  ${1glb9_port_range_1}  L2         
+    cli delete portchannel  s2  ${1glb9_pc_number_2}  ${1glb9_port_range_2}  L2
+    cli delete portchannel  s3  ${10gly2_pc_number}  ${10gly2_port_range}  L3
+    cli delete portchannel  s3  ${40gly2_pc_number_2}  ${40gly2_port_range_1} L3
+    cli delete portchannel  s4  ${40gly2_pc_number_2}  ${40gly2_port_range_2}  L3
+    Sleep   30
+    base suite teardown

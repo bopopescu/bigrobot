@@ -1,0 +1,167 @@
+*Settings
+Documentation       SwitchLight Platform : User Management Test Suite
+Suite Setup         base suite setup
+Suite Teardown      base suite teardown
+Test Setup          base test setup
+Test Teardown       reset username password
+Force Tags          BigTap  SwitchLight  switch-platform
+Library  keywords/BsnCommon.py
+Library  keywords/SwitchLight.py
+
+* Variable
+${switchlight_version}  Software Image Version: Switch Light OS  
+${netmask}              18
+${gateway}              10.9.18.1
+${dns_server}           10.3.0.4
+${dns_domain}           qa.bigswitch.com
+
+*Test Case
+Verify username admin can have all lower-case alphabet password
+    verify password change  s1  clientclient
+    [Tags]      
+
+Verify username admin can have all upper-case alphabet password
+    verify password change  s1  CLIENTCLIENT
+    [Tags]      
+     
+Verify username admin can have a mix of lower-case and upper-case alphabet password
+    verify password change  s1  cLiEnTcLiEnT 
+    [Tags]      
+
+Verify username admin can have a numeric password
+    verify password change  s1  1234567890
+    [Tags]      
+    
+Verify username admin can have a alphanumeric (alphabet all small) password
+    verify password change  s1  bsn1234
+    [Tags]      
+    
+Verify username admin can have a alphanumeric (alphabet all caps) password
+    verify password change  s1  BSN1234
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a !
+    verify password change  s1  bSn1234!
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a @
+    verify password change  s1  bSn1234@
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a #
+    verify password change  s1  bSn1234#
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a $
+    verify password change  s1  bSn1234$
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a %
+    verify password change  s1  bSn1234%
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a ^
+    verify password change  s1  bSn1234^    
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a &
+    verify password change  s1  bSn1234&
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a *
+    verify password change  s1  bSn1234*
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a (
+    verify password change  s1  bSn1234(
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a )
+    verify password change  s1  bSn1234)
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a -
+    verify password change  s1  bSn1234-
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a _
+    verify password change  s1  bSn1234_
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a +
+    verify password change  s1  bSn1234+
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a }
+    verify password change  s1  bSn1234}
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a {
+    verify password change  s1  bSn1234{
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a [
+    verify password change  s1  bSn1234[
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a ]
+    verify password change  s1  bSn1234]
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a |
+    verify password change  s1  bSn|1234
+    [Tags]      
+        
+Verify username admin can have a alphanumeric password with a \
+    verify password change  s1  bSn\\1234 
+    [Tags]      
+        
+Verify username admin can have a alphanumeric password with a :
+    verify password change  s1  bSn:1234
+    [Tags]      
+    
+Verify username admin can have a alphanumeric password with a ,
+    verify password change  s1  bSn,1234
+    [Tags]      
+    
+Verify username admin can have a alphanumeric password with a .
+    verify password change  s1  bSn.1234
+    [Tags]      
+    
+Verify username admin can have a alphanumeric password with a <
+    verify password change  s1  bSn1234<
+    [Tags]      
+    
+Verify username admin can have a alphanumeric password with a /
+    verify password change  s1  bSn1234/
+    [Tags]      
+
+Verify username admin can have a alphanumeric password with a ~
+    verify password change  s1  bSn1234~
+    [Tags]      
+    
+Verify username admin can have a alphanumeric password with a `
+    verify password change  s1  bSn1234`
+    [Tags]      
+
+Verify password change is persistent after process OFAD is restarted.
+    cli change user password  s1  admin  adminadmin  bSn1234
+    bash restart process  s1  ofad
+    ${verify_change}=  cli verify password change  s1  admin  bSn1234  ${switchlight_version}
+    Set Global Variable  ${update_password}  bSn1234
+    Should be True  ${verify_change}    
+    [Tags]      
+ 
+    
+* Keywords 
+
+verify password change  [Arguments]  ${switch}  ${new_password}
+    cli change user password  s1  admin  adminadmin  ${new_password}
+    ${verify_change}=  cli verify password change  s1  admin  ${new_password}  ${switchlight_version}
+    Set Global Variable  ${update_password}  ${new_password}  
+    Should be True  ${verify_change}
+
+reset username password
+    ${verify_change}=  cli change user password  s1  admin  ${update_password}  adminadmin
+    Should be True  ${verify_change}
+    Sleep  20

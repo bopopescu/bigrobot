@@ -19,3 +19,7 @@ Test esb: cli show running config
     ${status}=        test vui esb    nodes=@{nodes}
     Should be true    ${status}
 
+Test esb: bsn common services (Production services)
+    [Tags]  skipped
+    #@{nodes}=         create list     c1   c2
+    test bsn common services

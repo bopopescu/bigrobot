@@ -1,21 +1,21 @@
 *Settings
-Documentation       Quanta LY2: SNMP Sanity Test Suite
-Suite Setup         snmp suite setup
-Suite Teardown      base suite teardown 
-Test Setup          snmp test setup
-Test Teardown       snmp test teardown
-Force Tags          SwitchLight  SNMP  LY2 
-Library             keywords/BsnCommon.py
-Library             keywords/AppController.py
-Library             keywords/BigTap.py
-Library             keywords/SwitchLight.py
-Library             keywords/Ixia.py
-Library             Collections.py
-Library             OperatingSystem.py
-Library             String.py
+Documentation               Quanta LY2: SNMP Sanity Test Suite
+Suite Setup                 snmp suite setup
+Suite Teardown              base suite teardown 
+Test Setup                  snmp test setup
+Test Teardown               snmp test teardown
+Force Tags                  SwitchLight  SNMP  Quanta-LY2  switch-platform  BigTap
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
 
 * Variable
-${switchlight_version}      Switch Light OS SWL-BT-4.1.1
+${switchlight_version}      Switch Light OS SWL-BT-
 ${snmp_ccommunity_1}        ro public
 ${snmp_community_1}         public
 ${snmp_ccommunity_2}        ro bigswitch
@@ -36,227 +36,227 @@ ${pc_name}                  port-channel1
 *Test Case
 TC1: Configure and Verify Configuration via CLI   
     verify config
-    [Tags]  basic    
+    [Tags]  full feature    
 
 TC2: Verify SNMP OID sysContact  
     verify snmp attribute  s1  sysContact.0  ${snmp_contact_1}
-    [Tags]  common    
+    [Tags]  full  feature    
 
 TC3: Verify SNMP OID sysLocation 
     verify snmp attribute  s1  sysLocation.0  ${snmp_location_1}
-    [Tags]  common    
+    [Tags]  full  feature    
 
 TC4: Verify SNMP OID sysDescr  
     verify snmp attribute  s1  sysDescr.0  ${switchlight_version}
-    [Tags]  common    
+    [Tags]  full  feature    
 
 TC5: Verify SNMP OID ifDescr of ma1  
     verify snmp attribute  s1  ifDescr.2  ma1
-    [Tags]  common    
+    [Tags]  full  feature    
 
 TC6: Verify SNMP OID ifType of ma1  
     verify snmp attribute  s1  ifType.2  ethernetCsmacd
-    [Tags]  common 
+    [Tags]  full  feature 
 
 TC7: Verify SNMP OID ifAdminStatus of ma1  
     verify snmp attribute  s1  ifAdminStatus.2  up
-    [Tags]  common         
+    [Tags]  full  feature         
 
 TC8: Verify SNMP OID ifOperStatus of ma1  
     verify snmp attribute  s1  ifOperStatus.2  up    
-    [Tags]  common         
+    [Tags]  full  feature         
 
 TC9: Verify SNMP OID ifSpeed of ma1  
     verify snmp attribute  s1  ifSpeed.2  1000000000
-    [Tags]  common  
+    [Tags]  full  feature  
 
 TC10: Verify SNMP OID ifMtu of ma1  
     verify snmp attribute  s1  ifMtu.2  1500
-    [Tags]  common  
+    [Tags]  full  feature  
 
 TC11: Verify SNMP OID ifDescr of 10Gig Data Port
     verify snmp attribute  s1  ifDescr.1013  ${tenG_intf}
-    [Tags]  10G    
+    [Tags]  full  feature  10Glink
     
 TC12: Verify SNMP OID ifType of 10Gig Data Port
     verify snmp attribute  s1  ifType.1013  ethernetCsmacd
-    [Tags]  10G
+    [Tags]  full  feature  10Glink
         
 TC13: Verify SNMP OID ifAdminStatus of 10Gig Data Port
     verify snmp attribute  s1  ifAdminStatus.1013  up
-    [Tags]  10G
+    [Tags]  full  feature  10Glink
         
 TC14: Verify SNMP OID ifOperStatus of 10Gig Data Port
     verify snmp attribute  s1  ifOperStatus.1013  up
-    [Tags]  10G
+    [Tags]  full  feature  10Glink
         
 TC15: Verify SNMP OID ifSpeed of 10Gig Data Port
     verify snmp attribute  s1  ifSpeed.1013  4294967295
-    [Tags]  10G
+    [Tags]  full  feature  10Glink
         
 TC16: Verify SNMP OID ifHighSpeed of 10Gig Data Port
     verify snmp attribute  s1  ifHighSpeed.1013  10000
-    [Tags]  10G
+    [Tags]  full  feature  10Glink
         
 TC17: Verify SNMP OID ifPhysAddress of 10Gig Data Port
     ${mac_address1}=  cli show interface macaddress  s1  ${tenG_intf}
     ${my_mac_address}=  strip character from string  ${mac_address1}  ${0}  blank   
     verify snmp attribute  s1  ifPhysAddress.1013  ${my_mac_address}
-    [Tags]  10G      
+    [Tags]  full  feature  10Glink      
         
 TC18: Verify SNMP OID ifDescr of 40Gig Data Port  
     verify snmp attribute  s1  ifDescr.1049  ${fortyG_intf}
-    [Tags]  40G
+    [Tags]  full  feature  40Glink
         
 TC19: Verify SNMP OID ifType of 40Gig Data Port  
     verify snmp attribute  s1  ifType.1049  ethernetCsmacd
-    [Tags]  40G    
+    [Tags]  full  feature  40Glink    
     
 TC20: Verify SNMP OID ifAdminStatus of 40Gig Data Port  
     verify snmp attribute  s1  ifAdminStatus.1049  up
-    [Tags]  40G    
+    [Tags]  full  feature  40Glink    
     
 TC21: Verify SNMP OID ifOperStatus of 40Gig Data Port  
     verify snmp attribute  s1  ifOperStatus.1049  up
-    [Tags]  40G    
+    [Tags]  full  feature  40Glink    
     
 TC22: Verify SNMP OID ifSpeed of 40Gig Data Port  
     verify snmp attribute  s1  ifSpeed.1049  4294967295
-    [Tags]  40G    
+    [Tags]  full  feature  40Glink    
     
 TC23: Verify SNMP OID ifHighSpeed of 40Gig Data Port  
     verify snmp attribute  s1  ifHighSpeed.1049  40000
-    [Tags]  40G    
+    [Tags]  full  feature  40Glink    
 
 TC24: Verify SNMP OID ifPhysAddress of 40Gig Data Port  
     ${mac_address1}=  cli show interface macaddress  s1  ${fortyG_intf} 
     verify snmp attribute  s1  ifPhysAddress.1049  ${mac_address1}
-    [Tags]  40G
+    [Tags]  full  feature  40Glink
 
 TC25: Verify SNMP OID ifDescr of PortChannel across 40G Interface
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifDescr.1061  ${pc_name}
+    verify snmp attribute  s1  ifDescr.1129  ${pc_name}
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  40G  Lag
+    [Tags]  full  feature  40Glink  portchannel
     
 TC26: Verify SNMP OID ifType of PortChannel across 40G Interface
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifType.1061  ethernetCsmacd
+    verify snmp attribute  s1  ifType.1129  ethernetCsmacd
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  40G  Lag
+    [Tags]  full  feature  40Glink  portchannel
         
 TC27: Verify SNMP OID ifAdminStatus of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifAdminStatus.1061  up
+    verify snmp attribute  s1  ifAdminStatus.1129  up
     cli delete portchannel  s1  1            
     sleep  5    
 
-    [Tags]  40G  Lag
+    [Tags]  full  feature  40Glink  portchannel
         
 TC28: Verify SNMP OID ifOperStatus of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifOperStatus.1061  up
+    verify snmp attribute  s1  ifOperStatus.1129  up
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  40G  Lag
+    [Tags]  full  feature  40Glink  portchannel
         
 TC29: Verify SNMP OID ifSpeed of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifSpeed.1061  4294967295
+    verify snmp attribute  s1  ifSpeed.1129  4294967295
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  40G  Lag
+    [Tags]  full  feature  40Glink  portchannel
         
 TC30: Verify SNMP OID ifHighSpeed of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
-    verify snmp attribute  s1  ifHighSpeed.1061  40000
+    verify snmp attribute  s1  ifHighSpeed.1129  40000
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  40G  Lag
+    [Tags]  full  feature  40Glink  portchannel
     
 TC31: Verify SNMP OID ifPhysAddress of PortChannel across 40G Interface 
     cli add portchannel  s1  1  ${pc_intf_1}  L2 
     sleep  5
     ${mac_address1}=  cli show interface macaddress  s1  ${pc_name} 
-    verify snmp attribute  s1  ifPhysAddress.1061  ${mac_address1}
+    verify snmp attribute  s1  ifPhysAddress.1129  ${mac_address1}
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  40G  Lag
+    [Tags]  full  feature  40Glink  portchannel
 
 TC32: Verify SNMP OID ifDescr of PortChannel across 10G Interface
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifDescr.1061  ${pc_name}
+    verify snmp attribute  s1  ifDescr.1129  ${pc_name}
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  10G  Lag
+    [Tags]  full  feature  10Glink  portchannel
     
 TC33: Verify SNMP OID ifType of PortChannel across 10G Interface
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifType.1061  ethernetCsmacd
+    verify snmp attribute  s1  ifType.1129  ethernetCsmacd
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  10G  Lag
+    [Tags]  full  feature  10Glink  portchannel
         
 TC34: Verify SNMP OID ifAdminStatus of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifAdminStatus.1061  up
+    verify snmp attribute  s1  ifAdminStatus.1129  up
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  10G  Lag
+    [Tags]  full  feature  10Glink  portchannel
         
 TC35: Verify SNMP OID ifOperStatus of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifOperStatus.1061  up
+    verify snmp attribute  s1  ifOperStatus.1129  up
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  10G  Lag
+    [Tags]  full  feature  10Glink  portchannel
         
 TC36: Verify SNMP OID ifSpeed of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifSpeed.1061  4294967295
+    verify snmp attribute  s1  ifSpeed.1129  4294967295
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  10G  Lag
+    [Tags]  full  feature  10Glink  portchannel
         
 TC37: Verify SNMP OID ifHighSpeed of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
-    verify snmp attribute  s1  ifHighSpeed.1061  20000
+    verify snmp attribute  s1  ifHighSpeed.1129  20000
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  10G  Lag  
+    [Tags]  full  feature  10Glink  portchannel
     
 TC38: Verify SNMP OID ifPhysAddress of PortChannel across 10G Interface 
     cli add portchannel  s1  1  ${pc_intf_2}  L2 
     sleep  5
     ${mac_address1}=  cli show interface macaddress  s1  ${pc_name} 
-    verify snmp attribute  s1  ifPhysAddress.1061  ${mac_address1}
+    verify snmp attribute  s1  ifPhysAddress.1129  ${mac_address1}
     cli delete portchannel  s1  1            
     sleep  5    
-    [Tags]  10G  Lag
+    [Tags]  full  feature  10Glink  portchannel
 
 TC39: Verify snmpgetnext works as expected 
     ${snmp_key} =   snmp cmd  s1  snmpgetnext  ${snmp_community_1}  ifDescr.1
     Should Contain  ${snmp_key}  ma1
-    [Tags]  snmpgetnext
+    [Tags]  full  feature
 
 TC40: Verify snmpbulkget works as expected
     ${snmp_key}=  snmp cmd opt   s1  snmpbulkget  -Cr1  ${snmp_community_1}  ifDescr.1
     Should Contain  ${snmp_key}  ma1
-    [Tags]  snmpbulkget
+    [Tags]  full  feature
             
 TC41: Verify snmpbulkwalk works as expected
     ${snmp_key}=  snmp cmd opt   s1  snmpbulkwalk  -Cr2  ${snmp_community_1}  ifDescr.2
@@ -280,7 +280,7 @@ TC42: Verify snmptrap is generated on dataport linkflap
     ${output}=  return snmptrap output  ${snmp_trap_svr_1}  rly2
     Should contain  ${output}  Link up on interface 1013   
     config  node=s1    cmd=no snmp-server trap linkUpDown interval 30       
-    [Tags]  snmptrap  runthis
+    [Tags]  full  feature
 
 TC43: Modify SNMP community and verify SNMP OID sysContact
     cli delete snmp keyword  s1  community  ${snmp_ccommunity_1}
@@ -291,8 +291,8 @@ TC43: Modify SNMP community and verify SNMP OID sysContact
     sleep  1
     cli delete snmp keyword  s1  community  ${snmp_ccommunity_2}
     cli add snmp keyword  s1  community  ${snmp_ccommunity_1}
-    [Tags]  modify-community
-
+    [Tags]  full  feature
+    
 TC44: Modify SNMP location and verify SNMP OID sysLocation
     cli delete snmp keyword  s1  location  ${snmp_location_1}
     cli add snmp keyword  s1  location  ${snmp_location_2}
@@ -302,7 +302,7 @@ TC44: Modify SNMP location and verify SNMP OID sysLocation
     sleep  1
     cli delete snmp keyword  s1  location  ${snmp_location_2}
     cli add snmp keyword  s1  location  ${snmp_location_1}    
-    [Tags]  modify-location
+    [Tags]  full  feature
 
 TC45: Modify SNMP Contact and verify SNMP OID sysContact
     cli delete snmp keyword  s1  contact  ${snmp_contact_1}
@@ -313,7 +313,7 @@ TC45: Modify SNMP Contact and verify SNMP OID sysContact
     sleep  1
     cli delete snmp keyword  s1  contact  ${snmp_contact_2}
     cli add snmp keyword  s1  contact  ${snmp_contact_1}    
-    [Tags]  modify-contact
+    [Tags]  full  feature
 
 TC46: Verify no snmp-server disables snmp     
     cli disable switch snmp  s1
@@ -328,7 +328,7 @@ TC46: Verify no snmp-server disables snmp
     Should Contain  ${snmp_output}  enabled
     ${snmp_key}=  snmp cmd  s1  snmpget   ${snmp_community_1}  sysContact.0
     Should Contain  ${snmp_key}  ${snmp_contact_1}
-    [Tags]  snmp
+    [Tags]  full  feature
 
 TC47: Restart process SNMPD and verify SNMP Stats     
     bash restart process  s1   snmpd
@@ -339,8 +339,8 @@ TC47: Restart process SNMPD and verify SNMP Stats
     Should Contain  ${snmp_output}  ${snmp_community_1}
     ${snmp_key}=  snmp cmd  s1  snmpget  ${snmp_community_1}  sysContact.0
     Should Contain  ${snmp_key}  ${snmp_contact_1} 
-    [Tags]  process-restart
-                                    
+    [Tags]  full  ha  robustness  process-restart
+
 * Keywords  
 snmp suite setup
     base suite setup        
@@ -366,8 +366,11 @@ verify config
     Should Contain   ${snmp_output}   enabled
 
 snmp test setup
-    write version to file
-    start syslog monitor
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     
 snmp test teardown
-    stop syslog monitor 
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}

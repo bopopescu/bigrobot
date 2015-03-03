@@ -1,0 +1,515 @@
+* Settings
+Documentation    T5 Test Suite
+Suite Setup      T5 longevity suite setup
+Suite Teardown   T5 longevity suite teardown
+Test Setup       T5 base test setup 
+Test Teardown    T5 base test teardown 
+Force Tags       IronHorse   T5   longevity
+Library		keywords/BsnCommon.py
+Library		keywords/Controller.py
+Library		keywords/Mininet.py
+Library		keywords/Host.py
+Library		keywords/Ixia.py
+Library		keywords/T5.py
+Library		keywords/T5L3.py
+Library		keywords/T5Platform.py
+Library		keywords/Controller.py
+Library		keywords/SwitchLight.py
+Library		keywords/T5Utilities.py
+Library		keywords/T5ZTN.py
+Library        OperatingSystem
+ 
+* Variable
+${short}  1
+${medium}  3
+${long}   30
+${verylong}      120 
+${linkflap}   120
+${inevent}       300
+${betweenevent}  600
+
+${Tflapnum}     100 
+${Vflapnum}     100 
+${bigconfigsleep}  300 
+
+
+${loop}        5
+${repeat}      60
+
+
+${leaf1-a}     leaf1-a
+${leaf1-b}     leaf1-b
+${leaf2-a}     leaf2-a
+${leaf2-b}     leaf2-b
+ 
+${spine1}      spine0
+${spine2}      spein1
+ 
+* Test Case
+ 
+	    
+T23 controller node event failover        
+    [Document]  Description:    Failover for controllers nodes is performed by issuing 'system failover' in standby controller.
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Output:         Previous active controller becomes standby controller, standby controller becomes active controller.
+    ...
+    ...         Requirement:    2 controller nodes
+    ...
+    ...         Pass criteria:  Controller nodes switch roles.
+
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* controller node failover: ${i}*******    
+    \	controller node event HA failover     ${inevent}
+    \   sleep   ${inevent}
+        
+	[Tags] 	longevity    traffic     event     
+
+
+T21 spine switch node down/up event 	 
+    [Document]  Description:    Spine nodes is rebooted by issuing 'system reboot switch SWITCH' in active controller.
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.SPINE_LIST- spines in the list is rebooted one by one.  SPINE_LIST can be modified by .....
+    ...
+    ...         Output:         spine switch reboots.
+    ...
+    ...         Requirement:    2 or more spines to guarantee at any time at least 1 spine is function
+    ...
+    ...         Pass criteria:  Spine joins the fabric after it comes back
+
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* spine switch node down/up event: ${i}********   
+    \	switch node down/up event      ${spine1} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${spine2}   
+    \   sleep  ${inevent}  
+       
+	[Tags] 	longevity   traffic    event      
+
+
+T22 leaf switch node down/up event 	 
+    [Document]  Description:    Leaf switch is rebooted by issuing 'system reboot switch SWITCH' in active controller.
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
+    ...
+    ...         Output:         leaf switch reboots.
+    ...
+    ...         Requirement:    2 leafs in a rack
+    ...                         Host is connected to leaf switches through port group
+    ...
+    ...         Pass criteria:  Leaf joins the fabric after it comes back
+
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* switch switch node down/up event: ${i}********   
+    \	switch node down/up event      ${leaf1-a} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${leaf1-b} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${leaf2-a} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${leaf2-b} 
+    \   sleep  ${inevent}
+    
+         
+	[Tags] 	longevity   traffic    event   skipped    
+
+
+
+T27 data Link down/up event between leaf and spine
+    [Document]  Description:    Link between spine switch and leaf switch is flapped by calling API to controller
+    ...                         to disable and enable the interface. The flap is executed at both spine side and leaf side.
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.SPINE_LIST- spines in the list is rebooted one by one.  SPINE_LIST can be modified by .....
+    ...                         self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
+    ...
+    ...         Output:         Links are flapped.
+    ...
+    ...         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
+    ...
+    ...         Pass criteria:  Link is removed from fabric when it is disabled, and link appears in fabric when it is enabled.         """
+    
+        : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* data Link down/up event between leaf and spine ${i}******* 
+	\  data Link down/up event between nodes  ${leaf1-a}    ${spine1} 	
+	\  sleep  ${linkflap}  
+	\  data Link down/up event between nodes  ${spine1}    ${leaf1-a} 
+	\  sleep  ${linkflap} 	
+	\  data Link down/up event between nodes  ${leaf1-b}    ${spine1} 
+	\  sleep  ${linkflap}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf1-b} 
+	\  sleep  ${linkflap}  	
+	
+	\  data Link down/up event between nodes  ${leaf1-a}    ${spine2} 
+	\  sleep  ${linkflap}  	
+	\  data Link down/up event between nodes  ${spine2}    ${leaf1-a} 
+	\  sleep  ${linkflap}  	
+	\  data Link down/up event between nodes  ${leaf1-b}    ${spine2} 
+	\  sleep  ${linkflap}  	
+	\  data Link down/up event between nodes  ${spine2}   ${leaf1-b} 
+	\  sleep  ${linkflap}  	
+	
+	\  data Link down/up event between nodes  ${leaf2-a}    ${spine1} 
+	\  sleep  ${linkflap}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf2-a} 
+	\  sleep  ${linkflap}  	
+	\  data Link down/up event between nodes  ${leaf2-b}    ${spine1} 
+	\  sleep  ${linkflap}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf2-b} 	
+	\  sleep  ${linkflap}
+	  	
+	\  data Link down/up event between nodes  ${leaf2-a}    ${spine2} 
+	\  sleep  ${linkflap}  	
+	\  data Link down/up event between nodes  ${spine2}    ${leaf2-a} 
+	\  sleep  ${linkflap}  	
+	\  data Link down/up event between nodes  ${leaf2-b}    ${spine2} 
+	\  sleep  ${linkflap}  	
+	\  data Link down/up event between nodes  ${spine2}    ${leaf2-b} 
+	\  sleep  ${inevent}  
+ 
+ 
+	[Tags] 	longevity     traffic     event     
+
+T28 data Link down/up event between leafs 
+    [Document]  Description:    Link between leaf pair switches is flapped by calling API to controller
+    ...                         to disable and enable the interface. The flap is executed at both sides for each connection.
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.LEAF_LIST- spines in the list is rebooted one by one.  LEAF_LIST can be modified by .....
+    ...
+    ...         Output:         leaf switch reboots.
+    ...
+    ...         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
+    ...
+    ...         Pass criteria:  Link is removed from fabric when it is disabled, and link appears in fabric when it is enabled.
+
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* date link down/up ${i}******* 
+	\  data Link down/up event between nodes  ${leaf1-a}    ${leaf1-b} 	
+	\  sleep  ${linkflap}  
+	\  data Link down/up event between nodes  ${leaf1-b}    ${leaf1-a} 
+	\  sleep  ${linkflap}  
+	\  data Link down/up event between nodes  ${leaf2-a}    ${leaf2-b} 	
+	\  sleep  ${linkflap}  
+	\  data Link down/up event between nodes  ${leaf2-b}    ${leaf2-a} 
+	\  sleep  ${inevent}  		
+   
+	[Tags] 	 longevity   traffic   event      
+
+T26 big configuration changes (around 500 tenants)
+    [Document]  Description:    Tenants are created and deleted by calling API to controller
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.TFLAPNUM - the number of tenants to be created and deleted.  self.TFLAPNUM can be modified by .....
+    ...
+    ...         Output:         None
+    ...
+    ...         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
+    ...
+    ...         Pass criteria:  Tenants are created and deleted successfully.
+
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* big configuration changes tenant ${i}******* 
+ 	\  tenant configuration add/remove      ${Tflapnum}       3       
+ 	\  sleep  ${bigconfigsleep}  
+   	
+	[Tags] 	longevity     traffic    event     
+
+
+T25 big configuration changes (around 500 vns change)
+    [Document]  Description:    Segments are created and deleted by calling API to controller
+    ...                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
+    ...
+    ...         Input:          self.VFLAPNUM -  the number of segments to be created and deleted.  self.TFLAPNUM can be modified by .....
+    ...
+    ...         Output:         None
+    ...
+    ...         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
+    ...
+    ...         Pass criteria:  Segments are created and deleted successfully.
+
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* big configuration changes vns ${i}******* 
+  	\  vns configuration add/remove         ${Vflapnum}               
+ 	\  sleep  ${bigconfigsleep}  
+  	
+	[Tags] 	longevity     traffic    event     
+
+
+T51 continues Event
+    [Document]  Description:    Combination of all the test cases.
+    ...                         A random number is generated, based on the random number a testcase event is executed.
+    ...                         The testcase event is executed once.
+    ...                         Total of self.REPEAT random numbers are generated. The event runs at the gap of self.BETWEENEVENT seconds
+    ...
+    ...         Input:          self.REPEAT -  the times random number to be generated.  self.TFLAPNUM can be modified by .....
+    ...                         self.BETWEENEVENT - idle timer between events - this can be modified by .....
+    ...
+    ...         Output:         None
+    ...
+    ...         Requirement:    More than 1 spines or 2 leafs in a rack or 2 links between spine and leaf
+    ...
+    ...         Pass criteria:  Segments are created and deleted successfully.
+
+   	log  randomize all the event test cases from T23 to T30
+    ${loop}=  Set Variable   1	
+    : FOR   ${index}    IN RANGE    0    ${repeat}	
+	\  Log To Console   "\n========******* in continues event loop: ${index} out of ${repeat} ******====== " 
+	\  ${random}=	Evaluate	 random.randint(1,5)    random,sys
+	\  Log To Console   "--------random number is ${random} --------" 
+	\  Run Keyword if    ${random}==1   T21 spine switch node down/up event 	 
+	\  Run Keyword if    ${random}==2   T27 data Link down/up event between leaf and spine       
+	\  Run Keyword if    ${random}==3   T28 data Link down/up event between leafs 
+	\  Run Keyword if    ${random}==4   T26 big configuration changes (around 500 tenants or vns change) 
+	\  Run Keyword if    ${random}==5   T25 big configuration changes (around 500 vns change) 	
+#	\  Run Keyword if    ${random}==6   T23 controller node event failover
+  	\  sleep  ${betweenevent}
+   
+	[Tags] 	longevity    traffic     
+
+
+ 
+
+* Keywords
+
+Cli show commands for debug     
+	cli     master   show ver           timeout=60
+	enable  master   show running-config switch   timeout=60
+	enable  master   show switch 		 timeout=60
+	enable  master   show link	         timeout=60
+	cli     master   show ver            timeout=60	
+	cli     slave   show ver           timeout=60	
+
+switch node down/up event   [Arguments]    ${node}
+	log  reload switch
+	Log To Console   ================ Rebooting ${node} ===============
+	Cli show commands for debug 	
+	cli_reboot_switch    master     ${node} 
+	Cli show commands for debug
+	sleep   ${long}	
+	Wait Until Keyword Succeeds   10 min  30 sec   Verify all switches connected back 
+
+Verify all switches connected back
+ 	${switches}=  rest_get_disconnect_switch
+	Cli show commands for debug
+	log   the disconnected switches are ${switches}  	
+	Should Be Empty   ${switches}	
+ 
+ 
+controller node event HA failover    [Arguments]    ${during}=30
+    Log To Console   =============HA failover ===============
+	Cli show commands for debug    
+    cli_cluster_take_leader
+    sleep  ${during}   
+	Cli show commands for debug
+ 	  
+
+controller node event reboot master    [Arguments]    ${during}=30
+    Log To Console   ================ Rebooting controller ===============
+    cli_verify_cluster_master_reboot 
+	Cli show commands for debug
+	sleep  ${during}
+  
+ 
+controller node event reboot slave    [Arguments]    ${during}=30
+    Log To Console   ================ Rebooting controller ===============
+    cli_verify_cluster_slave_reboot 
+	Cli show commands for debug     
+    sleep  ${during}
+ 
+
+data Link down/up event between nodes   [Arguments]    ${node1}    ${node2}
+    Log To Console   ================ data link down/up for ${node1} ${node2} ===============
+	log  disable/enable link from nodes		
+	${list}=    cli_get_links_nodes_list     ${node1}   ${node2} 
+ 	: FOR    ${int}   IN   @{list}   
+	\   disable links between nodes      ${node1}   ${int}
+	\   sleep   60
+	\   enable links between nodes      ${node1}   ${int} 
+ 	\   sleep   60 
+ 
+
+disable links between nodes    [Arguments]   ${node1}   ${int} 
+	Cli show commands for debug
+	rest_disable_fabric_interface		${node1}  ${int}  
+ 
+ 
+enable links between nodes   [Arguments]   ${node1}   ${int} 
+	Cli show commands for debug
+ 
+	rest_enable_fabric_interface		${node1}  ${int}  
+ 
+
+
+ 
+tenant configuration add/remove    [Arguments]    ${Tnumber}   ${Vnumber}    ${sleep}=1
+    Log To Console   ================tenant configuration changes: ${Tnumber}===============
+ 	clear stats in controller switch	     
+	enable  master  copy running-config config://config_tenant_old
+	cli     master   ''
+	log  big scale configuration tenant add	
+	rest_add_tenant_vns_scale    tenantcount=${Tnumber}   tname=FLAP     vnscount=${Vnumber}   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
+	cli  master  show running-config tenant FLAP0
+	${vlan}=    Set Variable   1000
+    : FOR    ${j}    IN RANGE    0     ${Tnumber}
+    \	rest_add_interface_to_all_vns      FLAP${j}     ${leaf1-a}    ethernet3  vlan=${vlan}
+    \  	cli  master  show running-config tenant FLAP${j}
+#    \   rest_add_l3_endpoint_to_all_vns       FLAP${j}     ${leaf1-a}    ethernet3  vlan=${vlan} 
+    \   cli  master  show running-config tenant FLAP${j}
+    \   ${vlan}=  expr  ${vlan} + ${Vnumber}
+	\   sleep   ${sleep}
+	cli    master     show running-config tenant   timeout=120
+	enable  master  copy running-config config://config_tenant_new	
+	log  big scale configuration tenant delete
+	
+    : FOR    ${j}    IN RANGE    0     ${Tnumber}
+    \ 	config    master     no tenant FLAP${j}
+    
+	cli    master     show running-config tenant  timeout=120
+   	
+
+vns configuration add/remove    [Arguments]   ${Vnumber}      ${sleep}=1
+    Log To Console   ================ vns configuration changes: ${Vnumber}===============
+	enable  master  copy running-config config://config_vns_old
+	 
+	${vlan}=    Set Variable   1000    
+	rest_add_tenant_vns_scale    tenantcount=1   tname=FLAP    vnscount=${Vnumber}   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
+	rest_add_interface_to_all_vns      FLAP0     ${leaf1-a}    ethernet3   vlan=${vlan}	
+	sleep   ${sleep}	 
+	cli    master     show running-config tenant	timeout=120
+	enable  master  copy running-config config://config_vns_new
+	 
+ 	log  big scale configuration tenant delete
+ 	config    master   tenant FLAP0
+	${vns}=  expr  1 + ${Vnumber}
+    : FOR    ${j}    IN RANGE    1     ${vns}
+    \ 	config    master    no segment V${j}
+	config    master   logical-router    
+    : FOR    ${j}    IN RANGE    1     ${vns}
+    \ 	config    master    no interface segment V${j}   
+	config    master    no tenant FLAP0      
+	cli    master     show running-config tenant	 timeout=120	
+ 
+clear stats in controller switch
+	enable    master  clear switch all interface all counters 
+#	rest_clear_vns_stats
+#	rest_clear_fabric_interface_stats
+ 	Cli show commands for debug 
+ 	 
+T5 longevity suite setup
+   base suite setup
+    : FOR    ${j}    IN RANGE    0     500
+    \ 	config    master     no tenant FLAP${j}
+  		
+T5 longevity suite teardown
+#   base suite teardown
+    sleep  1
+
+
+T5 base test setup 
+   base test setup
+ 
+T5 base test teardown  
+    base test teardown   
+    Run Keyword If Test Failed    generate_support
+    Run Keyword If Test Failed    check controller top   c1
+    Run Keyword If Test Failed    check controller top   c2
+ 
+ 
+ 
+verify switch interface is up	[Arguments]  ${switch}   ${intf}  
+	${info}=  rest_get_fabric_interface_info   ${switch}  ${intf}
+	Should Be Equal as Strings 		up      ${info['state']}
+ 
+check controller top  [Arguments]  ${node}   
+    : FOR    ${j}    IN RANGE    0     5 
+    \  bash   ${node}  top -n 1 
+    \  sleep  2
+ 	Cli show commands for debug
+ 
+ 
+######## test case keyword
+
+T21 spine switch node down/up event 	 
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* spine switch node down/up event: ${i}********   
+    \	switch node down/up event      ${spine1} 
+    \   sleep  ${inevent}
+    \	switch node down/up event      ${spine2} 
+    \   sleep  ${inevent}  
+  	    
+T23 controller node event failover        
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \	Log To Console   \n******* controller node failover: ${i}*******    
+    \	controller node event HA failover     ${inevent}
+    \   sleep   ${inevent}
+        
+	 
+
+
+
+T27 data Link down/up event between leaf and spine
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* data Link down/up event between leaf and spine ${i}******* 
+	\  data Link down/up event between nodes  ${leaf1-a}    ${spine1} 	
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${spine1}    ${leaf1-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf1-b}    ${spine1} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf1-b} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf1-a}    ${spine2} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine2}    ${leaf1-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf1-b}    ${spine2} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine2}   ${leaf1-b} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf2-a}    ${spine1} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf2-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf2-b}    ${spine1} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine1}    ${leaf2-b} 	
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf2-a}    ${spine2} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine2}    ${leaf2-a} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${leaf2-b}    ${spine2} 
+	\  sleep  ${inevent}  	
+	\  data Link down/up event between nodes  ${spine2}    ${leaf2-b} 
+	\  sleep  ${inevent}  
+ 
+  
+T28 data Link down/up event between leafs 
+    : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* date link down/up ${i}******* 
+	\  data Link down/up event between nodes  ${leaf1-a}    ${leaf1-b} 	
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${leaf1-b}    ${leaf1-a} 
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${leaf2-a}    ${leaf2-b} 	
+	\  sleep  ${inevent}  
+	\  data Link down/up event between nodes  ${leaf2-b}    ${leaf2-a} 
+	\  sleep  ${inevent}  		
+  
+ 
+T26 big configuration changes (around 500 tenants or vns change)
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* big configuration changes ${i}******* 
+ 	\  tenant configuration add/remove      ${Tflapnum}       3       
+ 	\  sleep  ${bigconfigsleep}  
+  	
+T25 big configuration changes (around 500 vns change)
+     : FOR    ${i}    IN RANGE    0    ${loop}
+    \  Log To Console   \n******* big configuration changes vns ${i}******* 
+  	\  vns configuration add/remove         ${Vflapnum}               
+ 	\  sleep  ${bigconfigsleep}  
+  	
+	

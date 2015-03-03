@@ -35,60 +35,7 @@ sys.path.insert(1, exscript_path)
 import autobot.helpers as helpers
 from catalog_modules.test_catalog import TestCatalog
 from catalog_modules.authors import Authors
-
-
-def sanitize_string(value):
-    if re.search(r':', value):
-        # String contains the character ':' which will cause YAML
-        # error.
-        if re.search("'", value):
-            value = '"' + value + '"'
-        else:
-            value = "'" + value + "'"
-    return value
-
-
-class PseudoYAML(object):
-    def __init__(self, infile):
-        self._infile = infile
-        self._data = None
-
-    def sanitize_data(self, line):
-        line = line.rstrip()
-        if re.match(r'^#', line):
-            return None
-        if re.match(r'^(- name):', line):
-            key, value = line.split(':', 1)
-            value = value.strip("' ")
-
-            value = sanitize_string(value)
-
-            key = key.strip(" ")
-            line = "%s: %s" % (key, value)
-        elif re.match(r'^\s+(product_suite|status):', line):
-            key, value = line.split(':', 1)
-            value = value.strip("' ")
-            key = key.strip(" ")
-            line = "  %s: %s" % (key, value)
-        elif re.match(r'^(\s+\w+):', line):
-            key, value = line.split(':', 1)
-            value = value.strip(" ")
-            key = key.strip(" ")
-            line = "  %s: %s" % (key, value)
-        return line
-
-    def load_yaml_file(self):
-        yaml_string = ''
-        lines = helpers.file_read_once(self._infile, to_list=True)
-        for line in lines:
-            new_line = self.sanitize_data(line)
-            if new_line:
-                yaml_string += new_line + "\n"
-        self._data = helpers.from_yaml(yaml_string)
-        return self._data
-
-    def data(self):
-        return self._data
+from catalog_modules.pseudo_yaml import PseudoYAML, sanitize_yaml_string
 
 
 class VerificationFileBuilder(object):
@@ -102,7 +49,7 @@ class VerificationFileBuilder(object):
 
         if not self._builds:
             helpers.error_exit(
-                "Aggregated build '%s' is not defined in catalog.yaml."
+                "Aggregated build '%s' is not defined in the database."
                 % build)
         # dictionary of test suites indexed by product_suite key.
         self._product_suites = {}
@@ -233,7 +180,7 @@ class VerificationFileBuilder(object):
             if key in self._test_case_dict[author]:
                 if status == self._test_case_dict[author][key]['status']:
                     self._test_case_dict[author][key]['name'] = \
-                        sanitize_string(
+                        sanitize_yaml_string(
                             self._test_case_dict[author][key]['name'])
                     self.write_entry_to_file(self._test_case_dict[author][key],
                                              new_file_name)
@@ -243,7 +190,7 @@ class VerificationFileBuilder(object):
                             "\n### status: %s in recent '%s'"
                             % (status, build_name_last))
                     self._test_case_dict[author][key]['name'] = \
-                        sanitize_string(
+                        sanitize_yaml_string(
                             self._test_case_dict[author][key]['name'])
                     self.write_entry_to_file(self._test_case_dict[author][key],
                                              new_file_name)
@@ -254,7 +201,7 @@ class VerificationFileBuilder(object):
                             "\n### new entry in recent '%s'"
                             % (build_name_last))
                 rec = {
-                       "name": sanitize_string(tc_name),
+                       "name": sanitize_yaml_string(tc_name),
                        "product_suite": product_suite,
                        "status": status,
                        }
@@ -292,7 +239,7 @@ class VerificationFileBuilder(object):
                                 new_file_name,
                                 "\n### Previously verified. Not reported as"
                                 " FAIL in recent report so is likely PASSing.")
-                        tc['name'] = sanitize_string(tc['name'])
+                        tc['name'] = sanitize_yaml_string(tc['name'])
                         self.write_entry_to_file(tc, new_file_name)
                     else:
                         # User didn't get a chance to verify it previously.
@@ -300,7 +247,7 @@ class VerificationFileBuilder(object):
                         pass
                 else:
                     # Contains user comments
-                    tc['name'] = sanitize_string(tc['name'])
+                    tc['name'] = sanitize_yaml_string(tc['name'])
                     self.write_entry_to_file(tc, new_file_name)
 
         # for key, value in first_pass.iteritems():

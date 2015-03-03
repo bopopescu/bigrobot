@@ -15,6 +15,8 @@ Library         keywords/Ixia.py
 Library         keywords/T5.py     
 Library         String
 Resource		 testsuites/T5/t5_physical_variables.txt
+Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+
 *Variables
 
 ${j}    1
@@ -24,8 +26,6 @@ ${switch7_name}=  spine0
 ${tenant}=        testTenant 
 ${vns}=           v1
 ${vlan}=          -1
-${intf_1}=        ethernet24
-${intf_2}=        ethernet24
 
 ${count}=         1 
 ${ratetolerance}=     10
@@ -57,7 +57,7 @@ TC01 Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
-    [Tags]  switch-platform  L2  traffic  feature    
+    [Tags]  switch-platform  L2  traffic  feature    daily-sanity
 
 TC02 Uni-Directional L2 Traffic flow=a->c traffic linerate 10% pktsize 64
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:03  dst_mac=00:11:01:00:00:04  line_rate=10  frame_size=64  ethertype=8000  name=a_b_flow
@@ -108,7 +108,7 @@ TC04 Uni-Directional L2 Traffic flow=a->c traffic linerate 25% pktsize 256
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
-    [Tags]  switch-platform  L2  traffic  feature       
+    [Tags]  switch-platform  L2  traffic  feature       daily-sanity
 
 TC05 Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 512 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:01:01  dst_mac=00:11:01:00:01:02  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_flow
@@ -170,7 +170,7 @@ TC08 Bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1518
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  switch-platform  L2  traffic  feature  
+    [Tags]  switch-platform  L2  traffic  feature   daily-sanity
 
 TC09 Bi-Directional L2 Traffic flow=a<->c traffic linerate 75% pktsize 1518
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:03:01  dst_mac=00:11:01:00:03:02  line_rate=75  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
@@ -184,7 +184,7 @@ TC09 Bi-Directional L2 Traffic flow=a<->c traffic linerate 75% pktsize 1518
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  switch-platform  L2  traffic  feature  
+    [Tags]  switch-platform  L2  traffic  feature   daily-sanity
 
 TC10 Bi-Directional L2 Traffic flow=a<->c traffic linerate 100% pktsize 1518
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:05:01  dst_mac=00:11:01:00:05:02  line_rate=100  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
@@ -212,7 +212,7 @@ TC11 Uni-Directional L2 Traffic jumbo flow=a->c traffic linerate 10% pktsize 915
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  switch-platform  L2  traffic  jumbo  feature    
+    [Tags]  switch-platform  L2  traffic  jumbo  feature
 
 TC12 Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 10% pktsize 9150
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=10  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
@@ -268,7 +268,7 @@ TC15 Bi-Directional L2 Traffic jumbo flow=a<->c traffic linerate 100% pktsize 91
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  switch-platform  L2  traffic  jumbo  feature  
+    [Tags]  switch-platform  L2  traffic  jumbo  feature
 
 TC16 leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
@@ -281,14 +281,14 @@ TC16 leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->c tra
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
-    disable switch interface from controller  ${switch1_name}  ${leaf1a_spine0_intf0}
+    disable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
     sleep  10 
-    enable switch interface from controller  ${switch1_name}  ${leaf1a_spine0_intf0}
+    enable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
     sleep  10 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  switch-platform  L2  traffic  linkflap  feature          
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity      
 
 TC17 spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
@@ -308,7 +308,7 @@ TC17 spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->c tra
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  switch-platform  L2  traffic  linkflap  feature    
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity
 
 TC18 leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 512 
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_bidir_flow
@@ -328,7 +328,7 @@ TC18 leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->c tra
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  switch-platform  L2  traffic  linkflap  feature    
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity
     
 TC19 spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1518 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
@@ -348,12 +348,40 @@ TC19 spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c tra
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  switch-platform  L2  traffic  linkflap  feature    
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity
 
-
+TC20 Bi-Directional L2 Traffic IPv6 mac address starting with 33: flow=a<->c traffic linerate 50% pktsize 9150
+    ${stream}=     L2 add  flow=a<->c  dst_mac=33:33:33:33:33:33  src_mac=00:11:01:00:01:0b  line_rate=50  frame_size=9150  ethertype=0802  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  jumbo  feature
+    
+TC21 Bi-Directional L2 Traffic IPv6 mac address starting with 33: flow=a<->c traffic linerate 50% pktsize 1024
+    ${stream}=     L2 add  flow=a<->c  dst_mac=33:33:33:33:33:33  src_mac=00:11:01:00:01:0b  line_rate=50  frame_size=1024  ethertype=0802  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  switch-platform  L2  traffic  jumbo  feature
 * Keywords
       
 T5 switch platform test setup
+   fabric infra suite setup
+   Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common  2
    #base test setup
    #rest add switch  ${switch1_name}
    #${swDpid1}=  rest return switch dpid from ip  s1
@@ -369,6 +397,10 @@ T5 switch platform test setup
    #${swDpid7}=  rest return switch dpid from ip  s7
    #rest add dpid  ${switch7_name}   ${swDpid7}
    #rest add fabric role  ${switch7_name}  spine 
+   ${intf_1}=  get_switch_int_topo  s1  ixia1_int0
+   Set Suite Variable  ${intf_1}
+   ${intf_2}=  get_switch_int_topo  s3  ixia1_int0
+   Set Suite Variable  ${intf_1}
    Set swith int variables
    Set switch dpid variables
    rest add tenant  ${tenant}

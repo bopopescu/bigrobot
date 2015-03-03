@@ -19,8 +19,6 @@ ${switch3_name}      spine0
 ${switch4_name}      spine1
 ${tenant_1}         T5HATenant
 ${vns_1}            T5HAVNS
-${interface_1}      ethernet24
-${interface_2}      ethernet24
 ${src_ip}       10.11.1.10
 ${src_gw}       10.11.2.10
 ${src_mac}      00:11:00:00:00:01
@@ -88,7 +86,7 @@ Verify L2 traffic: frame size 128 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream}   
-    [Tags]  feature  traffic  
+    [Tags]  feature  traffic   daily-sanity
 
 Verify L3 traffic: frame size 128 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=128
@@ -192,7 +190,7 @@ Verify L3 traffic: frame size 1024 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  feature  traffic
+    [Tags]  feature  traffic  daily-sanity
     
 Verify L2 traffic: frame size 1518 bytes
     ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=1518  name=a_b_flow
@@ -239,7 +237,7 @@ Verify L2 traffic: frame size 2048 bytes
     verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  feature  traffic  
+    [Tags]  feature  traffic  daily-sanity
 
 Verify L3 traffic: frame size 2048 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=2048
@@ -357,7 +355,7 @@ Verify L3 Traffic: VLAN Tagged Traffic
     stop traffic   ${stream}     
     rest delete tenant  ${tenant_1}
     t5 tenant add  -1  
-    [Tags]  feature  traffic
+    [Tags]  feature  traffic  daily-sanity
 
 Line Rate: L2 Traffic with frame Size 1518
     ${stream}=  L2 add  flow=a<->b  frame_size=1518  line_rate=100  name=a_b_flow
@@ -402,27 +400,34 @@ t5 tenant add  [Arguments]  ${vlan}
     
 t5 suite setup
     base suite setup
-    rest add switch  ${switch1_name}
-    ${switch1_dpid}=  rest return switch dpid from ip  s1
+    ${interface_1}=     get_switch_int_topo  s1  ixia1_int0
+    Set Suite Variable		${interface_1}
+	${interface_2}=      get_switch_int_topo  s2  ixia1_int0
+	Set Suite Variable		${interface_2}
+	
+	rest add switch  ${switch1_name}
+    ${switch1_dpid}=  get_switch_mac_topo  s1
     rest add dpid  ${switch1_name}  ${switch1_dpid}
-    rest add fabric role  ${switch1_name}  leaf 
-    rest add leaf group  ${switch1_name}  rack0     
-
+    rest add fabric role  ${switch1_name}  leaf      
+	rest add leaf group  ${switch1_name}  rack0
     rest add switch  ${switch2_name}
-    ${switch2_dpid}=  rest return switch dpid from ip  s2
+    ${switch2_dpid}=  get_switch_mac_topo  s2
     rest add dpid  ${switch2_name}  ${switch2_dpid}
-    rest add fabric role  ${switch2_name}  leaf 
-    rest add leaf group  ${switch2_name}  rack1     
-
+    rest add fabric role  ${switch2_name}  leaf
+    rest add leaf group  ${switch2_name}  rack0      
+    
     rest add switch  ${switch3_name}
-    ${switch3_dpid}=  rest return switch dpid from ip  s7
+    ${switch3_dpid}=  get_switch_mac_topo  s7
     rest add dpid  ${switch3_name}  ${switch3_dpid}
     rest add fabric role  ${switch3_name}  spine
-
+	
     rest add switch  ${switch4_name}
-    ${switch4_dpid}=  rest return switch dpid from ip  s8
+    ${switch4_dpid}=  get_switch_mac_topo  s8
     rest add dpid  ${switch4_name}  ${switch4_dpid}
-    rest add fabric role  ${switch4_name}  spine 
+    rest add fabric role  ${switch4_name}  spine    
+	sleep  155
+	rest_verify_fabric_switch_all
+	
     Sleep  5     
     t5 tenant add  -1
 

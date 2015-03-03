@@ -1,0 +1,486 @@
+*Settings
+Documentation               SwitchLight SNMP Community Naming Convention Test Suite
+Suite Setup                 community suite setup
+Suite Teardown              community suite teardown
+Test Setup                  community test setup
+Test Teardown               community test teardown
+Force Tags                  BigTap  SwitchLight  switch-platform  SNMP
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
+
+* Variable
+${switchlight_version}      Switch Light OS SWL-BT
+${snmp_ccommunity_1}        ro public
+${snmp_community_1}         public
+${snmp_ccommunity_2}        ro bigswitch
+${snmp_community_2}         bigswitch
+${snmp_contact_1}           snmphost@bigswitch.com
+${snmp_contact_2}           host@bigswitch.com
+${snmp_location_1}          CS-214-6007
+${snmp_location_2}          CS214-6007
+${snmp_trap_svr_1}          10.9.18.3
+${snmp_trap_svr_2}          10.9.18.2
+
+*Test Case
+TC001: Verify snmp community string can comprise of all lower-case alphabets
+    config  node=s1  cmd=snmp-server community ro bigswitch
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC002: Verify snmp community string can comprise of all upper-case alphabets
+    config  node=s1  cmd=snmp-server community ro BIGSWITCH
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  BIGSWITCH  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro BIGSWITCH
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  BIGSWITCH  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC003: Verify snmp community string can comprise of a mix of lower-case and upper-case alphabet
+    config  node=s1  cmd=snmp-server community ro BiGsWiTcH
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  BiGsWiTcH  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro BiGsWiTcH
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  BiGsWiTcH  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC004: Verify snmp community string can be numeric
+    config  node=s1  cmd=snmp-server community ro 123456
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  123456  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro 123456
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  123456  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+    
+TC005: Verify snmp community string can comprise of alphanumeric characters (alphabet all lower-case)
+    config  node=s1  cmd=snmp-server community ro bigswitch1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC006: Verify snmp community string can comprise of alphanumeric characters (alphabet all upper-case)
+    config  node=s1  cmd=snmp-server community ro BIGSWITCH1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  BIGSWITCH1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro BIGSWITCH1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  BIGSWITCH1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC007: Verify snmp community string can comprise of alphanumeric characters with a !
+    config  node=s1  cmd=snmp-server community ro bigswitch1234!
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch1234!  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch1234!
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch1234!  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC008: Verify snmp community string can comprise of alphanumeric characters with a @
+    config  node=s1  cmd=snmp-server community ro bigswitch@1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch@1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch@1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch@1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC009: Verify snmp community string can comprise of alphanumeric characters with a #
+    config  node=s1  cmd=snmp-server community ro bigswitch#1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch#1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch#1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch#1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC010: Verify snmp community string can comprise of alphanumeric characters with a $
+    config  node=s1  cmd=snmp-server community ro bigswitch$1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch\\$1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch$1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch\\$1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature  
+
+TC011: Verify snmp community string can comprise of alphanumeric characters with a %
+    config  node=s1  cmd=snmp-server community ro bigswitch%1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch%1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch%1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch%1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC012: Verify snmp community string can comprise of alphanumeric characters with a ^
+    config  node=s1  cmd=snmp-server community ro bigswitch^1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch^1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch^1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch^1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC013: Verify snmp community string can comprise of alphanumeric characters with a ampersand
+    config  node=s1  cmd=snmp-server community ro bigswitch&1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch\\&1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch&1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch\\&1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature  runthis
+
+TC014: Verify snmp community string can comprise of alphanumeric characters with an asterix
+    config  node=s1  cmd=snmp-server community ro bigswitch*1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch*1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch*1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch*1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC015: Verify snmp community string can comprise of alphanumeric characters with a (
+    config  node=s1  cmd=snmp-server community ro bigswitch(1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch\\(1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch\\(1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch\\(1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC016: Verify snmp community string can comprise of alphanumeric characters with a )
+    config  node=s1  cmd=snmp-server community ro bigswitch)1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch\\)1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch\\)1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch\\)1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+    
+TC017: Verify snmp community string can comprise of alphanumeric characters with a -
+    config  node=s1  cmd=snmp-server community ro bigswitch-1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch-1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch-1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch-1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC018: Verify snmp community string can comprise of alphanumeric characters with a _
+    config  node=s1  cmd=snmp-server community ro bigswitch_1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch_1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch_1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch_1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC019: Verify snmp community string can comprise of alphanumeric characters with a +
+    config  node=s1  cmd=snmp-server community ro bigswitch+1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch+1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch+1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch+1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+    
+TC020: Verify snmp community string can comprise of alphanumeric characters with a =
+    config  node=s1  cmd=snmp-server community ro bigswitch=1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch=1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch=1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch=1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC021: Verify snmp community string can comprise of alphanumeric characters with a {
+    config  node=s1  cmd=snmp-server community ro bigswitch{1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch{1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch{1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch{1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC022: Verify snmp community string can comprise of alphanumeric characters with a }
+    config  node=s1  cmd=snmp-server community ro bigswitch}1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch}1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch}1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch}1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC023: Verify snmp community string can comprise of alphanumeric characters with a [
+    config  node=s1  cmd=snmp-server community ro bigswitch[1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch[1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch[1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch[1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC024: Verify snmp community string can comprise of alphanumeric characters with a ]
+    config  node=s1  cmd=snmp-server community ro bigswitch]1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch]1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch]1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch]1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC023: Verify snmp community string can comprise of alphanumeric characters with a :
+    config  node=s1  cmd=snmp-server community ro bigswitch:1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch:1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch:1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch:1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC024: Verify snmp community string can comprise of alphanumeric characters with a .
+    config  node=s1  cmd=snmp-server community ro bigswitch.1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch.1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch.1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch.1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+
+TC025: Verify snmp community string can comprise of alphanumeric characters with a ~
+    config  node=s1  cmd=snmp-server community ro bigswitch~1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch~1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch~1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch~1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature
+    
+TC026: Verify snmp community string can comprise of alphanumeric characters with a <
+    config  node=s1  cmd=snmp-server community ro bigswitch<1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_1}=  snmp cmd  s1  snmpget  bigswitch\\<1234  sysContact.0
+    Should Contain   ${snmp_key_1}   ${snmp_contact_1}
+    config  node=s1  cmd=no snmp-server community ro bigswitch<1234
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${snmp_key_2}=  snmp cmd  s1  snmpget  bigswitch\\<1234  sysContact.0
+    Should Not Contain   ${snmp_key_2}   ${snmp_contact_1}
+    [Tags]  full  feature  runthis
+
+    
+* Keywords  
+community suite setup
+    base suite setup
+    cli add snmp keyword   s1   community   ${snmp_ccommunity_1}
+    cli add snmp keyword   s1   location    ${snmp_location_1}
+    cli add snmp keyword   s1   contact     ${snmp_contact_1}
+    cli enable snmp   s1
+    Sleep   30
+
+community test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
+    
+verify snmp attribute  [Arguments]  ${switch}  ${attribute}  ${expected_value}               
+    ${snmp_key} =     snmp cmd   ${switch}   snmpget    ${snmp_community_1}   ${attribute}  
+    Should Contain   ${snmp_key}   ${expected_value}
+
+community test teardown
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+    
+community suite teardown
+    config  node=s1  cmd=no snmp-server location ${snmp_location_1}
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    config  node=s1  cmd=no snmp-server contact ${snmp_contact_1}
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    config  node=s1  cmd=no snmp-server enable
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    Sleep   30
+    base suite teardown

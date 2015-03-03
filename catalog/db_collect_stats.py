@@ -208,8 +208,12 @@ def display_stats(args):
     total['tests'] = total_tc
 
 
+    # !!! FIXME: unspecified-topology will need to be removed.
     for functionality in cat.test_types() + ["virtual",
                                              "physical",
+                                             "unspecified-topology",
+                                             "generic-topology",
+                                             "missing-topology",
                                              "manual",
                                              "manual-untested"]:
         total_tc_func = ih.total_testcases_by_tag(functionality)[0]
@@ -230,6 +234,18 @@ def display_stats(args):
     print_stat3("Total physical test cases:",
                 total_physical,
                 percentage(total_physical, total_tc))
+    total_unspecified_topology = ih.total_testcases_by_tag('unspecified-topology')[0]
+    print_stat3("Total unspecified-topology test cases:",
+                total_unspecified_topology,
+                percentage(total_unspecified_topology, total_tc))
+    total_generic_topology = ih.total_testcases_by_tag('generic-topology')[0]
+    print_stat3("Total generic-topology test cases:",
+                total_generic_topology,
+                percentage(total_generic_topology, total_tc))
+    total_missing_topology = ih.total_testcases_by_tag('missing-topology')[0]
+    print_stat3("Total missing-topology test cases:",
+                total_missing_topology,
+                percentage(total_missing_topology, total_tc))
     total_manual = ih.total_testcases_by_tag('manual')[0]
     print_stat3("Total manual test cases:",
                 total_manual,
@@ -314,6 +330,9 @@ def display_stats(args):
 
     for functionality in cat.test_types() + ['virtual',
                                              'physical',
+                                             'unspecified-topology',
+                                             'generic-topology',
+                                             'missing-topology',
                                              "manual",
                                              "manual-untested"]:
         total_executed = ih.total_testcases_by_tag_executed(functionality)
@@ -382,11 +401,16 @@ def display_stats(args):
     print ""
     print "Manual Verification Details"
     print "==================================================================="
-    test_case_cursor = cat.find_test_cases_archive_matching_build(build_name=build)
+    # test_case_cursor = cat.find_test_cases_archive_matching_build(build_name=build)
+    test_case_cursor = ih.testcases_archive(release=ih.release_lowercase(), build=build)
     # print "Total test cases for build '%s': %s" % (build, test_case_cursor.count())
     i = 0
     pass_rate = {}
     details_str = ""
+
+    # print "XXXX release: %s, build: %s, tc total: %s" % (ih.release_lowercase(),
+    #                                                build,
+    #                                                test_case_cursor.count())
     for test_case in test_case_cursor:
         # if (('jira' in test_case and test_case['jira']) or
         #    ('notes' in test_case and test_case['notes'])):
@@ -409,10 +433,12 @@ def display_stats(args):
                 build_name_verified = test_case['build_name_verified']
             else:
                 build_name_verified = None
+
             if 'jira' in test_case and test_case['jira']:
                 jira = test_case['jira']
             else:
                 jira = None
+
             if 'notes' in test_case and test_case['notes']:
                 notes = test_case['notes']
             else:
@@ -427,6 +453,7 @@ def display_stats(args):
             details_str += "\tjira        : %s\n" % jira
             details_str += "\tnotes       : %s\n" % notes
             details_str += ""
+
     if i == 0:
         print "None"
     else:

@@ -21,6 +21,15 @@ if [ "$BUILD_NAME"x = x ]; then
     usage
 fi
 
+# !!! FIXME: This code is duplicated from run_repopulate_build_baseline.sh.
+if [ "$TEST_CATALOG_LOG_DIR"x = x ]; then
+    ts=`date "+%Y-%m-%d_%H%M%S"`
+    dest=.data.$ts
+    mkdir $dest
+    export TEST_CATALOG_LOG_DIR=$dest
+    echo "TEST_CATALOG_LOG_DIR='$TEST_CATALOG_LOG_DIR'"
+fi
+
 ts=`date "+%Y-%m-%d_%H%M%S"`
 
 ./db_chk_build_name.py
@@ -35,7 +44,7 @@ fi
 if [ $# -eq 0 ]; then
     # If ../testlogs exists then look for output.xml there
     if [ -d ../testlogs ]; then
-        infile=input_list.$ts.txt
+        infile=${TEST_CATALOG_LOG_DIR}/input_list.$ts.txt
         echo "Looking for output.xml files in ../testlogs/ directory."
         find ../testlogs -name output.xml > $infile
         if [ ! -s $infile ]; then
@@ -54,13 +63,13 @@ else
 fi
 
 progname=`basename $0`
-outfile=raw_data.${progname}.output.$ts.log
+outfile=${TEST_CATALOG_LOG_DIR}/raw_data.${progname}.output.$ts.log
 
-rm -f test_suites_regression.json test_cases_regression.json
+#rm -f test_suites_regression.json test_cases_regression.json
 
 time ./parse_test_xml_output.py \
         --input=$infile \
-        --output-suites=test_suites_regression.json \
-        --output-testcases=test_cases_regression.json \
+        --output-suites=${TEST_CATALOG_LOG_DIR}/test_suites_regression.json \
+        --output-testcases=${TEST_CATALOG_LOG_DIR}/test_cases_regression.json \
         --is-regression > $outfile 2>&1
 

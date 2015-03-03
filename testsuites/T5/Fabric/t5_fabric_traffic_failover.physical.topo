@@ -51,27 +51,27 @@ s8:
   user: admin
   password: adminadmin
 h1:
-  ip: 10.195.0.103
+  ip: 10.9.16.13
   user: root
   password: bsn
 h2:
-  ip: 10.195.0.104
+  ip: 10.9.16.14
   user: root
   password: bsn
 h3:
-  ip: 10.195.0.101
+  ip: 10.9.16.11
   user: root
   password: bsn
 h4:
-  ip: 10.195.0.102
+  ip: 10.9.16.12
   user: root
   password: bsn
 h5:
-  ip: 10.195.0.105
+  ip: 10.9.16.15
   user: root
   password: bsn
 h6:
-  ip: 10.195.0.106
+  ip: 10.9.16.16
   user: root
   password: bsn
 tg1:

@@ -1,0 +1,123 @@
+* Settings
+Documentation   	Test suite with tests to check pages, hover over menu and check elements. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Force Tags      	BigTap  GUI
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Library         	keywords/BsnCommon.py
+#Library         	keywords_dev/tomasz/BigTap.py
+Library        		keywords/BsnSelenium.py
+Library        		SeleniumLibrary
+Library       		String
+Resource        	keywords_dev/Sahaja/bigtap_resource.txt
+Library  			keywords_dev/Sahaja/BigTap.py 
+Library  			keywords_dev/Sahaja/SwitchLight.py
+Library             keywords/AppController.py
+Library             keywords/Ixia.py
+Library             Collections.py
+Library             OperatingSystem.py
+
+* Variable
+@{fil_intf}       2 
+${switch_1_alias}   fil_switch
+${switch_2_alias}   del_switch
+
+${policy_name_1}    POLICY1
+${policy_name_2}    POLICY2
+
+${filter_1}         ethernet2  
+${filter_1_nick}    ixia-2-25 
+${delivery_1}       ethernet2  
+${delivery_1_nick}  ixia-1-26
+${col_ip}			10.8.33.10
+
+
+*Test Case
+### Check Pages		
+T1.1 Configure sflow collector ip
+	Configure sflow   10.8.3.33
+    ${collector_return}=  rest verify sflow config    collector   10.8.33.10
+    Should be true  ${collector_return}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+    [Tags]  feature  sanity 	
+    
+T1.2 Configure sflow collector ip and udp port
+	Configure sflow udp port  10.9.1.2   6345
+	${config_sflow}=  rest config sflow collector   ${col_ip}   col_param=udp-port  col_param_val=6345 
+	Should be true  ${config_sflow}
+    ${collector_return}=  rest verify sflow config    collector   ${col_ip}  col_param=udp-port   col_sub_param_val=6345
+    Should be true  ${collector_return}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample}     
+    [Tags]  feature  sanity 	
+    
+T1.3 Configure sample rate
+	Configure sflow Settings Sample Rate   5000
+	${sample_ret}=  rest verify sflow config    sample-rate  5000
+    Should be true  ${sample_ret}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample}  
+    ${sample_rate}=  switch sflow sample rate   s1  5000  @{fil_intf}
+    Should be true  ${sample_rate}
+    [Tags]  feature  sanity  		
+
+T1.4 Configure header size
+	Configure sflow Settings Header Size  256
+    ${header_ret}=  rest verify sflow config    max-header-size   256
+    Should be true  ${header_ret}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 	
+    [Tags]  feature  sanity  
+    
+T1.5 Configure counter interval
+	Configure sflow Counter Interval  100   second(s)
+    ${counter_ret}=  rest verify sflow config    counter-interval   100
+    Should be true  ${counter_ret}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 		
+    [Tags]  feature  sanity   run
+        
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}=            get node ip   master
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+	Delete All Big Tap Resources
+    rest add switch alias  s1  ${switch_1_alias}
+    rest add switch alias  s2  ${switch_2_alias}
+
+    rest add interface role  s1  ${filter_1}  filter  ${filter_1_nick}  
+    rest add interface role  s2  ${delivery_1}  delivery  ${delivery_1_nick}
+    
+    rest add policy  admin-view  ${policy_name_1}  forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${filter_1_nick}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${delivery_1_nick}  delivery 
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+
+config suite teardown
+	delete traffic
+    rest delete policy  admin-view   ${policy_name_1}
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_1_nick} 
+    rest delete interface role  s2  ${delivery_1}  delivery  ${delivery_1_nick}
+    rest delete interface  s1  ${filter_1}  switch_alias=${switch_1_alias}  
+    rest delete interface  s2  ${delivery_1}  switch_alias=${switch_2_alias}  
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch  s1
+    rest delete switch  s2
+	Close Browser
+    Stop Selenium Server
+    base suite teardown
+    
+ 

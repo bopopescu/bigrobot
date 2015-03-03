@@ -524,7 +524,6 @@ class Test(object):
             if not self._setup_in_progress:
                 self.setup()
 
-        # helpers.prettify_log("_topology:", self._topology)
         if name and node:
             name = self.alias(name, ignore_error=ignore_error)
             self._topology[name] = node
@@ -860,8 +859,10 @@ class Test(object):
                 try:
                     # IXIA support is not available in some packages. So
                     # load it only if it is truly required.
+                    import sys
                     import autobot.node_ixia as node_ixia
-                except:
+                except Exception, e:
+                    helpers.log("Unexpect IXIA Error: \n %s" % str(e))
                     helpers.environment_failure("Unable to import node_ixia")
             if platform.lower() == 'ixia':
                 n = node_ixia.IxiaNode(node, t)
@@ -885,7 +886,7 @@ class Test(object):
                            br_utils.end_of_output_marker()))
         return n
 
-    def node_disconnect(self, node=None):
+    def node_disconnect(self, node=None, delete_session_cookie=True):
         """
         Disconnect the node's SSH/Telnet sessions.
         If node name is not specified, disconnect all the nodes. If node name
@@ -903,10 +904,13 @@ class Test(object):
             for _, handle in self.topology().items():
                 node_handles.append(handle)
         for h in node_handles:
-            h.close()
+            if helpers.is_controller(h.name()):
+                h.close(delete_session_cookie=delete_session_cookie)
+            else:
+                h.close()
             del self._topology[h.name()]
 
-    def node_reconnect(self, node, **kwargs):
+    def node_reconnect(self, node, delete_session_cookie=True, **kwargs):
         helpers.log("Node reconnect for '%s'" % node)
 
         if helpers.is_controller(node):
@@ -936,10 +940,16 @@ class Test(object):
         else:
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
-        self.node(node).close()
+
+        if helpers.is_controller(node_name):
+            self.node(node_name).close(delete_session_cookie=delete_session_cookie)
+        else:
+            self.node(node_name).close()
+
         c = self.node_connect(node_name, quiet=1, **kwargs)
-        if helpers.is_controller(node):
-            c.rest.request_session_cookie()
+        if helpers.is_controller(node_name):
+            helpers.log("Create HTTP session cookie for '%s'" % node_name)
+            self.setup_controller_http_session_cookie(node_name)
         return self.node(node)
 
     def dev_console(self, node, modeless=False, expect_console_banner=False):
@@ -1055,19 +1065,25 @@ class Test(object):
         p.cli(str(reboot_cmd).encode('ascii'))
         p.close()
 
-    def power_cycle(self, node, minutes=5):
+    def power_cycle(self, node, minutes=0):
         self._pdu_mgt(node, 'reboot')
         helpers.log("Power cycled '%s'. Sleeping for %s minutes while it comes up."
                     % (node, minutes))
         helpers.sleep(int(minutes) * 60)
 
-    def power_down(self, node):
+    def power_down(self, node, minutes=0):
         self._pdu_mgt(node, 'off')
         helpers.log("Powered down '%s'" % node)
+        helpers.log("Powered down '%s'. Sleeping for %s minutes while it comes up."
+                    % (node, minutes))
+        helpers.sleep(int(minutes) * 60)
 
-    def power_up(self, node):
+    def power_up(self, node, minutes=0):
         self._pdu_mgt(node, 'on')
         helpers.log("Powered up '%s'" % node)
+        helpers.log("Powered up '%s'. Sleeping for %s minutes while it comes up."
+                    % (node, minutes))
+        helpers.sleep(int(minutes) * 60)
 
     def initialize(self):
         """
@@ -1245,33 +1261,33 @@ class Test(object):
             helpers.environment_failure("'%s' - Source file does not exist: %s"
                                         % (name, source_file))
         (_, error_code) = self._sudo_with_error_code(name,
-                                'grep -e "BigRobot mod" %s' % source_file)
+                                'grep -E "(BigRobot|QA) mod" %s' % source_file)
         if error_code == 0:
-            helpers.log("'%s' - BigRobot idle timeout modifications have already been applied."
+            helpers.log("'%s' - QA idle timeout modifications have already been applied."
                         % name)
             return False
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep -e "^command.cli.interactive_read_timeout" %s'
+                            'grep -E "^command.cli.interactive_read_timeout" %s'
                             % source_file)
         if error_code != 0:
             helpers.environment_failure("Cannot find interactive_read_timeout in %s on '%s'."
                                         % (source_file, name))
 
         helpers.log("'%s' - Modifying source file: %s" % (name, source_file))
-        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (BigRobot mod)/" %s'
+        n.sudo('sed -i.orig "s/^command.cli.interactive_read_timeout.*/command.cli.interactive_read_timeout( 1000 \* 60 ) \# 1000 minutes (QA mod)/" %s'
                % source_file)
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep "command.cli.interactive_read_timeout.*BigRobot mod" %s'
+                            'grep -E "command.cli.interactive_read_timeout.*(BigRobot|QA) mod" %s'
                             % source_file)
         if error_code != 0:
             helpers.environment_failure("Not able to modify idle time in %s on '%s'."
                                         % (source_file, name))
 
-        n.sudo('grep -e "^command.cli.interactive_read_timeout" %s'
+        n.sudo('grep -E "^command.cli.interactive_read_timeout" %s'
                % source_file)
         return True
 
@@ -1288,30 +1304,30 @@ class Test(object):
             helpers.environment_failure("'%s' - Source file does not exist: %s"
                                         % (name, source_file))
         (_, error_code) = self._sudo_with_error_code(name,
-                                'grep -e "BigRobot mod" %s' % source_file)
+                                'grep -E "(BigRobot|QA) mod" %s' % source_file)
         if error_code == 0:
-            helpers.log("'%s' - BigRobot reauth timeout modifications have already been applied."
+            helpers.log("'%s' - QA reauth timeout modifications have already been applied."
                         % name)
             return False
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep -e "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
+                            'grep -E "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
                             % source_file)
         if error_code == 0:
-            helpers.environment_failure("Found sessionCacheSpec in %s on '%s'. Possibly a change was recently made to Floodlight source which conflicts with BigRobot mod."
+            helpers.environment_failure("Found sessionCacheSpec in %s on '%s'. Possibly a change was recently made to Floodlight source which conflicts with QA mod."
                                         % (source_file, name))
 
         helpers.log("'%s' - Modifying source file: %s" % (name, source_file))
-        n.sudo('echo \'JVM_OPTS="$JVM_OPTS -Dorg.projectfloodlight.db.auth.sessionCacheSpec=maximumSize=1000000,expireAfterAccess=100d"  # 100 days (BigRobot mod)\' | sudo tee -a %s'
+        n.sudo('echo \'JVM_OPTS="$JVM_OPTS -Dorg.projectfloodlight.db.auth.sessionCacheSpec=maximumSize=1000000,expireAfterAccess=100d"  # 100 days (QA mod)\' | sudo tee -a %s'
                % source_file)
 
         (_, error_code) = self._sudo_with_error_code(
                             name,
-                            'grep -e "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
+                            'grep -E "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
                             % source_file)
         if error_code != 0:
-            helpers.environment_failure("Not able to modify idle time in %s on '%s'."
+            helpers.environment_failure("Not able to modify reauth time in %s on '%s'."
                                         % (source_file, name))
 
         self.checkpoint("Restarting floodlight to put new reauth timeout into effect.")
@@ -1350,9 +1366,12 @@ class Test(object):
         else:
             helpers.log("reconfig_reauth=%s" % reconfig_reauth)
 
+        helpers.log("I am here... status1=%s status2=%s" % (status1, status2))
         if status1 or status2:
             # Reconnect to device if updates were made to idle/reauth
             # properties.
+
+            helpers.log("Reconnecting nodes")
             self.node_reconnect(name)
         return True
 

@@ -20,17 +20,18 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  feature  IronHorse     
+   [Tags]  L2  feature  IronHorse   daily-sanity
    base suite setup
-   add fabric switch
+   fabric infra suite setup
    Set swith int variables
    Set switch dpid variables
-   sleep  5
+   Set host int variables
+   sleep  15
    rest verify fabric switch all
    rest verify fabric link
    
 tagged/untagged packet Mac move within the rack0
-	[Tags]  L2  feature  IronHorse    
+	[Tags]  L2  feature  IronHorse    daily-sanity
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -91,7 +92,7 @@ tagged/untagged packet move between rack
   
 
 Mac move between the vns same tenant
-	[Tags]  L2  feature  IronHorse
+	[Tags]  L2  feature  IronHorse  daily-sanity
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add vns  t1  v2
@@ -282,6 +283,7 @@ verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
     Should Be True   -4 < ${result} < 1
     
 T5 test teardown
+	base test teardown
 	delete traffic
 	rest delete tenant  t1
   

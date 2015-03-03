@@ -19,23 +19,19 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature  IronHorse  
+	[Tags]  Fabric  feature  IronHorse   daily-sanity
 	base suite setup     
-    add fabric switch
+    fabric infra suite setup
     Set swith int variables
     Set switch dpid variables
-    bring up h1 bond0
-    bring up h2 bond0
-    bring up h3 bond0
-    bring up h4 bond0
-    bring up h5 bond0
-    bring up h6 bond0
+    Set host int variables
     sleep  5
     rest verify fabric switch all
-	rest verify fabric link 	
+	rest verify fabric link 
+	Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common	
 
 Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
-    [Tags]  Fabric  feature  IronHorse  
+    [Tags]  Fabric  feature  IronHorse   daily-sanity
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -89,7 +85,7 @@ Spine Link Failover/back test from leaf0-b tagged packet
     rest delete tenant  t2    
 
 Peer link failover between leaf1a to leaf1b
-	[Tags]  Fabric  feature  IronHorse    
+	[Tags]  Fabric  feature  IronHorse    daily-sanity
 	rest add tenant  t2
     rest add vns  t2  v2
     rest add interface to vns  t2  v2  leaf1-a  ${leaf1a_ixia_intf}  -1
@@ -159,9 +155,9 @@ Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
     sleep  2
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} < 50
-    sleep  90
+    sleep  190
     cli restart switch  leaf2-b
-    sleep  90
+    sleep  190
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} < 50
    rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
@@ -214,7 +210,7 @@ Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
     rest delete portgroup  p4  
 
 change portgroup from lacp to static and verify the forwarding
-	[Tags]  Fabric  feature  IronHorse  
+	[Tags]  Fabric  feature  IronHorse   daily-sanity
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -323,35 +319,4 @@ T5 test teardown
 	base test teardown
 	delete traffic
 	rest delete tenant  t1
-	rest delete tenant  t2
-
-
-bring up h1 bond0
-	bash init intf  h1  bond0.10
-    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
-    bash ifup intf  h1   bond0 
-bring up h2 bond0
-	bash init intf  h2  bond0.10
-    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
-    bash ifup intf  h2  bond0
-bring up h3 bond0
-	bash init intf  h3  bond0.10
-    bash add ip address  h3  ${h3_tag_ip}/24  bond0.10
-    bash ifup intf  h3  bond0 
-bring up h4 bond0
-	bash init intf  h4  bond0
-    bash add ip address  h4  ${h4_ip}/24  bond0
-    bash ifup intf  h4  bond0
-bring up h5 bond0
-	bash init intf  h5  bond0
-    bash add ip address  h5  ${h5_ip}/24  bond0
-    bash ifup intf  h5  bond0
-bring up h6 bond0
-	bash init intf  h6  bond0
-    bash add ip address  h6  ${h6_ip}/24  bond0
-    bash ifup intf  h6  bond0 
-bring up 1 gig interface
-	bash execute command  leaf0-a  ofad-ctl autoneg 25
-	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-a  ofad-ctl autoneg 25
-	bash execute command  leaf1-a  ofad-ctl autoneg 26 
+	rest delete tenant  t2 

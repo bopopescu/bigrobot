@@ -1,7 +1,7 @@
-== T5 L2  feature CLI Test Suite ==
+== T5 L2  feature     daily-sanity CLI Test Suite ==
 
 * Setting
-Documentation    T5 BVS APP L2  feature CLI Test Suite
+Documentation    T5 BVS APP L2  feature     daily-sanity CLI Test Suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
@@ -17,17 +17,19 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  feature  IronHorse 
+   [Tags]  L2  feature     daily-sanity  IronHorse 
    Set swith int variables
-   Set switch dpid variables      
+   Set switch dpid variables
+   Set host int variables      
    base suite setup
-   add fabric switch
-   sleep  5
+   fabric infra suite setup
+   sleep  35
    rest verify fabric switch all
    rest verify fabric link
+   Wait Until Keyword Succeeds   5 min  30 sec  rest verify fabric link common
 
 add/delete a tenant with different characters
-   [Tags]   L2  feature  IronHorse
+   [Tags]   L2  feature     daily-sanity  IronHorse
    add a tenant  t1
    sleep  1
    rest verify tenant
@@ -43,14 +45,14 @@ add/delete a tenant with different characters
    delete a tenant  'abcdefghijklmnopqrstuvwxyz'  
    
 add tenant of same name
-	[Tags]  L2  feature  IronHorse 
+	[Tags]  L2  feature     daily-sanity  IronHorse 
 	add a tenant  t1
 	add a tenant  t1
 	rest verify tenant
 	delete a tenant  t1  
 
 add/delete a vns
-   [Tags]  L2  feature  IronHorse
+   [Tags]  L2  feature     daily-sanity  IronHorse
    add a tenant  t1
    add a vns  t1  v1 
    rest verify vns
@@ -65,7 +67,7 @@ add/delete a vns
    Should not be True  ${result} 
 
 add a multiple vns different name single tenant 
-   [Tags]  L2  feature  IronHorse
+   [Tags]  L2  feature     daily-sanity  IronHorse
    add a tenant  t1
    add a vns  t1  v1
    add a vns  t1  v2
@@ -74,7 +76,7 @@ add a multiple vns different name single tenant
    delete a tenant  t1
 
 add a multiple vns same name single tenant 
-   [Tags]  L2  feature  IronHorse
+   [Tags]  L2  feature     daily-sanity  IronHorse
    add a tenant  t1
    add a vns  t1  v1
    add a vns  t1  v1
@@ -82,7 +84,7 @@ add a multiple vns same name single tenant
    delete a tenant  t1   
    
 add a multiple vns same name on different tenant
-	[Tags]  L2  feature  IronHorse
+	[Tags]  L2  feature     daily-sanity  IronHorse
    add a tenant  t1
    add a tenant  t2
    add a vns  t1  v1
@@ -92,7 +94,7 @@ add a multiple vns same name on different tenant
    delete a tenant  t2 
    
 add/verify a portgroup with invalid port-group and switch name
-   [Tags]  L2  feature  IronHorse  
+   [Tags]  L2  feature     daily-sanity  IronHorse  
    rest add portgroup  p1
    ${result}=  rest add portgroup  '12'
    Should not be True  ${result}
@@ -101,7 +103,7 @@ add/verify a portgroup with invalid port-group and switch name
    delete a portgroup  p1
    
 add/verify a portgroup from different rack 
-	[Tags]  L2  feature  IronHorse
+	[Tags]  L2  feature     daily-sanity  IronHorse
 	add a portgroup  p1
 	add interface to portgroup  leaf0-a  ${h1_intf0}  p1
 	${result}=  add interface to portgroup  leaf1-a  ${h3_intf0}  p1
@@ -110,7 +112,7 @@ add/verify a portgroup from different rack
 	delete a portgroup  p1
 
 Adding same interface to multiple VNS without tag
-   [Tags]  L2  feature  IronHorse
+   [Tags]  L2  feature     daily-sanity  IronHorse
    add a tenant  t1
    add a tenant  t2
    add a vns  t1  v1
@@ -122,7 +124,7 @@ Adding same interface to multiple VNS without tag
    delete a tenant  t2
    
 adding same interface to multiple VNS with same tag
-	[Tags]  L2  feature  IronHorse
+	[Tags]  L2  feature     daily-sanity  IronHorse
 	add a tenant  t1
     add a vns  t1  v1
     add a vns  t1  v2
@@ -132,7 +134,7 @@ adding same interface to multiple VNS with same tag
    delete a tenant  t1
    
 add same interface to multiple tag onto same VNS
-	[Tags]  L2  feature  IronHorse
+	[Tags]  L2  feature     daily-sanity  IronHorse
 	add a tenant  t1
 	add a vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  100
@@ -141,7 +143,7 @@ add same interface to multiple tag onto same VNS
 	delete a tenant  t1
 
 Tear down the config
-   [Tags]  L2  feature  IronHorse
+   [Tags]  L2  feature     daily-sanity  IronHorse
    delete fabric switch
    base suite teardown
 

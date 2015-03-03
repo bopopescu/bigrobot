@@ -1,20 +1,20 @@
 * Setting
-Documentation   BigTap Test Suite Release:Blackbird Feature:Prefix/VLAN Optimization
-Suite Setup     Bigtap list op l3_l4 suite setup
-Suite Teardown  Bigtap list op l3_l4 suite teardown
-Test Setup      Bigtap list op l3_l4 case setup
-Test Teardown   Bigtap list op l3_l4 case teardown
-Force Tags      BigTap  Optimization  blackbird
-Library         keywords_dev/mingtao/Common.py
-Library                 keywords/BsnCommon.py
-Library                 keywords/AppController.py
-Library                 keywords/BigTap.py
-Library                 keywords/SwitchLight.py
-Library                 keywords/Ixia.py
-Library                 Collections.py
-Library                 OperatingSystem.py
-Library                 String.py
-Resource	    testsuites/BigTap/blackbird_list_op_l34_resource.txt
+Documentation               BigTap Test Suite Release:Blackbird Feature:Prefix/VLAN Optimization
+Suite Setup                 Bigtap list op l3_l4 suite setup
+Suite Teardown              Bigtap list op l3_l4 suite teardown
+Test Setup                  Bigtap list op l3_l4 case setup
+Test Teardown               Bigtap list op l3_l4 case teardown
+Force Tags                  BigTap  blackbird-300  Quanta-LB9  optimization
+Library                     keywords_dev/mingtao/Common.py
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
+Resource	                testsuites/BigTap/blackbird_list_op_l34_resource.txt
 
 
 * Variable
@@ -42,10 +42,9 @@ T2.1 Ipv4 prefix list optimization
      Config ipv4 list src                 P1    "G_1"   10
      Config ipv4 list dst                 P1    "G_1"   20
      Sleep     ${medium}       
-	 Verify optimized match    P1   2
+     Verify optimized match    P1   2
      Verify switch entry       ${sw1}   2
-
-	[Tags]   sanity    optimization    BigTap   blackbird    
+     [Tags]  sanity  feature
 
 
 T2.2 Ipv4 prefix list optimization and ip  
@@ -56,8 +55,7 @@ T2.2 Ipv4 prefix list optimization and ip
      Sleep     ${medium}       
 	 Verify optimized match    P1   2
      Verify switch entry       ${sw1}   2
-
-	[Tags]   sanity   optimization     BigTap   blackbird     
+     [Tags]  sanity  feature
 
 T2.3 Ipv4 prefix list and ip double optimizaton 
      log   Failed:BSC-4610
@@ -70,10 +68,7 @@ T2.3 Ipv4 prefix list and ip double optimizaton
      Sleep     ${medium}       
 	 Verify optimized match    P1     2
      Verify switch entry       ${sw1}   2
-
-	[Tags]   feature   optimization     BigTap   blackbird       JIRA-BSC-4610
-
-
+     [Tags]  sanity  feature  JIRA-BSC-4610
 
 T2.4 Ipv6 prefix list optimization
      Config number of ipv6 entries        G_1      f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0     32  
@@ -83,9 +78,7 @@ T2.4 Ipv6 prefix list optimization
      Sleep     ${medium}       
 	 Verify optimized match    P1   2
      Verify switch entry       ${sw1}   2
-
-	[Tags]   sanity     optimization   BigTap   blackbird    
-
+     [Tags]  sanity  feature
 
 T2.5 Ipv6 prefix list optimization and src address 
      Config number of ipv6 entries        G_1      f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0       32  
@@ -95,9 +88,8 @@ T2.5 Ipv6 prefix list optimization and src address
      Sleep     ${medium}       
 	 Verify optimized match    P1   2
      Verify switch entry       ${sw1}   2
-
-	[Tags]   sanity     optimization   BigTap   blackbird    
-
+     [Tags]  sanity  feature
+     
 T2.6 Ipv6 prefix list and ip double optimizaton 
      log   Failed:BSC-4610
      Config number of ipv6 entries        G_1      f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0     8  
@@ -109,8 +101,7 @@ T2.6 Ipv6 prefix list and ip double optimizaton
      Sleep     ${medium}       
 	 Verify optimized match    P1     2
      Verify switch entry       ${sw1}   2
-
-	[Tags]   feature   optimization    BigTap   blackbird      JIRA-BSC-4610
+     [Tags]  sanity  feature  JIRA-BSC-4610
 
 
 T2.7 Ipv4 single tcp udp vlan optimization
@@ -123,8 +114,7 @@ T2.7 Ipv4 single tcp udp vlan optimization
      Sleep     ${medium}       
 	 Verify optimized match    P1        8
      Verify switch entry       ${sw1}      8
-
-	[Tags]   sanity      optimization   BigTap   blackbird    
+     [Tags]  sanity  feature
 
 
 T2.8 Ipv6 tcp udp vlan single optimization
@@ -137,9 +127,7 @@ T2.8 Ipv6 tcp udp vlan single optimization
      Sleep     ${medium}       
 	 Verify optimized match    P1     7
      Verify switch entry       ${sw1}   7
-
-	[Tags]   sanity    optimization    BigTap   blackbird    
-
+     [Tags]  sanity  feature
  
  T2.9 Ipv4/6 vlan tcp/udp single optimization
      Config bigtap policy              P1    ${sw1_f1}     ${sw1_d1}	 
@@ -151,8 +139,7 @@ T2.8 Ipv6 tcp udp vlan single optimization
      Sleep     ${medium}       
 	 Verify optimized match    P1     5
      Verify switch entry       ${sw1}   5
-
-	[Tags]   sanity    optimization    BigTap   blackbird    
+     [Tags]  sanity  feature
 
 
  T2.10 Ipv4/6 vlan tcp/udp port range double optimization
@@ -165,8 +152,7 @@ T2.8 Ipv6 tcp udp vlan single optimization
      Sleep     ${medium}       
 	 Verify optimized match    P1     4
      Verify switch entry       ${sw1}   4
-
-	[Tags]   feature      optimization    BigTap   blackbird    
+     [Tags]  sanity  feature
 
 
  T2.11 Ipv4/6 ip list vlan tcp/udp port range triple optimization
@@ -182,12 +168,10 @@ T2.8 Ipv6 tcp udp vlan single optimization
      Config ipv6 ip list dst vlan range + tcp d range      P1   "G2"  120     2048    4095    8192   16383    
      Config ipv4 ip list dst vlan range + udp d range      P1   "G1"  130     1024    2047    4096   8191    
      Config ipv6 ip list dst vlan range + udp s range      P1   "G2"  140     2048    4095    16384   32767
-      
      Sleep     ${medium}       
 	 Verify optimized match    P1     8
      Verify switch entry       ${sw1}   8
-
-	[Tags]   feature      optimization   BigTap   blackbird    
+     [Tags]  sanity  feature
   
 
  T2.12 Ipv4/6 ip list ip vlan tcp/udp port range triple optimization
@@ -198,17 +182,14 @@ T2.8 Ipv6 tcp udp vlan single optimization
      Config ipv6 ip list src ip vlan range + tcp d range      P1   "G2"  20   ${bip6}     ${bmask6}   2048    4095    8192   16383    
      Config ipv4 ip list src ip vlan range + udp d range      P1   "G1"  30   ${bip}     ${bmask}    1024    2047    4096   8191    
      Config ipv6 ip list src ip vlan range + udp s range      P1   "G2"  40   ${bip6}     ${bmask6}   2048    4095    16384   32767
- 
      Config ipv4 ip list dst ip vlan range + tcp s range      P1   "G1"  110   ${bip}     ${bmask}   1024    2047    4096   8191       
      Config ipv6 ip list dst ip vlan range + tcp d range      P1   "G2"  120   ${bip6}     ${bmask6}   2048    4095    8192   16383    
      Config ipv4 ip list dst ip vlan range + udp d range      P1   "G1"  130   ${bip}     ${bmask}    1024    2047    4096   8191    
      Config ipv6 ip list dst ip vlan range + udp s range      P1   "G2"  140   ${bip6}     ${bmask6}   2048    4095    16384   32767
-      
      Sleep     ${medium}       
 	 Verify optimized match    P1     8
      Verify switch entry       ${sw1}   8
-
-	[Tags]   feature    optimization    BigTap   blackbird    
+     [Tags]  sanity  feature
 
 
  T2.13 Ipv4/6 prefix overlap entries optimization
@@ -240,11 +221,7 @@ T2.8 Ipv6 tcp udp vlan single optimization
      Sleep     ${medium}       
 	 Verify optimized match    P1     2
      Verify switch entry       ${sw1}   2
-
-	[Tags]   feature    optimization    BigTap   blackbird       JIRA-BT-786
-
-
-
+     [Tags]  sanity  feature  JIRA-BT-786
 
 T2.101 Ipv4 prefix list optimization scale
      Config number of ipv4 entries        G1     10.0.0.0    0.0.0.1    255.255.255.255    512
@@ -254,8 +231,7 @@ T2.101 Ipv4 prefix list optimization scale
      Sleep     ${medium}       
 	 Verify optimized match    P1   2
      Verify switch entry       ${sw1}   2
-
-	[Tags]   scaling    optimization    BigTap   blackbird    
+     [Tags]  sanity  scaling
 	
 T2.102 Ipv6 prefix list optimization scale
      Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}
@@ -265,7 +241,4 @@ T2.102 Ipv6 prefix list optimization scale
      Sleep     ${medium}       
 	 Verify optimized match    P1   2
      Verify switch entry       ${sw1}   2
-
-	[Tags]   scaling  optimization   BigTap   blackbird  runthis    
-
-   
+     [Tags]  sanity  scaling

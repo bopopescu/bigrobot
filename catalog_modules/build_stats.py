@@ -33,6 +33,11 @@ class BuildStats(object):
             query['build_name'] = self._build_name
         return testcases.find(query)
 
+    def testcases_archive(self, release=None, build=None, collection_testcases=None):
+        collection_testcases = (collection_testcases or 'test_cases_archive')
+        return self.testcases(release=release, build=build,
+                              collection_testcases=collection_testcases)
+
     def testsuites(self, **kwargs):
         """
         Returns a list containing product_suite, total_tests, and author.

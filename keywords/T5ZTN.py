@@ -36,26 +36,26 @@ class T5ZTN(object):
             or re.match(r'.*internal.*', output[4])):
             return helpers.test_failure("SL internal image in the bundle!")
         helpers.log("Trying to check if SL amd64 installer is in %s"
-                    % output[2])
-        if not re.match(r'.*switchlight*amd64*release.ztn.*installer',
-                        output[2]):
+                    % output[3])
+        if not re.match(r'.*switchlight.*ZTN-amd64-release.*installer',
+                        output[3]):
             return helpers.test_failure("SL amd64 installer not found")
         helpers.log("Trying to check if SL amd64 SWI image is in %s"
                     % output[1])
-        if not re.match(r'.*switchlight*amd64*release-bcf.*swi',
+        if not re.match(r'.*switchlight.*amd64-release.*swi',
                         output[1]):
             return helpers.test_failure("SL amd64 SWI image not found")
         helpers.log("Switch Light amd64 installer and SWI image are present")
 
         helpers.log("Trying to check if SL powerpc installer is in %s"
                     % output[4])
-        if not re.match(r'.*switchlight*powerpc*release.ztn.*installer',
+        if not re.match(r'.*switchlight.*ZTN-powerpc-release.*installer',
                         output[4]):
             return helpers.test_failure("SL powerpc installer not found")
         helpers.log("Trying to check if SL powerpc SWI image is in %s"
-                    % output[3])
-        if not re.match(r'.*switchlight*powerpc*release-bcf.*swi',
-                        output[3]):
+                    % output[2])
+        if not re.match(r'.*switchlight.*powerpc-release.*swi',
+                        output[2]):
             return helpers.test_failure("SL powerpc SWI image not found")
         helpers.log("Switch Light powerpc installer and SWI image are present")
         c.config("enable")
@@ -175,6 +175,25 @@ class T5ZTN(object):
             swi_manifest = ast.literal_eval(output)
             swi_release = swi_manifest['sha1']
             return swi_release
+
+    def controller_get_release_string(self, node='master'):
+        """
+        Get Release String of the controller bundle
+
+        Inputs:
+        | node | reference to controller as defined in .topo file |
+
+        Return Value:
+        - Controller release string, None in case of errors
+        """
+        t = test.Test()
+        c = t.controller(node)
+        content = c.config("show version | grep Version")['content']
+        output = helpers.strip_cli_output(content)
+        temp = output.split(': ')
+        temp = temp[1].strip()
+        return temp
+
 
     def telnet_get_switch_switchlight_version(self, image, hostname,
                                               password='adminadmin'):
@@ -1488,6 +1507,9 @@ class T5ZTN(object):
         t = test.Test()
         n = t.node(switch)
         s = t.dev_console(switch, modeless=True)
+        self.power_down_switch(switch)
+        helpers.sleep(10)
+        self.power_up_switch(switch)
         try:
             options = s.expect([r"Hit any key to stop autoboot",
                      "Press enter to boot the selected OS"], timeout=100)
@@ -1762,7 +1784,7 @@ class T5ZTN(object):
 
 
 
-    def power_cycle_switch(self, switch):
+    def power_cycle_switch(self, switch, minutes=0):
         """
         Power cycle a switch
 
@@ -1773,9 +1795,9 @@ class T5ZTN(object):
         - True if successfully power cycled the switch, False otherwise
         """
         t = test.Test()
-        t.power_cycle(switch)
+        t.power_cycle(switch, minutes=minutes)
         return True
-    def power_down_switch(self, switch):
+    def power_down_switch(self, switch, minutes=0):
         """
         Power cycle a switch
 
@@ -1786,10 +1808,10 @@ class T5ZTN(object):
         - True if successfully powered down the switch, False otherwise
         """
         t = test.Test()
-        t.power_down(switch)
+        t.power_down(switch, minutes=minutes)
         return True
 
-    def power_up_switch(self, switch):
+    def power_up_switch(self, switch, minutes=0):
         """
         Power cycle a switch
 
@@ -1800,7 +1822,7 @@ class T5ZTN(object):
         - True if successfully powered up the switch, False otherwise
         """
         t = test.Test()
-        t.power_up(switch)
+        t.power_up(switch, minutes=minutes)
         return True
 
     def cli_get_switch_image(self, image, switch):

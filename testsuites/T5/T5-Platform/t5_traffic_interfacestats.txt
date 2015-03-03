@@ -1,7 +1,7 @@
 * Settings
 Documentation     T5  Traffic Interface Stats Test suite- Iron Horse
-Suite Setup       T5 traffic interface stats test setup
-Suite Teardown    T5 traffic interface stats test teardown
+#Suite Setup       T5 traffic interface stats test setup
+#Suite Teardown    T5 traffic interface stats test teardown
 Test Teardown     traffic teardown
 #Force Tags        T5  IronHorse
 ...             
@@ -24,11 +24,11 @@ Setup the configuration for the interface stats traffic test
     [Tags]  T5  L2  intfStats  setup    
     T5 traffic interface stats test setup 
 
-TC1 Verify the traffic flow using Bi directional L2 Traffic flow from a<->b 
-    [Tags]    feature  L2  intfStats    
-    ${stream1}=   L2 add  name=a_b_flow1  flow=a->b  
+TC1 Verify the traffic flow using Bi directional L2 Traffic flow from a<->c 
+    [Tags]    feature  L2  intfStats  test1    
+    ${stream1}=   L2 add  name=a_c_flow1  flow=a->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
-    ...                 frame_rate=100000  frame_size=64 
+    ...                 frame_rate=100000  frame_size=1518 
     
     clear stats
     start traffic  
@@ -38,11 +38,11 @@ TC1 Verify the traffic flow using Bi directional L2 Traffic flow from a<->b
     stop traffic       
 
 TC2 Interface Stats outgoing Two different src mac and two different dst mac Uni directional L2 Traffic  
-    [Tags]    feature  L2  intfStats  test1   
-    ${learnStream1}=   L2 add  name=a_b_learnflow1  flow=a<->b  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
+    [Tags]    feature  L2  intfStats  test2   
+    ${learnStream1}=   L2 add  name=a_c_learnflow1  flow=a<->c  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
 	...						frame_size=${frame_size1}  frame_cnt=20000  
 	
-	${learnStream2}=   L2 add  name=a_b_learnflow2  flow=a<->b  src_mac=${src_mac3}  dst_mac=${dst_mac3}  frame_rate=${frame_rate1}
+	${learnStream2}=   L2 add  name=a_c_learnflow2  flow=a<->c  src_mac=${src_mac3}  dst_mac=${dst_mac3}  frame_rate=${frame_rate1}
 	...						frame_size=${frame_size1}  frame_cnt=20000  
 	
     ixia.start traffic 
@@ -52,12 +52,12 @@ TC2 Interface Stats outgoing Two different src mac and two different dst mac Uni
     ixia.delete traffic
     ixia.clear stats
     sleep  2
-    ${stream1}=   L2 add  name=a_b_flow1  flow=a->b   
+    ${stream1}=   L2 add  name=a_c_flow1  flow=a->c   
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
-    ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
-    ${stream2}=   L2 add  name=a_b_flow2  flow=a->b  
+    ...                 frame_rate=10000  frame_size=1518  frame_cnt=200000
+    ${stream2}=   L2 add  name=a_c_flow2  flow=a->c  
     ...				    src_mac=${src_mac3}  dst_mac=${dst_mac3}
-    ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
+    ...                 frame_rate=10000  frame_size=1518  frame_cnt=200000
     
     rest clear fabric interface stats 
     start traffic   
@@ -69,19 +69,20 @@ TC2 Interface Stats outgoing Two different src mac and two different dst mac Uni
     ixia.stop traffic
     sleep   5
     ${report}=     fetch port stats
-    ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames 
-    verify interface counters  ${switch1_name}  ${leaf0a_spine0_intf1}  txstat  ${ixiatx}  ${countertolerance}
-    verify interface counters  ${switch7_name}  ${spine0_leaf1a_intf1}  txstat  ${ixiatx}  ${countertolerance}
-    
     verify ixia counters traffic  transmitted_frames  received_valid_frames  ${countertolerance}
+    ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames
+    ${ixiatx1}=    EVALUATE    ${ixiatx} / 2     
+    verify interface counters  ${switch1_name}  ${leaf0a_spine0_intf1}  txstat  ${ixiatx1}  ${countertolerance}
+    verify interface counters  ${switch7_name}  ${leaf0a_spine1_intf2}  txstat  ${ixiatx1}  ${countertolerance}
+    
           
 
 TC3 Interface Stats incoming Two different src mac and two different dst mac Uni directional L2 Traffic  
-    [Tags]    feature  L2  intfStats  test2   
-    ${learnStream1}=   L2 add  name=a_b_learnflow1  flow=a<->b  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
+    [Tags]    feature  L2  intfStats  test3   
+    ${learnStream1}=   L2 add  name=a_c_learnflow1  flow=a<->c  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
 	...						frame_size=${frame_size1}  frame_cnt=20000  
 	
-	${learnStream2}=   L2 add  name=a_b_learnflow2  flow=a<->b  src_mac=${src_mac3}  dst_mac=${dst_mac3}  frame_rate=${frame_rate1}
+	${learnStream2}=   L2 add  name=a_c_learnflow2  flow=a<->c  src_mac=${src_mac3}  dst_mac=${dst_mac3}  frame_rate=${frame_rate1}
 	...						frame_size=${frame_size1}  frame_cnt=20000  
 	
     ixia.start traffic 
@@ -91,10 +92,10 @@ TC3 Interface Stats incoming Two different src mac and two different dst mac Uni
     ixia.delete traffic
     ixia.clear stats
     sleep  2
-    ${stream1}=   L2 add  name=a_b_flow1  flow=a->b   
+    ${stream1}=   L2 add  name=a_c_flow1  flow=a->c   
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
-    ${stream2}=   L2 add  name=a_b_flow2  flow=a->b  
+    ${stream2}=   L2 add  name=a_c_flow2  flow=a->c  
     ...				    src_mac=${src_mac3}  dst_mac=${dst_mac3}
     ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
     
@@ -108,18 +109,19 @@ TC3 Interface Stats incoming Two different src mac and two different dst mac Uni
     ixia.stop traffic
     sleep   5
     ${report}=     fetch port stats
-    ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames 
+    ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames
+    ${ixiatx1}=    EVALUATE    ${ixiatx} / 2 
     verify interface counters  ${switch1_name}  ${leaf0a_ixia}  rxstat  ${ixiatx}  ${countertolerance} 
-    verify interface counters  ${switch7_name}  ${spine0_leaf0a_intf1}  rxstat  ${ixiatx}  ${countertolerance} 
-      
+    verify interface counters  ${switch7_name}  ${spine0_leaf0a_intf1}  rxstat  ${ixiatx1}  ${countertolerance}   
     verify ixia counters traffic  transmitted_frames  received_valid_frames  ${countertolerance}
 
-Interface stats outgoing Same src mac to two different dst mac Uni directional L2 Traffic  
-    [Tags]    feature  L2  intfStats   
-    ${learnStream1}=   L2 add  name=a_b_learnflow1  flow=a<->b  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
+
+TC4 Interface stats outgoing Same src mac to two different dst mac Uni directional L2 Traffic  
+    [Tags]    feature  L2  intfStats  test4   
+    ${learnStream1}=   L2 add  name=a_c_learnflow1  flow=a<->c  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
 	...						frame_size=${frame_size1}  frame_cnt=20000  
 	
-	${learnStream2}=   L2 add  name=a_b_learnflow2  flow=a<->b  src_mac=${src_mac3}  dst_mac=${dst_mac3}  frame_rate=${frame_rate1}
+	${learnStream2}=   L2 add  name=a_c_learnflow2  flow=a<->c  src_mac=${src_mac3}  dst_mac=${dst_mac3}  frame_rate=${frame_rate1}
 	...						frame_size=${frame_size1}  frame_cnt=20000  
 	
     ixia.start traffic 
@@ -129,10 +131,10 @@ Interface stats outgoing Same src mac to two different dst mac Uni directional L
     ixia.delete traffic
     ixia.clear stats
     sleep  2
-    ${stream1}=   L2 add  name=a_b_flow1  flow=a->b   
+    ${stream1}=   L2 add  name=a_c_flow1  flow=a->c   
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
     ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
-    ${stream2}=   L2 add  name=a_b_flow2  flow=a->b  
+    ${stream2}=   L2 add  name=a_c_flow2  flow=a->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac3}
     ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
     
@@ -151,6 +153,7 @@ Interface stats outgoing Same src mac to two different dst mac Uni directional L
     verify interface counters  ${switch7_name}  ${spine0_leaf1a_intf1}  txstat  ${ixiatx}  ${countertolerance}
         
     verify ixia counters traffic  transmitted_frames  received_valid_frames  ${countertolerance}
+
   
     
     
@@ -187,7 +190,7 @@ verify rate traffic  [Arguments]  ${transmitted_frame_rate}  ${received_valid_fr
     Sleep  5
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frame_rate}
-    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frame_rate}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frame_rate}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance} 
     Should be true  ${in_range}
 
@@ -195,7 +198,7 @@ verify ixia counters traffic  [Arguments]  ${transmitted_frames}  ${received_val
     Sleep  5
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
-    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frames}
+    ${rx_value}=  verify dict key  ${report}  c  ${received_valid_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance}
     Should be true  ${in_range}
       

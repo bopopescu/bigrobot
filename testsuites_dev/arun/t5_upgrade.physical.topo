@@ -1,0 +1,189 @@
+ # Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: 10.9.16.48
+  monitor_reauth: false
+c2:
+  ip: 10.9.16.49
+  monitor_reauth: false
+  
+  
+s1:
+  alias: leaf0-a
+  leaf-group: rack0
+  mac: 90:B1:1C:F4:C0:12
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.201
+    port: 7024
+    protocol: telnet
+  interfaces:
+    spine0_int0: ethernet9
+    leaf0b_int0: ethernet2
+    ixia1_int0: ethernet24
+    spine1_int0: ethernet23
+  pdu:
+    ip: pdu-313-a.bigswitch.com
+    port: 1
+  set_session_ssh: false
+  set_init_ping: false
+s2:
+  alias: leaf0-b
+  leaf-group: rack0
+  mac: ec:f4:bb:fb:d1:f6
+  user: admin
+  password: adminadmin
+  interfaces:
+    leaf0a_int0: ethernet2
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet16
+    spine1_int0: ethernet9
+  console:
+    ip: 10.1.8.201
+    port: 7023
+  pdu:
+    ip: pdu-313-a.bigswitch.com
+    port: 2
+  set_session_ssh: false
+  set_init_ping: false
+s3:
+  alias: leaf1-a
+  leaf-group: rack1
+  mac: 70:72:CF:AE:B7:BA
+  user: admin
+  password: adminadmin
+  interfaces:
+    ixia1_int0: ethernet24
+    spine1_int0: ethernet21
+    leaf1b_int0: ethernet11
+    leaf1b_int1: ethernet25
+    spine0_int0: ethernet5
+  console:
+    ip: 10.1.8.201
+    port: 7003
+  pdu:
+    ip: pdu-313-b.bigswitch.com
+    port: 11
+  set_session_ssh: false
+  set_init_ping: false
+
+s4:
+  alias: leaf1-b
+  leaf-group: rack1
+  mac: 70:72:CF:BD:58:B6
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.201
+    port: 7004
+  pdu:
+    ip: pdu-313-b.bigswitch.com
+    port: 12
+  set_session_ssh: false
+  set_init_ping: false
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet11
+    spine1_int0: ethernet6
+
+s5:
+  alias: leaf2-a
+  leaf-group: rack2
+  mac: ec:f4:bb:fb:de:41
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.201
+    port: 7020
+  pdu:
+    ip: pdu-313-a.bigswitch.com
+    port: 5
+  set_session_ssh: false
+  set_init_ping: false
+  interfaces:
+    leaf2b_int0: ethernet15
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet19
+    spine1_int0: ethernet25
+
+s6:
+  alias: leaf2-b
+  leaf-group: rack2
+  mac: EC:F4:BB:FB:E2:CA
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.201
+    port: 7019
+  pdu:
+    ip: pdu-313-a.bigswitch.com
+    port: 6
+  set_session_ssh: false
+  set_init_ping: false
+  interfaces:
+    ixia1_int0: ethernet24
+    spine0_int0: ethernet29
+    spine1_int0: ethernet24
+    
+s7:
+  alias: spine0
+  fabric-role: spine
+  mac: ec:f4:bb:fb:d7:81
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.201
+    port: 7007
+  pdu:
+    ip: pdu-313-a.bigswitch.com
+    port: 4
+  set_session_ssh: false
+  set_init_ping: false
+  interfaces:
+    leaf0a_int0: ethernet9
+    leaf1a_int0: ethernet5
+    leaf0b_int0: ethernet21
+    leaf1b_int0: ethernet29
+    leaf2a_int0: ethernet17
+    leaf2b_int0: ethernet25
+
+s8:
+  alias: spine1
+  fabric-role: spine
+  mac: 90:b1:1c:f4:c6:1e
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.201
+    port: 7008
+  pdu:
+    ip: pdu-313-a.bigswitch.com
+    port: 3
+  set_session_ssh: false
+  set_init_ping: false
+  interfaces:
+    leaf0a_int0: ethernet1
+    leaf0b_int0: ethernet19
+    leaf1a_int0: ethernet9
+    leaf1b_int0: ethernet8
+    leaf2a_int0: ethernet12
+    leaf2b_int0: ethernet24
+  
+h1:
+   ip: 10.9.16.15
+   user: root
+   password: bsn
+   
+      
+h2:
+  ip: 10.9.16.16
+  user: root
+  password: bsn
+  
+ 

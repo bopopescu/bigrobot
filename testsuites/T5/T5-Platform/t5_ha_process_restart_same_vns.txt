@@ -19,8 +19,7 @@ ${switch3_name}      spine0
 ${switch4_name}      spine1
 ${tenant_1}         T5HATenant
 ${vns_1}            T5HAVNS
-${interface_1}      ethernet24
-${interface_2}      ethernet24
+
 
 
 *Test Case
@@ -155,7 +154,7 @@ Switch HA: Restart Process OFAD on switch
     Sleep  200
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}   
-    [Tags]  feature  ha  traffic  switch 
+    [Tags]  feature  ha  traffic  switch   daily-sanity
 
 
 Controller HA: Restart Process snmpd on Master Controller:
@@ -174,7 +173,7 @@ Controller HA: Restart Process snmpd on Master Controller:
     Sleep  90
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}        
-    [Tags]  feature  ha  traffic  controller
+    [Tags]  feature  ha  traffic  controller  daily-sanity
 
 Controller HA: Restart Process snmpd on Slave Controller:
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -192,7 +191,7 @@ Controller HA: Restart Process snmpd on Slave Controller:
     Sleep  90
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}  
-    [Tags]  feature  ha  traffic  controller
+    [Tags]  feature  ha  traffic  controller  daily-sanity
 
 
 Controller HA: Restart Process rsyslogd on Master Controller:
@@ -211,7 +210,7 @@ Controller HA: Restart Process rsyslogd on Master Controller:
     Sleep  90
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}        
-    [Tags]  feature  ha  traffic  controller
+    [Tags]  feature  ha  traffic  controller  daily-sanity
 
 Controller HA: Restart Process rsyslogd on Slave Controller:
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -339,11 +338,15 @@ Controller HA: Restart Process Floodlight on Slave Controller:
     Sleep  90
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}  
-    [Tags]  feature  ha  traffic  controller    
+    [Tags]  feature  ha  traffic  controller    daily-sanity
 *Keywords
 
 t5 suite setup
     base suite setup
+    ${interface_1}=     get_switch_int_topo  s1  ixia1_int0
+    Set Suite Variable		${interface_1}
+	${interface_2}=      get_switch_int_topo  s2  ixia1_int0
+	Set Suite Variable		${interface_2}
     rest add snmp keyword  community  public
     rest add snmp keyword  contact  Big Switch Networks
     rest add snmp keyword  location  mountainview
@@ -379,8 +382,9 @@ t5 suite setup
     rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch1_name}  ${interface_1}   -1
     rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch2_name}  ${interface_2}   -1    
     sleep  10
-    add ntp server  master  time-c.nist.gov
-    verify ntp  master  time-c.nist.gov
+    # Need to check if below adding REST ApIs still valid adding same NTP server details again
+#    add ntp server  master  time-c.nist.gov
+#    verify ntp  master  time-c.nist.gov
     reconnect_switch_ips  s1
 	reconnect_switch_ips  s2
 	reconnect_switch_ips  s7

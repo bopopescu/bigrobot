@@ -152,5 +152,6 @@ traffic endpoint learning   [Arguments]    ${during}
 T5 longevity suite teardown
 #   base suite teardown
 	stop traffic
+	delete traffic
 	sleep  1
    
