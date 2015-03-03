@@ -16,7 +16,6 @@ class BsnCommands(object):
             t = test.Test()
             n = t.node(node)
             content = n.cli("show user")['content']
-            10 / 0
             return content
         return task_execute(params, run)
 
