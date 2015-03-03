@@ -1,0 +1,376 @@
+*Settings
+Documentation           BigTap SwitchLight Platform Test Suite
+Suite Setup             base suite setup
+Suite Teardown          base suite teardown
+Test Setup              platform test setup
+Test Teardown           platform test teardown
+Force Tags              BigTap  SwitchLight  dell-s4000  switch-platform 
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py             
+
+* Variable
+${switchlight_version}  SwitchLight
+${netmask}              23
+${gateway}              10.9.18.1
+${dns_server}           10.3.0.4
+${dns_domain}           qa.bigswitch.com
+
+*Test Case
+ 
+TC001: Verify one openflow controller can be configured
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
+    add openflow controller  s1  c1
+    verify openflow controller  s1  c1
+    [Tags]  sanity  feature 
+
+TC002: Verify controller can be modified 
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
+    add openflow controller  s1  c1
+    verify openflow controller  s1  c1
+    delete existing controllers  s1  c1
+    add openflow controller  s1  c2
+    verify openflow controller  s1  c2
+    [Tags]  sanity  feature 
+
+TC003: Verify multiple openflow controllers can be configured
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
+    add openflow controller  s1  c1
+    verify openflow controller  s1  c1
+    add openflow controller  s1  c2
+    verify openflow controller  s1  c2    
+    [Tags]  sanity  feature 
+
+TC004: Verify Controller IP address is pingable
+    ping remote  s1
+    [Tags]  sanity  feature 
+
+TC005: Configure DNS server and DNS Domain. Verify you can ping www.bigswitch.com
+    configure dns domain  s1  ${dns_server}  ${dns_domain}
+    Sleep  30
+    cli ping from switch  s1  bigswitch.com
+    [Tags]  sanity  feature     
+
+TC006: Verify all interfaces show up (in show o/p from CLI)
+    verify interfaces  s1
+    [Tags]  sanity  feature     
+ 
+TC007: Shutdown a 10G interface and verify interface state is down
+    shut interface  s1  ethernet41
+    Sleep  5
+    ${ret_value_1}=  cli show interface state  s1  ethernet41  admin_down=${True}
+    Should Contain  ${ret_value_1}  down     
+    unshut interface  s1  ethernet41
+    Sleep  30
+    ${ret_value_1}=  cli show interface state  s1  ethernet41
+    Should Contain  ${ret_value_1}  up     
+    [Tags]  sanity  ha  robustness
+ 
+TC008: Shutdown a 40G interface and verify interface state is down
+    shut interface  s1  etherne51
+    Sleep  5
+    ${ret_value_1}=  cli show interface state  s1  etherne51  admin_down=${True}
+    Should Contain  ${ret_value_1}  down     
+    unshut interface  s1  etherne51
+    Sleep  30
+    ${ret_value_1}=  cli show interface state  s1  etherne51
+    Should Contain  ${ret_value_1}  up     
+    [Tags]  sanity  ha  robustness
+
+TC009: Verify ma1 ip address configuration via static config
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
+    delete static ip  s1  ${netmask}  ${gateway}
+    delete dns  s1  ${dns_server}  ${dns_domain}
+    Sleep  5
+    add static ip  s1  ${netmask}  ${gateway}
+    add dns  s1  ${dns_server}  ${dns_domain}
+    Sleep  60
+    add openflow controller  s1  c1
+    verify openflow controller  s1  c1
+    add openflow controller  s1  c2
+    verify openflow controller  s1  c2
+    verify ip dns  s1  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
+    [Tags]  sanity  feature  
+
+TC010: Verify ma1 ip address configuration via dhcp
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
+    delete static ip  s1  ${netmask}  ${gateway}
+    delete dns  s1  ${dns_server}  ${dns_domain}
+    Sleep  5
+    ${console}=  params  s1  console
+    ${switch_ip}=  params  s1  ip
+    cli add dhcp ip  ${console['ip']}  ${console['port']}
+    Sleep  60
+    ${ret_value_1}=  cli verify dhcp ip dns  s1  ${netmask}  ${dns_server}  ${dns_domain}
+    Should Be True  ${ret_value_1}
+    cli delete dhcp ip  ${console['ip']}  ${console['port']}  ${switch_ip}  ${netmask}  ${gateway}
+    sleep  5
+    add static ip  s1  ${netmask}  ${gateway}
+    add dns  s1  ${dns_server}  ${dns_domain}
+    add openflow controller  s1  c1
+    verify openflow controller  s1  c1
+    add openflow controller  s1  c2
+    verify openflow controller  s1  c2
+    [Tags]  sanity  feature  
+
+TC011: Verify ntp
+    configure ntp server  s1  time-c.nist.gov
+    Sleep  5
+    verify ntp server  s1  time-c.nist.gov
+    delete ntp  s1  time-c.nist.gov
+    [Tags]  sanity  feature     
+
+TC012: Verify ntp server after process ntp restart
+    configure ntp server  s1  time-c.nist.gov
+    Sleep  5
+    verify ntp server  s1  time-c.nist.gov
+    bash restart process  s1  ntpd
+    Sleep  5
+    verify ntp server  s1  time-c.nist.gov    
+    [Tags]  sanity  feature
+
+TC013: Verify DPID on switch is same as being reported to Controller
+    ${controller_dpid}=  rest return switch dpid from ip  s1
+    ${switch_dpid}=      cli show switch dpid  s1
+    Should be equal as strings  ${controller_dpid}  ${switch_dpid}   
+    [Tags]  sanity  feature
+
+TC014: Verify Switch Manufacturer
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  DELL
+    ${match2}=  Convert To String  ${switch_dict['Manufacturer']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC015: Verify Switch Model
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  S4000-ON
+    ${match2}=  Convert To String  ${switch_dict['Model']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC016: Verify Switch Platform
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  x86-64-dell-s4000-c2338-r0
+    ${match2}=  Convert To String  ${switch_dict['Platform']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC017: Verify Switch Description
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  DELL S4000-ON (x86-64-dell-s4000-c2338-r0)
+    ${match2}=  Convert To String  ${switch_dict['Description']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC018: Verify Switch Label Revision
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  X01
+    ${match2}=  Convert To String  ${switch_dict['Label']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC019: Verify Switch Part Number
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  0J09D3
+    ${match2}=  Convert To String  ${switch_dict['PartNumber']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC020: Verify Switch Product Name
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  S4000ON
+    ${match2}=  Convert To String  ${switch_dict['ProductName']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC021: Verify Switch Serial Number
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  TW0J09D32829849Q0020
+    ${match2}=  Convert To String  ${switch_dict['SerialNumber']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC022: Verify Maximum number of component ports in a LAG on switch
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To Integer  24
+    ${match2}=  Convert To Integer  ${switch_dict['MaxLagPorts']}
+    Should be equal as integers  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC023: Verify Total Physical Ports on switch
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To Integer  54
+    ${match2}=  Convert To Integer  ${switch_dict['PhysicalPorts']}
+    Should be equal as integers  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC024: Verify mac address of MA1 interface in show version
+    ${switch_dict}=  cli show version  s1
+    ${ma1mac}=  cli show interface macaddress  s1   ma1
+    ${match1}=  Convert To String  ${ma1mac}
+    ${match2}=  Convert To String  ${switch_dict['ma1Mac']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC025: Verify ONIE Version
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  1.6.1.1
+    ${match2}=  Convert To String  ${switch_dict['onie']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature  skipped
+
+TC026: Verify Country Code
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  TW
+    ${match2}=  Convert To String  ${switch_dict['country']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature
+
+TC027: Verify Diag Version
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  1.4.0.1
+    ${match2}=  Convert To String  ${switch_dict['diag']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature  skipped
+
+TC028: Verify Vendor
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  Edgecore
+    ${match2}=  Convert To String  ${switch_dict['Vendor']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature  skipped
+
+TC028: Verify CPLD Version
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  5.5.5
+    ${match2}=  Convert To String  ${switch_dict['cpld']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature  skipped
+    
+TC029: Verify if 1G ports are up
+	${intf_status}=  switch inventory if status  s1  1GBASE
+	Should be true  ${intf_status}
+    [Tags]  sanity  feature   skipped 
+    
+TC030: Verify if 10G ports are up
+	${intf_status}=  switch inventory if status  s1  10GBASE
+	Should be true  ${intf_status}
+    [Tags]  sanity  feature  	
+    
+TC031: Verify if 40G ports are up
+	${intf_status}=  switch inventory if status  s1  40GBASE
+	Should be true  ${intf_status}
+    [Tags]  sanity  feature  	  
+    
+    
+* Keywords 
+
+delete existing controllers  [Arguments]  ${switch}  ${controller}
+    ${ret_value_1}=  cli delete controller  ${switch}  ${controller}
+    Should Be True  ${ret_value_1}
+
+add openflow controller  [Arguments]  ${switch}  ${controller}
+    ${ret_value_1}=  cli add controller  ${switch}  ${controller}
+    Should Be True  ${ret_value_1}    
+
+verify openflow controller  [Arguments]  ${switch}  ${controller}
+    ${ret_value_1}=  cli verify controller  ${switch}  ${controller}
+    Should Be True  ${ret_value_1}
+ 
+ping remote  [Arguments]  ${remote}
+    ${ret_value_1}=  ping from local  ${remote}
+    Should Be True  ${ret_value_1}
+
+ping from switch  [Arguments]  ${switch}  ${remote} 
+    ${ret_value_1}=  cli ping from switch  ${switch}  ${remote}
+    Should Be True  ${ret_value_1}  
+
+configure dns domain  [Arguments]  ${switch}  ${dns_server}  ${dns_domain}  
+    ${ret_value_1}=  cli add dns server domain  ${switch}  ${dns_server}  ${dns_domain}
+    Should Be True  ${ret_value_1}
+
+verify interfaces  [Arguments]  ${switch}
+    cli show all interfaces  ${switch}
+
+shut interface  [Arguments]  ${switch}  ${interface}
+    ${ret_value_1}=  cli disable interface  ${switch}  ${interface}
+    Should Be True  ${ret_value_1}    
+
+verify interface state  [Arguments]  ${switch}  ${interface}  ${state}  ${admin_down}
+    ${ret_value_1}=  cli show interface state  ${switch}  ${interface}  admin_down=${admin_down}
+    Should Contain  ${ret_value_1}  ${state}  
+
+unshut interface  [Arguments]  ${switch}  ${interface}
+    ${ret_value_1}=  cli enable interface  ${switch}  ${interface}
+    Should Be True  ${ret_value_1}
+
+delete static ip  [Arguments]  ${switch}  ${netmask}  ${gateway}
+    ${ret_value_1}=  cli delete static ip  ${switch}  ${netmask}  ${gateway}
+    Should Be True  ${ret_value_1}
+
+add static ip  [Arguments]  ${switch}  ${netmask}  ${gateway}
+    ${ret_value_1}=  cli add static ip  ${switch}  ${netmask}  ${gateway}
+    Should Be True  ${ret_value_1}
+
+delete dns  [Arguments]  ${switch}  ${dns_server}  ${dns_domain}
+    ${ret_value_1}=  cli delete dns server domain  ${switch}  ${dns_server}  ${dns_domain}
+    Should Be True  ${ret_value_1}
+    
+add dns  [Arguments]  ${switch}  ${dns_server}  ${dns_domain}
+    ${ret_value_1}=  cli add dns server domain  ${switch}  ${dns_server}  ${dns_domain}
+    Should Be True  ${ret_value_1}
+
+verify ip dns  [Arguments]  ${switch}  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}  
+    ${ret_value_1}=  cli verify ip dns  ${switch}  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
+    Should Be True  ${ret_value_1}
+
+enable crc forwarding  [Arguments]  ${switch}
+    ${ret_value_1}=  cli enable crc forwarding  ${switch}
+    Should Be True  ${ret_value_1}
+
+verify crc is enabled  [Arguments]  ${switch}
+    ${ret_value_1}=  cli verify crc forwarding is enabled  ${switch}
+    Should Be True  ${ret_value_1}
+    
+verify crc is disabled  [Arguments]  ${switch}
+    ${ret_value_1}=  cli verify crc forwarding is disabled  ${switch}
+    Should Be True  ${ret_value_1}
+
+disable crc forwarding  [Arguments]  ${switch}
+    ${ret_value_1}=  cli disable crc forwarding  ${switch}
+    Should Be True  ${ret_value_1}
+
+configure ntp server  [Arguments]  ${switch}  ${ntp_server}
+    ${ret_value_1}=  add ntp server  ${switch}  ${ntp_server}  
+    Should Be True  ${ret_value_1}
+ 
+verify ntp server  [Arguments]  ${switch}  ${ntp_server}
+     ${ret_value_1}=  verify ntp  ${switch}  ${ntp_server}  
+    Should Be True  ${ret_value_1}
+
+delete ntp  [Arguments]  ${switch}  ${ntp_server}
+    ${ret_value_1}=  delete ntp server  ${switch}  ${ntp_server}  
+    Should Be True  ${ret_value_1}
+
+platform test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
+    
+platform test teardown
+    configure dns domain  s1  ${dns_server}  ${dns_domain}
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+    
