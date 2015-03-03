@@ -359,7 +359,7 @@ ha suite teardown
     Should be true  ${config1}
     ${config2}=  rest delete switch alias  s2
     Should be true  ${config2}
-    ${config31}=  rest delete switch alias  s3
+    ${config3}=  rest delete switch alias  s3
     Should be true  ${config3}
     ${config4}=  rest delete switch alias  s4
     Should be true  ${config4}
