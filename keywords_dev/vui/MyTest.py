@@ -1290,3 +1290,10 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
                          )
         return res
 
+    def cli_exit(self, node):
+        t = test.Test()
+        c = t.controller(node)
+        try:
+            c.cli("exit")
+        except:
+            pass
