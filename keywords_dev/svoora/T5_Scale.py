@@ -50,6 +50,36 @@ class T5_Scale(object):
             return False
 
 
+    def copy_config_from_server_to_snapshot(self, file_path, server, server_passwd, dest_file='cfg_file_from_server.cfg'):
+        t = test.Test()
+        c = t.controller('master')
+        c.config('')
+        # helpers.log("INFO: ****Getting config file from server")
+        # string = "copy scp://root@%s:%s %s" % (server, file_path, dest_file)
+        # helpers.log("copy string file is:%s" % string)
+        # c.send(string)
+        try:
+            helpers.log("INFO: ****Getting config file from server")
+            dest_file_format = "snapshot://" + dest_file
+            string = "copy scp://root@%s:%s %s" % (server, file_path, dest_file_format)
+            helpers.log("copy string file is:%s" % string)
+            c.send (string)
+            try:
+                c.expect(r"Are you sure you want to continue connecting \(yes/no\)?")
+                c.send("yes")
+            except:
+                helpers.test_log("Apparently already RSA key fingerprint stored")
+            c.expect("password")
+            c.send(server_passwd)
+            c.expect()
+            cli_content = c.cli_content()
+            assert "100%" in cli_content
+            assert "Error" not in cli_content
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return False
 
         # opt = c.expect([r'[\r\n].+password:', r'[\r\n].+(yes/no)?'])
         # helpers.log("received option %s" % opt)
