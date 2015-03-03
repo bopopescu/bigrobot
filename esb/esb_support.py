@@ -41,13 +41,14 @@ def task_execute(params, task_func):
 
         t.node_disconnect()
     except:
-        helpers.log("Error while executing task %s!!! Gathering logs before raising exception."
+        helpers.log("Error while executing task %s!!! Archiving logs before re-raising exception."
                     % task_id)
         helpers.log("Ending task %s on exception." % task_id)
         helpers.log(helpers.exception_info())
         _archive_logs(task_id)
         raise
     else:
-        helpers.log("Ending task %s." % task_id)
+        helpers.log("Ending task %s on success. Archiving logs." % task_id)
+        _archive_logs(task_id)
         return content
 
