@@ -301,7 +301,6 @@ TC44: Modify SNMP location and verify SNMP OID sysLocation
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
     sleep  10
-    pause
     ${snmp_key}=  snmp cmd  s1  snmpwalk   ${snmp_community_1}  sysLocation.0
     Should Contain  ${snmp_key}  ${snmp_location_2}
     sleep  10
