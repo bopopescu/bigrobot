@@ -915,11 +915,11 @@ vui@Vuis-MacBook-Pro$
         #
         for res in results:
             task_id = res.task_id
+            helpers.log("Getting result for task_id: %s" % task_id)
             output = res.get()
             result_dict[task_id]["result"] = output
 
         helpers.log("***** result_dict:\n%s" % helpers.prettify(result_dict))
-
         return True
 
     def exit_early(self):
@@ -1290,3 +1290,10 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
                          )
         return res
 
+    def cli_exit(self, node):
+        t = test.Test()
+        c = t.controller(node)
+        try:
+            c.cli("exit")
+        except:
+            pass

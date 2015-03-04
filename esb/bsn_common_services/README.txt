@@ -11,7 +11,7 @@ ESB service startup instruction:
 - Start a 'screen' session
 - cd /home/bsn/workspace/bigrobot/esb/bsn_common_services
 - Start the service daemon:
-    $ ./start_services.sh
+    $ ./start_services.sh | tee -a /home/bsn/bigrobot_esb_log/start_services-bsn_common_services.log
 - Leave the session running inside 'screen'. You can close the terminal window.
 
 - To connect to a running 'screen' session, log into qa-esb-services1 and type
@@ -38,7 +38,7 @@ Updating services:
   you need to redeploy the service.
 - Log into the deployment server (as described in the section above) and kill
   the service daemon - press Control-C.
-- Update the branch using 'git update'
-    $ git update
+- Update the branch using 'git pull'
+    $ git pull
 - Restart the service daemon:
     $ ./start_services.sh

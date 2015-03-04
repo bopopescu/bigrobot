@@ -2480,6 +2480,9 @@ class SwitchLight(object):
                 helpers.test_log("Interface {} is up".format(intf))
             else:
                 helpers.test_log("Interface {} is not up".format(intf))
+                cmd = "show running-config"
+                s1.cli(cmd)
+                helpers.log("The interface {} is down, check running-config to see if it has been shutdown {}".format(intf, s1.cli_content()))
                 return False
         return True
 

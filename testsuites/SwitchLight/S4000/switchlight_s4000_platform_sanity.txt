@@ -4,7 +4,7 @@ Suite Setup             base suite setup
 Suite Teardown          base suite teardown
 Test Setup              platform test setup
 Test Teardown           platform test teardown
-Force Tags              BigTap  SwitchLight  Dell-S6000  switch-platform 
+Force Tags              BigTap  SwitchLight  dell-s4000  switch-platform 
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -46,7 +46,7 @@ TC003: Verify multiple openflow controllers can be configured
     add openflow controller  s1  c1
     verify openflow controller  s1  c1
     add openflow controller  s1  c2
-    verify openflow controller  s1  c2
+    verify openflow controller  s1  c2    
     [Tags]  sanity  feature 
 
 TC004: Verify Controller IP address is pingable
@@ -62,19 +62,30 @@ TC005: Configure DNS server and DNS Domain. Verify you can ping www.bigswitch.co
 TC006: Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
     [Tags]  sanity  feature     
-
-TC007: Shutdown a 40G interface and verify interface state is down
-    shut interface  s1  etherne11
+ 
+TC007: Shutdown a 10G interface and verify interface state is down
+    shut interface  s1  ethernet41
     Sleep  5
-    ${ret_value_1}=  cli show interface state  s1  etherne13  admin_down=${True}
+    ${ret_value_1}=  cli show interface state  s1  ethernet41  admin_down=${True}
     Should Contain  ${ret_value_1}  down     
-    unshut interface  s1  etherne11
+    unshut interface  s1  ethernet41
     Sleep  30
-    ${ret_value_1}=  cli show interface state  s1  etherne13
+    ${ret_value_1}=  cli show interface state  s1  ethernet41
+    Should Contain  ${ret_value_1}  up     
+    [Tags]  sanity  ha  robustness
+ 
+TC008: Shutdown a 40G interface and verify interface state is down
+    shut interface  s1  etherne51
+    Sleep  5
+    ${ret_value_1}=  cli show interface state  s1  etherne51  admin_down=${True}
+    Should Contain  ${ret_value_1}  down     
+    unshut interface  s1  etherne51
+    Sleep  30
+    ${ret_value_1}=  cli show interface state  s1  etherne51
     Should Contain  ${ret_value_1}  up     
     [Tags]  sanity  ha  robustness
 
-TC008: Verify ma1 ip address configuration via static config
+TC009: Verify ma1 ip address configuration via static config
     delete existing controllers  s1  c1
     delete existing controllers  s1  c2
     delete static ip  s1  ${netmask}  ${gateway}
@@ -88,9 +99,9 @@ TC008: Verify ma1 ip address configuration via static config
     add openflow controller  s1  c2
     verify openflow controller  s1  c2
     verify ip dns  s1  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
-    [Tags]  sanity  feature
+    [Tags]  sanity  feature  
 
-TC009: Verify ma1 ip address configuration via dhcp
+TC010: Verify ma1 ip address configuration via dhcp
     delete existing controllers  s1  c1
     delete existing controllers  s1  c2
     delete static ip  s1  ${netmask}  ${gateway}
@@ -112,14 +123,14 @@ TC009: Verify ma1 ip address configuration via dhcp
     verify openflow controller  s1  c2
     [Tags]  sanity  feature  
 
-TC010: Verify ntp
+TC011: Verify ntp
     configure ntp server  s1  time-c.nist.gov
     Sleep  5
     verify ntp server  s1  time-c.nist.gov
     delete ntp  s1  time-c.nist.gov
     [Tags]  sanity  feature     
 
-TC011: Verify ntp server after process ntp restart
+TC012: Verify ntp server after process ntp restart
     configure ntp server  s1  time-c.nist.gov
     Sleep  5
     verify ntp server  s1  time-c.nist.gov
@@ -128,17 +139,10 @@ TC011: Verify ntp server after process ntp restart
     verify ntp server  s1  time-c.nist.gov    
     [Tags]  sanity  feature
 
-TC012: Verify DPID on switch is same as being reported to Controller
+TC013: Verify DPID on switch is same as being reported to Controller
     ${controller_dpid}=  rest return switch dpid from ip  s1
     ${switch_dpid}=      cli show switch dpid  s1
     Should be equal as strings  ${controller_dpid}  ${switch_dpid}   
-    [Tags]  sanity  feature
-
-TC013: Verify Vendor
-    ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To String  DELL
-    ${match2}=  Convert To String  ${switch_dict['Vendor']}
-    Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
 
 TC014: Verify Switch Manufacturer
@@ -150,49 +154,49 @@ TC014: Verify Switch Manufacturer
 
 TC015: Verify Switch Model
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To String  S6000-ON
+    ${match1}=  Convert To String  S4000-ON
     ${match2}=  Convert To String  ${switch_dict['Model']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
 
 TC016: Verify Switch Platform
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To String  x86-64-dell-s6000-s1220-r0
+    ${match1}=  Convert To String  x86-64-dell-s4000-c2338-r0
     ${match2}=  Convert To String  ${switch_dict['Platform']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
 
 TC017: Verify Switch Description
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To String  DELL S6000-ON (x86-64-dell-s6000-s1220-r0)
+    ${match1}=  Convert To String  DELL S4000-ON (x86-64-dell-s4000-c2338-r0)
     ${match2}=  Convert To String  ${switch_dict['Description']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
 
 TC018: Verify Switch Label Revision
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To String  R0
+    ${match1}=  Convert To String  X01
     ${match2}=  Convert To String  ${switch_dict['Label']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
 
 TC019: Verify Switch Part Number
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To String  PN-S6000-ON
+    ${match1}=  Convert To String  0J09D3
     ${match2}=  Convert To String  ${switch_dict['PartNumber']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
 
 TC020: Verify Switch Product Name
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To String  S6000-ON
+    ${match1}=  Convert To String  S4000ON
     ${match2}=  Convert To String  ${switch_dict['ProductName']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
 
 TC021: Verify Switch Serial Number
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To String  SN-MAC-90
+    ${match1}=  Convert To String  TW0J09D32829849Q0020
     ${match2}=  Convert To String  ${switch_dict['SerialNumber']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
@@ -206,7 +210,7 @@ TC022: Verify Maximum number of component ports in a LAG on switch
 
 TC023: Verify Total Physical Ports on switch
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To Integer  32
+    ${match1}=  Convert To Integer  54
     ${match2}=  Convert To Integer  ${switch_dict['PhysicalPorts']}
     Should be equal as integers  ${match1}  ${match2}
     [Tags]  sanity  feature
@@ -221,16 +225,55 @@ TC024: Verify mac address of MA1 interface in show version
 
 TC025: Verify ONIE Version
     ${switch_dict}=  cli show version  s1
-    ${match1}=  Convert To String  3.20.1.1
+    ${match1}=  Convert To String  1.6.1.1
     ${match2}=  Convert To String  ${switch_dict['onie']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature  skipped
+
+TC026: Verify Country Code
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  TW
+    ${match2}=  Convert To String  ${switch_dict['country']}
     Should be equal as strings  ${match1}  ${match2}
     [Tags]  sanity  feature
 
-TC026: Verify if 40G ports are up
-    ${intf_status}=  switch inventory if status  s1  40GBASE
-    Should be true  ${intf_status}
-    [Tags]  sanity  feature
+TC027: Verify Diag Version
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  1.4.0.1
+    ${match2}=  Convert To String  ${switch_dict['diag']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature  skipped
 
+TC028: Verify Vendor
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  Edgecore
+    ${match2}=  Convert To String  ${switch_dict['Vendor']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature  skipped
+
+TC028: Verify CPLD Version
+    ${switch_dict}=  cli show version  s1
+    ${match1}=  Convert To String  5.5.5
+    ${match2}=  Convert To String  ${switch_dict['cpld']}
+    Should be equal as strings  ${match1}  ${match2}
+    [Tags]  sanity  feature  skipped
+    
+TC029: Verify if 1G ports are up
+	${intf_status}=  switch inventory if status  s1  1GBASE
+	Should be true  ${intf_status}
+    [Tags]  sanity  feature   skipped 
+    
+TC030: Verify if 10G ports are up
+	${intf_status}=  switch inventory if status  s1  10GBASE
+	Should be true  ${intf_status}
+    [Tags]  sanity  feature  	
+    
+TC031: Verify if 40G ports are up
+	${intf_status}=  switch inventory if status  s1  40GBASE
+	Should be true  ${intf_status}
+    [Tags]  sanity  feature  	  
+    
+    
 * Keywords 
 
 delete existing controllers  [Arguments]  ${switch}  ${controller}
@@ -323,8 +366,8 @@ delete ntp  [Arguments]  ${switch}  ${ntp_server}
 platform test setup
     ${result1}=  write version to file
     Should be true  ${result1}
-    ${result2}=  start syslog monitor
-    Should be true  ${result2}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
     
 platform test teardown
     configure dns domain  s1  ${dns_server}  ${dns_domain}
