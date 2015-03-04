@@ -792,7 +792,7 @@ TC30:Delete and restore complete configuration. Verify tunnel gets re-establishe
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
-    config  master  tunnel-encap-type gre
+    config  master  tunnel-encap-type gre ${tunnel_sw1_vpnkey}
     config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
@@ -809,7 +809,7 @@ TC31:Delete and restore partial configuration. Do not add tunnel-destination. Ve
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
-    config  master  tunnel-encap-type gre
+    config  master  tunnel-encap-type gre ${tunnel_sw1_vpnkey}
     config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
@@ -833,7 +833,7 @@ TC32:Delete and restore partial configuration. Do not add tunnel-type. Verify tu
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
-    config  master  tunnel-encap-type gre
+    config  master  tunnel-encap-type gre ${tunnel_sw1_vpnkey}
     config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     sleep  10
@@ -879,7 +879,7 @@ TC34:Delete and restore partial configuration. Do not add tunnel-interface paren
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
-    config  master  tunnel-encap-type gre
+    config  master  tunnel-encap-type gre ${tunnel_sw1_vpnkey}
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
@@ -902,7 +902,7 @@ TC35:Delete and restore partial configuration. Do not add tunnel-source. Verify 
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
-    config  master  tunnel-encap-type gre
+    config  master  tunnel-encap-type gre ${tunnel_sw1_vpnkey}
     config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
