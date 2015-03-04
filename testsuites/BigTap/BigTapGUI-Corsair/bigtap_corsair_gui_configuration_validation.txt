@@ -311,7 +311,7 @@ config suite setup
     Open Browser To Login Page
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
-    #Set Switching Mode  L3-L4 Offset Match
+    Set Switching Mode  L3-L4 Offset Match
     #Configure Switch Alias    00:00:5c:16:c7:1e:f3:95            app-rlb9-1                                     
      #Configure Switch Alias    00:00:5c:16:c7:1c:16:f2            app-rly2-1
     #Configure Switch Alias    00:00:08:9e:01:b3:0c:0c            app-rlb9-1                                     
@@ -321,11 +321,11 @@ config suite setup
     ${switch_dpid_s3}=  rest return switch dpid from ip  s3
     ${switch_dpid_s4}=  rest return switch dpid from ip  s4
     ${switch_dpid_s5}=  rest return switch dpid from ip  s5
-    #Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
-    #Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
-    #Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
-    #Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
-    #Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
+    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
     
 config suite teardown
     Close Browser
