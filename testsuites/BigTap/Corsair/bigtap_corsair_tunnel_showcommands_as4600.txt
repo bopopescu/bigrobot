@@ -127,7 +127,8 @@ TC005: BiDirectional Tunnel: Verify CLI "show link | grep tunnel" on controller
     [Tags]  full  feature  jira-pan-1971
 
 TC006: BiDirectional Tunnel: Verify CLI "show interface" on switch shows tunnel status
-    cli  node=s1  cmd=show interface
+    enable  node=s1  cmd=clear interface statistics
+    enable  node=s1  cmd=show interface
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
     verify openflow controller  s1  c1
@@ -269,7 +270,8 @@ TC015: Receive-only Tunnel: Verify CLI "show switch <switch_alias> interfaces tu
     [Tags]  full  feature
 
 TC016: Transmit-only Tunnel: Verify CLI "show interface" on switch shows tunnel status
-    cli  node=s1  cmd=show interface
+    enable  node=s1  cmd=clear interface statistics
+    enable  node=s1  cmd=show interface
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
     verify openflow controller  s1  c1
@@ -279,7 +281,8 @@ TC016: Transmit-only Tunnel: Verify CLI "show interface" on switch shows tunnel 
     [Tags]  full  feature
 
 TC017: Receive-only Tunnel: Verify CLI "show interface" on switch shows tunnel status
-    cli  node=s2  cmd=show interface
+    enable  node=s1  cmd=clear interface statistics
+    enable  node=s1  cmd=show interface
     ${content1}=  cli_content  node=s2
     Should Not Contain  ${content1}  Error
     verify openflow controller  s2  c1
