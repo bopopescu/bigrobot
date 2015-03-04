@@ -127,23 +127,23 @@ ${MAIN PLUS BUTTON}				xpath=//div[@class='icon_node plus']
 #${GROUPNAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_0']
 ${GROUPNAME FIELD}				xpath=//input[@id="big_console_widgets_core_form_BsnIdentifierTextBox_0"]
 #${PASSWORD FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_1']
-${PASSWORD FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+#${PASSWORD FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 #${CONFIRM PASSWORD FIELD}		xpath=//input[@id='dijit_form_ValidationTextBox_2']
 #${FULL NAME FIELD}				xpath=//input[@id='dijit_form_ValidationTextBox_2']
-${CONFIRM PASSWORD FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Confirm Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
-${FULL NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Full Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
-${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_color']
-${INCORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_gray']
+#${CONFIRM PASSWORD FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Confirm Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+#${FULL NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Full Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+#${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_color']
+#${INCORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_gray']
 ${ERROR DUPE NAME}				xpath=//div[@class='input_error']
 #${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_4']
-${ERROR BACKEND}				xpath=//div[@class='errors']
+#${ERROR BACKEND}				xpath=//div[@class='errors']
 ${INFO BUTTON}					xpath=//div[@class='step_text' and contains(text(), '1. Info')]
 ${USERS BUTTON}					xpath=//div[@class='step_text' and contains(text(), '2. Users')]
 ${RBAC BUTTON}					xpath=//div[@class='step_text' and contains(text(), '3. RBAC Permissions')]
 ${USER ASSOCIATE BUTTON}		xpath=//div[@data-dojo-attach-point='usersNode']/descendant::div[@class='icon_node plus']
 ${RBAC ASSOCIATE BUTTON}		xpath=//div[@data-dojo-attach-point='rbacPermissionsNode']/descendant::div[@class='icon_node plus']
-${APPEND SELECTED BUTTON}		xpath=//span[@id='dijit_form_Button_9']
-${APPEND SELECTED RBAC BUTTON}	xpath=//span[@id='dijit_form_Button_14']
+${APPEND SELECTED BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
+${APPEND SELECTED RBAC BUTTON}	xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
 ${CREATE GROUP POPUP}			xpath=//div[@title='Create Group']
 ${ADD USERS POPUP}				xpath=//div[@title='Add Users']
 ${ASSOCIATE RBAC POPUP}			xpath=//div[@title='Associate RBAC Permissions']
@@ -160,7 +160,7 @@ ${USERNAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contain
 ${PASSWORD FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${CONFIRM PASSWORD FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Confirm Password')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${FULL NAME FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Full Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
-${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_color']
+${CORRECT PASSWORD ICON}		xpath=//div[@class='status_icon_text_right' and contains(text(), 'Confirmed')]
 ${INCORRECT PASSWORD ICON}		xpath=//div[@class='status_icon check_gray']
 ${ERROR DUPE USERNAME}			xpath=//div[@class='input_error']
 #${SAVE BUTTON}					xpath=//span[@id='dijit_form_Button_4']
@@ -170,7 +170,7 @@ ${GROUPS BUTTON}				xpath=//div[@class='step_text' and contains(text(), '2. Grou
 ${GROUP ASSOCIATE BUTTON}		xpath=//div[@data-dojo-attach-point='groupNode']/descendant::div[@class='icon_node plus']
 #${APPEND GROUP BUTTON}			xpath=//span[@id='dijit_form_Button_9']
 ${APPEND GROUP BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
-${MAIN PLUS BUTTON}				xpath=//div[@class='icon_node plus']
+#${MAIN PLUS BUTTON}				xpath=//div[@class='icon_node plus']
 ${CREATE USER POPUP}			xpath=//div[@title='Create User']
 ${MANAGE GROUPS POPUP}			xpath=//div[@title='Manage Groups']
 
@@ -190,19 +190,19 @@ ${RBAC FILTER INTERFACES PLUS BUTTON}							xpath=//div[@data-dojo-attach-point=
 #${RBAC FILTER INTERFACES PLUS BUTTON}							xpath=//div[@id="bsn_widgets_ControlButton_8"]/div[1]
 ${RBAC INCLUDE FILTER INTERFACES POPUP}   						xpath=//div[@title='Include Filter Interfaces']
 #${RBAC INCLUDE FILTER INTERFACES POPUP}   						xpath=//span[@id="bsn_widgets_Dialog_2_title"]
-${RBAC APPEND SELECTED FILTER INTERFACES BUTTON}   				xpath=//span[@id='dijit_form_Button_9_label']
+${RBAC APPEND SELECTED FILTER INTERFACES BUTTON}   				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
 ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX SELECTED}    		xpath=//div[@data-dojo-attach-point='filterInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX UNSELECTED}   	 	xpath=//div[@data-dojo-attach-point='filterInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC DELIVERY INTERFACES NODE}								xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']
 ${RBAC DELIVERY INTERFACES PLUS BUTTON}							xpath=//div[@data-dojo-attach-point='deliveryInterfaceManager']/descendant::div[@class='icon_node plus']
 ${RBAC INCLUDE DELIVERY INTERFACES POPUP}   					xpath=//div[@title='Include Delivery Interfaces']
-${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//span[@id='dijit_form_Button_14_label']
+${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}   			xpath=//descendant::span[@id='dijit_form_Button_18_label' and contains(text(), 'Append Selected')]
 ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}    		xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}    	xpath=//div[@data-dojo-attach-point='deliveryInterfaceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC SERVICES NODE}											xpath=//div[@data-dojo-attach-point='serviceNode']
 ${RBAC SERVICES PLUS BUTTON}									xpath=//div[@data-dojo-attach-point='serviceManager']/descendant::div[@class='icon_node plus']
 ${RBAC INCLUDE SERVICES POPUP}   								xpath=//div[@title='Include Services']
-${RBAC APPEND SELECTED SERVICES BUTTON}   						xpath=//span[@id='dijit_form_Button_24_label']
+${RBAC APPEND SELECTED SERVICES BUTTON}   						xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
 ${RBAC ALLOW ALL SERVICES CHECKBOX SELECTED}    				xpath=//div[@data-dojo-attach-point='serviceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${RBAC ALLOW ALL SERVICES CHECKBOX UNSELECTED}    				xpath=//div[@data-dojo-attach-point='serviceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC MATCHES NODE}											xpath=//div[@data-dojo-attach-point='matchNode']
@@ -230,7 +230,7 @@ ${RBAC MATCH DESTINATION BUTTON}		xpath=//div[@class='step_text' and contains(te
 ${RBAC MATCH OFFSET MATCH BUTTON}		xpath=//div[@class='step_text' and contains(text(), '4. Offset Match')]
 ${RBAC MATCH SOURCE NODE}				xpath=//div[@data-dojo-attach-point='sourceNode']
 ${RBAC MATCH DESTINATION NODE}			xpath=//div[@data-dojo-attach-point='destinationNode']
-${RBAC MATCH SOURCE IP FIELD}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='nodeSingleNetwork']/descendant::div[@class='dijitReset dijitInputField dijitInputContainer']/input[@id='bsn_widgets_form_IpAddressTextBox_0']
+${RBAC MATCH SOURCE IP FIELD}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='nodeSingleNetwork']/descendant::div[@class='dijitReset dijitInputField dijitInputContainer']/input[contains(@id, 'bsn_widgets_form_IpAddressTextBox')]
 ${RBAC MATCH SOURCE TO PORT}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='blockPort']/descendant::label[contains(text(), 'From:')]/parent::div[@class='controls']/div[1]/div[3]/input[1]
 ${RBAC MATCH SOURCE DST PORT}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='blockPort']/descendant::label[contains(text(), 'From:')]/parent::div[@class='controls']/div[2]/div[3]/input[1]
 ${RBAC MATCH SOURCE PORT CHECKBOX}		xpath=//div[@id='bsn_widgets_form_CheckBox_20']/input
@@ -241,7 +241,7 @@ ${RBAC MATCH DESTINATION PORT CHECKBOX SELECTED}		xpath=//div[@data-dojo-attach-
 ${RBAC MATCH DESTINATION PORT CHECKBOX UNSELECTED}	  	xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC MATCH DESTINATION TO PORT}			xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='blockPort']/descendant::label[contains(text(), 'From:')]/parent::div[@class='controls']/div[1]/div[3]/input[1]
 ${RBAC MATCH DESTINATION DST PORT}			xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='blockPort']/descendant::label[contains(text(), 'From:')]/parent::div[@class='controls']/div[2]/div[3]/input[1]
-${RBAC MATCH DESTINATION IP FIELD}		xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='nodeSingleNetwork']/descendant::div[@class='dijitReset dijitInputField dijitInputContainer']/input[@id='bsn_widgets_form_IpAddressTextBox_1']
+${RBAC MATCH DESTINATION IP FIELD}		xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='nodeSingleNetwork']/descendant::div[@class='dijitReset dijitInputField dijitInputContainer']/input[contains(@id, 'bsn_widgets_form_IpAddressTextBox')]
 ${RBAC MATCH SOURCE IP MASK FIELD}		  xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::input[@id='bsn_widgets_form_NetworkMaskTextBox_0']
 ${RBAC MATCH DESTINATION IP MASK FIELD}	  xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::input[@id='bsn_widgets_form_NetworkMaskTextBox_1']
 ${RBAC MATCH OFFSET MATCH NODE}			  xpath=//div[@data-dojo-attach-point='offsetMatchNode']
@@ -1163,15 +1163,18 @@ Configure User
 	#${random_groupname}  Generate Random Name  Group  5 
 	#Run Keyword If  '${group}'=='__new__'  
     #...		Configure Group  ${random_groupname}  ${EMPTY}  ${EMPTY}
+    #...     ELSE
+    #...     Configure Group  ${group}  ${EMPTY}  ${EMPTY}
     #${group}  Set Variable If  '${group}'=='__new__'  ${random_groupname}  ${group} 
-
+	Run Keyword Unless  '${group}'=='admin' or '${group}'=='${EMPTY}'
+    ...		Configure Group  ${group}  ${EMPTY}  ${EMPTY}
     Go To Security Users Page
     Verify Element Visible  ${MAIN PLUS BUTTON}
     Click Element  ${MAIN PLUS BUTTON}   and don't wait
     Verify Element Visible  ${CREATE USER POPUP}
 
-    #${random_username}  Generate Random Name  User  5
-    #${username}  Set Variable If  '${user}'=='__random__'  ${random_username}  ${user} 
+    ${random_username}  Generate Random Name  User  5
+    ${username}  Set Variable If  '${username}'=='__random__'  ${random_username}  ${username} 
 
     Input Text And Verify  ${USERNAME FIELD}  ${username}
     Click Element  ${CREATE USER POPUP}   and don't wait    
@@ -1182,15 +1185,15 @@ Configure User
     Input Text And Verify  ${FULL NAME FIELD}  ${full_name}
     Click Element  ${CREATE USER POPUP}   and don't wait
 
- 	#Run Keyword Unless  '${password}'=='${conf_password}'  
-    #...		Verify Element Visible  ${INCORRECT PASSWORD ICON} 
-    #Run Keyword Unless  '${password}'=='${conf_password}'
-    #...		Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${password}   
+ 	Run Keyword Unless  '${password}'=='${conf_password}'  
+    ...		Verify Element Visible  ${INCORRECT PASSWORD ICON} 
+    Run Keyword Unless  '${password}'=='${conf_password}'
+    ...		Input Text And Verify  ${CONFIRM PASSWORD FIELD}  ${password}   
 
-    #Run Keyword Unless  '${password}'=='${EMPTY}'  
-    #...  	Verify Element Visible  ${CORRECT PASSWORD ICON}
+    Run Keyword Unless  '${password}'=='${EMPTY}'  
+    ...  	Verify Element Visible  ${CORRECT PASSWORD ICON}
 
-    #Element Text Should Be  ${ERROR DUPE USERNAME}  ${EMPTY}  Username already exists
+    Element Text Should Be  ${ERROR DUPE USERNAME}  ${EMPTY}  Username already exists
 
     Run Keyword Unless  '${group}'=='${EMPTY}'  
     ...		Associate Group  ${group}
@@ -1223,10 +1226,10 @@ Associate Group
 
 Configure Group
 	[Arguments]  ${group_name}  ${user}  ${rbac}
-	${random_rbacname}  Generate Random Name  Rbac  5
-    Run Keyword IF  '${rbac}'=='__new__'  
-    ...		Configure RBAC  ${random_rbacname}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
-    ${rbac}  Set Variable If  '${rbac}'=='__new__'  ${random_rbacname}  ${rbac} 
+	#${random_rbacname}  Generate Random Name  Rbac  5
+    Run Keyword Unless  '${rbac}'=='${EMPTY}'  
+    ...		Configure RBAC  ${rbac}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
+    #${rbac}  Set Variable If  '${rbac}'=='__new__'  ${random_rbacname}  ${rbac} 
 
     ${random_username}  Generate Random Name  User  5
     Run Keyword IF  '${user}'=='__new__'  
@@ -1278,13 +1281,16 @@ Associate User
 
 
 Associate RBAC
-	[Arguments]  ${user}
+	[Arguments]  ${rbac}
 	Click Element  ${RBAC BUTTON}  and don't wait
 	#Verify Page Contains Element  ${GROUP ASSOCIATE BUTTON}
 
 	Click Element  ${RBAC ASSOCIATE BUTTON}  and don't wait
 	Verify Page Contains Element  ${ASSOCIATE RBAC POPUP} 
 	${checkbox}  Generate Checkbox Xpath Nowrap  div[@id='big_console_widgets_core_form_MultiModelSelect_0']  ${rbac}
+	Sleep  20
+	Highlight Element  ${checkbox}
+	
 	Verify Page Contains Element  ${checkbox}
 	Click Element  ${checkbox}  and don't wait
 	Checkbox Should Be Selected	  ${checkbox}
@@ -1295,10 +1301,9 @@ Associate RBAC
 
 Configure RBAC
 	[Arguments]  ${rbac}  ${group}  ${filter}  ${delivery}  ${service}  ${ipprotocol}  ${src-ip}  ${dst-ip}
-	${random_groupname}  Generate Random Name  Group  5
-    Run Keyword If  '${group}'=='__new__'  
-    ...		Configure Group  ${random_groupname}  ${EMPTY}  ${EMPTY}
-    ${group}  Set Variable If  '${group}'=='__new__'  ${random_groupname}  ${group} 
+	Run Keyword Unless  '${group}'=='admin' or '${group}'=='${EMPTY}'
+    ...		Configure Group  ${group}  ${EMPTY}  ${EMPTY}
+    #${group}  Set Variable If  '${group}'=='__new__'  ${random_groupname}  ${group} 
 
     ${random_rbacname}  Generate Random Name  Rbac  5
     ${rbac}  Set Variable If  '${rbac}'=='__random__'  ${random_rbacname}  ${rbac} 
@@ -1323,8 +1328,8 @@ Configure RBAC
     Run Keyword Unless  '${delivery}'=='${EMPTY}'  
     ...		Associate Delivery Interface  ${delivery}
 
-    #Run Keyword Unless  '${service}'=='${EMPTY}'  
-    #...		Associate Service  ${service}
+    Run Keyword Unless  '${service}'=='${EMPTY}'  
+    ...		Associate Service  ${service}
 
     Run Keyword Unless  '${ipprotocol}'=='${EMPTY}'  
     ...		Associate Match Rule  ${ipprotocol}  ${src-ip}  ${dst-ip}
@@ -1378,7 +1383,9 @@ Associate Delivery Interface
 
 	Click Element  ${delivery_checkbox}  and don't wait
 	Checkbox Should Be Selected  ${delivery_checkbox}
-
+	
+	Highlight Element  ${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}
+	
 	Verify Page Contains Element  ${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}
 	Click Element  ${RBAC APPEND SELECTED DELIVERY INTERFACES BUTTON}  and don't wait
 
@@ -1471,7 +1478,7 @@ Associate Match Rule
 	Verify Page Contains Element  ${RBAC MATCH DESTINATION NODE}
 		Run Keyword Unless  '${dst-ip}' == '${EMPTY}'
 	...		Input Text And Verify  ${RBAC MATCH DESTINATION IP FIELD}  ${dst-ip}
-	Click Element  ${RBAC MATCH DESTINATION IP MASK FIELD}  and don't wait
+	Click Element  ${RBAC MATCH DESTINATION BUTTON}  and don't wait
 	#Verify Page Contains Element  ${dst-ip}
 
 	Verify Page Contains Element  ${RBAC APPEND SELECTED MATCHES BUTTON}

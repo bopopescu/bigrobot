@@ -1,5 +1,5 @@
 * Settings
-Documentation       A test suite test to configure interface from controller and bigtap menu, interface groups, udf's, 
+Documentation       Test suite to configure interface from controller and bigtap menu, interface groups, udf's, 
 ...                    users, rbac, switch alias and switch match mode. The tests have
 ...                 a workflow that is created using keywords from the resource file.
 Suite Setup          config suite setup
@@ -174,65 +174,128 @@ T4.8 Configure udf0 with L4 start offset 24
      Configure Big TapUser Defined Offsets                        udf3                L4 Start            24
     [Tags]  corsair  full  feature  udf  match-conditions
 
+# ### Configure User	  	Username 			Password 			Confirm Password  			Full Name				Group
+T5.1 User with password 	
+ 	Configure User			__random__			testtest			testtest					User with password		${EMPTY}
+ 	[Tags]  blackbird  full  feature  user
+T5.2 User no password		
+ 	Configure User			user1			    ${EMPTY}			${EMPTY}					User no password		${EMPTY}
+ 	[Tags]  blackbird  full  feature  user
+T5.3 User no full name	
+ 	Configure User			user_2				testtest			testtest					${EMPTY}				${EMPTY}
+ 	[Tags]  blackbird  full  feature  user
+T5.4 User group admin
+ 	Configure User			user.3				adminadmin			adminadmin					User group admin		admin
+ 	[Tags]  blackbird  full  feature  user
+T5.5 User new group
+ 	Configure User			user-4				adminadmin			adminadmin					User new group			group.4
+ 	[Tags]  blackbird  full  feature  user
+T5.6 User new group
+	Configure User			__random__			testuser			testuser					User new group			group_1
+	[Tags]  blackbird  full  feature  user
+ T5 Teardown
+ 	Delete All Security Users
+	[Tags]  blackbird  full  feature  user
+
+### Configure RBAC  				RBAC Name  			Group Name 			Filter			Delivery 		Service			Match				${src-ip}		${dst-ip}
+T6 Test Set Up:
+	Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1			 filter	        ixia-2-9
+    Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-intern1       delivery       ixia-2-15
+    Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             service        ixia-4-8    	
+	[Tags]  blackbird  full  feature  rbac
+T6.1 RBAC Allow All		
+	Configure RBAC			 		rbac				admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}    		${EMPTY}     	${EMPTY}	
+	[Tags]  blackbird  full  feature  rbac
+T6.2 RBAC IPv4
+    Configure RBAC				 	rbac1				group_new			${EMPTY}		${EMPTY}		${EMPTY}	  	IPv4 - 0x800 (2048)		1.1.1.1		${EMPTY}
+	[Tags]  blackbird  full  feature  rbac
+T6.3 RBAC IPv4 with filter / delivery / service interfaces
+    Configure RBAC				 	rbac_2				admin				ixia-2-9		ixia-2-15		${EMPTY}	  	IPv4 - 0x800 (2048)		1.1.1.1		2.6.0.0
+	[Tags]  blackbird  full  feature  rbac
+T6.4 RBAC IPv6 with filter / delivery / service interfaces
+  	Configure RBAC				 	rbAC-3				group.ip			ixia-2-9		ixia-2-15		${EMPTY}	  	IPv6 - 0x86DD (34525)	${EMPTY}	2:2:2:2:2:2
+	[Tags]  blackbird  full  feature  rbac
+T6.5 RBAC ARP with filter / delivery / service interfaces
+ 	Configure RBAC				 	RBAc.4				admin				ixia-2-9		ixia-2-15		${EMPTY}	  	ARP - 0x806 (2054)		${EMPTY}	${EMPTY}
+	[Tags]  blackbird  full  feature  rbac
+T6 Teardown
+ 	Delete All Security RBAC
+ 	[Tags]  blackbird  full  feature  rbac
+  
+### Configure Group  				Group Name 			User	 			RBAC	
+T7.1 Group with no users		
+ 	Configure Group			 		__random__			${EMPTY}			${EMPTY}
+ 	[Tags]  blackbird  full  feature  group		  			
+T7.2 Group with user admin		
+ 	Configure Group			 		__random__			admin				${EMPTY}
+ 	[Tags]  blackbird  full  feature  group
+T7.3 Group with new user and new rbac	
+ 	Configure Group					__random__			__new__				rbac_new
+ 	[Tags]  blackbird  full  feature  groupi
+T7 Teardown
+ 	Delete All Security Groups
+ 	[Tags]  blackbird  full  feature  group
+ 	
+# 
 # ### Configure Switch Alias                                        Switch                             Alias                 
-T7.1 Switch with regular alias                     
+T8.1 Switch with regular alias                     
      Configure Switch Alias                                        00:00:08:9e:01:b3:0c:0c            app-rlb9-1
     [Tags]  blackbird  full  feature  switch
-T7.2 Edit switch alias                                         
+T8.2 Edit switch alias                                         
      Configure Switch Alias                                        00:00:08:9e:01:f8:6b:8b            app-rly2-1
     [Tags]  blackbird  full  feature  switch
-T7.3 Delete switch regular alias         
+T8.3 Delete switch regular alias         
      Configure Switch Alias                                        00:00:08:9e:01:b3:0c:0c            ${EMPTY}
     [Tags]  blackbird  full  feature  switch
-T7.4 Switch with alias containing allowed special characters-
+T8.4 Switch with alias containing allowed special characters-
      Configure Switch Alias                                        00:00:08:9e:01:b3:0c:0c            switch-2
     [Tags]  blackbird  full  feature  switch
-T7.5 Switch with alias containing allowed special characters_
+T8.5 Switch with alias containing allowed special characters_
      Configure Switch Alias                                        00:00:08:9e:01:b3:0c:0c            switch_3
     [Tags]  blackbird  full  feature  switch
-T7.6 Switch with empty alias                     
+T8.6 Switch with empty alias                     
      Configure Switch Alias                                        00:00:08:9e:01:b3:0c:0c            ${EMPTY}
     [Tags]  blackbird  full  feature  switch
-T7.7 Switch with empty alias                     
+T8.7 Switch with empty alias                     
      Configure Switch Alias                                        00:00:08:9e:01:f8:6b:8b            ${EMPTY}
     [Tags]  blackbird  full  feature  switch
 
 #### Enable Disable Match Modes                                Match Mode
                         
-T8.1 Enable L3-L4 Offset Match                     
+T9.1 Enable L3-L4 Offset Match                     
      Set Switching Mode                                            L3-L4 Offset Match        
      [Tags]  corsair  full  feature  match-mode
-T8.2 Enable L3-L4 Match         
+T9.2 Enable L3-L4 Match         
      Set Switching Mode                                            L3-L4 Match            
     [Tags]  corsair  full  feature  match-mode
-T8.3 Enable Full Match Mode
-    Set Switching Mode                                            Full Match
+T9.3 Enable Full Match Mode
+    Set Switching Mode                                             Full Match
     [Tags]  corsair  full  feature  match-mode
-T8.4 Enable Policy Overlap                                        
-    Configure Match Mode                                        Policy Overlap
+T9.4 Enable Policy Overlap                                        
+    Configure Match Mode                                           Policy Overlap
     [Tags]  corsair  full  feature  match-mode
-T8.5 Disable Policy Overlap
+T9.5 Disable Policy Overlap
     Configure Match Mode                                        !Policy Overlap
     [Tags]  corsair  full  feature  match-mode
-T8.6 Disable Inport Mask
+T9.6 Disable Inport Mask
     Configure Match Mode                                        !Inport Mask    
     [Tags]  corsair  full  feature  match-mode
-T8.7 Enable Inport Mask
+T9.7 Enable Inport Mask
     Configure Match Mode                                        Inport Mask
     [Tags]  corsair  full  feature  match-mode
-T8.8 Disable CRC Check
+T9.8 Disable CRC Check
     Configure Match Mode                                        !CRC Check
     [Tags]  corsair  full  feature  match-mode
-T8.9 Enable CRC Check
+T9.9 Enable CRC Check
     Configure Match Mode                                        CRC Check
     [Tags]  corsair  full  feature  match-mode
-T8.10 Disable Tunneling
+T9.10 Disable Tunneling
     Configure Match Mode                                        !Tunneling
     [Tags]  corsair  full  feature  match-mode
-T8.11 Enable Tunneling
+T9.11 Enable Tunneling
     Configure Match Mode                                        Tunneling
     [Tags]  corsair  full  feature  match-mode
-T8.12 Enable L3-L4 Offset Match                     
+T9.12 Enable L3-L4 Offset Match                     
      Set Switching Mode                                            L3-L4 Offset Match    
     [Tags]  corsair  full  feature  match-mode
                         
