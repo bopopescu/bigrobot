@@ -32,6 +32,7 @@ ${tunnel_sw1_dip}                           192.168.67.1            #Tunnel Dest
 ${tunnel_sw1_gip}                           192.168.43.2            #Tunnel Gateway IP
 ${tunnel_sw1_mask}                          255.255.255.0           #Tunnel Subnet Mask
 ${tunnel_sw1_loopback}                      ethernet21              #Tunnel Loopback Interface
+${tunnel_sw1_vpnkey}                        1975                    #Tunnel VPN Key
 ${arista1_sw1_tunnel_name}                 tunnel1
 ${arista1_sw1_tunnel_intf1}                Ethernet51/1
 ${arista1_sw1_tunnel_ip}                   192.168.43.2  
@@ -46,6 +47,7 @@ ${tunnel_sw2_dip}                           192.168.43.1     #Tunnel Destination
 ${tunnel_sw2_gip}                           192.168.67.2     #Tunnel Gateway IP
 ${tunnel_sw2_mask}                          255.255.255.0    #Tunnel Subnet Mask
 ${tunnel_sw2_loopback}                      ethernet3        #Tunnel Loopback Interface
+${tunnel_sw2_vpnkey}                        1975                    #Tunnel VPN Key
 ${arista1_sw2_tunnel_name}                 tunnel1
 ${arista1_sw2_tunnel_intf1}                Ethernet49/1
 ${arista1_sw2_tunnel_ip}                   192.168.67.2  
@@ -197,14 +199,14 @@ TC009: Accton AS6700: BiDirectional Tunnel: Verify CLI "show tunnel 1" on switch
 
 #### Change tunnel direction to TX-RX and re-verify tunnel status
 TC010: Transmit-only Tunnel (Accton-AS5710): Verify tunnel state via rest
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     [Tags]  full  feature
     
 TC011: Receive-only Tunnel (Accton-AS6700): Verify tunnel state via rest
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
@@ -373,14 +375,14 @@ TC021: Accton AS6700: Receive-only Tunnel: Verify CLI "show tunnel 1" on switch 
     [Tags]  full  feature
 
 TC022: Receive-only Tunnel (Accton-AS5710): Verify tunnel state via rest
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  pinterface=${tunnel_sw1_parent_intf}  tdirection=rx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  pinterface=${tunnel_sw1_parent_intf}  tdirection=rx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
     [Tags]  full  feature
 
 TC023: Transmit-only Tunnel (Accton-AS6700): Verify tunnel state via rest
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=tx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=tx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
     Should be true  ${verify_tun_sw2}
@@ -599,14 +601,14 @@ corsair suite setup
     #Setup tunnels across  Accton AS5710 (app-ac5710-1)
     #### CORE IS TUNNEL
     arista tunnel setup  ${arista1_sw1_tunnel_intf1}  ${arista1_sw1_tunnel_ip}  ${arista1_sw1_tunnel_mask}
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
     Sleep  5     
     #Setup tunnels across  Accton AS6700 (app-ac6700-1)
     #### CORE IS TUNNEL
     arista tunnel setup  ${arista1_sw2_tunnel_intf1}  ${arista1_sw2_tunnel_ip}  ${arista1_sw2_tunnel_mask}
     Sleep  5    
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  5
     ## Configure BigTap policy 
