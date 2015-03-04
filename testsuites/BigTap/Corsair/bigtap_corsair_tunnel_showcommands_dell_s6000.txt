@@ -25,7 +25,7 @@ ${tunnel_sw1_dip}                           192.168.80.2            #Tunnel Dest
 ${tunnel_sw1_gip}                           192.168.80.2            #Tunnel Gateway IP
 ${tunnel_sw1_mask}                          255.255.255.0           #Tunnel Subnet Mask
 ${tunnel_sw1_loopback}                      ethernet24              #Tunnel Loopback Interface
-
+${tunnel_sw1_vpnkey}                        1975                    #Tunnel VPN Key
 ## Switch 2: APP-AS5710-2
 ${arista1_sw1_tunnel_name}                  tunnel1
 ${arista1_sw1_tunnel_intf1}                 Ethernet52/1
@@ -54,7 +54,7 @@ TC002: BiDirectional Tunnel: Verify CLI "show switch-interface <switch_alias> tu
     Should Be Equal As Strings  ${tunnel_dict['IF Name']}  ${tunnel_sw1_name}
     Should Be Equal As Strings  ${tunnel_dict['direction']}  bidirectional
     Should Be Equal As Strings  ${tunnel_dict['Loopback Interface']}  ${tunnel_sw1_loopback}
-    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  1024
+    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  ${tunnel_sw1_vpnkey}
     Should Be Equal As Strings  ${tunnel_dict['runtime-state']}  up
     Should Be Equal As Strings  ${tunnel_dict['source-ip']}  ${tunnel_sw1_sip}
     Should Be Equal As Strings  ${tunnel_dict['Parent Interface']}  ${tunnel_sw1_parent_intf}
@@ -112,7 +112,7 @@ TC006: BiDirectional Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel s
     ${tunnel_2} =  Get Line  ${content1}  4
     @{tunnel_2a}=  Split String  ${tunnel_2}
     ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
-    Should be equal as integers  ${tunnel_2b}  1024
+    Should be equal as integers  ${tunnel_2b}  ${tunnel_sw1_vpnkey}
     ${tunnel_3} =  Get Line  ${content1}  7
     @{tunnel_3a}=  Split String  ${tunnel_3}
     Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw1_sip}
@@ -122,7 +122,7 @@ TC006: BiDirectional Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel s
     [Tags]  full  feature
 
 TC007: Transmit-only Tunnel: Verify tunnel state via rest
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
@@ -143,7 +143,7 @@ TC008: Transmit-only Tunnel: Verify CLI "show switch-interface <switch_alias> tu
     Should Be Equal As Strings  ${tunnel_dict['IF Name']}  ${tunnel_sw1_name}
     Should Be Equal As Strings  ${tunnel_dict['direction']}  transmit-only
     Should Be Equal As Strings  ${tunnel_dict['Loopback Interface']}  ${tunnel_sw1_loopback}
-    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  1024
+    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  ${tunnel_sw1_vpnkey}
     Should Be Equal As Strings  ${tunnel_dict['runtime-state']}  up
     Should Be Equal As Strings  ${tunnel_dict['source-ip']}  ${tunnel_sw1_sip}
     Should Be Equal As Strings  ${tunnel_dict['Parent Interface']}  ${tunnel_sw1_parent_intf}
@@ -201,7 +201,7 @@ TC012: Transmit-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel s
     ${tunnel_2} =  Get Line  ${content1}  4
     @{tunnel_2a}=  Split String  ${tunnel_2}
     ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
-    Should be equal as integers  ${tunnel_2b}  1024
+    Should be equal as integers  ${tunnel_2b}  ${tunnel_sw1_vpnkey}
     ${tunnel_3} =  Get Line  ${content1}  7
     @{tunnel_3a}=  Split String  ${tunnel_3}
     Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw1_sip}
@@ -211,7 +211,7 @@ TC012: Transmit-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel s
     [Tags]  full  feature
 
 TC013: Receive-only Tunnel: Verify tunnel state via rest
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  pinterface=${tunnel_sw1_parent_intf}  tdirection=rx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  pinterface=${tunnel_sw1_parent_intf}  tdirection=rx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}
@@ -231,7 +231,7 @@ TC014: Receive-only Tunnel: Verify CLI "show switch-interface <switch_alias> tun
     \    Set To Dictionary  ${tunnel_dict}  ${cliOp[0].strip()}  ${cliOp[1].strip()}
     Should Be Equal As Strings  ${tunnel_dict['IF Name']}  ${tunnel_sw1_name}
     Should Be Equal As Strings  ${tunnel_dict['direction']}  receive-only
-    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  1024
+    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  ${tunnel_sw1_vpnkey}
     Should Be Equal As Strings  ${tunnel_dict['runtime-state']}  up
     Should Be Equal As Strings  ${tunnel_dict['source-ip']}  ${tunnel_sw1_sip}
     Should Be Equal As Strings  ${tunnel_dict['Parent Interface']}  ${tunnel_sw1_parent_intf}
@@ -288,7 +288,7 @@ TC018: Receive-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel st
     ${tunnel_2} =  Get Line  ${content1}  4
     @{tunnel_2a}=  Split String  ${tunnel_2}
     ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
-    Should be equal as integers  ${tunnel_2b}  1024
+    Should be equal as integers  ${tunnel_2b}  ${tunnel_sw1_vpnkey}
     ${tunnel_3} =  Get Line  ${content1}  7
     @{tunnel_3a}=  Split String  ${tunnel_3}
     Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw1_sip}
@@ -337,7 +337,7 @@ corsair suite setup
     #Setup tunnels across  Accton AS5710 (app-ac5710-1)
     #### CORE IS TUNNEL
     arista tunnel setup  ${arista1_sw1_tunnel_intf1}  ${arista1_sw1_tunnel_ip}  ${arista1_sw1_tunnel_mask}
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
     Sleep  5     
 
