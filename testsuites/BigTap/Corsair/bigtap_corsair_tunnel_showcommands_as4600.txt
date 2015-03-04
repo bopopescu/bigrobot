@@ -84,7 +84,7 @@ TC002: BiDirectional Tunnel: Verify CLI "show switch-interface <switch_alias> tu
     Should Be Equal As Strings  ${tunnel_dict['IF Name']}  ${tunnel_sw1_name}
     Should Be Equal As Strings  ${tunnel_dict['direction']}  bidirectional
     Should Be Equal As Strings  ${tunnel_dict['Loopback Interface']}  ${tunnel_sw1_loopback}
-    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  1024
+    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  ${tunnel_sw1_vpnkey}
     Should Be Equal As Strings  ${tunnel_dict['runtime-state']}  up
     Should Be Equal As Strings  ${tunnel_dict['source-ip']}  ${tunnel_sw1_sip}
     Should Be Equal As Strings  ${tunnel_dict['Parent Interface']}  ${tunnel_sw1_parent_intf}
@@ -149,7 +149,7 @@ TC007: BiDirectional Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel s
     ${tunnel_2} =  Get Line  ${content1}  4
     @{tunnel_2a}=  Split String  ${tunnel_2}
     ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
-    Should be equal as integers  ${tunnel_2b}  1024
+    Should be equal as integers  ${tunnel_2b}  ${tunnel_sw1_vpnkey}
     ${tunnel_3} =  Get Line  ${content1}  7
     @{tunnel_3a}=  Split String  ${tunnel_3}
     Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw1_sip}
@@ -188,7 +188,7 @@ TC010: Transmit-only Tunnel: Verify CLI "show switch-interface <switch_alias> tu
     Should Be Equal As Strings  ${tunnel_dict['IF Name']}  ${tunnel_sw1_name}
     Should Be Equal As Strings  ${tunnel_dict['direction']}  transmit-only
     Should Be Equal As Strings  ${tunnel_dict['Loopback Interface']}  ${tunnel_sw1_loopback}
-    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  1024
+    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  ${tunnel_sw1_vpnkey}
     Should Be Equal As Strings  ${tunnel_dict['runtime-state']}  up
     Should Be Equal As Strings  ${tunnel_dict['source-ip']}  ${tunnel_sw1_sip}
     Should Be Equal As Strings  ${tunnel_dict['Parent Interface']}  ${tunnel_sw1_parent_intf}
@@ -215,7 +215,7 @@ TC011: Receive-only Tunnel: Verify CLI "show switch-interface <switch_alias> tun
     \    Set To Dictionary  ${tunnel_dict}  ${cliOp[0].strip()}  ${cliOp[1].strip()}
     Should Be Equal As Strings  ${tunnel_dict['IF Name']}  ${tunnel_sw2_name}
     Should Be Equal As Strings  ${tunnel_dict['direction']}  receive-only
-    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  1024
+    Should Be Equal As Strings  ${tunnel_dict['vpn-key']}  ${tunnel_sw2_vpnkey}
     Should Be Equal As Strings  ${tunnel_dict['runtime-state']}  up
     Should Be Equal As Strings  ${tunnel_dict['source-ip']}  ${tunnel_sw2_sip}
     Should Be Equal As Strings  ${tunnel_dict['Parent Interface']}  ${tunnel_sw2_parent_intf}
@@ -301,7 +301,7 @@ TC018: Transmit-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel s
     ${tunnel_2} =  Get Line  ${content1}  4
     @{tunnel_2a}=  Split String  ${tunnel_2}
     ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
-    Should be equal as integers  ${tunnel_2b}  1024
+    Should be equal as integers  ${tunnel_2b}  ${tunnel_sw1_vpnkey}
     ${tunnel_3} =  Get Line  ${content1}  7
     @{tunnel_3a}=  Split String  ${tunnel_3}
     Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw1_sip}
@@ -322,7 +322,7 @@ TC019: Receive-only Tunnel: Verify CLI "show tunnel 1" on switch shows tunnel st
     ${tunnel_2} =  Get Line  ${content1}  4
     @{tunnel_2a}=  Split String  ${tunnel_2}
     ${tunnel_2b}=  Convert to Integer  ${tunnel_2a[1]}
-    Should be equal as integers  ${tunnel_2b}  1024
+    Should be equal as integers  ${tunnel_2b}  ${tunnel_sw2_vpnkey}
     ${tunnel_3} =  Get Line  ${content1}  7
     @{tunnel_3a}=  Split String  ${tunnel_3}
     Should be equal as Strings  ${tunnel_3a[1]}  ${tunnel_sw2_sip}
