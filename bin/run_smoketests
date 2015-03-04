@@ -9,8 +9,8 @@
 testsuites="\
 testsuites/T5/L2/t5_singleleaf_dualrack_ping_test_suite \
 testsuites/T5/L2/t5_dualleaf_dualrack_ping_test_suite \
-testsuites/T5/Openstack/open_stack_unit_tests \
 testsuites/T5/T5-Platform/t5_platform_HA_L3 \
+testsuites/T5/Openstack/open_stack_unit_tests \
 "
 
 mesg() {
