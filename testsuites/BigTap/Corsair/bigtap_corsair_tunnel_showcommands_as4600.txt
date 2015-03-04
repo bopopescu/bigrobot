@@ -128,6 +128,7 @@ TC005: BiDirectional Tunnel: Verify CLI "show link | grep tunnel" on controller
 
 TC006: BiDirectional Tunnel: Verify CLI "show interface" on switch shows tunnel status
     enable  node=s1  cmd=clear interface statistics
+    sleep  2
     enable  node=s1  cmd=show interface
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -271,6 +272,7 @@ TC015: Receive-only Tunnel: Verify CLI "show switch <switch_alias> interfaces tu
 
 TC016: Transmit-only Tunnel: Verify CLI "show interface" on switch shows tunnel status
     enable  node=s1  cmd=clear interface statistics
+    sleep  2
     enable  node=s1  cmd=show interface
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -282,6 +284,7 @@ TC016: Transmit-only Tunnel: Verify CLI "show interface" on switch shows tunnel 
 
 TC017: Receive-only Tunnel: Verify CLI "show interface" on switch shows tunnel status
     enable  node=s1  cmd=clear interface statistics
+    sleep  2
     enable  node=s1  cmd=show interface
     ${content1}=  cli_content  node=s2
     Should Not Contain  ${content1}  Error
