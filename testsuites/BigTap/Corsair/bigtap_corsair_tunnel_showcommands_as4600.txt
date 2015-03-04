@@ -283,9 +283,9 @@ TC016: Transmit-only Tunnel: Verify CLI "show interface" on switch shows tunnel 
     [Tags]  full  feature
 
 TC017: Receive-only Tunnel: Verify CLI "show interface" on switch shows tunnel status
-    enable  node=s1  cmd=clear interface statistics
+    enable  node=s2  cmd=clear interface statistics
     sleep  2
-    enable  node=s1  cmd=show interface
+    enable  node=s2  cmd=show interface
     ${content1}=  cli_content  node=s2
     Should Not Contain  ${content1}  Error
     verify openflow controller  s2  c1
