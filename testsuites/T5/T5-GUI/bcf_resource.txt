@@ -1258,7 +1258,7 @@ Create Port Group
 	Click Element  ${SAVE SWITCH CONFIG BUTTON}  and don't wait
 
 	Verify Element Invisible  ${CREATE PORT GROUP POPUP}
-
+	Verify Page Contains Text  ${name}
 
 Select Port Group Interfaces
 	[Arguments]  ${switch}  @{interfaces}
