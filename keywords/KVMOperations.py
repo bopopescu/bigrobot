@@ -205,6 +205,7 @@ class KVMOperations(object):
         file_name = None
         if vm_type == 'bcf':
             file_name = "controller-%s_virtual-%s.qcow2" % (jenkins_project_name, latest_build_number)
+            helpers.log("Adding virtual tag to build file Name : %s" % file_name)
         elif vm_type == 'mininet':
             file_name = "mininet-%s.qcow2" % latest_build_number
         helpers.log("Latest Build Number on KVM Host: %s" % latest_kvm_build_number)
@@ -422,7 +423,7 @@ class KVMOperations(object):
                                     % vm_name)
                 self._destroy_vm(kvm_handle=kvm_handle, vm_name=vm_name)
                 self._undefine_vm(kvm_handle=kvm_handle, vm_name=vm_name)
-                helpers.summary_log("Checking The State of Vm : %s" % vm_name)
+                helpers.log("Checking The State of Vm : %s" % vm_name)
                 new_vm_state = self._get_vm_running_state(kvm_handle=kvm_handle, vm_name=vm_name)
                 helpers.log(" new vm_state : %s" % new_vm_state)
                 if new_vm_state != '':

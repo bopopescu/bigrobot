@@ -35,6 +35,7 @@ ${tunnel_sw1_dip}                           192.168.67.1            #Tunnel Dest
 ${tunnel_sw1_gip}                           192.168.43.2            #Tunnel Gateway IP
 ${tunnel_sw1_mask}                          255.255.255.0           #Tunnel Subnet Mask
 ${tunnel_sw1_loopback}                      ethernet52              #Tunnel Loopback Interface
+${tunnel_sw1_vpnkey}                        1975                    #Tunnel Loopback Interface
 ${tunnel_sw1_alias}                         extreme1_sw1_delivery_intf
 ${extreme1_sw1_tunnel_name}                 tunnel1
 ${extreme1_sw1_tunnel_intf1}                6
@@ -48,6 +49,7 @@ ${tunnel_sw1_invalid_sip}                   192.168.343.1                       
 ${tunnel_sw1_invalid_dip}                   192.168.367.1                               #Tunnel Invalid Destination IP
 ${tunnel_sw1_invalid_gip}                   192.168.343.2                               #Tunnel Invalid Gateway IP
 ${tunnel_sw1_invalid_mask}                  255.255.355.0                               #Tunnel Invalid Subnet Mask
+${tunnel_sw1_invalid_vpnkey}                1976                    #Tunnel Loopback Interface
 ${tunnel_sw1_ipv6_sip}                      2001:cdba:0000:0000:0000:0000:3257:9652     #Tunnel IPv6 based Source IP
 ${tunnel_sw1_ipv6_dip}                      2002:cdba:0000:0000:0000:0000:3257:9652     #Tunnel IPv6 based Destination IP
 ${tunnel_sw1_ipv6_gip}                      2003:cdba:0000:0000:0000:0000:3257:9652     #Tunnel IPv6 based Gateway IP
@@ -61,6 +63,7 @@ ${tunnel_sw1_dip_1}                           192.168.0.1            #Tunnel Des
 ${tunnel_sw1_gip_1}                           192.168.97.2            #Tunnel Gateway IP
 ${tunnel_sw1_mask_1}                          255.255.255.0           #Tunnel Subnet Mask
 ${tunnel_sw1_loopback_1}                      ethernet3              #Tunnel Loopback Interface
+${tunnel_sw1_vpnkey_1}                        1977                    #Tunnel Loopback Interface
 ${tunnel_sw1_alias_1}                       extreme2_sw1_filter_intf
 ${extreme2_sw1_tunnel_name}                 tunnel2
 ${extreme2_sw1_tunnel_intf1}                 9
@@ -75,6 +78,7 @@ ${tunnel_sw1_dip_ixia_filter}               192.168.142.2           #Tunnel Dest
 ${tunnel_sw1_gip_ixia_filter}               192.168.142.2           #Tunnel Gateway IP
 ${tunnel_sw1_mask_ixia_filter}              255.255.255.0           #Tunnel Subnet Mask
 ${tunnel_sw1_ixia_filter_name}              ac4600_1_ixia_filter    #Tunnel Name when used as filter interface
+${tunnel_sw1_vpnkey_2}                      1978                    #Tunnel Loopback Interface
 
 ${tunnel_sw1_name_ixia_delivery}            tunnel4                  #Tunnel Name
 ${tunnel_sw1_parent_intf_ixia_delivery}     ethernet2                #Tunnel Parent Interface
@@ -84,6 +88,7 @@ ${tunnel_sw1_gip_ixia_delivery}             192.168.143.2            #Tunnel Gat
 ${tunnel_sw1_mask_ixia_delivery}            255.255.255.0            #Tunnel Subnet Mask
 ${tunnel_sw1_ixia_delivery_name}            ac4600_1_ixia_delivery   #Tunnel Name when used as filter interface
 ${tunnel_sw1_loopback_ixia_delivery}        ethernet4                #Tunnel Loopback Interface
+${tunnel_sw1_vpnkey_3}                      1981                    #Tunnel Loopback Interface
 
 ## Switch 2: app-ac4600-2
 ${switch2_filter_intf}                      ethernet1       #filter interface on switch scale-ac4600-1
@@ -99,6 +104,7 @@ ${tunnel_sw2_gip}                       192.168.67.2     #Tunnel Gateway IP
 ${tunnel_sw2_mask}                      255.255.255.0    #Tunnel Subnet Mask
 ${tunnel_sw2_loopback}                  ethernet3        #Tunnel Loopback Interface
 ${tunnel_sw2_alias}                     extreme1_sw2_filter_intf
+${tunnel_sw2_vpnkey}                    1975                    #Tunnel VPN Key
 ${extreme1_sw2_tunnel_name}             tunnel5
 ${extreme1_sw2_tunnel_intf1}            9
 ${extreme1_sw2_tunnel_ip}               192.168.67.2  
@@ -111,27 +117,30 @@ ${tunnel_sw2_dip_1}                     192.168.10.1            #Tunnel Destinat
 ${tunnel_sw2_gip_1}                     192.168.197.2            #Tunnel Gateway IP
 ${tunnel_sw2_mask_1}                    255.255.255.0           #Tunnel Subnet Mask
 ${tunnel_sw2_loopback_1}                ethernet43              #Tunnel Loopback Interface
+${tunnel_sw2_vpnkey_1}                  1979                    #Tunnel VPN Key
 ${extreme2_sw2_tunnel_name}             tunnel6
 ${extreme2_sw2_tunnel_intf1}            13
 ${extreme2_sw2_tunnel_ip}               192.168.197.2  
 ${extreme2_sw2_tunnel_mask}             255.255.255.0
 
-${tunnel_sw2_name_ixia_filter}              tunnel7                 #Tunnel Name
-${tunnel_sw2_parent_intf_ixia_filter}       ethernet1               #Tunnel Parent Interface
-${tunnel_sw2_sip_ixia_filter}               192.168.175.1           #Tunnel Source IP
-${tunnel_sw2_dip_ixia_filter}               192.168.175.2           #Tunnel Destination IP
-${tunnel_sw2_gip_ixia_filter}               192.168.175.2           #Tunnel Gateway IP
-${tunnel_sw2_mask_ixia_filter}              255.255.255.0           #Tunnel Subnet Mask
-${tunnel_sw2_ixia_filter_name}              ac4600_ixia_filter      #Tunnel Name when used as filter interface
+${tunnel_sw2_name_ixia_filter}          tunnel7                 #Tunnel Name
+${tunnel_sw2_parent_intf_ixia_filter}   ethernet1               #Tunnel Parent Interface
+${tunnel_sw2_sip_ixia_filter}           192.168.175.1           #Tunnel Source IP
+${tunnel_sw2_dip_ixia_filter}           192.168.175.2           #Tunnel Destination IP
+${tunnel_sw2_gip_ixia_filter}           192.168.175.2           #Tunnel Gateway IP
+${tunnel_sw2_mask_ixia_filter}          255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw2_ixia_filter_name}          ac4600_ixia_filter      #Tunnel Name when used as filter interface
+${tunnel_sw2_vpnkey_2}                  1980                    #Tunnel VPN Key
 
-${tunnel_sw2_name_ixia_delivery}            tunnel8                 #Tunnel Name
-${tunnel_sw2_parent_intf_ixia_delivery}     ethernet2               #Tunnel Parent Interface
-${tunnel_sw2_sip_ixia_delivery}             192.168.180.1           #Tunnel Source IP
-${tunnel_sw2_dip_ixia_delivery}             192.168.180.2           #Tunnel Destination IP
-${tunnel_sw2_gip_ixiadelivery}              192.168.180.2           #Tunnel Gateway IP
-${tunnel_sw2_mask_ixia_delivery}            255.255.255.0           #Tunnel Subnet Mask
-${tunnel_sw2_ixia_delivery_name}            ac4600_ixia_delivery    #Tunnel Name when used as filter interface
-${tunnel_sw2_loopback_ixia_delivery}        ethernet4               #Tunnel Loopback Interface
+${tunnel_sw2_name_ixia_delivery}         tunnel8                 #Tunnel Name
+${tunnel_sw2_parent_intf_ixia_delivery}  ethernet2               #Tunnel Parent Interface
+${tunnel_sw2_sip_ixia_delivery}          192.168.180.1           #Tunnel Source IP
+${tunnel_sw2_dip_ixia_delivery}          192.168.180.2           #Tunnel Destination IP
+${tunnel_sw2_gip_ixiadelivery}           192.168.180.2           #Tunnel Gateway IP
+${tunnel_sw2_mask_ixia_delivery}         255.255.255.0           #Tunnel Subnet Mask
+${tunnel_sw2_ixia_delivery_name}         ac4600_ixia_delivery    #Tunnel Name when used as filter interface
+${tunnel_sw2_loopback_ixia_delivery}     ethernet4               #Tunnel Loopback Interface
+${tunnel_sw2_vpnkey_3}                   1981                    #Tunnel VPN Key
 
 ## Switch 3: app-ac5710-4
 ${switch3_filter_intf}                  ethernet1       #filter interface on switch scale-ac4600-1
@@ -147,6 +156,7 @@ ${tunnel_sw3_dip}                       192.168.29.1     #Tunnel Destination IP
 ${tunnel_sw3_gip}                       192.168.22.2     #Tunnel Gateway IP
 ${tunnel_sw3_mask}                      255.255.255.0    #Tunnel Subnet Mask
 ${tunnel_sw3_loopback}                  ethernet3        #Tunnel Loopback Interface
+${tunnel_sw3_vpnkey}                    1942             #Tunnel VPN Key
 ${arista1_sw3_tunnel_name}              tunnel7
 ${arista1_sw3_tunnel_intf1}             Et51/1
 ${arista1_sw3_tunnel_ip}                192.168.22.2  
@@ -159,6 +169,7 @@ ${tunnel_sw3_dip_ixia_filter}               192.168.82.2              #Tunnel De
 ${tunnel_sw3_gip_ixia_filter}               192.168.82.2              #Tunnel Gateway IP
 ${tunnel_sw3_mask_ixia_filter}              255.255.255.0             #Tunnel Subnet Mask
 ${tunnel_sw3_ixia_filter_name}              ac5710_4_ixia_filter      #Tunnel Name when used as filter interface
+${tunnel_sw3_vpnkey_1}                      1943             #Tunnel VPN Key
 
 ${tunnel_sw3_name_ixia_delivery}            tunnel11                   #Tunnel Name
 ${tunnel_sw3_parent_intf_ixia_delivery}     ethernet2                 #Tunnel Parent Interface
@@ -168,6 +179,7 @@ ${tunnel_sw3_gip_ixiadelivery}              192.168.81.2              #Tunnel Ga
 ${tunnel_sw3_mask_ixia_delivery}            255.255.255.0             #Tunnel Subnet Mask
 ${tunnel_sw3_ixia_delivery_name}            ac5710_4_ixia_delivery    #Tunnel Name when used as filter interface
 ${tunnel_sw3_loopback_ixia_delivery}        ethernet4                 #Tunnel Loopback Interface
+${tunnel_sw3_vpnkey_2}                      1944                      #Tunnel VPN Key
 
 ## Switch 4: app-ac6700-1
 
@@ -178,6 +190,7 @@ ${tunnel_sw4_dip}                       192.168.22.1     #Tunnel Destination IP
 ${tunnel_sw4_gip}                       192.168.29.2     #Tunnel Gateway IP
 ${tunnel_sw4_mask}                      255.255.255.0    #Tunnel Subnet Mask
 ${tunnel_sw4_loopback}                  ethernet10       #Tunnel Loopback Interface
+${tunnel_sw4_vpnkey}                    1942             #Tunnel VPN Key
 ${arista1_sw4_tunnel_name}              tunnel12
 ${arista1_sw4_tunnel_intf1}             Et49/1
 ${arista1_sw4_tunnel_ip}                192.168.29.2  
@@ -210,32 +223,32 @@ TC1:AS4600:Verify bidirectional tunnel interface
     Should be true  ${verify_tun_sw1}         
     ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip} 
     Should be true  ${verify_tun_sw2}
-    [Tags]  sanity  feature  Accton-AS4600  run
+    [Tags]  sanity  feature  Accton-AS4600  
 
 TC2:AS4600:Verify receive-only tunnel interface
     ${verify_tun_sw3}=  rest verify tunnel status  s1  ${tunnel_sw1_name_ixia_filter}  tunnel_number=377  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}      
     Should be true  ${verify_tun_sw3}
-    [Tags]  sanity  feature  Accton-AS4600
+    [Tags]  sanity  feature  Accton-AS4600  
 
 TC3:AS4600:Verify transmit-only tunnel interface
     ${verify_tun_sw4}=  rest verify tunnel status  s2  ${tunnel_sw2_name_ixia_delivery}  tunnel_number=377  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}      
     Should be true  ${verify_tun_sw4}
-    [Tags]  sanity  feature  Accton-AS4600
+    [Tags]  sanity  feature  Accton-AS4600  
 
 TC4:AS5710:Verify bidirectional tunnel interface
     ${verify_tun_sw5}=  rest verify tunnel status  s3  ${tunnel_sw3_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}      
     Should be true  ${verify_tun_sw5}
-    [Tags]  sanity  feature  Accton-AS5710
+    [Tags]  sanity  feature  Accton-AS5710  
 
 TC5:AS5710:Verify receive-only tunnel interface
     ${verify_tun_sw6}=  rest verify tunnel status  s3  ${tunnel_sw3_name_ixia_filter}  tunnel_number=377  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf_ixia_filter}  tunnel_direction=rx  sip=${tunnel_sw3_sip_ixia_filter}  dip=${tunnel_sw3_dip_ixia_filter}  mask=${tunnel_sw3_mask_ixia_filter}  gip=${tunnel_sw3_gip_ixia_filter}      
     Should be true  ${verify_tun_sw6}
-    [Tags]  sanity  feature  Accton-AS5710
+    [Tags]  sanity  feature  Accton-AS5710  
 
 TC6:AS5710:Verify transmit-only tunnel interface
     ${verify_tun_sw7}=  rest verify tunnel status  s3  ${tunnel_sw3_name_ixia_delivery}  tunnel_number=378  runtime_state=up  parent_interface=${tunnel_sw3_parent_intf_ixia_delivery}  tunnel_direction=tx  sip=${tunnel_sw3_sip_ixia_delivery}  dip=${tunnel_sw3_dip_ixia_delivery}  mask=${tunnel_sw3_mask_ixia_delivery}  gip=${tunnel_sw3_gip_ixiadelivery}      
     Should be true  ${verify_tun_sw7}
-    [Tags]  sanity  feature  Accton-AS5710
+    [Tags]  sanity  feature  Accton-AS5710  
     
 TC7:AS6700:Verify bidirectional tunnel interface   
     ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
@@ -243,23 +256,23 @@ TC7:AS6700:Verify bidirectional tunnel interface
     [Tags]  sanity  feature  Accton-AS6700  
     
 TC8:AS6700:Verify receive-only tunnel interface   
-    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  pinterface=${tunnel_sw4_parent_intf}  tdirection=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  pinterface=${tunnel_sw4_parent_intf}  tdirection=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}  vpnkey=${tunnel_sw4_vpnkey}
     Should be true  ${verify_add_tun_sw4}          
     sleep  5
     ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
     Should be true  ${verify_tun_sw8}
-    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}  vpnkey=${tunnel_sw4_vpnkey}
     Should be true  ${verify_add_tun_sw4}          
     sleep  5    
     [Tags]  sanity  feature  Accton-AS6700  
     
 TC9:AS6700:Verify transmit-only tunnel interface
-    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=tx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=tx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}  vpnkey=${tunnel_sw4_vpnkey}
     Should be true  ${verify_add_tun_sw4}          
     sleep  5       
     ${verify_tun_sw8}=  rest verify tunnel status  s4  ${tunnel_sw4_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw4_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}      
     Should be true  ${verify_tun_sw8}
-    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}  vpnkey=${tunnel_sw4_vpnkey}
     Should be true  ${verify_add_tun_sw4}          
     sleep  5    
     [Tags]  sanity  feature  Accton-AS6700  
@@ -315,7 +328,7 @@ TC12:Verify traffic across policies in TC10 and TC11
 
 
 TC13:Verify BigTap policy with tunnel as a transmit-only delivery interface
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}     
     sleep   3
     rest add interface role  s1  ${switch1_filter_intf}     filter      intf_nickname=${switch1_filter_alias}
@@ -331,7 +344,7 @@ TC13:Verify BigTap policy with tunnel as a transmit-only delivery interface
     [Tags]  sanity  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC14:Verify BigTap policy with tunnel as a receive-only filter interface
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}                
     sleep   3
     rest add interface role  s2  ${tunnel_sw2_name}         filter      intf_nickname=${tunnel_sw2_alias}
@@ -364,7 +377,7 @@ TC15:Verify traffic across policies in TC13 and TC14
 TC16:Verify BigTap policy where core and delivery are both tunnels on same switch
     rest delete interface role  s2  ${switch2_delivery_intf}   delivery
     sleep  3
-    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_ixia_delivery}  loopback=${tunnel_sw2_loopback_ixia_delivery}  pinterface=${tunnel_sw2_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}
+    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_ixia_delivery}  loopback=${tunnel_sw2_loopback_ixia_delivery}  pinterface=${tunnel_sw2_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}  vpnkey=${tunnel_sw2_vpnkey_3}
     Should be true  ${verify_add_tun_ixia_delivery}
     ${H2}=  L3 add host  src_ip=${tunnel_sw2_gip_ixiadelivery}  gw_ip=${tunnel_sw2_sip_ixia_delivery}  port_name=d
     L3 start hosts  port_name=d
@@ -400,7 +413,7 @@ TC16:Verify BigTap policy where core and delivery are both tunnels on same switc
     [Tags]  sanity  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700
     
 TC17:Verify a rewrite vlan can be done on a tunnel interface
-    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_ixia_delivery}  loopback=${tunnel_sw2_loopback_ixia_delivery}  pinterface=${tunnel_sw2_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}
+    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_ixia_delivery}  loopback=${tunnel_sw2_loopback_ixia_delivery}  pinterface=${tunnel_sw2_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}  vpnkey=${tunnel_sw2_vpnkey_3}
     Should be true  ${verify_add_tun_ixia_delivery}
     ${H2}=  L3 add host  src_ip=${tunnel_sw2_gip_ixiadelivery}  gw_ip=${tunnel_sw2_sip_ixia_delivery}  port_name=d
     L3 start hosts  port_name=d
@@ -477,7 +490,7 @@ TC18:Verify with policy level vlan rewrite and core and delivery interfaces bein
 TC19:Verify txrx tunnel interface can be configured as a pre-service interface
     clean config to suite setup state
     sleep  3        
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}
     sleep  3        
     ${add_intf_preservice}=  rest add interface role  s1  ${tunnel_sw1_name}  service  ${tunnel_pre_service}
@@ -485,7 +498,7 @@ TC19:Verify txrx tunnel interface can be configured as a pre-service interface
     [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC20:Verify txrx tunnel interface can be configured as a post-service interface
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}
     sleep  3          
     ${add_intf_postservice}=  rest add interface role  s2  ${tunnel_sw2_name}  service  ${tunnel_post_service}
@@ -552,7 +565,7 @@ TC22:Verify traffic across service interfaces that are txrx tunnels.
 TC23:Verify bidirectional tunnel interface can be configured as a pre-service interface
     clean config to suite setup state
     sleep  3        
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}
     sleep  3        
     ${add_intf_preservice}=  rest add interface role  s1  ${tunnel_sw1_name}  service  ${tunnel_pre_service}
@@ -560,7 +573,7 @@ TC23:Verify bidirectional tunnel interface can be configured as a pre-service in
     [Tags]  sanity  feature    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC24:Verify bidirectional tunnel interface can be configured as a post-service interface
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
     sleep  3          
     ${add_intf_postservice}=  rest add interface role  s2  ${tunnel_sw2_name}  service  ${tunnel_post_service}
@@ -722,7 +735,7 @@ TC29:Verify that overlapping feature works on tunnel based policy
     change tunnel direction to bidir
     ${ovelap_enabled}=  rest enable feature  overlap
     Should be true  ${ovelap_enabled}  
-    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s1  ${tunnel_sw1_name_ixia_delivery}  loopback=${tunnel_sw1_loopback_ixia_delivery}  pinterface=${tunnel_sw1_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw1_sip_ixia_delivery}  dip=${tunnel_sw1_dip_ixia_delivery}  mask=${tunnel_sw1_mask_ixia_delivery}  gip=${tunnel_sw1_gip_ixiadelivery}
+    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s1  ${tunnel_sw1_name_ixia_delivery}  loopback=${tunnel_sw1_loopback_ixia_delivery}  pinterface=${tunnel_sw1_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw1_sip_ixia_delivery}  dip=${tunnel_sw1_dip_ixia_delivery}  mask=${tunnel_sw1_mask_ixia_delivery}  gip=${tunnel_sw1_gip_ixiadelivery}  vpnkey=${tunnel_sw1_vpnkey_3}
     Should be true  ${verify_add_tun_ixia_delivery}
     ${H2}=  L3 add host  src_ip=${tunnel_sw1_gip_ixiadelivery}  gw_ip=${tunnel_sw1_sip_ixia_delivery}  port_name=b
     L3 start hosts  port_name=b
@@ -779,7 +792,7 @@ TC30:Delete and restore complete configuration. Verify tunnel gets re-establishe
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
-    config  master  tunnel-encap-type gre
+    config  master  tunnel-encap-type gre ${tunnel_sw1_vpnkey}
     config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
@@ -796,7 +809,7 @@ TC31:Delete and restore partial configuration. Do not add tunnel-destination. Ve
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
-    config  master  tunnel-encap-type gre
+    config  master  tunnel-encap-type gre ${tunnel_sw1_vpnkey}
     config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
@@ -804,7 +817,7 @@ TC31:Delete and restore partial configuration. Do not add tunnel-destination. Ve
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}
     sleep  10          
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -820,17 +833,17 @@ TC32:Delete and restore partial configuration. Do not add tunnel-type. Verify tu
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
-    config  master  tunnel-encap-type gre
+    config  master  tunnel-encap-type gre ${tunnel_sw1_vpnkey}
     config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}    
     sleep  10      
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_tun_sw1}                
     [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
@@ -850,10 +863,10 @@ TC33:Delete and restore partial configuration. Do not add tunnel-encap-type. Ver
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}
     sleep  10          
-    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+    ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
     Should be true  ${verify_tun_sw1}                
     [Tags]  sanity  negative    Accton-AS4600  Accton-AS5710  Accton-AS6700
 
@@ -866,14 +879,14 @@ TC34:Delete and restore partial configuration. Do not add tunnel-interface paren
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
-    config  master  tunnel-encap-type gre
+    config  master  tunnel-encap-type gre ${tunnel_sw1_vpnkey}
     config  master  tunnel-source ip ${tunnel_sw1_sip} mask ${tunnel_sw1_mask} gateway-ip ${tunnel_sw1_gip}    
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}   
     sleep  10       
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -889,14 +902,14 @@ TC35:Delete and restore partial configuration. Do not add tunnel-source. Verify 
     Should not be true  ${verify_tun_sw1}    
     config  master  interface ${tunnel_sw1_name}
     config  master  tunnel-destination ip ${tunnel_sw1_dip}
-    config  master  tunnel-encap-type gre
+    config  master  tunnel-encap-type gre ${tunnel_sw1_vpnkey}
     config  master  tunnel-interface parent-interface ${tunnel_sw1_parent_intf} 
     config  master  tunnel-type tunnel tunnel-direction bidirectional encap-loopback-interface ${tunnel_sw1_loopback}          
     sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  soft_error=${True}      
     Should not be true  ${verify_tun_sw1}    
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -913,7 +926,7 @@ TC36:Change tunnel parent interface to a different but valid interface. Verify t
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_alternate}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should be true  ${verify_tun_sw1}     
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -930,7 +943,7 @@ TC37:Change tunnel parent interface to a different but invalid interface. Verify
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf_invalid}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
     Should not be true  ${verify_tun_sw1}     
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -946,7 +959,7 @@ TC38:Verify tunnel interface configuration does NOT allow invalid destination IP
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_invalid_dip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -962,7 +975,7 @@ TC39:Verify tunnel interface configuration does NOT allow invalid source IP addr
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_invalid_sip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -978,7 +991,7 @@ TC40:Verify tunnel interface configuration does NOT allow invalid source IP mask
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid netmask (eg: 255.255.255.0): ${tunnel_sw1_invalid_mask}; invalid netmask  
     sleep  10
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -994,7 +1007,7 @@ TC41:Verify tunnel interface configuration does NOT allow invalid gateway IP.
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_invalid_gip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1010,7 +1023,7 @@ TC42:Verify tunnel interface configuration does NOT allow IPv6 address as destin
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_ipv6_dip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1026,7 +1039,7 @@ TC43:Verify tunnel interface configuration does NOT allow IPv6 address as source
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_ipv6_sip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1042,7 +1055,7 @@ TC44:Verify tunnel interface configuration does NOT allow IPv6 address as gatewa
     Should Contain  ${output['content']}  Error: Invalid argument: Invalid IP Address: ${tunnel_sw1_ipv6_gip}; not an ip-address   
     sleep  10
     #Restore configuration for next testcase
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1} 
     sleep  10         
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1051,9 +1064,9 @@ TC44:Verify tunnel interface configuration does NOT allow IPv6 address as gatewa
 
 TC45: Verify tunnel can be setup with bidirectional on one side and receive-only on other-end
     tunnel teardown
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1074,9 +1087,9 @@ TC45: Verify tunnel can be setup with bidirectional on one side and receive-only
 
 TC46: Verify bigtap policy is installed with transmit only tunnel on one side and receive-only on other-end
     tunnel teardown
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1097,9 +1110,9 @@ TC46: Verify bigtap policy is installed with transmit only tunnel on one side an
 
 TC47: With bigtap policy installed with transmit only tunnel on one side and receive-only on other-end, flap interface on extreme
     tunnel teardown
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1127,14 +1140,14 @@ TC47: With bigtap policy installed with transmit only tunnel on one side and rec
     node disconnect  s6 
     sleep  20 
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}                        
-    [Tags]  sanity  feature      Accton-AS4600  Accton-AS5710  Accton-AS6700
+    Should be true  ${verify_policy1}
+    [Tags]  sanity  feature  Accton-AS4600  Accton-AS5710  Accton-AS6700
 
 TC48: With bigtap policy installed with bidirectional tunnel on one side and receive-only on other-end, flap interface on extreme
     tunnel teardown
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1167,9 +1180,9 @@ TC48: With bigtap policy installed with bidirectional tunnel on one side and rec
 
 TC49: With bigtap policy installed with bidirectional tunnels, flap interface on extreme
     tunnel teardown
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  10
     ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=376  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
@@ -1219,24 +1232,24 @@ extreme tunnel setup   [Arguments]  ${node}  ${tunnel_name}  ${tunnel_port}  ${t
     node disconnect  ${node}  
 
 change tunnel direction to txrx
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
-    Should be true  ${verify_add_tun_sw2}          
-    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}
-    Should be true  ${verify_add_tun_sw3}          
-    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  pinterface=${tunnel_sw4_parent_intf}  tdirection=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
-    Should be true  ${verify_add_tun_sw4}          
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
+    Should be true  ${verify_add_tun_sw2}
+    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}  vpnkey=${tunnel_sw3_vpnkey}
+    Should be true  ${verify_add_tun_sw3}
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  pinterface=${tunnel_sw4_parent_intf}  tdirection=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}  vpnkey=${tunnel_sw4_vpnkey}
+    Should be true  ${verify_add_tun_sw4}
     sleep  10
 
 change tunnel direction to bidir
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
-    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}
+    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}  vpnkey=${tunnel_sw3_vpnkey}
     Should be true  ${verify_add_tun_sw3}          
-    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}  vpnkey=${tunnel_sw4_vpnkey}
     Should be true  ${verify_add_tun_sw4}          
     sleep  10
 
@@ -1254,11 +1267,11 @@ clean config to suite setup state
     ${del_is_success_2}=  rest delete interface role  s2  ${tunnel_sw2_name}   filter 
     should be true  ${del_is_success_2}     
     sleep  3    
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
-    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_ixia_delivery}  loopback=${tunnel_sw2_loopback_ixia_delivery}  pinterface=${tunnel_sw2_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}
+    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_ixia_delivery}  loopback=${tunnel_sw2_loopback_ixia_delivery}  pinterface=${tunnel_sw2_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}  vpnkey=${tunnel_sw2_vpnkey_3}
     Should be true  ${verify_add_tun_ixia_delivery}
     ${H2}=  L3 add host  src_ip=${tunnel_sw2_gip_ixiadelivery}  gw_ip=${tunnel_sw2_sip_ixia_delivery}  port_name=d
     L3 start hosts  port_name=d
@@ -1291,11 +1304,11 @@ corsair suite setup
     #Setup tunnels across  Accton 4600 (app-ac4600-1)
     extreme tunnel setup  s6  ${extreme1_sw1_tunnel_name}  ${extreme1_sw1_tunnel_intf1}  ${extreme1_sw1_tunnel_ip}  ${extreme1_sw1_tunnel_mask}
     Sleep  5    
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
-    Should be true  ${verify_add_tun_sw1}          
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
+    Should be true  ${verify_add_tun_sw1}
     Sleep  5
     ### Tunnel as filter interface
-    ${verify_add_tun_ixia_filter}=  rest add tunnel interface  s1  ${tunnel_sw1_name_ixia_filter}  pinterface=${tunnel_sw1_parent_intf_ixia_filter}  tdirection=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}
+    ${verify_add_tun_ixia_filter}=  rest add tunnel interface  s1  ${tunnel_sw1_name_ixia_filter}  pinterface=${tunnel_sw1_parent_intf_ixia_filter}  tdirection=rx  sip=${tunnel_sw1_sip_ixia_filter}  dip=${tunnel_sw1_dip_ixia_filter}  mask=${tunnel_sw1_mask_ixia_filter}  gip=${tunnel_sw1_gip_ixia_filter}  vpnkey=${tunnel_sw1_vpnkey_2}
     Should be true  ${verify_add_tun_ixia_filter}
     ${H1}=  L3 add host  src_ip=${tunnel_sw1_gip_ixia_filter}  gw_ip=${tunnel_sw1_sip_ixia_filter}  port_name=a
     L3 start hosts  port_name=a
@@ -1304,12 +1317,12 @@ corsair suite setup
     #Setup tunnels across  Accton 4600 (app-ac4600-2)
     extreme tunnel setup  s6  ${extreme1_sw2_tunnel_name}  ${extreme1_sw2_tunnel_intf1}  ${extreme1_sw2_tunnel_ip}  ${extreme1_sw2_tunnel_mask}
     Sleep  5    
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  5
  
     ### Tunnel as delivery interface
-    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_ixia_delivery}  loopback=${tunnel_sw2_loopback_ixia_delivery}  pinterface=${tunnel_sw2_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}
+    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s2  ${tunnel_sw2_name_ixia_delivery}  loopback=${tunnel_sw2_loopback_ixia_delivery}  pinterface=${tunnel_sw2_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw2_sip_ixia_delivery}  dip=${tunnel_sw2_dip_ixia_delivery}  mask=${tunnel_sw2_mask_ixia_delivery}  gip=${tunnel_sw2_gip_ixiadelivery}  vpnkey=${tunnel_sw2_vpnkey_3}
     Should be true  ${verify_add_tun_ixia_delivery}
     ${H2}=  L3 add host  src_ip=${tunnel_sw2_gip_ixiadelivery}  gw_ip=${tunnel_sw2_sip_ixia_delivery}  port_name=d
     L3 start hosts  port_name=d
@@ -1317,18 +1330,18 @@ corsair suite setup
     should be true  ${result}          
     
     #Setup tunnels across Accton 5710 (app-ac5710-4)
-    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}
+    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}  vpnkey=${tunnel_sw3_vpnkey}
     Should be true  ${verify_add_tun_sw3}          
     Sleep  5      
     ### Tunnel as filter interface
-    ${verify_add_tun_ixia_filter}=  rest add tunnel interface  s3  ${tunnel_sw3_name_ixia_filter}  pinterface=${tunnel_sw3_parent_intf_ixia_filter}  tdirection=rx  sip=${tunnel_sw3_sip_ixia_filter}  dip=${tunnel_sw3_dip_ixia_filter}  mask=${tunnel_sw3_mask_ixia_filter}  gip=${tunnel_sw3_gip_ixia_filter}
+    ${verify_add_tun_ixia_filter}=  rest add tunnel interface  s3  ${tunnel_sw3_name_ixia_filter}  pinterface=${tunnel_sw3_parent_intf_ixia_filter}  tdirection=rx  sip=${tunnel_sw3_sip_ixia_filter}  dip=${tunnel_sw3_dip_ixia_filter}  mask=${tunnel_sw3_mask_ixia_filter}  gip=${tunnel_sw3_gip_ixia_filter}  vpnkey=${tunnel_sw3_vpnkey_1}
     Should be true  ${verify_add_tun_ixia_filter}
     ${H3}=  L3 add host  src_ip=${tunnel_sw3_gip_ixia_filter}  gw_ip=${tunnel_sw3_sip_ixia_filter}  port_name=g
     L3 start hosts  port_name=g
     ${result}=  L3 chk gw arp
     should be true  ${result}    
     ### Tunnel as delivery interface
-    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s3  ${tunnel_sw3_name_ixia_delivery}  loopback=${tunnel_sw3_loopback_ixia_delivery}  pinterface=${tunnel_sw3_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw3_sip_ixia_delivery}  dip=${tunnel_sw3_dip_ixia_delivery}  mask=${tunnel_sw3_mask_ixia_delivery}  gip=${tunnel_sw3_gip_ixiadelivery}
+    ${verify_add_tun_ixia_delivery}=  rest add tunnel interface  s3  ${tunnel_sw3_name_ixia_delivery}  loopback=${tunnel_sw3_loopback_ixia_delivery}  pinterface=${tunnel_sw3_parent_intf_ixia_delivery}  tdirection=tx  sip=${tunnel_sw3_sip_ixia_delivery}  dip=${tunnel_sw3_dip_ixia_delivery}  mask=${tunnel_sw3_mask_ixia_delivery}  gip=${tunnel_sw3_gip_ixiadelivery}  vpnkey=${tunnel_sw3_vpnkey_2}
     Should be true  ${verify_add_tun_ixia_delivery}
     ${H4}=  L3 add host  src_ip=${tunnel_sw3_gip_ixiadelivery}  gw_ip=${tunnel_sw3_sip_ixia_delivery}  port_name=h
     L3 start hosts  port_name=h
@@ -1336,7 +1349,7 @@ corsair suite setup
     should be true  ${result}    
     
     #Setup tunnels across Accton 6700 (app-ac6700-1)
-    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}  vpnkey=${tunnel_sw4_vpnkey}
     Should be true  ${verify_add_tun_sw4}          
     Sleep  5
 

@@ -65,7 +65,12 @@ ${cfg_file_server}		10.8.22.2
 ${file_server_passwd}	bsn
 ${monitor_file}			exception_file.log
 ${image}      bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-*.pkg
-
+${spine}        s33
+${leaf}         s7
+${spine-interface}      ethernet17
+${leaf-interface}       ethernet49
+${leaf-name}            leaf3a-7011
+${spine-name}           spine1
 * Test Case 
 
 copy config file to controller
@@ -97,12 +102,12 @@ config controller with copied config file
     ${return}=  rest verify disk usage
     Should Be True  ${return}
     verify fabric switch link and errors
-    reconnect switch ips   s1
-    ${l2_table}=  get L2 table count  s1
+    reconnect switch ips   ${leaf}
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} < 200
-    ${l3_table}=  get L3 table count  s1
+    ${l3_table}=  get L3 table count  ${leaf}
     Should be true  ${l3_table} < 1
-    ${acl_table}=  get ACL table count  s1
+    ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
     
@@ -127,7 +132,7 @@ verify disk usage in controllers
 
 Create L2 devices in ixia
     [Tags]   T5L2   traffic
-    reconnect switch ips   s1
+    reconnect switch ips   ${leaf}
     ${return}=  rest verify sync state
     Should Be True  ${return}
     create L2 streams
@@ -140,7 +145,7 @@ Create L2 devices in ixia
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     verify L2 packet_loss_duration
@@ -150,7 +155,7 @@ Create L2 devices in ixia
     
 Create L3 devices in ixia
     [Tags]   T5L3   traffic
-    reconnect switch ips   s1
+    reconnect switch ips   ${leaf}
     ${return}=  rest verify sync state
     Should Be True  ${return}
     create L3 streams
@@ -158,7 +163,7 @@ Create L3 devices in ixia
     L3 start hosts    RetransmitInterval=10000   RetransmitCount=10    arp_check=False
     sleep  120   #Sleeping for 100 seconds for the ARP to complete for 46K end points
     #pause       FREEZZEEE!!!
-    ${l3_table}=  get L3 table count  s1
+    ${l3_table}=  get L3 table count  ${leaf}
     Should be true  ${l3_table} > 45000
     
     
@@ -185,12 +190,12 @@ Controller HA failover with L2 traffic
     sleep  5
     stop traffic
     verify L2 packet_loss_duration
-    reconnect switch ips   s1
-    ${l2_table}=  get L2 table count  s1
+    reconnect switch ips   ${leaf}
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
-    ${l3_table}=  get L3 table count  s1
+    ${l3_table}=  get L3 table count  ${leaf}
     Should be true  ${l3_table} > 45000
-    ${acl_table}=  get ACL table count  s1
+    ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
     
@@ -217,12 +222,12 @@ Controller Master reboot
     sleep  5
     stop traffic
     verify L2 packet_loss_duration
-    reconnect switch ips   s1
-    ${l2_table}=  get L2 table count  s1
+    reconnect switch ips   ${leaf}
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
-    ${l3_table}=  get L3 table count  s1
+    ${l3_table}=  get L3 table count  ${leaf}
     Should be true  ${l3_table} > 45000
-    ${acl_table}=  get ACL table count  s1
+    ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
 
@@ -249,16 +254,16 @@ Controller Slave Reboot
     sleep  5
     stop traffic
     verify L2 packet_loss_duration
-    reconnect switch ips   s1
-    ${l2_table}=  get L2 table count  s1
+    reconnect switch ips   ${leaf}
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
-    ${l3_table}=  get L3 table count  s1
+    ${l3_table}=  get L3 table count  ${leaf}
     Should be true  ${l3_table} > 45000
-    ${acl_table}=  get ACL table count  s1
+    ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
 
-Power off Master Controller
+Power off/On Master Controller
     [Tags]  HA4
     create L2 streams
     clear stats
@@ -279,17 +284,17 @@ Power off Master Controller
     Should Be True  ${return}
     stop traffic
     verify L2 packet_loss_duration
-    reconnect switch ips   s1
-    ${l2_table}=  get L2 table count  s1
+    reconnect switch ips   ${leaf}
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
-    ${l3_table}=  get L3 table count  s1
+    ${l3_table}=  get L3 table count  ${leaf}
     Should be true  ${l3_table} > 45000
-    ${acl_table}=  get ACL table count  s1
+    ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
 
 
-Power off Slave Controller
+Power off/On Slave Controller
     [Tags]  HA5
     create L2 streams
     clear stats
@@ -310,12 +315,12 @@ Power off Slave Controller
     Should Be True  ${return}
     stop traffic
     verify L2 packet_loss_duration
-    reconnect switch ips   s1
-    ${l2_table}=  get L2 table count  s1
+    reconnect switch ips   ${leaf}
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
-    ${l3_table}=  get L3 table count  s1
+    ${l3_table}=  get L3 table count  ${leaf}
     Should be true  ${l3_table} > 45000
-    ${acl_table}=  get ACL table count  s1
+    ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
 
@@ -326,12 +331,12 @@ Reboot all switches
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
-    reconnect switch ips   s1
-    ${l2_table}=  get L2 table count  s1
+    reconnect switch ips   ${leaf}
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} < 200
-    ${l3_table}=  get L3 table count  s1
+    ${l3_table}=  get L3 table count  ${leaf}
     Should be true  ${l3_table} < 1
-    ${acl_table}=  get ACL table count  s1
+    ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
     create L2 streams
@@ -344,7 +349,7 @@ Reboot all switches
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     verify L2 packet_loss_duration
@@ -363,13 +368,13 @@ Reboot spine print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
-    power cycle switch   s33
-    sleep   120
+    power cycle switch   ${spine}
+    sleep   210
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -389,13 +394,13 @@ PowerOff spine print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
-    power cycle switch   s33
-    sleep   120
+    power down switch   ${spine}
+    sleep   20
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -415,13 +420,13 @@ PowerOn spine print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
-    power cycle switch   s33
-    sleep   120
+    power up switch   ${spine}
+    sleep   210
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -441,13 +446,13 @@ Reboot leaf print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
     power cycle switch   s7
-    sleep   120
+    sleep   210
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -466,13 +471,13 @@ PowerOff leaf print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
-    power cycle switch   s7
-    sleep   120
+    power down switch   s7
+    sleep   20
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -492,13 +497,13 @@ PowerOn leaf print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
-    power cycle switch   s7
-    sleep   120
+    power up switch   s7
+    sleep   210
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -519,14 +524,15 @@ Shutdown leaf 40g interface and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
     ##SHUT DOWN LEAF 40G INTERFACE
-    sleep   120
-    verify fabric switch link and errors
+    ${result}=   rest_disable_fabric_interface  ${leaf}  ${leaf-interface}
+    Should be true   ${result}
+    sleep   50
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
@@ -544,18 +550,20 @@ Bringup leaf 40g interface and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
     ##SHUT DOWN LEAF 40G INTERFACE
-    sleep   120
-    verify fabric switch link and errors
+    ${result}=   rest_enable_fabric_interface  ${leaf}  ${leaf-interface}
+    Should be true   ${result}
+    sleep   50
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
     print L2 packet_loss_duration
+
    
 
 Shutdown spine 40g interface and print traffic convergence time   
@@ -570,19 +578,21 @@ Shutdown spine 40g interface and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
     ##SHUT DOWN spine 40G INTERFACE
-    sleep   120
-    verify fabric switch link and errors
+    ${result}=   rest_disable_fabric_interface  ${spine}  ${spine-interface}
+    Should be true   ${result}
+    sleep   50
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
     print L2 packet_loss_duration
-   
+
+
 Bringup spine 40g interface and print traffic convergence time   
     [Tags]   reboot
     create L2 streams
@@ -595,18 +605,20 @@ Bringup spine 40g interface and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
     ##SHUT DOWN spine 40G INTERFACE
-    sleep   120
-    verify fabric switch link and errors
+    ${result}=   rest_enable_fabric_interface  ${spine}  ${spine-interface}
+    Should be true   ${result}
+    sleep   50
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
     print L2 packet_loss_duration
+
    
 
 Remove leaf from configuration and print traffic convergence time   
@@ -621,18 +633,19 @@ Remove leaf from configuration and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
-    power cycle switch   s7
-    sleep   120
-    verify fabric switch link and errors
+    ${result}=   rest_delete_fabric_switch  ${leaf-name}  
+    Should be true   ${result}
+    sleep   50
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
     print L2 packet_loss_duration
+
 
 
 Add leaf to configuration and print traffic convergence time   
@@ -647,19 +660,22 @@ Add leaf to configuration and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
-    power cycle switch   s7
-    sleep   120
-    verify fabric switch link and errors
+    ${result}=   rest_add_fabric_role  ${leaf-name}  leaf
+    Should be true   ${result}
+    ${result}=   rest_add_leaf_group  ${leaf-name}  leaf3
+    Should be true   ${result}
+    ${result}=   rest_add_dpid  ${leaf-name}  70:72:cf:bc:ce:4e
+    Should be true   ${result}
+    sleep   210
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
     print L2 packet_loss_duration
-
 
 Remove spine from configuration and print traffic convergence time   
     [Tags]   reboot
@@ -673,14 +689,14 @@ Remove spine from configuration and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
-    power cycle switch   s7
-    sleep   120
-    verify fabric switch link and errors
+    ${result}=   rest_delete_fabric_switch  ${spine-name}  
+    Should be true   ${result}
+    sleep   50
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
@@ -699,14 +715,16 @@ Add spine to configuration and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
-    power cycle switch   s7
-    sleep   120
-    verify fabric switch link and errors
+    ${result}=   rest_add_fabric_role  ${spine-name}  spine
+    Should be true   ${result}
+    ${result}=   rest_add_dpid  ${leaf-name}  70:72:cf:ae:b0:9e
+    Should be true   ${result}
+    sleep   210
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
@@ -725,13 +743,15 @@ Restart ofad in spine and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
-    power cycle switch   s7
-    sleep   120
+    sleep  20
+    ${result}=   bash_restart_process  ${spine}  ofad
+    Should be true  ${result}
+    sleep   210
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -750,34 +770,32 @@ Restart ofad in leaf and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} > 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  s1
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
     stop traffic
     clear stats
     start traffic
-    power cycle switch   s7
-    sleep   120
+    sleep  20
+    ${result}=   bash_restart_process  ${spine}  ofad
+    Should be true  ${result}
+    sleep   210
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
     print L2 packet_loss_duration
-
-
+    
+    
 restart floodlight in master controller
    [Tags]  HA2
     create L2 streams
     clear stats
     apply traffic
     start traffic
-    start monitoring the exception
-    ${file_exist}=  verify file  ${copied_file1}
-    Should Be True  ${file_exist}
     ###RESTART floodlight deamon
-    ${returnVal}=  cli verify cluster master reboot
-    Should Be True  ${returnVal}
-    stop monitoring the exception
-    parse monitoring file
+    ${result}=  restart_process_on_controller  floodlight  master
+    Should be True  ${result}
+    sleep  80
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -788,12 +806,12 @@ restart floodlight in master controller
     sleep  5
     stop traffic
     verify L2 packet_loss_duration
-    reconnect switch ips   s1
-    ${l2_table}=  get L2 table count  s1
+    reconnect switch ips   ${leaf}
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
-    ${l3_table}=  get L3 table count  s1
+    ${l3_table}=  get L3 table count  ${leaf}
     Should be true  ${l3_table} > 45000
-    ${acl_table}=  get ACL table count  s1
+    ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
 restart floodlight in slave controller
@@ -802,14 +820,10 @@ restart floodlight in slave controller
     clear stats
     apply traffic
     start traffic
-    start monitoring the exception
-    ${file_exist}=  verify file  ${copied_file1}
-    Should Be True  ${file_exist}
     ###RESTART floodlight deamon
-    ${returnVal}=  cli verify cluster master reboot
-    Should Be True  ${returnVal}
-    stop monitoring the exception
-    parse monitoring file
+    ${result}=  restart_process_on_controller  floodlight  slave
+    Should be True  ${result}
+    sleep  80
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -820,13 +834,14 @@ restart floodlight in slave controller
     sleep  5
     stop traffic
     verify L2 packet_loss_duration
-    reconnect switch ips   s1
-    ${l2_table}=  get L2 table count  s1
+    reconnect switch ips   ${leaf}
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} > 48000
-    ${l3_table}=  get L3 table count  s1
+    ${l3_table}=  get L3 table count  ${leaf}
     Should be true  ${l3_table} > 45000
-    ${acl_table}=  get ACL table count  s1
+    ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
+    
     
 	
 upgrade stage in master

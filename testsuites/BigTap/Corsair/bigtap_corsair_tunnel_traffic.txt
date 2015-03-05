@@ -35,6 +35,7 @@ ${tunnel_sw1_dip}                           192.168.67.1            #Tunnel Dest
 ${tunnel_sw1_gip}                           192.168.43.2            #Tunnel Gateway IP
 ${tunnel_sw1_mask}                          255.255.255.0           #Tunnel Subnet Mask
 ${tunnel_sw1_loopback}                      ethernet52              #Tunnel Loopback Interface
+${tunnel_sw1_vpnkey}                        1975                    #Tunnel VPN Key
 ${extreme1_sw1_tunnel_name}                 tunnel1
 ${extreme1_sw1_tunnel_intf1}                5
 ${extreme1_sw1_tunnel_ip}                   192.168.43.2  
@@ -47,6 +48,7 @@ ${tunnel_sw1_dip_ixia_filter}               192.168.142.2           #Tunnel Dest
 ${tunnel_sw1_gip_ixia_filter}               192.168.142.2           #Tunnel Gateway IP
 ${tunnel_sw1_mask_ixia_filter}              255.255.255.0           #Tunnel Subnet Mask
 ${tunnel_sw1_ixia_filter_name}              ac4600_1_ixia_filter    #Tunnel Name when used as filter interface
+${tunnel_sw1_vpnkey_1}                      1980                    #Tunnel VPN Key
 
 ${tunnel_sw1_name_ixia_delivery}            tunnel3                  #Tunnel Name
 ${tunnel_sw1_parent_intf_ixia_delivery}     ethernet2                #Tunnel Parent Interface
@@ -56,6 +58,7 @@ ${tunnel_sw1_gip_ixia_delivery}             192.168.143.2            #Tunnel Gat
 ${tunnel_sw1_mask_ixia_delivery}            255.255.255.0            #Tunnel Subnet Mask
 ${tunnel_sw1_ixia_delivery_name}            ac4600_1_ixia_delivery   #Tunnel Name when used as filter interface
 ${tunnel_sw1_loopback_ixia_delivery}        ethernet4                #Tunnel Loopback Interface
+${tunnel_sw1_vpnkey_2}                      1967                    #Tunnel VPN Key
 
 ## Switch 2: app-ac4600-2
 ${switch2_filter_intf}                      ethernet1       #filter interface on switch scale-ac4600-1
@@ -70,6 +73,7 @@ ${tunnel_sw2_dip}                       192.168.43.1     #Tunnel Destination IP
 ${tunnel_sw2_gip}                       192.168.67.2     #Tunnel Gateway IP
 ${tunnel_sw2_mask}                      255.255.255.0    #Tunnel Subnet Mask
 ${tunnel_sw2_loopback}                  ethernet3        #Tunnel Loopback Interface
+${tunnel_sw2_vpnkey}                    1975                    #Tunnel VPN Key
 ${extreme1_sw2_tunnel_name}             tunnel4
 ${extreme1_sw2_tunnel_intf1}            9
 ${extreme1_sw2_tunnel_ip}               192.168.67.2  
@@ -82,7 +86,7 @@ ${tunnel_sw2_dip_ixia_filter}               192.168.175.2           #Tunnel Dest
 ${tunnel_sw2_gip_ixia_filter}               192.168.175.2           #Tunnel Gateway IP
 ${tunnel_sw2_mask_ixia_filter}              255.255.255.0           #Tunnel Subnet Mask
 ${tunnel_sw2_ixia_filter_name}              ac4600_ixia_filter      #Tunnel Name when used as filter interface
-
+${tunnel_sw2_vpnkey_1}                      1966                    #Tunnel VPN Key
 ${tunnel_sw2_name_ixia_delivery}            tunnel6                 #Tunnel Name
 ${tunnel_sw2_parent_intf_ixia_delivery}     ethernet2               #Tunnel Parent Interface
 ${tunnel_sw2_sip_ixia_delivery}             192.168.180.1           #Tunnel Source IP
@@ -91,6 +95,7 @@ ${tunnel_sw2_gip_ixiadelivery}              192.168.180.2           #Tunnel Gate
 ${tunnel_sw2_mask_ixia_delivery}            255.255.255.0           #Tunnel Subnet Mask
 ${tunnel_sw2_ixia_delivery_name}            ac4600_ixia_delivery    #Tunnel Name when used as filter interface
 ${tunnel_sw2_loopback_ixia_delivery}        ethernet4               #Tunnel Loopback Interface
+${tunnel_sw2_vpnkey_2}                      1943                    #Tunnel VPN Key
 
 ## Switch 3: app-ac5710-4
 ${switch3_filter_intf}                  ethernet1       #filter interface on switch scale-ac4600-1
@@ -106,27 +111,30 @@ ${tunnel_sw3_dip}                       192.168.29.1     #Tunnel Destination IP
 ${tunnel_sw3_gip}                       192.168.22.2     #Tunnel Gateway IP
 ${tunnel_sw3_mask}                      255.255.255.0    #Tunnel Subnet Mask
 ${tunnel_sw3_loopback}                  ethernet3        #Tunnel Loopback Interface
+${tunnel_sw3_vpnkey}                    1942             #Tunnel VPN Key
 ${arista1_sw3_tunnel_name}              tunnel7
 ${arista1_sw3_tunnel_intf1}             Et51/1
 ${arista1_sw3_tunnel_ip}                192.168.22.2  
 ${arista1_sw3_tunnel_mask}              255.255.255.0
 
-${tunnel_sw3_name_ixia_filter}              tunnel8                   #Tunnel Name
-${tunnel_sw3_parent_intf_ixia_filter}       ethernet1                 #Tunnel Parent Interface
-${tunnel_sw3_sip_ixia_filter}               192.168.82.1              #Tunnel Source IP
-${tunnel_sw3_dip_ixia_filter}               192.168.82.2              #Tunnel Destination IP
-${tunnel_sw3_gip_ixia_filter}               192.168.82.2              #Tunnel Gateway IP
-${tunnel_sw3_mask_ixia_filter}              255.255.255.0             #Tunnel Subnet Mask
-${tunnel_sw3_ixia_filter_name}              ac5710_4_ixia_filter      #Tunnel Name when used as filter interface
+${tunnel_sw3_name_ixia_filter}           tunnel8                   #Tunnel Name
+${tunnel_sw3_parent_intf_ixia_filter}    ethernet1                 #Tunnel Parent Interface
+${tunnel_sw3_sip_ixia_filter}            192.168.82.1              #Tunnel Source IP
+${tunnel_sw3_dip_ixia_filter}            192.168.82.2              #Tunnel Destination IP
+${tunnel_sw3_gip_ixia_filter}            192.168.82.2              #Tunnel Gateway IP
+${tunnel_sw3_mask_ixia_filter}           255.255.255.0             #Tunnel Subnet Mask
+${tunnel_sw3_ixia_filter_name}           ac5710_4_ixia_filter      #Tunnel Name when used as filter interface
+${tunnel_sw3_vpnkey_1}                   1997             #Tunnel VPN Key
 
-${tunnel_sw3_name_ixia_delivery}            tunnel9                   #Tunnel Name
-${tunnel_sw3_parent_intf_ixia_delivery}     ethernet2                 #Tunnel Parent Interface
-${tunnel_sw3_sip_ixia_delivery}             192.168.81.1              #Tunnel Source IP
-${tunnel_sw3_dip_ixia_delivery}             192.168.81.2              #Tunnel Destination IP
-${tunnel_sw3_gip_ixiadelivery}              192.168.81.2              #Tunnel Gateway IP
-${tunnel_sw3_mask_ixia_delivery}            255.255.255.0             #Tunnel Subnet Mask
-${tunnel_sw3_ixia_delivery_name}            ac5710_4_ixia_delivery    #Tunnel Name when used as filter interface
-${tunnel_sw3_loopback_ixia_delivery}        ethernet4                 #Tunnel Loopback Interface
+${tunnel_sw3_name_ixia_delivery}         tunnel9                   #Tunnel Name
+${tunnel_sw3_parent_intf_ixia_delivery}  ethernet2                 #Tunnel Parent Interface
+${tunnel_sw3_sip_ixia_delivery}          192.168.81.1              #Tunnel Source IP
+${tunnel_sw3_dip_ixia_delivery}          192.168.81.2              #Tunnel Destination IP
+${tunnel_sw3_gip_ixiadelivery}           192.168.81.2              #Tunnel Gateway IP
+${tunnel_sw3_mask_ixia_delivery}         255.255.255.0             #Tunnel Subnet Mask
+${tunnel_sw3_ixia_delivery_name}         ac5710_4_ixia_delivery    #Tunnel Name when used as filter interface
+${tunnel_sw3_loopback_ixia_delivery}     ethernet4                 #Tunnel Loopback Interface
+${tunnel_sw3_vpnkey_1}                   2000             #Tunnel VPN Key
 
 ## Switch 4: app-ac6700-1
 
@@ -137,6 +145,7 @@ ${tunnel_sw4_dip}                       192.168.22.1     #Tunnel Destination IP
 ${tunnel_sw4_gip}                       192.168.29.2     #Tunnel Gateway IP
 ${tunnel_sw4_mask}                      255.255.255.0    #Tunnel Subnet Mask
 ${tunnel_sw4_loopback}                  ethernet10       #Tunnel Loopback Interface
+${tunnel_sw4_vpnkey}                    1942             #Tunnel VPN Key
 ${arista1_sw4_tunnel_name}              tunnel7
 ${arista1_sw4_tunnel_intf1}             Et49/1
 ${arista1_sw4_tunnel_ip}                192.168.29.2  
@@ -2238,24 +2247,24 @@ extreme tunnel setup   [Arguments]  ${node}  ${tunnel_name}  ${tunnel_port}  ${t
     extreme save config  ${node}  
 
 change tunnel direction to txrx
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=tx  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}    vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=rx  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}    vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
-    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}
+    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=tx  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}    vpnkey=${tunnel_sw3_vpnkey}
     Should be true  ${verify_add_tun_sw3}          
-    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  pinterface=${tunnel_sw4_parent_intf}  tdirection=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  pinterface=${tunnel_sw4_parent_intf}  tdirection=rx  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}    vpnkey=${tunnel_sw4_vpnkey}
     Should be true  ${verify_add_tun_sw4}          
     sleep  10
 
 change tunnel direction to bidir
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
-    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}
+    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}  vpnkey=${tunnel_sw3_vpnkey}
     Should be true  ${verify_add_tun_sw3}          
-    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}  vpnkey=${tunnel_sw4_vpnkey}
     Should be true  ${verify_add_tun_sw4}          
     sleep  10
 
@@ -2285,24 +2294,24 @@ corsair suite setup
     #### CORE IS TUNNEL
     extreme tunnel setup  s6  ${extreme1_sw1_tunnel_name}  ${extreme1_sw1_tunnel_intf1}  ${extreme1_sw1_tunnel_ip}  ${extreme1_sw1_tunnel_mask}
     Sleep  5    
-    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+    ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
     Should be true  ${verify_add_tun_sw1}          
     Sleep  5     
     #Setup tunnels across  Accton 4600 (app-ac4600-2)
     #### CORE IS TUNNEL
     extreme tunnel setup  s6  ${extreme1_sw2_tunnel_name}  ${extreme1_sw2_tunnel_intf1}  ${extreme1_sw2_tunnel_ip}  ${extreme1_sw2_tunnel_mask}
     Sleep  5    
-    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}
+    ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  loopback=${tunnel_sw2_loopback}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}  vpnkey=${tunnel_sw2_vpnkey}
     Should be true  ${verify_add_tun_sw2}          
     Sleep  5
     
     #Setup tunnels across Accton 5710 (app-ac5710-4)
-    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}
+    ${verify_add_tun_sw3}=  rest add tunnel interface  s3  ${tunnel_sw3_name}  loopback=${tunnel_sw3_loopback}  pinterface=${tunnel_sw3_parent_intf}  tdirection=bidir  sip=${tunnel_sw3_sip}  dip=${tunnel_sw3_dip}  mask=${tunnel_sw3_mask}  gip=${tunnel_sw3_gip}  vpnkey=${tunnel_sw3_vpnkey}
     Should be true  ${verify_add_tun_sw3}          
     Sleep  5      
     
     #Setup tunnels across Accton 6700 (app-ac6700-1)
-    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}
+    ${verify_add_tun_sw4}=  rest add tunnel interface  s4  ${tunnel_sw4_name}  loopback=${tunnel_sw4_loopback}  pinterface=${tunnel_sw4_parent_intf}  tdirection=bidir  sip=${tunnel_sw4_sip}  dip=${tunnel_sw4_dip}  mask=${tunnel_sw4_mask}  gip=${tunnel_sw4_gip}  vpnkey=${tunnel_sw4_vpnkey}
     Should be true  ${verify_add_tun_sw4}          
     Sleep  5
 

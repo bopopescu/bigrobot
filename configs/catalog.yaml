@@ -24,20 +24,23 @@ products:
                    - 2.0.2         # patch1
           software_image_map:
                    - ih
-                   - ironhorse
       - ironhorse-plus:
           version:
                    - 2.5.0
           software_image_map:
                    - ihp
                    - ihplus
-                   - ironhorse-plus
+      - ironhorse-260:
+          version:
+                   - 2.6.0
+          software_image_map:
+                   - ih-260
+                   - ih260
       - jackfrost:
           version:
                    - 3.0.0
           software_image_map:
                    - jf
-                   - jackfrost
 
   bigtap:
     releases:

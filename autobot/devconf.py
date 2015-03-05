@@ -66,25 +66,6 @@ class DevConf(object):
 
         self.connect()
 
-        helpers.debug("Setting expect timeout to %s seconds" % self._timeout)
-        self.conn.set_timeout(self._timeout)
-
-        driver = self.conn.get_driver()
-        if driver.name == 'generic' and console_info == None:
-            # Patch the device driver, possibly due to missing Login banner.
-            # Don't do this if the devconf session is a console.
-            driver = self._patch_driver(driver)
-
-        helpers.log("Node '%s' using devconf driver '%s' (name: '%s')"
-                    % (name, driver, driver.name))
-
-        # Devconf autoinit which will invoke driver's init_terminal()
-        self.conn.autoinit()
-
-        # Aliases
-        self.set_prompt = self.conn.set_prompt
-        self.get_prompt = self.conn.get_prompt
-
     def _patch_driver(self, d):
         """
         A convention commonly seen in device output is an "Authen banner"
@@ -213,6 +194,25 @@ class DevConf(object):
         # Reset mode to 'cli' as default
         self._mode = 'cli'
         self.conn = conn
+
+        helpers.debug("Setting expect timeout to %s seconds" % self._timeout)
+        self.conn.set_timeout(self._timeout)
+
+        driver = self.conn.get_driver()
+        if driver.name == 'generic' and self._console_info == None:
+            # Patch the device driver, possibly due to missing Login banner.
+            # Don't do this if the devconf session is a console.
+            driver = self._patch_driver(driver)
+
+        helpers.log("Node '%s' using devconf driver '%s' (name: '%s')"
+                    % (self._name, driver, driver.name))
+
+        # Devconf autoinit which will invoke driver's init_terminal()
+        self.conn.autoinit()
+
+        # Aliases
+        self.set_prompt = self.conn.set_prompt
+        self.get_prompt = self.conn.get_prompt
 
     def default_timeout(self):
         return self._timeout

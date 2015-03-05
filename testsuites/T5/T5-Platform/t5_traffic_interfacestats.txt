@@ -1,7 +1,7 @@
 * Settings
 Documentation     T5  Traffic Interface Stats Test suite- Iron Horse
-#Suite Setup       T5 traffic interface stats test setup
-#Suite Teardown    T5 traffic interface stats test teardown
+Suite Setup       T5 traffic interface stats test setup
+Suite Teardown    T5 traffic interface stats test teardown
 Test Teardown     traffic teardown
 #Force Tags        T5  IronHorse
 ...             
@@ -19,16 +19,14 @@ Library         String
 Resource        testsuites/T5/T5-Platform/t5_traffic_interfacestats_variables.txt
 #Resource        testsuites_dev/kranti/ironhorse/t5_traffic_interfacestats_variables.txt
 
+
 *Test Case 
-Setup the configuration for the interface stats traffic test
-    [Tags]  T5  L2  intfStats  setup    
-    T5 traffic interface stats test setup 
 
 TC1 Verify the traffic flow using Bi directional L2 Traffic flow from a<->c 
-    [Tags]    feature  L2  intfStats  test1    
+    [Tags]    feature  L2  intfStats      
     ${stream1}=   L2 add  name=a_c_flow1  flow=a->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
-    ...                 frame_rate=100000  frame_size=1518 
+    ...                 frame_rate=${frame_rate1}  frame_size=1518 
     
     clear stats
     start traffic  
@@ -37,13 +35,14 @@ TC1 Verify the traffic flow using Bi directional L2 Traffic flow from a<->c
     verify rate traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic       
 
+
 TC2 Interface Stats outgoing Two different src mac and two different dst mac Uni directional L2 Traffic  
-    [Tags]    feature  L2  intfStats  test2   
+    [Tags]    feature  L2  intfStats  test     
     ${learnStream1}=   L2 add  name=a_c_learnflow1  flow=a<->c  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
-	...						frame_size=${frame_size1}  frame_cnt=20000  
+	...						frame_size=${frame_size1}  frame_cnt=${frame_cnt}  
 	
 	${learnStream2}=   L2 add  name=a_c_learnflow2  flow=a<->c  src_mac=${src_mac3}  dst_mac=${dst_mac3}  frame_rate=${frame_rate1}
-	...						frame_size=${frame_size1}  frame_cnt=20000  
+	...						frame_size=${frame_size1}  frame_cnt=${frame_cnt}  
 	
     ixia.start traffic 
     sleep  2 
@@ -71,14 +70,15 @@ TC2 Interface Stats outgoing Two different src mac and two different dst mac Uni
     ${report}=     fetch port stats
     verify ixia counters traffic  transmitted_frames  received_valid_frames  ${countertolerance}
     ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames
-    ${ixiatx1}=    EVALUATE    ${ixiatx} / 2     
-    verify interface counters  ${switch1_name}  ${leaf0a_spine0_intf1}  txstat  ${ixiatx1}  ${countertolerance}
-    verify interface counters  ${switch7_name}  ${leaf0a_spine1_intf2}  txstat  ${ixiatx1}  ${countertolerance}
-    
-          
+    ${ixiatx1}=    EVALUATE    ${ixiatx} / ${numlinks}
+    ${intf1}=  get_switch_int_topo  s1  spine0_int0
+    ${intf2}=  get_switch_int_topo  s1  spine1_int0   
+    verify interface counters  ${switch1_name}  ${intf1}  txstat  ${ixiatx1}  ${countertolerance}
+    verify interface counters  ${switch1_name}  ${intf2}  txstat  ${ixiatx1}  ${countertolerance}
 
+    
 TC3 Interface Stats incoming Two different src mac and two different dst mac Uni directional L2 Traffic  
-    [Tags]    feature  L2  intfStats  test3   
+    [Tags]    feature  L2  intfStats     
     ${learnStream1}=   L2 add  name=a_c_learnflow1  flow=a<->c  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
 	...						frame_size=${frame_size1}  frame_cnt=20000  
 	
@@ -94,10 +94,10 @@ TC3 Interface Stats incoming Two different src mac and two different dst mac Uni
     sleep  2
     ${stream1}=   L2 add  name=a_c_flow1  flow=a->c   
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
-    ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
+    ...                 frame_rate=100000  frame_size=1518  frame_cnt=200000
     ${stream2}=   L2 add  name=a_c_flow2  flow=a->c  
     ...				    src_mac=${src_mac3}  dst_mac=${dst_mac3}
-    ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
+    ...                 frame_rate=100000  frame_size=1518  frame_cnt=200000
     
     rest clear fabric interface stats 
     start traffic   
@@ -110,14 +110,16 @@ TC3 Interface Stats incoming Two different src mac and two different dst mac Uni
     sleep   5
     ${report}=     fetch port stats
     ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames
-    ${ixiatx1}=    EVALUATE    ${ixiatx} / 2 
-    verify interface counters  ${switch1_name}  ${leaf0a_ixia}  rxstat  ${ixiatx}  ${countertolerance} 
-    verify interface counters  ${switch7_name}  ${spine0_leaf0a_intf1}  rxstat  ${ixiatx1}  ${countertolerance}   
+    ${ixiatx1}=    EVALUATE    ${ixiatx} / ${numlinks}
+    ${intf1}=      get_switch_int_topo  s1  ixia1_int0
+    ${intf2}=      get_switch_int_topo  s7  leaf0a_int0 
+    verify interface counters  ${switch1_name}  ${intf1}  rxstat  ${ixiatx}  ${countertolerance} 
+    verify interface counters  ${switch7_name}  ${intf2}  rxstat  ${ixiatx1}  ${countertolerance}   
     verify ixia counters traffic  transmitted_frames  received_valid_frames  ${countertolerance}
 
 
 TC4 Interface stats outgoing Same src mac to two different dst mac Uni directional L2 Traffic  
-    [Tags]    feature  L2  intfStats  test4   
+    [Tags]    feature  L2  intfStats     
     ${learnStream1}=   L2 add  name=a_c_learnflow1  flow=a<->c  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
 	...						frame_size=${frame_size1}  frame_cnt=20000  
 	
@@ -133,9 +135,53 @@ TC4 Interface stats outgoing Same src mac to two different dst mac Uni direction
     sleep  2
     ${stream1}=   L2 add  name=a_c_flow1  flow=a->c   
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}
-    ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
+    ...                 frame_rate=100000  frame_size=1518  frame_cnt=200000
     ${stream2}=   L2 add  name=a_c_flow2  flow=a->c  
     ...				    src_mac=${src_mac1}  dst_mac=${dst_mac3}
+    ...                 frame_rate=100000  frame_size=1518  frame_cnt=200000
+    
+    rest clear fabric interface stats 
+    start traffic   
+    sleep          10
+    ${report}=     fetch port stats
+    verify rate traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic    
+    sleep   10
+    ixia.stop traffic
+    sleep   5
+    ${report}=     fetch port stats
+    ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames
+    ${ixiatx1}=    EVALUATE    ${ixiatx} / ${numlinks} 
+    ${intf1}=      get_switch_int_topo  s1  spine0_int0
+    ${intf2}=      get_switch_int_topo  s1  spine1_int0
+    verify interface counters  ${switch1_name}  ${intf1}  txstat  ${ixiatx1}  ${countertolerance}
+    verify interface counters  ${switch1_name}  ${intf1}  txstat  ${ixiatx1}  ${countertolerance}     
+    verify ixia counters traffic  transmitted_frames  received_valid_frames  ${countertolerance}
+
+
+TC5 Interface stats outgoing Same src mac vlan to two different dst mac Uni directional L2 Traffic  
+    [Tags]    feature  L2  intfStats  test5 
+    
+    T5 traffic vlan setup 
+    
+    ${learnStream1}=   L2 add  name=a_c_learnflow1  flow=a<->c  src_mac=${src_mac1}  dst_mac=${dst_mac1}  frame_rate=${frame_rate1}
+	...						frame_size=${frame_size1}  frame_cnt=20000  vlan_id=${vlan1}  
+	
+	${learnStream2}=   L2 add  name=a_c_learnflow2  flow=a<->c  src_mac=${src_mac3}  dst_mac=${dst_mac3}  frame_rate=${frame_rate1}
+	...						frame_size=${frame_size1}  frame_cnt=20000  vlan_id=${vlan1}  
+	
+    ixia.start traffic 
+    sleep  2 
+    ixia.stop traffic 
+    sleep  1 
+    ixia.delete traffic
+    ixia.clear stats
+    sleep  2
+    ${stream1}=   L2 add  name=a_c_flow1  flow=a->c   
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac1}  vlan_id=${vlan1}  
+    ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
+    ${stream2}=   L2 add  name=a_c_flow2  flow=a->c  
+    ...				    src_mac=${src_mac1}  dst_mac=${dst_mac3}  vlan_id=${vlan1}  
     ...                 frame_rate=100000  frame_size=64  frame_cnt=200000
     
     rest clear fabric interface stats 
@@ -148,15 +194,16 @@ TC4 Interface stats outgoing Same src mac to two different dst mac Uni direction
     ixia.stop traffic
     sleep   5
     ${report}=     fetch port stats
-    ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames 
-    verify interface counters  ${switch1_name}  ${leaf0a_spine0_intf1}  txstat  ${ixiatx}  ${countertolerance}
-    verify interface counters  ${switch7_name}  ${spine0_leaf1a_intf1}  txstat  ${ixiatx}  ${countertolerance}
-        
+    ${ixiatx}=     verify dict key  ${report}  a  transmitted_frames
+    ${ixiatx1}=    EVALUATE    ${ixiatx} / ${numlinks}
+    ${intf1}=      get_switch_int_topo  s1  spine0_int0
+    ${intf2}=      get_switch_int_topo  s1  spine1_int0 
+    verify interface counters  ${switch1_name}  ${intf1}  txstat  ${ixiatx1}  ${countertolerance}
+    verify interface counters  ${switch1_name}  ${intf1}  txstat  ${ixiatx1}  ${countertolerance}     
     verify ixia counters traffic  transmitted_frames  received_valid_frames  ${countertolerance}
-
-  
     
     
+   
 *Keywords 
 
 T5 traffic interface stats test setup
@@ -171,13 +218,44 @@ T5 traffic interface stats test setup
    rest add vns ip  ${tenant}  ${vns1}  ${ip1}  ${mask1}
    sleep  2
    rest add vns ip  ${tenant}  ${vns2}  ${ip2}  ${mask2} 
-   sleep  2 
-   rest add interface to vns  ${tenant}  ${vns1}  ${switch1_name}  ${leaf0a_ixia}  ${vlan} 
-   sleep  2   
-   rest add interface to vns  ${tenant}  ${vns1}  ${switch3_name}  ${leaf1a_ixia}  ${vlan}
    sleep  2
-   
+   ${intf1}=  get_switch_int_topo  s1  ixia1_int0
+   Set Suite Variable  ${intf_1}
+   ${intf2}=  get_switch_int_topo  s3  ixia1_int0
+   Set Suite Variable  ${intf_2}
+   rest add interface to vns  ${tenant}  ${vns1}  ${switch1_name}  ${intf1}  ${vlan} 
+   sleep  2   
+   rest add interface to vns  ${tenant}  ${vns1}  ${switch3_name}  ${intf2}  ${vlan}
+   sleep  2
 
+
+T5 traffic vlan setup 
+    rest delete tenant  ${tenant}
+    rest add tenant  ${tenant}
+    rest add vns  ${tenant}  ${vns1}
+    rest add vns  ${tenant}  ${vns2}  
+    rest add router intf  ${tenant}  ${vns1}
+    sleep  2
+    rest add router intf  ${tenant}  ${vns2} 
+    sleep  2
+    rest add vns ip  ${tenant}  ${vns1}  ${ip1}  ${mask1}
+    sleep  2
+    rest add vns ip  ${tenant}  ${vns2}  ${ip2}  ${mask2} 
+    sleep  2
+    ${intf1}=  get_switch_int_topo  s1  ixia1_int0
+    Set Suite Variable  ${intf_1}
+    ${intf2}=  get_switch_int_topo  s3  ixia1_int0
+    Set Suite Variable  ${intf_2}
+    rest add interface to vns  ${tenant}  ${vns1}  ${switch1_name}  ${intf1}  ${vlan1}
+    sleep  2
+    rest add interface to vns  ${tenant}  ${vns1}  ${switch3_name}  ${intf2}  ${vlan1}
+    sleep  2
+    rest add interface to vns  ${tenant}  ${vns2}  ${switch1_name}  ${intf1}  ${vlan2}
+    sleep  2
+    rest add interface to vns  ${tenant}  ${vns2}  ${switch3_name}  ${intf2}  ${vlan2}
+    sleep  2
+    
+    
 T5 traffic interface stats test teardown
    rest delete tenant  ${tenant}  
    base suite teardown

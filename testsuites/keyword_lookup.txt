@@ -13,6 +13,7 @@ Library           XML.py
 Library           BuiltIn.py
 # 3rd party Robot keyword libraries
 Library           SeleniumLibrary
+Library           Selenium2Library
 # BSN keyword libraries
 Library           keywords/AppController.py
 Library           keywords/BigChain.py

@@ -196,6 +196,7 @@ def bigrobot_env_init(is_gobot='True'):
     helpers.bigrobot_ha_logging()
     helpers.bigrobot_quiet_output()
     helpers.bigrobot_reconfig_reauth()
+    helpers.bigrobot_selenium_browser()
 
 
 def big_setup(is_gobot='True', auto_package_install=True):
