@@ -1,0 +1,28 @@
+* Settings
+Documentation   Selenium2Library test
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+Library         keywords_dev/vui/MyTest.py
+Library         Selenium2Library
+
+
+#
+# Notes:
+#  - For Google Chrome, need to install chromedriver (a binary executable) for it to work.
+#    I tried it successfully on Mac OS X 10.10.2 (Maverick). Download chromedriver at
+#    https://sites.google.com/a/chromium.org/chromedriver/downloads
+#
+
+* Test Cases
+BCF Login
+    #[Tags]           skipped
+    ${ip} =        get node ip      c1
+    ${browser} =   set variable     chrome
+    #${browser} =   set variable     firefox
+    open browser   https://${ip}/   browser=${browser}
+    sleep    10
+
+BCF Logout
+    #[Tags]           skipped
+    close browser 
+
