@@ -6,9 +6,10 @@
 # mn  : Mininet server
 
 c1:
-  #ip: 10.9.16.66
-  ip: dummy
+  #ip: 10.8.31.2   # bigtap
+  ip: 10.8.3.195 # bcf
+  #ip: dummy
 
-c2:
-  #ip: 10.9.16.67
-  ip: dummy
+#c2:
+#  #ip: 10.9.16.67
+#  ip: dummy
