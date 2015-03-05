@@ -14,6 +14,9 @@ ${mask2}=           24
 ${vlan}=            -1
 ${leaf0a_ixia}=        ethernet24
 ${leaf1a_ixia}=        ethernet24
+${vlan1}=            101
+${vlan2}=            1001
+
 
 ${src_mac1}=       00:a1:b1:c1:bb:0c
 ${dst_mac1}=       00:1a:1b:1c:aa:0a
@@ -24,39 +27,28 @@ ${dst_mac3}=       00:1a:1b:1c:cd:0b
 ${dst_mac_step1}=   00:00:00:60:00:00
 ${src_mac_step1}=   00:00:00:60:00:00
 
+
 ${src_ip1}=        10.200.0.2
 ${src_gw1}=        10.200.0.1
 ${dst_ip1}=        10.200.16.2
 ${dst_gw1}=        10.200.16.1
 ${frame_rate1}=     10000
 ${frame_size1}=     64
+${frame_cnt}=       20000
 ${frame_cnt1}=      100000
 ${frame_cnt2}=      200000
-${ratetolerance}=   20
-${countertolerance}=  100
+${ratetolerance}=   50
+${countertolerance}=  1000
 
 ${numlinks}=  2
-${leaf0a_spine0_intf1}=   ethernet49
-${spine0_leaf0a_intf1}=   ethernet21
-${leaf0a_spine1_intf2}=   ethernet50
-${spine1_leaf0a_intf2}=   ethernet21
-${leaf1a_spine0_intf1}=   ethernet49
-${spine0_leaf1a_intf1}=   ethernet27
-${leaf1a_spine1_intf2}=   ethernet50
-${spine1_leaf1a_intf2}=   ethernet27
 
-
-
-  
-   
-      
-     
-
-
-
-
-
-
-
+#${leaf0a_spine0_intf1}=   ethernet49
+#${spine0_leaf0a_intf1}=   ethernet21
+#${leaf0a_spine1_intf2}=   ethernet50
+#${spine1_leaf0a_intf2}=   ethernet21
+#${leaf1a_spine0_intf1}=   ethernet49
+#${spine0_leaf1a_intf1}=   ethernet27
+#${leaf1a_spine1_intf2}=   ethernet50
+#${spine1_leaf1a_intf2}=   ethernet27
 
 
