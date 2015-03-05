@@ -36,6 +36,7 @@ class Test(object):
             self._current_controller_slave = None
             self._settings = {}
             self._checkpoint = 0
+            self._is_bcf_topology = False
 
             # ESB environment:
             # Per convention, the consumer will pass the params data to the
@@ -352,6 +353,11 @@ class Test(object):
         helpers.log(":::: CHECKPOINT %04d - %s%s"
                     % (self._checkpoint, msg, br_utils.end_of_output_marker()),
                     level=3)
+
+    def is_bcf_topology(self, new_state=None):
+        if new_state != None:
+            self._is_bcf_topology = new_state
+        return self._is_bcf_topology
 
     def controller_user(self):
         return self.bsn_config('controller_user')
@@ -788,6 +794,9 @@ class Test(object):
             n = self.node_spawn(ip=host, node=node, user=user,
                                 password=password, device_type='controller',
                                 quiet=1)
+            if helpers.is_bcf(n.platform()) and not self.is_bcf_topology():
+                helpers.log("Node '%s' is a BCF controller. This is a BCF topology." % node)
+                self.is_bcf_topology(True)
         elif helpers.is_switch(node):
             n = self.node_spawn(ip=host, node=node, user=user,
                                 password=password, device_type='switch',
@@ -1717,10 +1726,6 @@ class Test(object):
         Perform teardown on SwitchLight
         - delete the controller IP address
         """
-        if helpers.bigrobot_test_teardown_switch().lower() == 'false':
-            helpers.debug("Env BIGROBOT_TEST_TEARDOWN_SWITCH is False. Skipping switch teardown.")
-            return
-
         n = self.topology(name)
         if helpers.bigrobot_no_auto_reload().lower() == 'true' and helpers.bigrobot_test_ztn().lower() == 'true':
             con = self.dev_console(name)
@@ -1730,6 +1735,10 @@ class Test(object):
 
         if helpers.bigrobot_test_ztn().lower() == 'true':
             helpers.log("Skipping switch TEAR_DOWN in ZTN MODE")
+            return
+
+        if self.is_bcf_topology():
+            helpers.log("Skipping switch TEAR_DOWN for BCF topology")
             return
 
         if not n.devconf():
