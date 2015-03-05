@@ -501,4 +501,57 @@ class T6(object):
                 vrf_id = data[i]["id"]
                 return vrf_id
             else:
-                continue        
+                continue     
+    
+    def rest_create_nat_scale(self, tenant, subnet, remote_tenant, remote_segment, count, name="n"):
+        '''Function to add nat profile in a tenant in a loop
+        Input: tenant name, subnet for the external network (e.g , 40.0.0) , external tenant , externl segment , count , always starts with name = n 
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        i = 2
+        count = int(count)
+        count = count + 1
+        while (i <= count):
+            nat_profile = name
+            nat_profile += str(i)
+            public_ip = subnet + "." + "%s" % i
+            self.rest_add_nat_profile(tenant, nat_profile)
+            self.rest_add_nat_remote_tenant(tenant, nat_profile, remote_tenant, remote_segment)
+            helpers.sleep(5)
+            self.rest_add_pat(tenant, nat_profile)
+            self.rest_add_pat_public_ip(tenant, nat_profile, public_ip)
+            i = i + 1
+            
+    def rest_delete_nat_scale(self, tenant, count, name="n"):
+        '''function to delete nat-profile in a loop
+        Input: tenant name , how many nat profiles needs to be delete , nat-profile name starts with "n" and while loop integers
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        i = 2
+        count = int(count)
+        count = count + 1
+        while (i <= count):
+            nat_profile = name
+            nat_profile += str(i)
+            self.rest_delete_nat_profile(tenant, nat_profile)
+            i = i + 1
+            
+    def rest_verify_nat_endpoint_scale(self, tenant, remote_tenant, remote_segment, count, name="n"):
+        ''' Function to verify nat endpoint created for each nat profile in a loop
+        Input: tenant , count for loop , name starts with "n"
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        i = 2
+        count = int(count)
+        count = count + 1
+        while (i <= count):
+            nat_profile = name
+            nat_profile += str(i)
+            self.rest_verify_nat_endpoint(tenant, nat_profile, remote_tenant, remote_segment)
+            i = i + 1
+            
+        
+        
