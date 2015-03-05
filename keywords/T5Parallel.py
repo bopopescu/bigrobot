@@ -22,7 +22,7 @@ class T5Parallel(object):
             is_pending = False
             iteration += 1
             helpers.sleep(int(timer))
-            helpers.log("USR INFO:  result is %s" % results)
+            helpers.log("USR INFO:  result is %s. Iteration=%s." % (results, iteration))
 
             for res in results:
                 task_id = res.task_id
