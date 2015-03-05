@@ -343,6 +343,11 @@ Test evaluation
 Test environment variable
     #[Tags]           skipped
     ${BIGROBOT_PATH} =    Get Environment Variable    BIGROBOT_PATH
+    Start Selenium Server -trustAllSSLCertificates
+
+Test environment variable (with custom profile)
+    [Tags]           skipped
+    ${BIGROBOT_PATH} =    Get Environment Variable    BIGROBOT_PATH
     ${PROFILE} =          Set Variable                ${BIGROBOT_PATH}/data/browser/regression_firefox_profile
     Log                   Start Selenium Server -trustAllSSLCertificates -firefoxProfileTemplate ${PROFILE}
 
