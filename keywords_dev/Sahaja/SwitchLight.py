@@ -2294,11 +2294,12 @@ class SwitchLight(object):
         s1.bash(bash_input)
         out1 = s1.cli_content()
         sample1 = out1.split(':')[1]
-        helpers.sleep(5)
+        helpers.test_log("Sample1 is {} and type is {}".format(sample1, type(sample1)))
+        helpers.sleep(15)
         s1.bash(bash_input)
         out2 = s1.cli_content()
         sample2 = out2.split(':')[1]
-        helpers.test_log("Sample1 is {} and type is {}".format(sample1, type(sample1)))
+        helpers.test_log("Sample2 is {} and type is {}".format(sample2, type(sample2)))
         smpl = int(sample2.split()[0]) - int(sample1.split()[0])
         if smpl > 0:
             helpers.test_log("Sampling is happening on the switch {}".format(sw))
@@ -2351,7 +2352,9 @@ class SwitchLight(object):
             return False
         s1.bash(sflow_bash)
         out1 = s1.cli_content()
-        if ip in out1:
+        col_out = out1.split('\n')[1:]
+        helpers.test_log("Will be considering this output {} and type is {} type of ip is {}".format(col_out[0], type(col_out[0]), type(ip)))
+        if str(ip) in col_out[0]:
             helpers.log("IP {} is seen on switch".format(ip))
             return True
         else:
