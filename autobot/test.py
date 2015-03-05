@@ -1717,16 +1717,16 @@ class Test(object):
         Perform teardown on SwitchLight
         - delete the controller IP address
         """
+        if helpers.bigrobot_test_teardown_switch().lower() == 'false':
+            helpers.debug("Env BIGROBOT_TEST_TEARDOWN_SWITCH is False. Skipping switch teardown.")
+            return
+
         n = self.topology(name)
         if helpers.bigrobot_no_auto_reload().lower() == 'true' and helpers.bigrobot_test_ztn().lower() == 'true':
             con = self.dev_console(name)
             helpers.log("Removing switch config auto-reloads files at the End of Each script Execution...")
             con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
             con.cli("")
-
-        if helpers.is_bcf(n.platform()):
-            helpers.log("No Clean config is done in BCF with switch handles..skipp it, all the clean config should be done on controlelrs...")
-            return
 
         if helpers.bigrobot_test_ztn().lower() == 'true':
             helpers.log("Skipping switch TEAR_DOWN in ZTN MODE")
