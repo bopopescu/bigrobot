@@ -168,15 +168,15 @@ s7:
 #  ip: 10.195.0.21
   alias: spine0
   fabric-role: spine
-  mac: 70:72:CF:B5:F8:68
+  mac: 34:17:eb:f2:7c:c4
   user: admin
   password: adminadmin
   console:
     ip: 10.1.8.201
-    port: 7001
+    port: 7025
   pdu:
-    ip: pdu-314-b.bigswitch.com
-    port: 19
+    ip: pdu-313-b.bigswitch.com
+    port: 1
   interfaces:
     leaf0a_int0: ethernet26
     leaf1a_int0: ethernet16
