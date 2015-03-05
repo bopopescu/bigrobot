@@ -432,7 +432,7 @@ class T5_Scale(object):
         for line in temp:
             helpers.log("***line is: %s  \n" % line)
             line = line.lstrip()
-            match = re.match(r'L3_HOST_ROUTE (\d+)\s+(\d+).*', line)
+            match = re.match(r'L3_HOST_ROUTE\s+(\d+)\s+(\d+).*', line)
             if match:
                 helpers.log("INFO: Total L3 table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
                 return match.group(2)
@@ -466,7 +466,7 @@ class T5_Scale(object):
         for line in temp:
             helpers.log("***line is: %s  \n" % line)
             line = line.lstrip()
-            match = re.match(r'INGRESS_ACL (\d+)\s+(\d+).*', line)
+            match = re.match(r'INGRESS_ACL\s+(\d+)\s+(\d+).*', line)
             if match:
                 helpers.log("INFO: Total INGRESS_ACL table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
                 return match.group(2)
