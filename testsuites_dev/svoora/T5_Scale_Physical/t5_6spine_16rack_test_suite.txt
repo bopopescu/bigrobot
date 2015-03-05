@@ -154,10 +154,10 @@ Create L2 devices in ixia
     stop traffic
     clear stats
     start traffic
-    sleep  50
+    sleep  25
     #pause   freeezz!!!
     stop traffic
-    verify L2 packet_loss_duration
+    print L2 packet_loss_duration
         
 
     
@@ -292,7 +292,7 @@ Power off/On Master Controller
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
-    verify L2 packet_loss_duration
+    print L2 packet_loss_duration
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
@@ -323,7 +323,7 @@ Power off/On Slave Controller
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
-    verify L2 packet_loss_duration
+    print L2 packet_loss_duration
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
@@ -361,7 +361,7 @@ Reboot all switches
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
     stop traffic
-    verify L2 packet_loss_duration
+    print L2 packet_loss_duration
     
     
 
@@ -814,7 +814,7 @@ restart floodlight in master controller
     Should Be True  ${return}
     sleep  5
     stop traffic
-    verify L2 packet_loss_duration
+    print L2 packet_loss_duration
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
@@ -842,7 +842,7 @@ restart floodlight in slave controller
     Should Be True  ${return}
     sleep  5
     stop traffic
-    verify L2 packet_loss_duration
+    print L2 packet_loss_duration
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
@@ -1015,7 +1015,7 @@ verify L2 packet_loss_duration
     Should be true  ${rx_value_m} == 0
     
     ${NTOP}=  fetch port stats  stream=${flow_n_to_p}
-    ${rx_value_n}=  verify dict key  ${ATOC}  port_n_to_p  packet_loss_duration_ms
+    ${rx_value_n}=  verify dict key  ${NTOP}  port_n_to_p  packet_loss_duration_ms
     Should be true  ${rx_value_n} == 0
    
 print L2 packet_loss_duration
@@ -1049,7 +1049,7 @@ print L2 packet_loss_duration
     Log to console     ${rx_value_m} 
     
     ${NTOP}=  fetch port stats  stream=${flow_n_to_p}
-    ${rx_value_n}=  verify dict key  ${ATOC}  port_n_to_p  packet_loss_duration_ms
+    ${rx_value_n}=  verify dict key  ${NTOP}  port_n_to_p  packet_loss_duration_ms
     Log to console     ${rx_value_n} 
    
    
