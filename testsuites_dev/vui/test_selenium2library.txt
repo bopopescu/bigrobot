@@ -8,9 +8,12 @@ Library         Selenium2Library
 
 #
 # Notes:
+#  - Install Selenium2Library:
+#      pip install robotframework-selenium2library
 #  - For Google Chrome, need to install chromedriver (a binary executable) for it to work.
 #    I tried it successfully on Mac OS X 10.10.2 (Maverick). Download chromedriver at
-#    https://sites.google.com/a/chromium.org/chromedriver/downloads
+#    https://sites.google.com/a/chromium.org/chromedriver/downloads. Then copy the
+#    binary to /usr/local/bin/.
 #
 
 * Test Cases
