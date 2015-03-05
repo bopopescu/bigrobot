@@ -38,16 +38,25 @@ class T5Parallel(object):
             if iteration >= int(timeout) / int(timer):
 #                helpers.test_failure("USR ERROR: the parallel execution did not finish with %s seconds" %timeout)
                 helpers.log("USR ERROR: the parallel execution did not finish with %s seconds" % timeout)
-                return False
+                break
 
         helpers.log("*** Parallel tasks completed ")
+
+        # Archive the ESB task logs
+        for res in results:
+            task_id = res.task_id
+            helpers.log_task_output(task_id)
+
+        if is_pending:
+            helpers.log("Not able to run ESB tasks successfully.")
+            flag = False
+            return flag
 
         #
         # Check task output
         #
         for res in results:
             task_id = res.task_id
-            helpers.log_task_output(task_id)
             output = res.get()
             helpers.log("USER INFO:  for task %s , result is  %s  " % (task_id, output))
             result_dict[task_id]["result"] = output
