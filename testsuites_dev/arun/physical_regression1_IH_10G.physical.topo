@@ -165,30 +165,8 @@ s6:
   set_session_ssh: false
   set_init_ping: false
 s7:
-#  ip: 10.195.0.21
-  alias: spine0
-  fabric-role: spine
-  mac: 34:17:eb:f2:7c:c4
-  user: admin
-  password: adminadmin
-  console:
-    ip: 10.1.8.201
-    port: 7025
-  pdu:
-    ip: pdu-313-b.bigswitch.com
-    port: 1
-  interfaces:
-    leaf0a_int0: ethernet26
-    leaf1a_int0: ethernet16
-    leaf0b_int0: ethernet2
-    leaf1b_int0: ethernet12
-    leaf2a_int0: ethernet34
-    leaf2b_int0: ethernet44
-  set_session_ssh: false
-  set_init_ping: false
-s8:
 #  ip: 10.195.0.22
-  alias: spine1
+  alias: spine0
   fabric-role: spine
   mac: 70:72:CF:B5:E5:0A
   user: admin
@@ -206,6 +184,28 @@ s8:
     leaf1b_int0: ethernet21
     leaf2a_int0: ethernet15
     leaf2b_int0: ethernet33
+  set_session_ssh: false
+  set_init_ping: false
+s8:
+#  ip: 10.195.0.21
+  alias: spine1
+  fabric-role: spine
+  mac: 34:17:eb:f2:7c:c4
+  user: admin
+  password: adminadmin
+  console:
+    ip: 10.1.8.201
+    port: 7025
+  pdu:
+    ip: pdu-313-b.bigswitch.com
+    port: 1
+  interfaces:
+    leaf0a_int0: ethernet26
+    leaf1a_int0: ethernet16
+    leaf0b_int0: ethernet2
+    leaf1b_int0: ethernet12
+    leaf2a_int0: ethernet34
+    leaf2b_int0: ethernet44
   set_session_ssh: false
   set_init_ping: false
 s100:
