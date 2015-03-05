@@ -35,6 +35,7 @@ products:
                    - 2.6.0
           software_image_map:
                    - ih-260
+                   - ih260
       - jackfrost:
           version:
                    - 3.0.0
