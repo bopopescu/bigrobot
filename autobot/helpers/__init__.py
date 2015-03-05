@@ -751,6 +751,17 @@ def bigrobot_test_suite_status(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_TEST_SUITE_STATUS', new_val, default)
 
 
+def bigrobot_selenium_browser(new_val=None, default='chrome'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Specify the browser to use when running Selenium tests. Currently
+    supported browsers are:
+      chrome
+      firefox
+    """
+    return _env_get_and_set('BIGROBOT_SELENIUM_BROWSER', new_val, default)
+
+
 def bigtest_path(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigTest.
