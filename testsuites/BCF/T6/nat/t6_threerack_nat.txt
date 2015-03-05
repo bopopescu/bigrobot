@@ -50,7 +50,7 @@ ${hv5_switch}  hv5
 * Test Case 
 
 add Fabric setup Three Rack Dual Leaf 
-   [Tags]  nat  feature           
+   [Tags]            
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -58,7 +58,7 @@ add Fabric setup Three Rack Dual Leaf
    rest verify fabric link common  30
 
 verify vm connectivity using multiple nat next-hop(single external tenant)
-   [Tags]  nat  feature   
+   [Tags]     
     add a tenant  external
     add a vns  external  s1
     add a vns  external  s2
@@ -100,7 +100,7 @@ verify vm connectivity using multiple nat next-hop(single external tenant)
     Should Be True  ${loss} == 0
 
 verify vm connectivity using multiple nat next-hop multiple tenants
-	[Tags]  nat  feature  
+	[Tags]   
 	add a tenant  external
 	add a tenant  external1
     add a vns  external  s1
@@ -143,7 +143,7 @@ verify vm connectivity using multiple nat next-hop multiple tenants
     Should Be True  ${loss} == 0
     
 verify bm-vm connectivity using multiple nat next-hop (single external tenant)
-   [Tags]  nat  feature   
+   [Tags]    
     add a tenant  external
     add a vns  external  s1
     add a vns  external  s2
@@ -182,7 +182,7 @@ verify bm-vm connectivity using multiple nat next-hop (single external tenant)
     Should Be True  ${loss} == 0
 
 verify bm-vm connectivity using multiple nat next-hop multiple tenants
-	[Tags]  nat  feature  
+	[Tags]    
 	add a tenant  external
 	add a tenant  external1
     add a vns  external  s1
@@ -225,7 +225,7 @@ verify bm-vm connectivity using multiple nat next-hop multiple tenants
     Should Be True  ${loss} == 0
 
 verify vm connectivity applying nat on multiple tenants
-	[Tags]  nat  feature  
+	[Tags]    
 	add a tenant  external
 	add a tenant  external1
     add a vns  external  s1
@@ -272,7 +272,7 @@ verify vm connectivity applying nat on multiple tenants
     Should Be True  ${loss} == 100
 	  
 verify vm connectivity after changing nat profile
-	[Tags]  nat  feature
+	[Tags]  
 	add a tenant  external
 	add a tenant  external1
     add a vns  external  s1
@@ -313,7 +313,7 @@ verify vm connectivity after changing nat profile
     Should Be True  ${loss} == 0
 	
 verify vm connectivity changing route from system to nat
-	[Tags]  nat  feature  
+	[Tags]   
 	rest add static routes  t2  0.0.0.0/0  {"tenant": "system"}
 	add a tenant  external
 	add a tenant  external1
@@ -570,7 +570,7 @@ verify vm connectivity with dynamic nat switch failover
 	rest verify fabric vswitch all
    
 verify vm connectivity with fixed nat switch failover
-	[Tags]  nat feature    
+	[Tags]     
 	rest add nat switch  ${hv1_switch}
 	${result}=  rest verify nat switch  ${hv1_switch}
 	Should be True  ${result}
@@ -624,7 +624,31 @@ verify vm connectivity with fixed nat switch failover
 	rest delete nat switch  ${hv1_switch}
 	rest delete nat switch  ${hv4_switch}
 
-
+verify NAT container scale for a single vswitch
+	[Tags]  
+	rest add nat switch  ${hv1_switch}
+	${result}=  rest verify nat switch  ${hv1_switch}
+	add a tenant  external
+    add a vns  external  s1
+    rest add router intf  external  s1
+    rest add vns ip  external  s1  10.10.0.1  24
+    rest add tenant routers intf to system  external
+    rest add system intf to tenant routers  external
+    rest add static routes  external  0.0.0.0/0  {"tenant": "system"}
+    rest create nat scale  t1  10.10.0  external  s1  20
+    sleep  10
+    rest verify nat endpoint scale  t1  external  s1  20
+    rest add nat profile  t1  nat50
+	rest add pat  t1  nat50
+	rest add pat public ip  t1  nat50  10.10.0.254  
+	rest add nat remote tenant  t1  nat50  external  s1
+	sleep  5
+	${result}=  rest verify nat profile  t1  nat50  
+	Should not be True  ${result}
+	rest delete nat profile  t1  nat50
+    rest delete nat scale  t1  20
+    rest delete nat switch  ${hv1_switch}
+    
 * Keywords
 
 T6 base suite setup
