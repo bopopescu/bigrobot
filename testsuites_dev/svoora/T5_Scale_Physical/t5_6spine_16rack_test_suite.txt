@@ -203,8 +203,8 @@ Controller HA failover with L2 traffic
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
-    ${l3_table}=  get L3 table count  ${leaf}
-    Should be true  ${l3_table} >= 45000
+    #${l3_table}=  get L3 table count  ${leaf}
+    #Should be true  ${l3_table} >= 45000
     ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
@@ -236,8 +236,8 @@ Controller Master reboot
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
-    ${l3_table}=  get L3 table count  ${leaf}
-    Should be true  ${l3_table} >= 45000
+    #${l3_table}=  get L3 table count  ${leaf}
+    #Should be true  ${l3_table} >= 45000
     ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
@@ -269,8 +269,8 @@ Controller Slave Reboot
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
-    ${l3_table}=  get L3 table count  ${leaf}
-    Should be true  ${l3_table} >= 45000
+    #${l3_table}=  get L3 table count  ${leaf}
+    #Should be true  ${l3_table} >= 45000
     ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
@@ -299,8 +299,8 @@ Power off/On Master Controller
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
-    ${l3_table}=  get L3 table count  ${leaf}
-    Should be true  ${l3_table} >= 45000
+    #${l3_table}=  get L3 table count  ${leaf}
+    #Should be true  ${l3_table} >= 45000
     ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
@@ -330,8 +330,8 @@ Power off/On Slave Controller
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
-    ${l3_table}=  get L3 table count  ${leaf}
-    Should be true  ${l3_table} >= 45000
+    #${l3_table}=  get L3 table count  ${leaf}
+    #Should be true  ${l3_table} >= 45000
     ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
@@ -821,8 +821,8 @@ restart floodlight in master controller
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
-    ${l3_table}=  get L3 table count  ${leaf}
-    Should be true  ${l3_table} >= 45000
+    #${l3_table}=  get L3 table count  ${leaf}
+    #Should be true  ${l3_table} >= 45000
     ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
@@ -849,8 +849,8 @@ restart floodlight in slave controller
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
-    ${l3_table}=  get L3 table count  ${leaf}
-    Should be true  ${l3_table} >= 45000
+    #${l3_table}=  get L3 table count  ${leaf}
+    #Should be true  ${l3_table} >= 45000
     ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
