@@ -95,17 +95,18 @@ s3:
   set_init_ping: false
 s4:
 #  ip: 10.195.0.36
+  hostname: dell-s4k-rack-314-11
   alias: leaf1-b
   leaf-group: rack1
-  mac: 70:72:CF:B6:00:36
+  mac: 34:17:eb:f2:eb:c4
   user: admin
   password: adminadmin
   console:
     ip: 10.1.8.46
     port: 7004
   pdu:
-    ip: pdu-314-a.bigswitch.com
-    port: 19
+    ip: pdu-314-b.bigswitch.com
+    port: 9
     user: apc
     password: apc
   interfaces:
@@ -118,16 +119,17 @@ s4:
   set_init_ping: false
 s5:
 #  ip: 10.195.0.31
+  hostname: dell-s4k-rack-314-5
   alias: leaf2-a
   leaf-group: rack2
-  mac: 70:72:CF:BD:DA:B6
+  mac: 34:17:EB:F2:67:C4
   user: admin
   password: adminadmin
   console:
     ip: 10.1.8.46
-    port: 7005
+    port: 7007
   pdu:
-    ip: pdu-314-a.bigswitch.com
+    ip: pdu-314-b.bigswitch.com
     port: 20
     user: apc
     password: apc
@@ -142,17 +144,18 @@ s5:
   set_init_ping: false
 s6:
 #  ip: 10.195.0.32
+  hostname: dell-s4k-rack-314-6
   alias: leaf2-b
   leaf-group: rack2
-  mac: 70:72:cf:b5:ef:bc
+  mac: 34:17:eb:f2:7c:c4
   user: admin
   password: adminadmin
   console:
     ip: 10.1.8.46
-    port: 7006
+    port: 7008
   pdu:
-    ip: pdu-314-a.bigswitch.com
-    port: 21
+    ip: pdu-314-b.bigswitch.com
+    port: 19
     user: apc
     password: apc
   interfaces:
@@ -168,14 +171,14 @@ s7:
 #  ip: 10.195.0.22
   alias: spine0
   fabric-role: spine
-  mac: 70:72:CF:B5:E5:0A
+  mac: 70:72:CF:BD:DA:B6
   user: admin
   password: adminadmin
   console:
-    ip: 10.1.8.201
-    port: 7002
+    ip: 10.1.8.46
+    port: 7006
   pdu:
-    ip: pdu-314-b.bigswitch.com
+    ip: pdu-314-a.bigswitch.com
     port: 20
   interfaces:
     leaf0a_int0: ethernet25
@@ -188,17 +191,18 @@ s7:
   set_init_ping: false
 s8:
 #  ip: 10.195.0.21
+  hostname: dell-s4k-rack-314-09
   alias: spine1
   fabric-role: spine
-  mac: 34:17:eb:f2:7c:c4
+  mac: 34:17:eb:f2:f8:c4
   user: admin
   password: adminadmin
   console:
-    ip: 10.1.8.201
-    port: 7025
+    ip: 10.1.8.46
+    port: 7005
   pdu:
-    ip: pdu-313-b.bigswitch.com
-    port: 1
+    ip: pdu-314-b.bigswitch.com
+    port: 14
   interfaces:
     leaf0a_int0: ethernet26
     leaf1a_int0: ethernet16
