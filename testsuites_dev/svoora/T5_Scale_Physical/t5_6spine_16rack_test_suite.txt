@@ -183,13 +183,13 @@ Controller HA failover with L2 traffic
     clear stats
     apply traffic
     start traffic
-    start monitoring the exception
-    ${file_exist}=  verify file  ${copied_file1}
-    Should Be True  ${file_exist}
+    #start monitoring the exception
+    #${file_exist}=  verify file  ${copied_file1}
+    #Should Be True  ${file_exist}
     cli cluster take leader
-    stop monitoring the exception
-    ${result}=  parse monitoring file
-    Should not be true  ${result}
+    #stop monitoring the exception
+    #${result}=  parse monitoring file
+    #Should not be true  ${result}
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -215,14 +215,14 @@ Controller Master reboot
     clear stats
     apply traffic
     start traffic
-    start monitoring the exception
-    ${file_exist}=  verify file  ${copied_file1}
-    Should Be True  ${file_exist}
+    #start monitoring the exception
+    #${file_exist}=  verify file  ${copied_file1}
+    #Should Be True  ${file_exist}
     ${returnVal}=  cli verify cluster master reboot
     Should Be True  ${returnVal}
-    stop monitoring the exception
-    ${result}=  parse monitoring file
-    Should not be true  ${result}
+    #stop monitoring the exception
+    #${result}=  parse monitoring file
+    #Should not be true  ${result}
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -248,14 +248,14 @@ Controller Slave Reboot
     clear stats
     apply traffic
     start traffic
-    start monitoring the exception
-    ${file_exist}=  verify file  ${copied_file1}
-    Should Be True  ${file_exist}
+    #start monitoring the exception
+    #${file_exist}=  verify file  ${copied_file1}
+    #Should Be True  ${file_exist}
     ${returnVal}=  cli verify cluster slave reboot
     Should Be True  ${returnVal}
-    stop monitoring the exception
-    ${result}=  parse monitoring file
-    Should not be true  ${result}
+    #stop monitoring the exception
+    #${result}=  parse monitoring file
+    #Should not be true  ${result}
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
