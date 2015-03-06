@@ -120,6 +120,10 @@ class HaControllerNode(object):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.name()
 
+    def hostname(self):
+        n = self.t.controller(self.logical_name(), resolve_mastership=True)
+        return n.hostname()
+
     def ip(self):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.ip()
