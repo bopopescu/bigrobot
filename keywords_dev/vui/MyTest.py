@@ -684,6 +684,12 @@ vui@Vuis-MacBook-Pro$
                     helpers.log("****** %d.NOT-READY - task_id(%s)['%s']"
                                 % (iterations, res.task_id, action))
                     is_pending = True
+
+        helpers.log("*** Parallel tasks completed")
+        for res in results:
+            task_id = res.task_id
+            helpers.log_task_output(task_id)  # display URL of task output
+
         if is_pending and iterations > max_tries:
             helpers.log("Not able to retrieve results from ESB")
             return False
@@ -769,14 +775,15 @@ vui@Vuis-MacBook-Pro$
                     helpers.log("****** %d.NOT-READY - task_id(%s)['%s']"
                                 % (iterations, res.task_id, action))
                     is_pending = True
-        if is_pending and iterations > max_tries:
-            helpers.log("Not able to retrieve results from ESB")
-            return False
 
         helpers.log("*** Parallel tasks completed")
         for res in results:
             task_id = res.task_id
             helpers.log_task_output(task_id)  # display URL of task output
+
+        if is_pending and iterations > max_tries:
+            helpers.log("Not able to retrieve results from ESB")
+            return False
 
         #
         # Check task output
@@ -817,14 +824,15 @@ vui@Vuis-MacBook-Pro$
                     helpers.log("****** %d.NOT-READY - task_id(%s)"
                                 % (iterations, res.task_id))
                     is_pending = True
-        if is_pending and iterations > max_tries:
-            helpers.log("Not able to retrieve results from ESB")
-            return False
 
         helpers.log("*** Parallel tasks completed")
         for res in results:
             task_id = res.task_id
             helpers.log_task_output(task_id)  # display URL of task output
+
+        if is_pending and iterations > max_tries:
+            helpers.log("Not able to retrieve results from ESB")
+            return False
 
         #
         # Check task output
@@ -901,14 +909,15 @@ vui@Vuis-MacBook-Pro$
                     helpers.log("****** %d.NOT-READY - task_id(%s)['%s']"
                                 % (iterations, res.task_id, action))
                     is_pending = True
-        if is_pending and iterations > max_tries:
-            helpers.log("Not able to retrieve results from ESB")
-            return False
 
         helpers.log("*** Parallel tasks completed")
         for res in results:
             task_id = res.task_id
             helpers.log_task_output(task_id)  # display URL of task output
+
+        if is_pending and iterations > max_tries:
+            helpers.log("Not able to retrieve results from ESB")
+            return False
 
         #
         # Check task output
