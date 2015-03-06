@@ -1162,6 +1162,20 @@ def to_json(python_data, is_raw=False):
         return json.dumps(python_data, indent=4, sort_keys=True)
 
 
+def in_list(_list, element, case_sensitive=False):
+    """
+    Return True if element is in the list and False it it isn't.
+    By default, ignore case when comparing values.
+    """
+    if case_sensitive:
+        if element in _list:
+            return True
+    else:
+        if element.lower() in [x.lower() for x in _list]:
+            return True
+    return False
+
+
 def unicode_to_ascii(u):
     """
     Convert a Unicode string to an ASCII string.

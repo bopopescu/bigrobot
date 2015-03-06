@@ -13,6 +13,13 @@ test_types:
   - negative
   - robustness
 
+testbeds:
+  bcf:
+    - 10g
+    - 40g
+    - common
+    - virtual
+
 # Note: releases field is an ordered list to reflect precedence, e.g.,
 #       ironhorse comes before ironhorse-plus which comes before jackfrost.
 products:
