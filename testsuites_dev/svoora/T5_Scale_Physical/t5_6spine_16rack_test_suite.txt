@@ -196,9 +196,9 @@ Controller HA failover with L2 traffic
     ${return}=  rest verify sync state
     Should Be True  ${return}
     verify fabric switch link and errors
-    sleep  5
+    sleep  15
     stop traffic
-    verify L2 packet_loss_duration
+    print L2 packet_loss_duration
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
