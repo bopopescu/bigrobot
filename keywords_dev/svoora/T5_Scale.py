@@ -151,7 +151,45 @@ class T5_Scale(object):
         helpers.log("Enabling the tail and redirecting to filename")
         c1.sudo('tail -f /var/log/switch/* | grep faultd | grep \"/bin/ofad\" > c1_%s &' % (file_name))
 
+    def start_monitor_exception_during_failover(self, file_name):
+        t = test.Test()
+        c1 = t.controller('c1')
+        c2 = t.controller('c2')
+        helpers.log("INFO: connecting to bash mode in both controllers")
+        helpers.log("INFO: Checking if file already exist in the controller")
+        result = c1.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C1: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C1, deleting the file")
+            c1.sudo('rm -rf c1_%s' % (file_name))
+        result = c2.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C2: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C2, deleting the file")
+            c2.sudo('rm -rf c2_%s' % (file_name))
+        helpers.log("Enabling the tail and redirecting to filename")
+        c1.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v DebugCounter > c1_%s &' % (file_name))
+        c2.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v DebugCounter > c2_%s &' % (file_name))
 
+    def start_monitor_exception_during_reboot(self, file_name):
+        t = test.Test()
+        c1 = t.controller('c1')
+        c2 = t.controller('c2')
+        helpers.log("INFO: connecting to bash mode in both controllers")
+        helpers.log("INFO: Checking if file already exist in the controller")
+        result = c1.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C1: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C1, deleting the file")
+            c1.sudo('rm -rf c1_%s' % (file_name))
+        result = c2.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C2: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C2, deleting the file")
+            c2.sudo('rm -rf c2_%s' % (file_name))
+        helpers.log("Enabling the tail and redirecting to filename")
+        c1.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v ABSRPCCH7002 > c1_%s &' % (file_name))
+        c2.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v ABSRPCCH7002 > c2_%s &' % (file_name))
 
     def pid_return_monitor_file(self, role):
         t = test.Test()
@@ -288,43 +326,71 @@ class T5_Scale(object):
         helpers.log("Checking fabric errors")
         t = test.Test()
         c = t.controller()
-        url = '%s/api/v1/data/controller/applications/bvs/info/fabric/errors/dual-tor/peer-link-absent' % (c.base_url)
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/switch-not-connected-to-standby' % (c.base_url)
         c.rest.get(url)
         data = c.rest.content()
         return_flag = 0
         if len(data) != 0:
-            helpers.test_failure("Fabric error reported for peer-links %s" % data)
+            helpers.test_failure("Fabric error reported for switches not connected to standby %s" % data)
             return_flag = 1
         else:
-            helpers.log("No Fabric errors Reported for peer-links %s" % data)
+            helpers.log("No Fabric errors Reported for switches not connected to standby %s" % data)
             # return_flag = True
-        url = '%s/api/v1/data/controller/applications/bvs/info/fabric/errors?select=uni-directional-links' % (c.base_url)
-        c.rest.get(url)
-        data = c.rest.content()
-        if data[0] != {}:
-            helpers.test_failure("Fabric error reported for uni-directional-links %s" % data)
-            return_flag = return_flag + 1
-        else:
-            helpers.log("No Fabric error Reported for uni-directional links %s" % data)
-            # return_flag = True
-        url = '%s/api/v1/data/controller/applications/bvs/info/fabric/errors/dual-tor/remote-leaf-groups-inconsistent' % (c.base_url)
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/pending-disconnect-switch' % (c.base_url)
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
-            helpers.test_failure("Fabric error reported for remote leaf groups %s" % data)
+            helpers.test_failure("Fabric error reported for disconnect switches %s" % data)
             return_flag = return_flag + 1
         else:
-            helpers.log("No Fabric error Reported for remote leaf groups %s" % data)
+            helpers.log("No Fabric error Reported for disconnect switches %s" % data)
             # return_flag = True
-        url = '%s/api/v1/data/controller/applications/bvs/info/fabric/errors/dual-tor/no-port-group-configured-interface' % (c.base_url)
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/suspended-switch' % (c.base_url)
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
-            helpers.test_failure("Fabric error reported for port-groups %s" % data)
+            helpers.test_failure("Fabric error reported for suspended switches %s" % data)
             return_flag = return_flag + 1
         else:
-            helpers.log("No Fabric error Reported for prot-groups %s" % data)
+            helpers.log("No Fabric error Reported for suspended switches %s" % data)
             # return_flag = True
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/error-threshold-member-count-exceeded-lag' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+            helpers.test_failure("Fabric error reported for error threashold member count %s" % data)
+            return_flag = return_flag + 1
+        else:
+            helpers.log("No Fabric error Reported for error threashold member count %s" % data)
+            # return_flag = True
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/invalid-link' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+            helpers.test_failure("Fabric error reported for invalid links %s" % data)
+            return_flag = return_flag + 1
+        else:
+            helpers.log("No Fabric error Reported for invalid links %s" % data)
+
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/missing-link' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+            helpers.test_failure("Fabric error reported for missing links %s" % data)
+            return_flag = return_flag + 1
+        else:
+            helpers.log("No Fabric error Reported for missing links %s" % data)
+
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/breakout-failed-interface' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+            helpers.test_failure("Fabric error reported for break-out links %s" % data)
+            return_flag = return_flag + 1
+        else:
+            helpers.log("No Fabric error Reported for break-out links %s" % data)
+
+
         return return_flag
 
 
@@ -432,7 +498,7 @@ class T5_Scale(object):
         for line in temp:
             helpers.log("***line is: %s  \n" % line)
             line = line.lstrip()
-            match = re.match(r'L3_HOST_ROUTE (\d+)\s+(\d+).*', line)
+            match = re.match(r'L3_HOST_ROUTE\s+(\d+)\s+(\d+).*', line)
             if match:
                 helpers.log("INFO: Total L3 table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
                 return match.group(2)
@@ -466,7 +532,7 @@ class T5_Scale(object):
         for line in temp:
             helpers.log("***line is: %s  \n" % line)
             line = line.lstrip()
-            match = re.match(r'INGRESS_ACL (\d+)\s+(\d+).*', line)
+            match = re.match(r'INGRESS_ACL\s+(\d+)\s+(\d+).*', line)
             if match:
                 helpers.log("INFO: Total INGRESS_ACL table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
                 return match.group(2)
