@@ -301,7 +301,7 @@ class T5_Scale(object):
         url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/pending-disconnect-switch' % (c.base_url)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0] != {}:
+        if len(data) != 0:
             helpers.test_failure("Fabric error reported for disconnect switches %s" % data)
             return_flag = return_flag + 1
         else:
