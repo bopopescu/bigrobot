@@ -99,203 +99,213 @@ T2.13 Delete Big Tap service interface
     [Tags]  blackbird  full  feature  interface
 T2 Teardown
      Delete All Big Tap Interfaces
-# 
+
+### Configure Big Tap Service			Name	 				Pre-service				Post-service
+T3.1 Service with regular name				
+	Configure Big Tap Service			__new__			service-new-1			service-new-2
+	[Tags]  blackbird  full  feature  group
+T3.2 Service with no interfaces			
+	Configure Big Tap Service			__new__			${EMPTY}				${EMPTY}
+	[Tags]  blackbird  full  feature  group
+T3 Teardown
+	Delete All Big Tap Resources
+	
 ### Configure Big Tap Interface Group from Big Tap Menu
 #                                                             ID                     Switch                            Role            Name                Interface Name
-T3 Test set up:
+T4 Test set up:
     Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1			 filter	        ixia-2-9
     Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-intern1       delivery       ixia-2-15
     Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             filter         ixia-4-8    
     [Tags]  corsair  full  feature  interface-group
-T3.1 Filter Interface group with no filter interface and name filter-group        
+T4.1 Filter Interface group with no filter interface and name filter-group        
      Configure Big Tap Interface Group from Big Tap Menu            filter                filter-group          ${EMPTY}
     [Tags]  corsair  full  feature  interface-group
-T3.2 Delivery Interface with 1 delivery interface and name delivery_group    
+T4.2 Delivery Interface with 1 delivery interface and name delivery_group    
     Configure Big Tap Interface Group from Big Tap Menu            delivery               delivery-group        ${EMPTY}
     [Tags]  corsair  full  feature  interface-group
-T3.3 Filter Interface group with 1 filter interface and name filter-group        
+T4.3 Filter Interface group with 1 filter interface and name filter-group        
      Configure Big Tap Interface Group from Big Tap Menu            filter                filter_group1         ixia-2-9
     [Tags]  corsair  full  feature  interface-group
-T3.4 Delivery Interface with 1 delivery interface and name delivery_group    
+T4.4 Delivery Interface with 1 delivery interface and name delivery_group    
     Configure Big Tap Interface Group from Big Tap Menu            delivery               delivery_group1       ixia-2-15
     [Tags]  corsair  full  feature  interface-group
-T3.5 Another Filter Interface group with previous filter interface and name filter group 1                    
+T4.5 Another Filter Interface group with previous filter interface and name filter group 1                    
      Configure Big Tap Interface Group from Big Tap Menu           filter                 filter:group2         ixia-2-9
     [Tags]  corsair  full  feature  interface-group
-T3.6 Another Delivery Interface group with previous delivery interface                
+T4.6 Another Delivery Interface group with previous delivery interface                
      Configure Big Tap Interface Group from Big Tap Menu            delivery              delivery:group2        ixia-2-15    
     [Tags]  corsair  full  feature  interface-group
-T3.7 Filter Interface group with all filter interfaces and name filter group 3       
+T4.7 Filter Interface group with all filter interfaces and name filter group 3       
      Configure Big Tap Interface Group from Big Tap Menu            filter                filter-group_3           All
     [Tags]  corsair  full  feature  interface-group
-T3.8 Delivery Interface with 1 delivery interface and name delivery_group    
+T4.8 Delivery Interface with 1 delivery interface and name delivery_group    
     Configure Big Tap Interface Group from Big Tap Menu            delivery               delivery-group_3         All
     [Tags]  corsair  full  feature  interface-group
-T3.9 Delete filter interface from Filter Interface group                    
+T4.9 Delete filter interface from Filter Interface group                    
      Delete Big Tap Interface from Interface Group                  filter                filter_group1          ixia-2-9
     [Tags]  corsair  full  feature  interface-group
-T3.10 Delete delivery interface from Delivery Interface group                
+T4.10 Delete delivery interface from Delivery Interface group                
      Delete Big Tap Interface from Interface Group                  delivery              delivery_group1        ixia-2-15
     [Tags]  corsair  full  feature  interface-group
-T3.11 Delete Filter Interface group                    
+T4.11 Delete Filter Interface group                    
      Delete Big Tap Interface group                                                       filter-group        
     [Tags]  corsair  full  feature  interface-group
-T3.12 Delete Delivery Interface group                
+T4.12 Delete Delivery Interface group                
     Delete Big Tap Interface group                                                        delivery_group1                    
     [Tags]  corsair  full  feature  interface-group
-T3 Teardown
+T4 Teardown
     Delete All Big Tap Resources
     [Tags]  corsair  full  feature  interface-group
 
 #### Configure User Defined Offsets
     
-T4.1 Configure udf0 with L3 start offset 8        
+T5.1 Configure udf0 with L3 start offset 8        
      Configure Big Tap User Defined Offsets                        udf0                L3 Start            8    
     [Tags]  corsair  full  feature  udf  match-conditions
-T4.2 Configure udf0 with L3 start offset 12        
+T5.2 Configure udf0 with L3 start offset 12        
     Configure Big Tap User Defined Offsets                        udf1                L3 Start            12
     [Tags]  corsair  full  feature  udf  match-conditions
-T4.3 Configure udf0 with L3 start offset 16                         
+T5.3 Configure udf0 with L3 start offset 16                         
      Configure Big Tap User Defined Offsets                        udf2                L3 Start            16
     [Tags]  corsair  full  feature  udf  match-conditions
-T4.4 Configure udf0 with L3 start offset 20                    
+T5.4 Configure udf0 with L3 start offset 20                    
      Configure Big Tap User Defined Offsets                        udf3                L3 Start            20
     [Tags]  corsair  full  feature  udf  match-conditions
-T4.5 Configure udf0 with L4 start offset 8        
+T5.5 Configure udf0 with L4 start offset 8        
      Configure Big Tap User Defined Offsets                        udf0                L4 Start            8    
     [Tags]  corsair  full  feature  udf  match-conditions
-T4.6 Configure udf0 with L4 start offset 12                        
+T5.6 Configure udf0 with L4 start offset 12                        
      Configure Big Tap User Defined Offsets                        udf1                L4 Start            12
     [Tags]  corsair  full  feature  udf  match-conditions
-T4.7 Configure udf0 with L4 start offset 20                    
+T5.7 Configure udf0 with L4 start offset 20                    
      Configure Big Tap User Defined Offsets                        udf2                L4 Start            20
     [Tags]  corsair  full  feature  udf  match-conditions
-T4.8 Configure udf0 with L4 start offset 24                    
+T5.8 Configure udf0 with L4 start offset 24                    
      Configure Big TapUser Defined Offsets                        udf3                L4 Start            24
     [Tags]  corsair  full  feature  udf  match-conditions
 
 # ### Configure User	  	Username 			Password 			Confirm Password  			Full Name				Group
-T5.1 User with password 	
+T6.1 User with password 	
  	Configure User			__random__			testtest			testtest					User with password		${EMPTY}
  	[Tags]  blackbird  full  feature  user
-T5.2 User no password		
+T6.2 User no password		
  	Configure User			user1			    ${EMPTY}			${EMPTY}					User no password		${EMPTY}
  	[Tags]  blackbird  full  feature  user
-T5.3 User no full name	
+T6.3 User no full name	
  	Configure User			user_2				testtest			testtest					${EMPTY}				${EMPTY}
  	[Tags]  blackbird  full  feature  user
-T5.4 User group admin
+T6.4 User group admin
  	Configure User			user.3				adminadmin			adminadmin					User group admin		admin
  	[Tags]  blackbird  full  feature  user
-T5.5 User new group
+T6.5 User new group
  	Configure User			user-4				adminadmin			adminadmin					User new group			group.4
  	[Tags]  blackbird  full  feature  user
-T5.6 User new group
+T6.6 User new group
 	Configure User			__random__			testuser			testuser					User new group			group_1
 	[Tags]  blackbird  full  feature  user
- T5 Teardown
+ T6 Teardown
  	Delete All Security Users
 	[Tags]  blackbird  full  feature  user
 
 ### Configure RBAC  				RBAC Name  			Group Name 			Filter			Delivery 		Service			Match				${src-ip}		${dst-ip}
-T6 Test Set Up:
+T7 Test Set Up:
 	Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1			 filter	        ixia-2-9
     Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-intern1       delivery       ixia-2-15
     Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             service        ixia-4-8    	
 	[Tags]  blackbird  full  feature  rbac
-T6.1 RBAC Allow All		
+T7.1 RBAC Allow All		
 	Configure RBAC			 		rbac				admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}    		${EMPTY}     	${EMPTY}	
 	[Tags]  blackbird  full  feature  rbac
-T6.2 RBAC IPv4
+T7.2 RBAC IPv4
     Configure RBAC				 	rbac1				group_new			${EMPTY}		${EMPTY}		${EMPTY}	  	IPv4 - 0x800 (2048)		1.1.1.1		${EMPTY}
 	[Tags]  blackbird  full  feature  rbac
-T6.3 RBAC IPv4 with filter / delivery / service interfaces
+T7.3 RBAC IPv4 with filter / delivery / service interfaces
     Configure RBAC				 	rbac_2				admin				ixia-2-9		ixia-2-15		${EMPTY}	  	IPv4 - 0x800 (2048)		1.1.1.1		2.6.0.0
 	[Tags]  blackbird  full  feature  rbac
-T6.4 RBAC IPv6 with filter / delivery / service interfaces
+T7.4 RBAC IPv6 with filter / delivery / service interfaces
   	Configure RBAC				 	rbAC-3				group.ip			ixia-2-9		ixia-2-15		${EMPTY}	  	IPv6 - 0x86DD (34525)	${EMPTY}	2:2:2:2:2:2
 	[Tags]  blackbird  full  feature  rbac
-T6.5 RBAC ARP with filter / delivery / service interfaces
+T7.5 RBAC ARP with filter / delivery / service interfaces
  	Configure RBAC				 	RBAc.4				admin				ixia-2-9		ixia-2-15		${EMPTY}	  	ARP - 0x806 (2054)		${EMPTY}	${EMPTY}
 	[Tags]  blackbird  full  feature  rbac
-T6 Teardown
+T7 Teardown
  	Delete All Security RBAC
  	[Tags]  blackbird  full  feature  rbac
   
 ### Configure Group  				Group Name 			User	 			RBAC	
-T7.1 Group with no users		
- 	Configure Group			 		__random__			${EMPTY}			${EMPTY}
+T8.1 Group with new user		
+ 	Configure Group			 		group-1				__new__					${EMPTY}
  	[Tags]  blackbird  full  feature  group		  			
-T7.2 Group with user admin		
- 	Configure Group			 		__random__			admin				${EMPTY}
+T8.2 Group with user admin		
+ 	Configure Group			 		group_2				admin					${EMPTY}
  	[Tags]  blackbird  full  feature  group
-T7.3 Group with new user and new rbac	
- 	Configure Group					__random__			__new__				rbac_new
- 	[Tags]  blackbird  full  feature  groupi
-T7 Teardown
+T8.3 Group with new user and new rbac	
+ 	Configure Group					group.3				user-2					rbac_new
+ 	[Tags]  blackbird  full  feature  group
+T8 Teardown
  	Delete All Security Groups
  	[Tags]  blackbird  full  feature  group
  	
 # 
 # ### Configure Switch Alias                                        Switch                             Alias                 
-T8.1 Switch with regular alias                     
+T9.1 Switch with regular alias                     
      Configure Switch Alias                                        00:00:08:9e:01:b3:0c:0c            app-rlb9-1
     [Tags]  blackbird  full  feature  switch
-T8.2 Edit switch alias                                         
+T9.2 Edit switch alias                                         
      Configure Switch Alias                                        00:00:08:9e:01:f8:6b:8b            app-rly2-1
     [Tags]  blackbird  full  feature  switch
-T8.3 Delete switch regular alias         
+T9.3 Delete switch regular alias         
      Configure Switch Alias                                        00:00:08:9e:01:b3:0c:0c            ${EMPTY}
     [Tags]  blackbird  full  feature  switch
-T8.4 Switch with alias containing allowed special characters-
+T9.4 Switch with alias containing allowed special characters-
      Configure Switch Alias                                        00:00:08:9e:01:b3:0c:0c            switch-2
     [Tags]  blackbird  full  feature  switch
-T8.5 Switch with alias containing allowed special characters_
+T9.5 Switch with alias containing allowed special characters_
      Configure Switch Alias                                        00:00:08:9e:01:b3:0c:0c            switch_3
     [Tags]  blackbird  full  feature  switch
-T8.6 Switch with empty alias                     
+T9.6 Switch with empty alias                     
      Configure Switch Alias                                        00:00:08:9e:01:b3:0c:0c            ${EMPTY}
     [Tags]  blackbird  full  feature  switch
-T8.7 Switch with empty alias                     
+T9.7 Switch with empty alias                     
      Configure Switch Alias                                        00:00:08:9e:01:f8:6b:8b            ${EMPTY}
     [Tags]  blackbird  full  feature  switch
 
 #### Enable Disable Match Modes                                Match Mode
                         
-T9.1 Enable L3-L4 Offset Match                     
+T10.1 Enable L3-L4 Offset Match                     
      Set Switching Mode                                            L3-L4 Offset Match        
      [Tags]  corsair  full  feature  match-mode
-T9.2 Enable L3-L4 Match         
+T10.2 Enable L3-L4 Match         
      Set Switching Mode                                            L3-L4 Match            
     [Tags]  corsair  full  feature  match-mode
-T9.3 Enable Full Match Mode
+T10.3 Enable Full Match Mode
     Set Switching Mode                                             Full Match
     [Tags]  corsair  full  feature  match-mode
-T9.4 Enable Policy Overlap                                        
+T10.4 Enable Policy Overlap                                        
     Configure Match Mode                                           Policy Overlap
     [Tags]  corsair  full  feature  match-mode
-T9.5 Disable Policy Overlap
-    Configure Match Mode                                        !Policy Overlap
+T10.5 Disable Policy Overlap
+    Configure Match Mode                                           !Policy Overlap
     [Tags]  corsair  full  feature  match-mode
-T9.6 Disable Inport Mask
-    Configure Match Mode                                        !Inport Mask    
+T10.6 Disable Inport Mask
+    Configure Match Mode                                           !Inport Mask    
     [Tags]  corsair  full  feature  match-mode
-T9.7 Enable Inport Mask
-    Configure Match Mode                                        Inport Mask
+T10.7 Enable Inport Mask
+    Configure Match Mode                                           Inport Mask
     [Tags]  corsair  full  feature  match-mode
-T9.8 Disable CRC Check
-    Configure Match Mode                                        !CRC Check
+T10.8 Disable CRC Check
+    Configure Match Mode                                           !CRC Check
     [Tags]  corsair  full  feature  match-mode
-T9.9 Enable CRC Check
-    Configure Match Mode                                        CRC Check
+T10.9 Enable CRC Check
+    Configure Match Mode                                           CRC Check
     [Tags]  corsair  full  feature  match-mode
-T9.10 Disable Tunneling
-    Configure Match Mode                                        !Tunneling
+T10.10 Disable Tunneling
+    Configure Match Mode                                           !Tunneling
     [Tags]  corsair  full  feature  match-mode
-T9.11 Enable Tunneling
-    Configure Match Mode                                        Tunneling
+T10.11 Enable Tunneling
+    Configure Match Mode                                           Tunneling
     [Tags]  corsair  full  feature  match-mode
-T9.12 Enable L3-L4 Offset Match                     
+T10.12 Enable L3-L4 Offset Match                     
      Set Switching Mode                                            L3-L4 Offset Match    
     [Tags]  corsair  full  feature  match-mode
                         
@@ -313,7 +323,7 @@ config suite setup
     Delete All Big Tap Resources
     Set Switching Mode  L3-L4 Offset Match
     #Configure Switch Alias    00:00:5c:16:c7:1e:f3:95            app-rlb9-1                                     
-     #Configure Switch Alias    00:00:5c:16:c7:1c:16:f2            app-rly2-1
+    #Configure Switch Alias    00:00:5c:16:c7:1c:16:f2            app-rly2-1
     #Configure Switch Alias    00:00:08:9e:01:b3:0c:0c            app-rlb9-1                                     
     #Configure Switch Alias    00:00:08:9e:01:f8:6b:8b            app-rly2-1   
     ${switch_dpid_s1}=  rest return switch dpid from ip  s1
@@ -321,11 +331,11 @@ config suite setup
     ${switch_dpid_s3}=  rest return switch dpid from ip  s3
     ${switch_dpid_s4}=  rest return switch dpid from ip  s4
     ${switch_dpid_s5}=  rest return switch dpid from ip  s5
-    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
-    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
-    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
-    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
-    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
+    #Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    #Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    #Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    #Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    #Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
     
 config suite teardown
     Close Browser

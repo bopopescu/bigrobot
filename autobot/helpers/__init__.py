@@ -319,14 +319,15 @@ def test_failure(msg, soft_error=False):
         raise TestFailure(msg)
 
 
-def test_error(msg, soft_error=False):
+def test_error(msg, soft_error=False, dump_error_stack=True):
     """
     Call this on test error.
     """
     if not is_bool(soft_error):
         environment_failure("helpers.test_error() argument 'soft_error' must"
                             " be a boolean.")
-    log("Dumping the error stack:\n" + exception_info())
+    if dump_error_stack:
+        log("Dumping the error stack:\n" + exception_info())
     if soft_error:
         log("Soft test error: %s" % msg)
         return False
