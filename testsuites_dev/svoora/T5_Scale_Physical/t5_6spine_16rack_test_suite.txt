@@ -188,7 +188,8 @@ Controller HA failover with L2 traffic
     Should Be True  ${file_exist}
     cli cluster take leader
     stop monitoring the exception
-    parse monitoring file
+    ${result}=  parse monitoring file
+    Should not be true  ${result}
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -220,7 +221,8 @@ Controller Master reboot
     ${returnVal}=  cli verify cluster master reboot
     Should Be True  ${returnVal}
     stop monitoring the exception
-    parse monitoring file
+    ${result}=  parse monitoring file
+    Should not be true  ${result}
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -252,7 +254,8 @@ Controller Slave Reboot
     ${returnVal}=  cli verify cluster slave reboot
     Should Be True  ${returnVal}
     stop monitoring the exception
-    parse monitoring file
+    ${result}=  parse monitoring file
+    Should not be true  ${result}
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
