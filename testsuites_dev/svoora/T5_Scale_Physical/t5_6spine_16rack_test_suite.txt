@@ -183,13 +183,15 @@ Controller HA failover with L2 traffic
     clear stats
     apply traffic
     start traffic
-    #start monitoring the exception
-    #${file_exist}=  verify file  ${copied_file1}
-    #Should Be True  ${file_exist}
+    sleep  25
+    stop traffic
+    sleep  5
+    clear stats
+    start traffic
+    start monitoring exception during failover
     cli cluster take leader
-    #stop monitoring the exception
-    #${result}=  parse monitoring file
-    #Should not be true  ${result}
+    stop monitoring the exception
+    parse monitoring file
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -215,14 +217,17 @@ Controller Master reboot
     clear stats
     apply traffic
     start traffic
-    #start monitoring the exception
-    #${file_exist}=  verify file  ${copied_file1}
-    #Should Be True  ${file_exist}
+    sleep  25
+    stop traffic
+    sleep  5
+    clear stats
+    start traffic
+    start monitoring exception during reboot
     ${returnVal}=  cli verify cluster master reboot
     Should Be True  ${returnVal}
-    #stop monitoring the exception
-    #${result}=  parse monitoring file
-    #Should not be true  ${result}
+    sleep  10
+    stop monitoring the exception
+    parse monitoring file
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -232,7 +237,7 @@ Controller Master reboot
     Should Be True  ${return}
     sleep  5
     stop traffic
-    verify L2 packet_loss_duration
+    print L2 packet_loss_duration
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
@@ -248,14 +253,16 @@ Controller Slave Reboot
     clear stats
     apply traffic
     start traffic
-    #start monitoring the exception
-    #${file_exist}=  verify file  ${copied_file1}
-    #Should Be True  ${file_exist}
+    sleep  25
+    stop traffic
+    sleep  5
+    clear stats
+    start traffic
+    start monitoring exception during reboot
     ${returnVal}=  cli verify cluster slave reboot
     Should Be True  ${returnVal}
-    #stop monitoring the exception
-    #${result}=  parse monitoring file
-    #Should not be true  ${result}
+    stop monitoring the exception
+    parse monitoring file
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -280,6 +287,11 @@ Power off/On Master Controller
     create L2 streams
     clear stats
     apply traffic
+    start traffic
+    sleep  25
+    stop traffic
+    sleep  5
+    clear stats
     start traffic
     {active}=  get node name   master
     power down switch  {active}
@@ -312,6 +324,11 @@ Power off/On Slave Controller
     clear stats
     apply traffic
     start traffic
+    sleep  25
+    stop traffic
+    sleep  5
+    clear stats
+    start traffic
     {slave}=  get node name   slave
     power down switch  {slave}
     sleep  5
@@ -339,7 +356,7 @@ Power off/On Slave Controller
 Reboot all switches
     [Tags]   HA6
     Reboot all switches
-    sleep   120
+    sleep   180
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -355,8 +372,7 @@ Reboot all switches
     clear stats
     apply traffic
     start traffic
-    #pause    FREEZZEEE!!!
-    sleep  25   #MAC learning time, and sleep time, we can change
+    sleep  25
     verify mac learning rate
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
@@ -364,12 +380,20 @@ Reboot all switches
     ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
     stop traffic
+    sleep  5
+    clear stats
+    apply traffic
+    start traffic
+    #pause    FREEZZEEE!!!
+    sleep  25   #MAC learning time, and sleep time, we can change
+    stop traffic
     print L2 packet_loss_duration
     
     
 
 Reboot spine print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${spine}
     create L2 streams
     clear stats
     apply traffic
@@ -380,7 +404,7 @@ Reboot spine print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  ${leaf}
+    ${l2_table}=  get L2 table count  ${spine}
     Should be true  ${l2_table} >= 48000
     stop traffic
     clear stats
@@ -396,6 +420,7 @@ Reboot spine print traffic convergence time
 
 PowerOff spine print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${spine}
     create L2 streams
     clear stats
     apply traffic
@@ -406,7 +431,7 @@ PowerOff spine print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  ${leaf}
+    ${l2_table}=  get L2 table count  ${spine}
     Should be true  ${l2_table} >= 48000
     stop traffic
     clear stats
@@ -422,6 +447,7 @@ PowerOff spine print traffic convergence time
 
 PowerOn spine print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${spine}
     create L2 streams
     clear stats
     apply traffic
@@ -432,7 +458,7 @@ PowerOn spine print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  ${leaf}
+    ${l2_table}=  get L2 table count  ${spine}
     Should be true  ${l2_table} >= 48000
     stop traffic
     clear stats
@@ -448,6 +474,7 @@ PowerOn spine print traffic convergence time
 
 Reboot leaf print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
     apply traffic
@@ -473,6 +500,7 @@ Reboot leaf print traffic convergence time
 
 PowerOff leaf print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
     apply traffic
@@ -499,6 +527,7 @@ PowerOff leaf print traffic convergence time
 
 PowerOn leaf print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
     apply traffic
@@ -526,6 +555,7 @@ PowerOn leaf print traffic convergence time
         
 Shutdown leaf 40g interface and print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
     apply traffic
@@ -552,6 +582,7 @@ Shutdown leaf 40g interface and print traffic convergence time
 
 Bringup leaf 40g interface and print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
     apply traffic
@@ -580,6 +611,7 @@ Bringup leaf 40g interface and print traffic convergence time
 
 Shutdown spine 40g interface and print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${spine}
     create L2 streams
     clear stats
     apply traffic
@@ -590,7 +622,7 @@ Shutdown spine 40g interface and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  ${leaf}
+    ${l2_table}=  get L2 table count  ${spine}
     Should be true  ${l2_table} >= 48000
     stop traffic
     clear stats
@@ -607,6 +639,7 @@ Shutdown spine 40g interface and print traffic convergence time
 
 Bringup spine 40g interface and print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${spine}
     create L2 streams
     clear stats
     apply traffic
@@ -617,7 +650,7 @@ Bringup spine 40g interface and print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  ${leaf}
+    ${l2_table}=  get L2 table count  ${spine}
     Should be true  ${l2_table} >= 48000
     stop traffic
     clear stats
@@ -635,6 +668,7 @@ Bringup spine 40g interface and print traffic convergence time
 
 Remove leaf from configuration and print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
     apply traffic
@@ -662,6 +696,7 @@ Remove leaf from configuration and print traffic convergence time
 
 Add leaf to configuration and print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
     apply traffic
@@ -691,6 +726,8 @@ Add leaf to configuration and print traffic convergence time
 
 Remove spine from configuration and print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${spine}
+    reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
     apply traffic
@@ -717,6 +754,8 @@ Remove spine from configuration and print traffic convergence time
 
 Add spine to configuration and print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${spine}
+    reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
     apply traffic
@@ -745,6 +784,8 @@ Add spine to configuration and print traffic convergence time
 
 Restart ofad in spine and print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${spine}
+    reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
     apply traffic
@@ -772,6 +813,7 @@ Restart ofad in spine and print traffic convergence time
 
 Restart ofad in leaf and print traffic convergence time   
     [Tags]   con
+    reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
     apply traffic
@@ -788,7 +830,7 @@ Restart ofad in leaf and print traffic convergence time
     clear stats
     start traffic
     sleep  20
-    ${result}=   bash_restart_process  ${spine}  ofad
+    ${result}=   bash_restart_process  ${leaf}  ofad
     Should be true  ${result}
     sleep   210
     verify fabric switch link and errors
@@ -807,7 +849,7 @@ restart floodlight in master controller
     ###RESTART floodlight deamon
     ${result}=  restart_process_on_controller  floodlight  master
     Should be True  ${result}
-    sleep  80
+    sleep  120
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -817,6 +859,7 @@ restart floodlight in master controller
     Should Be True  ${return}
     sleep  5
     stop traffic
+    sleep  5
     print L2 packet_loss_duration
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
@@ -835,7 +878,7 @@ restart floodlight in slave controller
     ###RESTART floodlight deamon
     ${result}=  restart_process_on_controller  floodlight  slave
     Should be True  ${result}
-    sleep  80
+    sleep  120
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -845,6 +888,7 @@ restart floodlight in slave controller
     Should Be True  ${return}
     sleep  5
     stop traffic
+    sleep   5
     print L2 packet_loss_duration
     reconnect switch ips   ${leaf}
     ${l2_table}=  get L2 table count  ${leaf}
@@ -1025,10 +1069,12 @@ print L2 packet_loss_duration
 
     ${ATOC}=  fetch port stats  stream=${flow_a_to_c}
     ${rx_value_c}=  verify dict key  ${ATOC}  port_a_to_c  packet_loss_duration_ms
+    Log to console   Traffic loss seen:  
     Log to console   ${rx_value_c}
     
     ${BTOD}=  fetch port stats  stream=${flow_b_to_d}
     ${rx_value_b}=  verify dict key  ${BTOD}  port_b_to_d  packet_loss_duration_ms
+    Log to console   Traffic loss seen:  
     Log to console   ${rx_value_b} 
     
     ${ETOG}=  fetch port stats  stream=${flow_e_to_g}
@@ -1037,23 +1083,28 @@ print L2 packet_loss_duration
     
     ${FTOH}=  fetch port stats  stream=${flow_f_to_h}
     ${rx_value_f}=  verify dict key  ${FTOH}  port_f_to_h  packet_loss_duration_ms
-    Log to console     ${rx_value_f} 
+    Log to console     Traffic loss seen:  
+    Log to console   ${rx_value_f} 
     
     ${ITOK}=  fetch port stats  stream=${flow_i_to_k}
     ${rx_value_i}=  verify dict key  ${ITOK}  port_i_to_k  packet_loss_duration_ms
-    Log to console     ${rx_value_i} 
+    Log to console     Traffic loss seen:  
+    Log to console   ${rx_value_i} 
     
     ${JTOL}=  fetch port stats  stream=${flow_j_to_l}
     ${rx_value_j}=  verify dict key  ${JTOL}  port_j_to_l  packet_loss_duration_ms
-    Log to console     ${rx_value_j} 
+    Log to console     Traffic loss seen:  
+    Log to console   ${rx_value_j} 
     
     ${MTOO}=  fetch port stats  stream=${flow_m_to_o}
     ${rx_value_m}=  verify dict key  ${MTOO}  port_m_to_o  packet_loss_duration_ms
-    Log to console     ${rx_value_m} 
+    Log to console     Traffic loss seen:  
+    Log to console   ${rx_value_m} 
     
     ${NTOP}=  fetch port stats  stream=${flow_n_to_p}
     ${rx_value_n}=  verify dict key  ${NTOP}  port_n_to_p  packet_loss_duration_ms
-    Log to console     ${rx_value_n} 
+    Log to console     Traffic loss seen:  
+    Log to console   ${rx_value_n} 
    
    
 verify mac learning rate
@@ -1171,6 +1222,22 @@ start monitoring the exception
 	${pid}=  pid return monitor file  slave
 	Should Be True  ${pid}
 
+start monitoring exception during failover
+    Log To console  Starting to monitor Exception logs
+    start monitor exception during failover  ${monitor_file}
+    ${pid}=  pid return monitor file  master
+    Should Be True  ${pid}
+    ${pid}=  pid return monitor file  slave
+    Should Be True  ${pid}
+
+start monitoring exception during reboot
+    Log To console  Starting to monitor Exception logs
+    start monitor exception during reboot  ${monitor_file}
+    ${pid}=  pid return monitor file  master
+    Should Be True  ${pid}
+    ${pid}=  pid return monitor file  slave
+    Should Be True  ${pid}        
+    
 stop monitoring the exception
 	Log To Console  Stopping the monitor Exception logs
 	${pid}=  pid return monitor file  master
