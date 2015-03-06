@@ -151,7 +151,45 @@ class T5_Scale(object):
         helpers.log("Enabling the tail and redirecting to filename")
         c1.sudo('tail -f /var/log/switch/* | grep faultd | grep \"/bin/ofad\" > c1_%s &' % (file_name))
 
+    def start_monitor_exception_during_failover(self, file_name):
+        t = test.Test()
+        c1 = t.controller('c1')
+        c2 = t.controller('c2')
+        helpers.log("INFO: connecting to bash mode in both controllers")
+        helpers.log("INFO: Checking if file already exist in the controller")
+        result = c1.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C1: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C1, deleting the file")
+            c1.sudo('rm -rf c1_%s' % (file_name))
+        result = c2.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C2: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C2, deleting the file")
+            c2.sudo('rm -rf c2_%s' % (file_name))
+        helpers.log("Enabling the tail and redirecting to filename")
+        c1.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v DebugCounter > c1_%s &' % (file_name))
+        c2.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v DebugCounter > c2_%s &' % (file_name))
 
+    def start_monitor_exception_during_reboot(self, file_name):
+        t = test.Test()
+        c1 = t.controller('c1')
+        c2 = t.controller('c2')
+        helpers.log("INFO: connecting to bash mode in both controllers")
+        helpers.log("INFO: Checking if file already exist in the controller")
+        result = c1.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C1: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C1, deleting the file")
+            c1.sudo('rm -rf c1_%s' % (file_name))
+        result = c2.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C2: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C2, deleting the file")
+            c2.sudo('rm -rf c2_%s' % (file_name))
+        helpers.log("Enabling the tail and redirecting to filename")
+        c1.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v ABSRPCCH7002 > c1_%s &' % (file_name))
+        c2.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v ABSRPCCH7002 > c2_%s &' % (file_name))
 
     def pid_return_monitor_file(self, role):
         t = test.Test()
