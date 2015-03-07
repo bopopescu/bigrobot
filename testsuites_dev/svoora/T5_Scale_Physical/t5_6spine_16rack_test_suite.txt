@@ -73,6 +73,7 @@ ${spine-interface}      ethernet17
 ${leaf-interface}       ethernet49
 ${leaf-name}            leaf3a-7011
 ${spine-name}           spine1
+${leaf-not-in-traffic}      s1
 
 * Test Case 
 
@@ -392,7 +393,7 @@ Reboot all switches
     
 
 Reboot spine print traffic convergence time   
-    [Tags]   con
+    [Tags]   con  loss
     reconnect switch ips   ${spine}
     create L2 streams
     clear stats
@@ -419,8 +420,11 @@ Reboot spine print traffic convergence time
     
 
 PowerOff spine print traffic convergence time   
-    [Tags]   con
+    [Tags]   con1  loss
     reconnect switch ips   ${spine}
+    reconnect switch ips   ${leaf}
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
     create L2 streams
     clear stats
     apply traffic
@@ -438,16 +442,20 @@ PowerOff spine print traffic convergence time
     start traffic
     power down switch   ${spine}
     sleep   20
-    verify fabric switch link and errors
-    ${return}=  rest verify sync state
-    Should Be True  ${return}
+    #verify fabric switch link and errors
     stop traffic
     print L2 packet_loss_duration
-
+    power up switch   ${spine}
+    sleep  120
 
 PowerOn spine print traffic convergence time   
-    [Tags]   con
+    [Tags]   con2  loss
     reconnect switch ips   ${spine}
+    reconnect switch ips   ${leaf}
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    power down switch    ${spine}
+    sleep  15
     create L2 streams
     clear stats
     apply traffic
@@ -458,7 +466,7 @@ PowerOn spine print traffic convergence time
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
     #pause   FREEZZEEE!!!!
-    ${l2_table}=  get L2 table count  ${spine}
+    ${l2_table}=  get L2 table count  ${leaf}
     Should be true  ${l2_table} >= 48000
     stop traffic
     clear stats
@@ -473,7 +481,8 @@ PowerOn spine print traffic convergence time
 
 
 Reboot leaf print traffic convergence time   
-    [Tags]   con
+    [Tags]   con3  loss
+    reconnect switch ips   ${leaf-not-in-traffic}
     reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
@@ -490,7 +499,7 @@ Reboot leaf print traffic convergence time
     stop traffic
     clear stats
     start traffic
-    power cycle switch   {leaf}
+    power cycle switch   ${leaf-not-in-traffic}
     sleep   210
     verify fabric switch link and errors
     ${return}=  rest verify sync state
@@ -499,8 +508,11 @@ Reboot leaf print traffic convergence time
     print L2 packet_loss_duration
 
 PowerOff leaf print traffic convergence time   
-    [Tags]   con
+    [Tags]   con4  loss
+    reconnect switch ips   ${leaf-not-in-traffic}
     reconnect switch ips   ${leaf}
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
     create L2 streams
     clear stats
     apply traffic
@@ -516,18 +528,24 @@ PowerOff leaf print traffic convergence time
     stop traffic
     clear stats
     start traffic
-    power down switch   {leaf}
+    power down switch   ${leaf-not-in-traffic}
     sleep   20
-    verify fabric switch link and errors
-    ${return}=  rest verify sync state
-    Should Be True  ${return}
     stop traffic
     print L2 packet_loss_duration
-
+    power up switch   ${leaf-not-in-traffic}
+    sleep   200
+    verify fabric switch link and errors
+    
 
 PowerOn leaf print traffic convergence time   
-    [Tags]   con
+    [Tags]   con5  loss
+    reconnect switch ips   ${leaf-not-in-traffic}
     reconnect switch ips   ${leaf}
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    verify fabric switch link and errors
+    power down switch  ${leaf-not-in-traffic}
+    sleep  25
     create L2 streams
     clear stats
     apply traffic
@@ -543,19 +561,18 @@ PowerOn leaf print traffic convergence time
     stop traffic
     clear stats
     start traffic
-    power up switch   ${leaf}
+    power up switch   ${leaf-not-in-traffic}
     sleep   210
-    verify fabric switch link and errors
-    ${return}=  rest verify sync state
-    Should Be True  ${return}
+    #verify fabric switch link and errors
     stop traffic
     print L2 packet_loss_duration
 
 
         
 Shutdown leaf 40g interface and print traffic convergence time   
-    [Tags]   con
+    [Tags]   con6  loss
     reconnect switch ips   ${leaf}
+    verify fabric switch link and errors
     create L2 streams
     clear stats
     apply traffic
@@ -581,7 +598,7 @@ Shutdown leaf 40g interface and print traffic convergence time
     print L2 packet_loss_duration
 
 Bringup leaf 40g interface and print traffic convergence time   
-    [Tags]   con
+    [Tags]   con7  loss
     reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
@@ -604,14 +621,16 @@ Bringup leaf 40g interface and print traffic convergence time
     sleep   50
     ${return}=  rest verify sync state
     Should Be True  ${return}
+    verify fabric switch link and errors
     stop traffic
     print L2 packet_loss_duration
 
    
 
 Shutdown spine 40g interface and print traffic convergence time   
-    [Tags]   con
+    [Tags]   con8  loss
     reconnect switch ips   ${spine}
+    verify fabric switch link and errors
     create L2 streams
     clear stats
     apply traffic
@@ -638,7 +657,7 @@ Shutdown spine 40g interface and print traffic convergence time
 
 
 Bringup spine 40g interface and print traffic convergence time   
-    [Tags]   con
+    [Tags]   con9  loss
     reconnect switch ips   ${spine}
     create L2 streams
     clear stats
@@ -661,14 +680,18 @@ Bringup spine 40g interface and print traffic convergence time
     sleep   50
     ${return}=  rest verify sync state
     Should Be True  ${return}
+    verify fabric switch link and errors
     stop traffic
     print L2 packet_loss_duration
 
    
 
 Remove leaf from configuration and print traffic convergence time   
-    [Tags]   con
+    [Tags]   con10  loss
     reconnect switch ips   ${leaf}
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    verify fabric switch link and errors
     create L2 streams
     clear stats
     apply traffic
@@ -689,13 +712,14 @@ Remove leaf from configuration and print traffic convergence time
     sleep   50
     ${return}=  rest verify sync state
     Should Be True  ${return}
+    #verify fabric switch link and errors
     stop traffic
     print L2 packet_loss_duration
 
 
 
 Add leaf to configuration and print traffic convergence time   
-    [Tags]   con
+    [Tags]   con11  loss
     reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
@@ -725,7 +749,7 @@ Add leaf to configuration and print traffic convergence time
     print L2 packet_loss_duration
 
 Remove spine from configuration and print traffic convergence time   
-    [Tags]   con
+    [Tags]   con12  loss
     reconnect switch ips   ${spine}
     reconnect switch ips   ${leaf}
     create L2 streams
@@ -753,7 +777,7 @@ Remove spine from configuration and print traffic convergence time
 
 
 Add spine to configuration and print traffic convergence time   
-    [Tags]   con
+    [Tags]   con13  loss
     reconnect switch ips   ${spine}
     reconnect switch ips   ${leaf}
     create L2 streams
@@ -783,7 +807,7 @@ Add spine to configuration and print traffic convergence time
 
 
 Restart ofad in spine and print traffic convergence time   
-    [Tags]   con
+    [Tags]   con14  loss
     reconnect switch ips   ${spine}
     reconnect switch ips   ${leaf}
     create L2 streams
@@ -812,7 +836,7 @@ Restart ofad in spine and print traffic convergence time
     print L2 packet_loss_duration
 
 Restart ofad in leaf and print traffic convergence time   
-    [Tags]   con
+    [Tags]   con15  loss
     reconnect switch ips   ${leaf}
     create L2 streams
     clear stats
@@ -841,7 +865,7 @@ Restart ofad in leaf and print traffic convergence time
     
     
 restart floodlight in master controller
-   [Tags]  HA2
+   [Tags]  HA2  loss
     create L2 streams
     clear stats
     apply traffic
