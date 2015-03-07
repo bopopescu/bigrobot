@@ -43,6 +43,7 @@ class Node(object):
         self._privatekey_password = self.node_params.get(
                                             'privatekey_password', None)
         self._privatekey_type = self.node_params.get('privatekey_type', None)
+        self._hostname = self.node_params.get('hostname', None)
 
         if not ip:
             if helpers.params_is_false('set_session_ssh', self.node_params):
@@ -72,6 +73,9 @@ class Node(object):
 
     def name(self):
         return self._name
+
+    def hostname(self):
+        return self._hostname
 
     def ip(self):
         return self._ip

@@ -1,0 +1,434 @@
+*** Settings ***
+Documentation  		GUI AAA testsuite
+Suite Setup  		AAA Suite Setup
+Suite Teardown		AAA Suite Teardown
+Test Setup   		Base Test Setup
+Test Teardown  		Base Test Teardown
+Force Tags   		Big Tap  AAA  GUI
+Library             keywords/BsnCommon.py
+Library             keywords/BsnSelenium.py
+Library             keywords/BigTap.py
+Library             SeleniumLibrary
+Library             keywords/AppController.py
+Resource            testsuites/BigTap/BigTapGUI-Corsair/bigtap_resource.txt
+Library             String
+
+
+*** Variables ***
+
+*** Test Cases ***
+T1.0 Authorization - remote > local, authentication remote > local
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default group tacacs+ local
+	Verify admin access
+	Verify read-only access
+	Verify rbac access
+
+T2.0 Authorization - remote > local, authentication local > remote
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default local group tacacs+
+	Verify admin access
+	Verify read-only access
+	Verify rbac access
+
+T3.0 Authorization - local > remote, authentication local > remote
+	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default local group tacacs+
+	Verify admin access
+	Verify read-only access
+	Verify rbac access
+
+T4.0 Authorization - local > remote, authentication remote > local
+	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default group tacacs+ local
+	Verify admin access
+	Verify read-only access
+	Verify rbac access
+	
+	#Intermission
+	Bash  master  sudo service floodlight restart
+	Sleep  60
+
+T5.0 Authorization - local, authentication local
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
+	Verify local access
+
+T6.0 Authorization - local, authentication local > remote
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local group tacacs+
+	Verify local access
+	Verify remote admin
+	
+T7.0 Authorization - local, authentication remote > local
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default group tacacs+ local
+	Verify local access
+	Verify remote admin
+
+T8.0 Authorization - local, authentication remote
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default group tacacs+
+	Verify remote admin
+	Valid Login   taco-user  taco
+	Configure Big Tap Policy	policy-remote-3	 local-rbac		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
+	Delete Big Tap Policy  policy-remote-3
+	#Run Keyword and Ignore Error  BT Cli Run  master  logout  user=taco-user  password=taco
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+
+	#Intermission
+	Bash  master  sudo service floodlight restart
+	Sleep  60
+
+T9.0 Authorization - remote, authentication local
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+; aaa authentication login default local
+	Verify local admin
+	Valid Login   rbac-user   local
+	Configure Big Tap Policy	policy-remote-1	 remote-rbac		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
+	Delete Big Tap Policy  policy-remote-1
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
+
+T10.0 Authorization - remote, authentication local > remote
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+; aaa authentication login default local group tacacs+
+	Verify remote access
+	Verify remote admin
+
+T11.0 Authorization - remote, authentication remote > local
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+; aaa authentication login default group tacacs+ local
+	Verify remote access
+	Verify local admin
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
+
+T12.0 Authorization - remote, authentication remote
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+; aaa authentication login default group tacacs+
+	Verify remote access
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+
+	#Intermission
+	Bash  master  sudo service floodlight restart
+	Sleep  60
+
+T13.0 Authorization - local > remote, authentication local
+	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default local
+	Verify local access
+	Valid Login    longevity   local
+	Configure User  longevity   local   local   ${EMPTY}  ${EMPTY}
+	Delete User  longevity
+	
+T14.0 Authorization - remote > local, authentication local
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default local
+	Valid Login    taco-user   local
+	Configure Big Tap Policy	policy-remote-4	 local-rbac		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
+	Delete Big Tap Policy  policy-remote-4
+	Verify local access
+
+T15.0 Authorization - local > remote, authentication remote
+	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default group tacacs+
+	Verify remote access
+	Valid Login     longevity   longevity
+	Configure User   test-longevity-1   longevity  longevity   ${EMPTY}  ${EMPTY}
+	Delete User  longevity
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+
+T16.0 Authorization - remote > local, authentication remote
+	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default group tacacs+
+	Verify remote access
+	Valid Login     taco-user   taco
+	Configure Big Tap Policy	policy-remote-5	 local-rbac		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
+	Delete Big Tap Policy  policy-remote-5
+	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+
+
+*** Keywords ***
+AAA Suite Setup
+	Base Suite Setup
+	${c1_ip}=            get node ip   master
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    Start Selenium Server  -trustAllSSLCertificates
+    #CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+    Delete All Big Tap Resources
+	#BT Cli Run  master  enable; config; ssh connection timeout 300
+	BT Cli Run  master  enable; config; tacacs server host 10.2.3.201 timeout 5 key secret
+	Configure User  local  local   local   ${EMPTY}  ${EMPTY}
+	Configure User  taco-user  local   local   ${EMPTY}  ${EMPTY}
+	Configure User  longevity  local   local   ${EMPTY}  ${EMPTY}
+	#BT Cli Run  master  enable; config; group read-only; associate user local
+	Configure Group	 read-only  local  ${EMPTY}
+	Configure User  rbac-user  local   local   ${EMPTY}  ${EMPTY}
+	Configure User  local-rbac-user  local   local   ${EMPTY}  ${EMPTY}
+	Configure RBAC	 local-rbac	 ${EMPTY}  ${EMPTY}	  ${EMPTY}	${EMPTY}	${EMPTY}   ${EMPTY}   ${EMPTY}
+	Configure RBAC	 remote-rbac	 ${EMPTY}  ${EMPTY}	  ${EMPTY}	${EMPTY}	${EMPTY}   ${EMPTY}   ${EMPTY}
+	BT Cli Run  master  enable; config; group local-bigtap-rbac; associate user local-rbac-user; associate rbac-permission local-rbac
+	BT Cli Run  master  enable; config; group bigtap-rbac; associate rbac-permission remote-rbac
+	BT Cli Run  master  enable; config; group local-bigtap-rbac; associate user taco-user
+	Configure Big Tap Service	service-ro			 		 service-new-1			service-new-2
+	Configure Big Tap Interface from Big Tap Menu            ethernet3              app-rlb9-1			   filter	        ixia-2-9
+    Configure Big Tap Interface from Big Tap Menu            ethernet4              app-rlb9-intern1       delivery         ixia-2-15
+	Configure Big Tap Interface Group from Big Tap Menu      filter                 filter-group          ixia-2-9
+	Configure Big Tap Policy	test-pol-read-only	 admin-view		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
+	
+
+AAA Suite Teardown
+	${status}=  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
+    Run Keyword If  '${status}'=='False'  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+	Delete All Big Tap Resources
+	BT Cli Run  master  enable; config; no tacacs server host 10.2.3.201
+	BT Cli Run  master  enable; config; ssh connection timeout 0
+	Base Suite Teardown
+
+Verify admin access
+	Verify local admin
+	Verify remote admin using shell:roles=bigtap-admin
+	Verify remote admin using shell:roles=admin
+	Verify remote admin using BSN-User-Role=bigtap-admin
+	Verify remote admin using BSN-User-Role=admin
+
+Verify read-only access
+	Verify local read-only user
+	Verify remote read-only user using shell:roles=bigtap-read-only
+	Verify remote read-only user using shell:roles=read-only
+	Verify remote read-only user using BSN-User-Role=bigtap-read-only
+	Verify remote read-only user using BSN-User-Role=read-only
+
+Verify rbac access
+	Verify local rbac-user
+	Verify remote rbac-user using shell:roles=bigtap-rbac
+	Verify remote rbac-user using BSN-User-Role=bigtap-rbac
+
+Verify local access
+	Verify local admin
+	Verify local read-only user
+	Verify local rbac-user
+
+Verify remote access
+	Verify remote admin using shell:roles=bigtap-admin
+	Verify remote admin using shell:roles=admin
+	Verify remote admin using BSN-User-Role=bigtap-admin
+	Verify remote admin using BSN-User-Role=admin
+	Verify remote read-only user using shell:roles=bigtap-read-only
+	Verify remote read-only user using shell:roles=read-only
+	Verify remote read-only user using BSN-User-Role=bigtap-read-only
+	Verify remote read-only user using BSN-User-Role=read-only
+	Verify remote rbac-user using shell:roles=bigtap-rbac
+	Verify remote rbac-user using BSN-User-Role=bigtap-rbac
+
+
+Verify local admin
+	Valid Login   admin   adminadmin
+	Configure User  test-local-admin    adminadmin   adminadmin    User group admin	   admin
+	Delete User   	test-local-admin
+	Configure Switch Alias                                00:00:08:9e:01:b3:0c:0c            	 app-rlb9-1
+	Configure Big Tap Interface from Controller Menu      ethernet1       app-rlb9-intern1       filter         filter-1
+	Configure Big Tap Interface from Big Tap Menu         ethernet1       app-rlb9-1             delivery       delivery_1
+	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1       delivery       delivery_new-1
+	Edit Big Tap Interface from Big Tap Menu              ethernet1       app-rlb9-1        	 filter         filter-new_1
+	Configure Big Tap Interface Group from Big Tap Menu   filter          filter_group1          filter-new_1
+	Configure Big Tap User Defined Offsets                udf0            L3 Start               8
+	Configure Big Tap Policy					 		  testpolicy	  admin-view		     Forward		IPv4 - 0x800 (2048)		filter-new_1	delivery_new-1	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
+	Delete Big Tap Policy  testpolicy
+	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1		 ${EMPTY}       ${EMPTY}
+	Delete Big Tap Interface from Big Tap Menu 			  filter-new_1
+	Delete Big Tap Interface group   filter_group1
+	Go To Signout Page
+		
+Verify remote admin using shell:roles=bigtap-admin
+	Valid Login   	bt-admin   adminadmin
+	Configure User  test-remote-admin-1    adminadmin   adminadmin    User group admin	   admin
+	Delete User   	test-remote-admin-1
+	Configure Switch Alias                                00:00:08:9e:01:b3:0c:0c            	 app-rlb9-1
+	Configure Big Tap Interface from Controller Menu      ethernet1       app-rlb9-intern1       filter         filter-1
+	Configure Big Tap Interface from Big Tap Menu         ethernet1       app-rlb9-1             delivery       delivery_1
+	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1       delivery       delivery_new-1
+	Edit Big Tap Interface from Big Tap Menu              ethernet1       app-rlb9-1        	 filter         filter-new_1
+	Configure Big Tap Interface Group from Big Tap Menu   filter          filter_group1          filter-new_1
+	Configure Big Tap User Defined Offsets                udf0            L3 Start               8
+	Configure Big Tap Policy					 		  testpolicy	  admin-view		     Forward		IPv4 - 0x800 (2048)		filter-new_1	delivery_new-1	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
+	Delete Big Tap Policy  testpolicy
+	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1		 ${EMPTY}       ${EMPTY}
+	Delete Big Tap Interface from Big Tap Menu 			  filter-new_1
+	Delete Big Tap Interface group   filter_group1
+	Go To Signout Page
+	
+Verify remote admin using shell:roles=admin
+	Valid Login   	remote   remote
+	Configure User  test-remote-admin-2    remote   remote    ${EMPTY}       ${EMPTY}
+	Delete User   	test-remote-admin-2
+	Configure Switch Alias                                00:00:08:9e:01:b3:0c:0c            	 app-rlb9-1
+	Configure Big Tap Interface from Controller Menu      ethernet1       app-rlb9-intern1       filter         filter-1
+	Configure Big Tap Interface from Big Tap Menu         ethernet1       app-rlb9-1             delivery       delivery_1
+	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1       delivery       delivery_new-1
+	Edit Big Tap Interface from Big Tap Menu              ethernet1       app-rlb9-1        	 filter         filter-new_1
+	Configure Big Tap Interface Group from Big Tap Menu   filter          filter_group1          filter-new_1
+	Configure Big Tap User Defined Offsets                udf0            L3 Start               8
+	Configure Big Tap Policy					 		  testpolicy	  admin-view		     Forward		IPv4 - 0x800 (2048)		filter-new_1	delivery_new-1	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
+	Delete Big Tap Policy  testpolicy
+	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1		 ${EMPTY}       ${EMPTY}
+	Delete Big Tap Interface from Big Tap Menu 			  filter-new_1
+	Delete Big Tap Interface group   filter_group1
+	Go To Signout Page
+	
+Verify remote admin using BSN-User-Role=bigtap-admin
+	Valid Login   	bsn-vsa-bigtap-admin-user   adminadmin
+	Configure User  test-remote-admin-3    remote   remote    ${EMPTY}       ${EMPTY}
+	Delete User   	test-remote-admin-3
+	Configure Switch Alias                                00:00:08:9e:01:b3:0c:0c            	 app-rlb9-1
+	Configure Big Tap Interface from Controller Menu      ethernet1       app-rlb9-intern1       filter         filter-1
+	Configure Big Tap Interface from Big Tap Menu         ethernet1       app-rlb9-1             delivery       delivery_1
+	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1       delivery       delivery_new-1
+	Edit Big Tap Interface from Big Tap Menu              ethernet1       app-rlb9-1        	 filter         filter-new_1
+	Configure Big Tap Interface Group from Big Tap Menu   filter          filter_group1          filter-new_1
+	Configure Big Tap User Defined Offsets                udf0            L3 Start               8
+	Configure Big Tap Policy					 		  testpolicy	  admin-view		     Forward		IPv4 - 0x800 (2048)		filter-new_1	delivery_new-1	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
+	Delete Big Tap Policy  testpolicy
+	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1		 ${EMPTY}       ${EMPTY}
+	Delete Big Tap Interface from Big Tap Menu 			  filter-new_1
+	Delete Big Tap Interface group   filter_group1
+	Go To Signout Page
+	
+Verify remote admin using BSN-User-Role=admin
+	Valid Login   	bsn-vsa-bigtap-admin-user   adminadmin
+	Configure User  test-remote-admin-4    remote   remote    ${EMPTY}       ${EMPTY}
+	Delete User   	test-remote-admin-4
+	Configure Switch Alias                                00:00:08:9e:01:b3:0c:0c            	 app-rlb9-1
+	Configure Big Tap Interface from Controller Menu      ethernet1       app-rlb9-intern1       filter         filter-1
+	Configure Big Tap Interface from Big Tap Menu         ethernet1       app-rlb9-1             delivery       delivery_1
+	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1       delivery       delivery_new-1
+	Edit Big Tap Interface from Big Tap Menu              ethernet1       app-rlb9-1        	 filter         filter-new_1
+	Configure Big Tap Interface Group from Big Tap Menu   filter          filter_group1          filter-new_1
+	Configure Big Tap User Defined Offsets                udf0            L3 Start               8
+	Configure Big Tap Policy					 		  testpolicy	  admin-view		     Forward		IPv4 - 0x800 (2048)		filter-new_1	delivery_new-1	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
+	Delete Big Tap Policy  testpolicy
+	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1		 ${EMPTY}       ${EMPTY}
+	Delete Big Tap Interface from Big Tap Menu 			  filter-new_1
+	Delete Big Tap Interface group   filter_group1
+	Go To Signout Page
+	
+Verify remote admin
+	Valid Login   	admin   Password1
+	Configure User  test-remote-admin-5    remote   remote    ${EMPTY}       ${EMPTY}
+	Delete User   	test-remote-admin-5
+	Go To Signout Page
+	
+Verify local read-only user
+	Valid Login   	local   local
+	Check Main Landing Page for read-only user
+	Check Controller Switches Page for read-only user
+	Check Controller Interfaces Page for read-only user
+	Check Big Tap Page for read-only user
+	Check Big Tap Policies Page for read-only user   
+	Check Big Tap Services Page for read-only user
+	Check Big Tap Interfaces Page for read-only user
+	Check Big Tap Host Tracker Page for read-only user
+	Check Big Tap DHCP Servers Page for read-only user
+	Check Big Tap DNS Servers Page for read-only user
+	Check Big Tap Observed IP Addresses Page for read-only user
+	Check Big Tap IP Lists Page for read-only user
+	Check Big Tap Interface Groups Page for read-only user
+	Check Big Tap User Defined Offsets Page for read-only user
+	Check sFlow Page for read-only user
+	Check Security Users Page for read-only user
+	Check Security Groups Page for read-only user
+	Check Security RBAC Page for read-only user
+	Go To Signout Page 
+	
+	
+Verify remote read-only user using shell:roles=bigtap-read-only
+	Valid Login   	bigtap-read-only   bsnbsn
+	Check Main Landing Page for read-only user
+	Check Controller Switches Page for read-only user
+	Check Controller Interfaces Page for read-only user
+	Check Big Tap Page for read-only user
+	Check Big Tap Policies Page for read-only user
+	Check Big Tap Services Page for read-only user
+	Check Big Tap Interfaces Page for read-only user
+	Check Big Tap Host Tracker Page for read-only user
+	Check Big Tap DHCP Servers Page for read-only user
+	Check Big Tap DNS Servers Page for read-only user
+	Check Big Tap Observed IP Addresses Page for read-only user
+	Check Big Tap IP Lists Page for read-only user
+	Check Big Tap Interface Groups Page for read-only user
+	Check Big Tap User Defined Offsets Page for read-only user
+	Check sFlow Page for read-only user
+	Check Security Users Page for read-only user
+	Check Security Groups Page for read-only user
+	Check Security RBAC Page for read-only user
+	Go To Signout Page 
+	
+Verify remote read-only user using shell:roles=read-only
+	Valid Login   	remote-reader   bsnbsn
+	Check Main Landing Page for read-only user
+	Check Controller Switches Page for read-only user
+	Check Controller Interfaces Page for read-only user
+	Check Big Tap Page for read-only user
+	Check Big Tap Policies Page for read-only user
+	Check Big Tap Services Page for read-only user
+	Check Big Tap Interfaces Page for read-only user
+	Check Big Tap Host Tracker Page for read-only user
+	Check Big Tap DHCP Servers Page for read-only user
+	Check Big Tap DNS Servers Page for read-only user
+	Check Big Tap Observed IP Addresses Page for read-only user
+	Check Big Tap IP Lists Page for read-only user
+	Check Big Tap Interface Groups Page for read-only user
+	Check Big Tap User Defined Offsets Page for read-only user
+	Check sFlow Page for read-only user
+	Check Security Users Page for read-only user
+	Check Security Groups Page for read-only user
+	Check Security RBAC Page for read-only user
+	Go To Signout Page
+
+Verify remote read-only user using BSN-User-Role=bigtap-read-only
+	Valid Login   	bsn-vsa-read-only-user   bsnbsn
+	Check Main Landing Page for read-only user
+	Check Controller Switches Page for read-only user
+	Check Controller Interfaces Page for read-only user
+	Check Big Tap Page for read-only user
+	Check Big Tap Policies Page for read-only user   
+	Check Big Tap Services Page for read-only user
+	Check Big Tap Interfaces Page for read-only user
+	Check Big Tap Host Tracker Page for read-only user
+	Check Big Tap DHCP Servers Page for read-only user
+	Check Big Tap DNS Servers Page for read-only user
+	Check Big Tap Observed IP Addresses Page for read-only user
+	Check Big Tap IP Lists Page for read-only user
+	Check Big Tap Interface Groups Page for read-only user
+	Check Big Tap User Defined Offsets Page for read-only user
+	Check sFlow Page for read-only user
+	Check Security Users Page for read-only user
+	Check Security Groups Page for read-only user
+	Check Security RBAC Page for read-only user
+	Go To Signout Page
+
+Verify remote read-only user using BSN-User-Role=read-only
+	Valid Login   	bsn-vsa-bigtap-read-only-user   bsnbsn
+	Check Main Landing Page for read-only user
+	Check Controller Switches Page for read-only user
+	Check Controller Interfaces Page for read-only user
+	Check Big Tap Page for read-only user
+	Check Big Tap Policies Page for read-only user   
+	Check Big Tap Services Page for read-only user
+	Check Big Tap Interfaces Page for read-only user
+	Check Big Tap Host Tracker Page for read-only user
+	Check Big Tap DHCP Servers Page for read-only user
+	Check Big Tap DNS Servers Page for read-only user
+	Check Big Tap Observed IP Addresses Page for read-only user
+	Check Big Tap IP Lists Page for read-only user
+	Check Big Tap Interface Groups Page for read-only user
+	Check Big Tap User Defined Offsets Page for read-only user
+	Check sFlow Page for read-only user
+	Check Security Users Page for read-only user
+	Check Security Groups Page for read-only user
+	Check Security RBAC Page for read-only user
+	Go To Signout Page
+
+Verify local rbac-user
+	Valid Login   	local-rbac-user   local
+	Configure Big Tap Policy  policy-remote-5   local-rbac		Forward		IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  ${EMPTY}	  	${EMPTY}	 ${EMPTY}
+	Delete Big Tap Policy  policy-remote-5 
+	
+
+Verify remote rbac-user using shell:roles=bigtap-rbac
+	Valid Login   	rbac-user   bsnbsn
+	Configure Big Tap Policy  policy-remote-1   remote-rbac		Forward		IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  ${EMPTY}	  	${EMPTY}	 ${EMPTY}
+	Delete Big Tap Policy  policy-remote-1 
+
+Verify remote rbac-user using BSN-User-Role=bigtap-rbac
+	Valid Login   	bsn-vsa-bigtap-rbac-user   bsnbsn
+	Configure Big Tap Policy  policy-remote-2   remote-rbac		Forward		IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  ${EMPTY}	  	${EMPTY}	 ${EMPTY}
+	Delete Big Tap Policy  policy-remote-1 
+	
