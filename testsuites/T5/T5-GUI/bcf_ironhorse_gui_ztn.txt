@@ -396,7 +396,25 @@ T8.6 Set And Unset Autoneg Interface From Switches Page
 	...  autoneg
 	...  flag=False
 
-T9.1 Controller Reload
+T9.1 Create Port group with 2 interfaces
+	Create Port Group				portgroup2		Static			rack0  			ethernet5  			ethernet5
+T9.2 Create Port group with 8 interfaces
+	@{interface list4}=  Create List  ethernet10  ethernet11  ethernet12  ethernet13
+	Create Port Group				portgroup8		Static			rack0  			${interface list4}  ${interface list4}
+T9.3 Create Port group with 16 interfaces
+	@{interface list8}=  Create List  ethernet20  ethernet21  ethernet22  ethernet23  ethernet24  ethernet25  ethernet26  ethernet27
+	Create Port Group				portgroup16		Static			rack0  			${interface list8}  ${interface list8}
+T5.4 Try and fail to create port group with 17 interfaces on one switch
+	@{interface list17}=  Create List
+	...  ethernet30  ethernet31  ethernet32  ethernet33
+	...  ethernet34  ethernet35  ethernet36  ethernet37
+	...  ethernet38  ethernet39  ethernet40  ethernet41
+	...  ethernet42  ethernet43  ethernet44  ethernet45
+	...  ethernet46
+	Run Keyword and Expect Error  *  Create Port Group	portgroup17		Static		rack0  		${interface list17}
+T5  Delete All Port Groups
+
+T10.1 Controller Reload
 	${node}  Set Variable  slave
 	Reload Controller From Fabric Page  ${node}
 	Wait Until Keyword Succeeds  3 min  30 sec
@@ -405,7 +423,7 @@ T9.1 Controller Reload
 	...  redundant
 	Sleep  30
 
-T9.2 Controller Reload
+T10.2 Controller Reload
 	${old_master_ip}  Set Variable  ${SERVER}
 	${node}  Set Variable  master
 	Reload Controller From Fabric Page  ${node}
