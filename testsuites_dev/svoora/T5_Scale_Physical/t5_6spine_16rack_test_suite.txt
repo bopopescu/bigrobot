@@ -500,7 +500,7 @@ Reboot leaf print traffic convergence time
     clear stats
     start traffic
     power cycle switch   ${leaf-not-in-traffic}
-    sleep   210
+    sleep   280
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
