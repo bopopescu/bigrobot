@@ -14,7 +14,8 @@ class T5Parallel(object):
         Output:
         Author: Mingtao
         '''
-        helpers.log("***Entering==> task_finish_check_parallel   \n")
+        helpers.log("***Entering==> task_finish_check_parallel (timer:%s, timeout:%s)\n"
+                    % (timer, timeout))
         is_pending = True
         iteration = 0
         flag = True
@@ -22,7 +23,7 @@ class T5Parallel(object):
             is_pending = False
             iteration += 1
             helpers.sleep(int(timer))
-            helpers.log("USR INFO:  result is %s. Iteration=%s." % (results, iteration))
+            helpers.log("USR INFO: Iteration=%s." % (iteration))
 
             for res in results:
                 task_id = res.task_id
@@ -162,11 +163,11 @@ class T5Parallel(object):
 
         # Check task status - are we done yet?
         if finish == 'yes':
-            result = self.task_finish_check_parallel(results, result_dict, timer=30, timeout=900)
+            result = self.task_finish_check_parallel(results, result_dict, timer=60, timeout=1200)
             helpers.log("***Exiting==> upgrade_launch_image_HA_parallel,  all node done  \n")
             return result
         elif finish == 'one':
-            result = self.task_one_finish_check_parallel(results, result_dict, timer=30, timeout=900)
+            result = self.task_one_finish_check_parallel(results, result_dict, timer=60, timeout=1200)
             return { 'results': results, 'result_dict': result_dict }
         else:
             helpers.log("***Exiting==> upgrade_launch_image_HA_parallel NOT checking task finish status  \n")
