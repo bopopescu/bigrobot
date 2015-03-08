@@ -420,6 +420,45 @@ class T5_Scale(object):
         else:
             helpers.log("config digest do not match between controllers")
             return False
+    def rest_shutdown_interface(self, switch, interface):
+        ''' Function to shutdown given switch interface
+        Input: switch and interface
+        Output: True/False
+        '''
+
+        t = test.Test()
+        c = t.controller('master')
+        # /api/v1/data/controller/core/switch-config[name="leaf0a"]/interface[name="ethernet24"] {"shutdown": true}
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
+        try:
+            c.rest.post(url, {"shutdown": True})
+        except:
+            # helpers.test_failure(c.rest.error())
+            return False
+        else:
+            # helpers.test_log("Output: %s" % c.rest.result_json())
+            # return c.rest.content()
+            return True
+
+    def rest_noshutdown_interface(self, switch, interface):
+        ''' Function to no shutdown given switch interface
+        Input: switch and interface
+        Output: True/False
+        '''
+
+        t = test.Test()
+        c = t.controller('master')
+        # /api/v1/data/controller/core/switch-config[name="leaf0a"]/interface[name="ethernet24"]/shutdown {}
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]/shutdown' % (switch, interface)
+        try:
+            c.rest.delete(url, {})
+        except:
+            # helpers.test_failure(c.rest.error())
+            return False
+        else:
+            # helpers.test_log("Output: %s" % c.rest.result_json())
+            # return c.rest.content()
+            return True
 
     def rest_verify_disk_usage(self):
         ''' Function to verify disk usage assert if it reaches 100%
