@@ -752,7 +752,7 @@ class T5Utilities(object):
             c = t.controller(node)
             result = c.sudo('ls *_dump.txt')
             filename = re.split('\n', result['content'])[1:-1]
-            c.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered %s >> %s &" % (monitor_message, filename[0].strip('\r')))
+            c.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered -i %s | grep --line-buffered ERROR >> %s &" % (monitor_message, filename[0].strip('\r')))
             return True
         else:
             return True
