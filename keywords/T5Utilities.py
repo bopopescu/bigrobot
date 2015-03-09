@@ -716,8 +716,7 @@ class T5Utilities(object):
         helpers.log("INFO: There are %d of controller(s) in the cluster" % num)
         return num
 
-
-    def start_floodlight_monitor(self):
+    def start_floodlight_monitor(self, monitor_message="Exception"):
         global floodlightMonitorFlag
 
         try:
@@ -734,8 +733,8 @@ class T5Utilities(object):
                     c2.sudo('kill -9 %s' % (c2_pid))
 
             # Add rm of the file if file already exist in case of a new test
-            c1.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR > %s &" % "c1_floodlight_dump.txt")
-            c2.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR > %s &" % "c2_floodlight_dump.txt")
+            helpers.log('%s' % c1.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered -i %s | grep --line-buffered ERROR > %s &" % (monitor_message, "c1_floodlight_dump.txt")))
+            helpers.log('%s' % c2.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered -i %s | grep --line-buffered ERROR > %s &" % (monitor_message, "c2_floodlight_dump.txt")))
 
             floodlightMonitorFlag = True
             return True
@@ -744,7 +743,7 @@ class T5Utilities(object):
             helpers.log("Exception occured while starting the floodlight monitor")
             return False
 
-    def restart_floodlight_monitor(self, node):
+    def restart_floodlight_monitor(self, node, monitor_message='Exception'):
 
         global floodlightMonitorFlag
 
@@ -753,7 +752,7 @@ class T5Utilities(object):
             c = t.controller(node)
             result = c.sudo('ls *_dump.txt')
             filename = re.split('\n', result['content'])[1:-1]
-            c.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR >> %s &" % filename[0].strip('\r'))
+            c.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered %s >> %s &" % (monitor_message, filename[0].strip('\r')))
             return True
         else:
             return True
@@ -783,7 +782,7 @@ class T5Utilities(object):
                 result = c1.sudo('cat c1_floodlight_dump.txt')
                 split = re.split('\n', result['content'])[1:-1]
                 if split:
-                    helpers.warn("Floodlight Errors Were Detected At: %s " % helpers.ts_long_local())
+                    helpers.exit_robot_immediately("Floodlight Errors Were Detected At: %s " % helpers.ts_long_local())
 
             except(AttributeError):
                 helpers.log("No Errors From Floodlight Monitor on C1")
@@ -793,7 +792,7 @@ class T5Utilities(object):
                 result = c2.sudo('cat c2_floodlight_dump.txt')
                 split = re.split('\n', result['content'])[1:-1]
                 if split:
-                    helpers.warn("Floodlight Errors Were Detected At: %s " % helpers.ts_long_local())
+                    helpers.exit_robot_immediately("Floodlight Errors Were Detected At: %s " % helpers.ts_long_local())
             except(AttributeError):
                 helpers.log("No Errors From Floodlight Monitor on C2")
 
@@ -808,6 +807,8 @@ class T5Utilities(object):
         t = test.Test()
         c = t.controller(role)
         helpers.log("Verifing for monitor job")
+        # doing this to flush out previous content in buffer
+        c.sudo('')
         c_result = c.sudo('ps ax | grep tail | grep sudo | awk \'{print $1}\'')
         split = re.split('\n', c_result['content'])
         pidList = split[1:-1]
