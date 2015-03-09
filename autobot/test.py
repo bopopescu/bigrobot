@@ -36,6 +36,7 @@ class Test(object):
             self._current_controller_slave = None
             self._settings = {}
             self._checkpoint = 0
+            self._is_bcf_topology = False
 
             # ESB environment:
             # Per convention, the consumer will pass the params data to the
@@ -352,6 +353,11 @@ class Test(object):
         helpers.log(":::: CHECKPOINT %04d - %s%s"
                     % (self._checkpoint, msg, br_utils.end_of_output_marker()),
                     level=3)
+
+    def is_bcf_topology(self, new_state=None):
+        if new_state != None:
+            self._is_bcf_topology = new_state
+        return self._is_bcf_topology
 
     def controller_user(self):
         return self.bsn_config('controller_user')
@@ -788,6 +794,9 @@ class Test(object):
             n = self.node_spawn(ip=host, node=node, user=user,
                                 password=password, device_type='controller',
                                 quiet=1)
+            if helpers.is_bcf(n.platform()) and not self.is_bcf_topology():
+                helpers.log("Node '%s' is a BCF controller. This is a BCF topology." % node)
+                self.is_bcf_topology(True)
         elif helpers.is_switch(node):
             n = self.node_spawn(ip=host, node=node, user=user,
                                 password=password, device_type='switch',
@@ -1724,12 +1733,12 @@ class Test(object):
             con.bash('rm -rf /mnt/flash/local.d/no-auto-reload')
             con.cli("")
 
-        if helpers.is_bcf(n.platform()):
-            helpers.log("No Clean config is done in BCF with switch handles..skipp it, all the clean config should be done on controlelrs...")
-            return
-
         if helpers.bigrobot_test_ztn().lower() == 'true':
             helpers.log("Skipping switch TEAR_DOWN in ZTN MODE")
+            return
+
+        if self.is_bcf_topology():
+            helpers.log("Skipping switch TEAR_DOWN for BCF topology")
             return
 
         if not n.devconf():

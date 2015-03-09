@@ -13,6 +13,13 @@ test_types:
   - negative
   - robustness
 
+testbeds:
+  bcf:
+    - 10g
+    - 40g
+    - common
+    - virtual
+
 # Note: releases field is an ordered list to reflect precedence, e.g.,
 #       ironhorse comes before ironhorse-plus which comes before jackfrost.
 products:
@@ -24,20 +31,23 @@ products:
                    - 2.0.2         # patch1
           software_image_map:
                    - ih
-                   - ironhorse
       - ironhorse-plus:
           version:
                    - 2.5.0
           software_image_map:
                    - ihp
                    - ihplus
-                   - ironhorse-plus
+      - ironhorse-260:
+          version:
+                   - 2.6.0
+          software_image_map:
+                   - ih-260
+                   - ih260
       - jackfrost:
           version:
                    - 3.0.0
           software_image_map:
                    - jf
-                   - jackfrost
 
   bigtap:
     releases:

@@ -319,14 +319,15 @@ def test_failure(msg, soft_error=False):
         raise TestFailure(msg)
 
 
-def test_error(msg, soft_error=False):
+def test_error(msg, soft_error=False, dump_error_stack=True):
     """
     Call this on test error.
     """
     if not is_bool(soft_error):
         environment_failure("helpers.test_error() argument 'soft_error' must"
                             " be a boolean.")
-    log("Dumping the error stack:\n" + exception_info())
+    if dump_error_stack:
+        log("Dumping the error stack:\n" + exception_info())
     if soft_error:
         log("Soft test error: %s" % msg)
         return False
@@ -743,6 +744,17 @@ def bigrobot_test_suite_status(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_TEST_SUITE_STATUS', new_val, default)
 
 
+def bigrobot_selenium_browser(new_val=None, default='chrome'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Specify the browser to use when running Selenium tests. Currently
+    supported browsers are:
+      chrome
+      firefox
+    """
+    return _env_get_and_set('BIGROBOT_SELENIUM_BROWSER', new_val, default)
+
+
 def bigtest_path(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigTest.
@@ -1148,6 +1160,20 @@ def to_json(python_data, is_raw=False):
         return json.dumps(python_data, sort_keys=True)
     else:
         return json.dumps(python_data, indent=4, sort_keys=True)
+
+
+def in_list(_list, element, case_sensitive=False):
+    """
+    Return True if element is in the list and False it it isn't.
+    By default, ignore case when comparing values.
+    """
+    if case_sensitive:
+        if element in _list:
+            return True
+    else:
+        if element.lower() in [x.lower() for x in _list]:
+            return True
+    return False
 
 
 def unicode_to_ascii(u):

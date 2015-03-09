@@ -14,7 +14,8 @@ class T5Parallel(object):
         Output:
         Author: Mingtao
         '''
-        helpers.log("***Entering==> task_finish_check_parallel   \n")
+        helpers.log("***Entering==> task_finish_check_parallel (timer:%s, timeout:%s)\n"
+                    % (timer, timeout))
         is_pending = True
         iteration = 0
         flag = True
@@ -22,7 +23,7 @@ class T5Parallel(object):
             is_pending = False
             iteration += 1
             helpers.sleep(int(timer))
-            helpers.log("USR INFO:  result is %s" % results)
+            helpers.log("USR INFO: Iteration=%s." % (iteration))
 
             for res in results:
                 task_id = res.task_id
@@ -38,16 +39,25 @@ class T5Parallel(object):
             if iteration >= int(timeout) / int(timer):
 #                helpers.test_failure("USR ERROR: the parallel execution did not finish with %s seconds" %timeout)
                 helpers.log("USR ERROR: the parallel execution did not finish with %s seconds" % timeout)
-                return False
+                break
 
         helpers.log("*** Parallel tasks completed ")
+
+        # Archive the ESB task logs
+        for res in results:
+            task_id = res.task_id
+            helpers.log_task_output(task_id)
+
+        if is_pending:
+            helpers.log("Not able to run ESB tasks successfully.")
+            flag = False
+            return flag
 
         #
         # Check task output
         #
         for res in results:
             task_id = res.task_id
-            helpers.log_task_output(task_id)
             output = res.get()
             helpers.log("USER INFO:  for task %s , result is  %s  " % (task_id, output))
             result_dict[task_id]["result"] = output
@@ -153,11 +163,11 @@ class T5Parallel(object):
 
         # Check task status - are we done yet?
         if finish == 'yes':
-            result = self.task_finish_check_parallel(results, result_dict, timer=30, timeout=900)
+            result = self.task_finish_check_parallel(results, result_dict, timer=60, timeout=1200)
             helpers.log("***Exiting==> upgrade_launch_image_HA_parallel,  all node done  \n")
             return result
         elif finish == 'one':
-            result = self.task_one_finish_check_parallel(results, result_dict, timer=30, timeout=900)
+            result = self.task_one_finish_check_parallel(results, result_dict, timer=60, timeout=1200)
             return { 'results': results, 'result_dict': result_dict }
         else:
             helpers.log("***Exiting==> upgrade_launch_image_HA_parallel NOT checking task finish status  \n")

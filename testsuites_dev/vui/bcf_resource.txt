@@ -9,7 +9,8 @@ Library        	SeleniumLibrary
 
 
 *** Variables ***
-${BROWSER}       				GoogleChrome
+#${BROWSER}       				GoogleChrome
+${BROWSER}       				Firefox
 ${DELAY}         				0
 ${LOG IN TITLE}    				Login
 ${VALID USER}    				admin

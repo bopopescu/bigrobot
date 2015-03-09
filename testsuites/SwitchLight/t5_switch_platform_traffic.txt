@@ -281,14 +281,15 @@ TC16 leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->c tra
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
-    disable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
+    ${intf1}=  get_switch_int_topo  s1  spine0_int0
+    disable switch interface from controller  ${switch1_name}  ${intf1}
     sleep  10 
-    enable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
+    enable switch interface from controller  ${switch1_name}  ${intf1}
     sleep  10 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity      
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity          
 
 TC17 spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->c traffic framerate 10000 pktsize 64 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=0800  name=a_b_flow
@@ -301,14 +302,15 @@ TC17 spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->c tra
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
-    disable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
+    ${intf1}=  get_switch_int_topo  s7  leaf0a_int0
+    disable switch interface from controller  ${switch7_name}  ${intf1}
     sleep  10 
-    enable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
+    enable switch interface from controller  ${switch7_name}  ${intf1}
     sleep  10 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity    
 
 TC18 leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 512 
     ${stream}=     L2 add  flow=a<->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=512  ethertype=0800  name=a_b_bidir_flow
@@ -321,14 +323,15 @@ TC18 leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->c tra
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
-    disable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
+    ${intf1}=  get_switch_int_topo  s3  spine0_int0
+    disable switch interface from controller  ${switch3_name}  ${intf1}
     sleep  10 
-    enable switch interface from controller  ${switch3_name}  ${leaf1a_spine0_intf0}
+    enable switch interface from controller  ${switch3_name}  ${intf1}
     sleep  10 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity    
     
 TC19 spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c traffic framerate 10000 pktsize 1518 
     ${stream}=     L2 add  flow=a->c  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=1518  ethertype=0800  name=a_b_bidir_flow
@@ -341,14 +344,15 @@ TC19 spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->c tra
     sleep          10
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
-    disable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
+    ${intf1}=  get_switch_int_topo  s7  leaf1a_int0
+    disable switch interface from controller  ${switch7_name}  ${intf1}
     sleep  10 
-    enable switch interface from controller  ${switch7_name}  ${spine0_leaf1a_intf0}
+    enable switch interface from controller  ${switch7_name}  ${intf1}
     sleep  10 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    daily-sanity      
 
 TC20 Bi-Directional L2 Traffic IPv6 mac address starting with 33: flow=a<->c traffic linerate 50% pktsize 9150
     ${stream}=     L2 add  flow=a<->c  dst_mac=33:33:33:33:33:33  src_mac=00:11:01:00:01:0b  line_rate=50  frame_size=9150  ethertype=0802  name=a_b_bidir_jumbo_flow
@@ -378,8 +382,8 @@ TC21 Bi-Directional L2 Traffic IPv6 mac address starting with 33: flow=a<->c tra
     stop traffic   ${stream}
     [Tags]  switch-platform  L2  traffic  jumbo  feature
     
-TC22 Uni-Directional L2 Traffic IPv4 Multicast mac address starting with 01:00:5e flow=a->c traffic linerate 90% pktsize 64
-    ${stream}=     L2 add  flow=a->c  dst_mac=01:00:5e:05:05:05  src_mac=00:11:01:00:01:0b  line_rate=90  frame_size=64  ethertype=0800  name=a_c_unidir_mcast_flow
+TC22 Uni-Directional L2 Traffic IPv4 Multicast mac address starting with 01:00:5e flow=a->c traffic framerate 10000 pktsize 64
+    ${stream}=     L2 add  flow=a->c  dst_mac=01:00:5e:05:05:05  src_mac=00:11:01:00:01:0b  frame_rate=10000  frame_size=64  ethertype=0800  name=a_c_unidir_mcast_flow
     start traffic  ${stream}
     sleep          5
     stop traffic   ${stream}
@@ -390,10 +394,10 @@ TC22 Uni-Directional L2 Traffic IPv4 Multicast mac address starting with 01:00:5
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  switch-platform  L2  traffic  feature       
+    [Tags]  switch-platform  L2  traffic  feature         
     
-TC23 Uni-Directional L2 Traffic IPv4 Multicast mac address starting with 01:00:5e flow=a->c traffic linerate 90% pktsize 1518
-    ${stream}=     L2 add  flow=a->c  dst_mac=01:00:5e:05:05:05  src_mac=00:11:01:00:01:0b  line_rate=90  frame_size=1518  ethertype=0800  name=a_c_unidir_mcast_flow
+TC23 Uni-Directional L2 Traffic IPv4 Multicast mac address starting with 01:00:5e flow=a->c traffic framerate 10000 pktsize 1518
+    ${stream}=     L2 add  flow=a->c  dst_mac=01:00:5e:05:05:05  src_mac=00:11:01:00:01:0b  frame_rate=10000  frame_size=1518  ethertype=0800  name=a_c_unidir_mcast_flow
     start traffic  ${stream}
     sleep          5
     stop traffic   ${stream}
@@ -404,10 +408,10 @@ TC23 Uni-Directional L2 Traffic IPv4 Multicast mac address starting with 01:00:5
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  switch-platform  L2  traffic  feature        
+    [Tags]  switch-platform  L2  traffic  feature           
 
-TC24 Uni-Directional L2 Traffic IPv4 Multicast mac address starting with 01:00:5e flow=a->c traffic linerate 90% pktsize 9216
-    ${stream}=     L2 add  flow=a->c  dst_mac=01:00:5e:05:05:05  src_mac=00:11:01:00:01:0b  line_rate=90  frame_size=9216  ethertype=0800  name=a_c_unidir_mcast_flow
+TC24 Uni-Directional L2 Traffic IPv4 Multicast mac address starting with 01:00:5e flow=a->c traffic frame_rate=10000 pktsize 9216
+    ${stream}=     L2 add  flow=a->c  dst_mac=01:00:5e:05:05:05  src_mac=00:11:01:00:01:0b  frame_rate=10000  frame_size=9216  ethertype=0800  name=a_c_unidir_mcast_flow
     start traffic  ${stream}
     sleep          5
     stop traffic   ${stream}
@@ -418,7 +422,7 @@ TC24 Uni-Directional L2 Traffic IPv4 Multicast mac address starting with 01:00:5
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  switch-platform  L2  traffic  feature
+    [Tags]  switch-platform  L2  traffic  feature    
     
     
     
@@ -445,9 +449,9 @@ T5 switch platform test setup
    ${intf_1}=  get_switch_int_topo  s1  ixia1_int0
    Set Suite Variable  ${intf_1}
    ${intf_2}=  get_switch_int_topo  s3  ixia1_int0
-   Set Suite Variable  ${intf_1}
-   Set swith int variables
-   Set switch dpid variables
+   Set Suite Variable  ${intf_2}
+   #Set swith int variables
+   #Set switch dpid variables
    rest add tenant  ${tenant}
    rest add vns  ${tenant}  ${vns}
    rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_1}  ${vlan}    

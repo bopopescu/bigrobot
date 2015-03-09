@@ -1,0 +1,36 @@
+* Settings
+Documentation   Selenium2Library test
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+Library         keywords_dev/vui/MyTest.py
+Library         OperatingSystem
+Library         Selenium2Library
+
+
+#
+# Notes:
+#  - Install Selenium2Library:
+#      pip install robotframework-selenium2library
+#  - For Google Chrome, need to install chromedriver (a binary executable) for it to work.
+#    I tried it successfully on Mac OS X 10.10.2 (Maverick). Download chromedriver at
+#    https://sites.google.com/a/chromium.org/chromedriver/downloads. Then copy the
+#    binary to /usr/local/bin/.
+#  - BigRobot defines the env BIGROBOT_SELENIUM_BROWSER. By default it is set to 'chrome'.
+#    GUI test suite should read from this env. To switch browser to Firefox, set the env
+#    from the shell before starting gobot. E.g.,
+#      $ export BIGROBOT_SELENIUM_BROWSER=firefox
+#      $ BIGROBOT_SUITE=test_selenium2library gobot test
+#
+
+* Test Cases
+BCF Login
+    #[Tags]           skipped
+    ${ip} =        get node ip      c1
+    ${browser} =   get environment variable     BIGROBOT_SELENIUM_BROWSER
+    open browser   https://${ip}/   browser=${browser}
+    sleep    10
+
+BCF Logout
+    #[Tags]           skipped
+    close browser 
+
