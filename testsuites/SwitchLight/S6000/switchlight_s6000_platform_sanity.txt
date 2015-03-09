@@ -66,11 +66,11 @@ TC006: Verify all interfaces show up (in show o/p from CLI)
 TC007: Shutdown a 40G interface and verify interface state is down
     shut interface  s1  etherne11
     Sleep  5
-    ${ret_value_1}=  cli show interface state  s1  etherne13  admin_down=${True}
+    ${ret_value_1}=  cli show interface state  s1  etherne11  admin_down=${True}
     Should Contain  ${ret_value_1}  down     
     unshut interface  s1  etherne11
     Sleep  30
-    ${ret_value_1}=  cli show interface state  s1  etherne13
+    ${ret_value_1}=  cli show interface state  s1  etherne11
     Should Contain  ${ret_value_1}  up     
     [Tags]  sanity  ha  robustness
 
