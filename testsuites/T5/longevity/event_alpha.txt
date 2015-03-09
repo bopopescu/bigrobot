@@ -63,7 +63,7 @@ T23 controller node event failover
     \	controller node event HA failover     ${inevent}
     \   sleep   ${inevent}
         
-	[Tags] 	longevity    traffic     event     
+	[Tags] 	longevity    traffic     event  skipped   
 
 
 T21 spine switch node down/up event 	 

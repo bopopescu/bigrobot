@@ -1,6 +1,7 @@
 global:
   user_switch_image: /etc/hosts
 c1:
+  hostname: abc
   ip: dummy
   #http_port: 8080
   #monitor_reauth: false

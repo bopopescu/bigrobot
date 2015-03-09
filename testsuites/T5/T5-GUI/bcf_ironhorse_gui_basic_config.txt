@@ -93,23 +93,7 @@ T5.4 Create Port group with an underscore in name
     Create Port Group				port_group_3	Static			leaf_group_new
 T5.5 Create Port group with name in CAPS and mode as LACP
     Create Port Group				PORT-GROUP-4	LACP			leaf_group_new
-T5.6 Create Port group with 2 interfaces
-	Create Port Group				portgroup2		Static			rack0  			ethernet5  			ethernet5
-T5.7 Create Port group with 8 interfaces
-	@{interface list4}=  Create List  ethernet10  ethernet11  ethernet12  ethernet13
-	Create Port Group				portgroup8		Static			rack0  			${interface list4}  ${interface list4}
-T5.8 Create Port group with 16 interfaces
-	@{interface list8}=  Create List  ethernet20  ethernet21  ethernet22  ethernet23  ethernet24  ethernet25  ethernet26  ethernet27
-	Create Port Group				portgroup16		Static			rack0  			${interface list8}  ${interface list8}
-T5.9 Try and fail to create port group with 17 interfaces on one switch
-	@{interface list17}=  Create List
-	...  ethernet30  ethernet31  ethernet32  ethernet33
-	...  ethernet34  ethernet35  ethernet36  ethernet37
-	...  ethernet38  ethernet39  ethernet40  ethernet41
-	...  ethernet42  ethernet43  ethernet44  ethernet45
-	...  ethernet46
-	Run Keyword and Expect Error  *  Create Port Group	portgroup17		Static		rack0  		${interface list17}
-T5.10 Delete Port groups
+T5.11 Delete Port groups
     Delete All Port Groups
     
 #### Support Bundles
@@ -203,7 +187,8 @@ T9.10 Default TACACS Settings - secret
 
 T9.11 Default TACACS Settings - default timeout and secret
 	Go To Tacacs Page
-	Configure TACACS Default Settings  30  secret  No
+	#Configure TACACS Default Settings  30  secret  No
+	Configure TACACS Default Settings  30  foo-secret  No
 	Page Should Contain  30
 	Page Should Contain  foo-secret
 	Cli Run and Verify Output  master
@@ -375,7 +360,7 @@ config suite setup
     Open Browser To Login Page
     Sleep  30
     Valid Login  admin  adminadmin
-    
+    #Physical GUI Suite Setup
 	
 config suite teardown
 	Clear Switch Config				switch-lEAf.3

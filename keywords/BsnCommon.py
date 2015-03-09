@@ -2001,13 +2001,33 @@ class BsnCommon(object):
         """
         Get the name of a node
 
-        Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
+        Input:
+        | node | logical node name, e.g., 'c1', 'master', 'slave', etc. |
 
         Return Value:  actual node name, e.g., 'c1', 'c2', 's1'
         """
         t = test.Test()
         n = t.node(node)
         return n.name()
+
+    def get_node_hostname(self, node, soft_error=False):
+        """
+        Get the hostname of a node
+
+        Input:
+        | node | logical node name, e.g., 'c1', 'master', 'slave', etc. |
+        | soft_error | Default is ${false} which will generate an exception if hostname does not exist. If ${true} then return ${none} if hostname does not exist. |
+
+        Return Value:  actual hostname of the node
+        """
+        t = test.Test()
+        n = t.node(node)
+        hostname = n.hostname()
+        if hostname == None:
+            helpers.test_error("Hostname for '%s' is not defined" % node,
+                               soft_error=soft_error,
+                               dump_error_stack=False)
+        return hostname
 
     def get_node_id(self, node):
         """
