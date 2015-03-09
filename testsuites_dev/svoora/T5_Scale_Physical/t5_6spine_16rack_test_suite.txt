@@ -728,9 +728,9 @@ Remove leaf from configuration and print traffic convergence time
     #${result}=   rest_add_dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
     #Should be true   ${result}
     rest add switch  ${leaf-name}  
-    rest add dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
     rest add fabric role  ${leaf-name}  leaf 
     rest add leaf group  ${leaf-name}  rack3
+    rest add dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
     sleep   210
     
 
@@ -765,9 +765,9 @@ Add leaf to configuration and print traffic convergence time
     #${result}=   rest_add_dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
     #Should be true   ${result}
     rest add switch  ${leaf-name}  
-    rest add dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
     rest add fabric role  ${leaf-name}  leaf 
     rest add leaf group  ${leaf-name}  rack3
+    rest add dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
     sleep   210
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -801,8 +801,8 @@ Remove spine from configuration and print traffic convergence time
     stop traffic
     print L2 packet_loss_duration
     rest add switch  ${spine-name}  
-    rest add dpid  ${spine-name}  00:00:70:72:cf:ae:b0:9e
     rest add fabric role  ${spine-name}  spine 
+    rest add dpid  ${spine-name}  00:00:70:72:cf:ae:b0:9e
     sleep   210
     
 
@@ -834,8 +834,8 @@ Add spine to configuration and print traffic convergence time
     #${result}=   rest_add_dpid  ${leaf-name}  00:00:70:72:cf:ae:b0:9e
     #Should be true   ${result}
     rest add switch  ${spine-name}  
-    rest add dpid  ${spine-name}  00:00:70:72:cf:ae:b0:9e
     rest add fabric role  ${spine-name}  spine 
+    rest add dpid  ${spine-name}  00:00:70:72:cf:ae:b0:9e
     sleep   210
     ${return}=  rest verify sync state
     Should Be True  ${return}
