@@ -13,10 +13,23 @@ class UpgradeCommands(object):
     @app.task(filter=task_method)
     def add(self, x, y):
         """
-        A very simple task which adds 2 numbers.
+        A very simple task for testing purpose - adds 2 numbers.
         """
         helpers.log("I am here: x=%s y=%s" % (x, y))
         return x + y
+
+    @app.task(filter=task_method)
+    def cli_show_version(self, params, node):
+        """
+        A simple task for testing purpose - invokes CLI command.
+        """
+        def run():
+            helpers.log("Task: cli_show_version")
+            t = test.Test()
+            n = t.node(node)
+            content = n.cli("show version")['content']
+            return content
+        return task_execute(params, run)
 
     @app.task(filter=task_method)
     def cli_copy_upgrade_pkg(self, params, **kwargs):
