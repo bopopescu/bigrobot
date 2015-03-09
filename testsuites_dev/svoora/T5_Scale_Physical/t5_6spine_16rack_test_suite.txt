@@ -69,10 +69,10 @@ ${monitor_file}			exception_file.log
 ${image}      bsn@jenkins.eng.bigswitch.com:/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-*.pkg
 ${spine}        s33
 ${leaf}         s7
-${spine-interface}      ethernet17
+${spine-interface}      ethernet14
 ${leaf-interface}       ethernet49
 ${leaf-name}            leaf3a-7011
-${spine-name}           spine1
+${spine-name}           spine0
 ${leaf-not-in-traffic}      s1
 ${leaf-not-in-traffic-name}     leaf0a-7005
 
@@ -535,7 +535,7 @@ PowerOff leaf print traffic convergence time
     print L2 packet_loss_duration
     power up switch   ${leaf-not-in-traffic}
     sleep   250
-    verify fabric switch link and errors
+    #verify fabric switch link and errors
     
 
 PowerOn leaf print traffic convergence time   
@@ -649,6 +649,7 @@ Shutdown spine 40g interface and print traffic convergence time
     start traffic
     ##SHUT DOWN spine 40G INTERFACE
     ${result}=   rest_disable_fabric_interface  ${spine-name}  ${spine-interface}
+    pause     feeee!!
     Should be true   ${result}
     sleep   50
     ${return}=  rest verify sync state
@@ -660,13 +661,17 @@ Shutdown spine 40g interface and print traffic convergence time
 Bringup spine 40g interface and print traffic convergence time   
     [Tags]   con9  loss
     reconnect switch ips   ${spine}
+    ${result}=   rest_disable_fabric_interface  ${spine-name}  ${spine-interface}
+    #pause     feeee!!
+    Should be true   ${result}
+    sleep   50
     create L2 streams
     clear stats
     apply traffic
     start traffic
     #pause    FREEZZEEE!!!
     sleep  25   #MAC learning time, and sleep time, we can change
-    verify mac learning rate
+    #verify mac learning rate
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
     #pause   FREEZZEEE!!!!
@@ -675,13 +680,13 @@ Bringup spine 40g interface and print traffic convergence time
     stop traffic
     clear stats
     start traffic
-    ##SHUT DOWN spine 40G INTERFACE
+    #No SHUT DOWN spine 40G INTERFACE
     ${result}=   rest_enable_fabric_interface  ${spine-name}  ${spine-interface}
     Should be true   ${result}
     sleep   50
     ${return}=  rest verify sync state
     Should Be True  ${return}
-    verify fabric switch link and errors
+    #verify fabric switch link and errors
     stop traffic
     print L2 packet_loss_duration
 
@@ -716,12 +721,16 @@ Remove leaf from configuration and print traffic convergence time
     #verify fabric switch link and errors
     stop traffic
     print L2 packet_loss_duration
-    ${result}=   rest_add_fabric_role  ${leaf-name}  leaf
-    Should be true   ${result}
-    ${result}=   rest_add_leaf_group  ${leaf-name}  leaf3
-    Should be true   ${result}
-    ${result}=   rest_add_dpid  ${leaf-name}  70:72:cf:bc:ce:4e
-    Should be true   ${result}
+    #${result}=   rest_add_fabric_role  ${leaf-name}  leaf
+    #Should be true   ${result}
+    #${result}=   rest_add_leaf_group  ${leaf-name}  leaf3
+    #Should be true   ${result}
+    #${result}=   rest_add_dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
+    #Should be true   ${result}
+    rest add switch  ${leaf-name}  
+    rest add fabric role  ${leaf-name}  leaf 
+    rest add leaf group  ${leaf-name}  rack3
+    rest add dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
     sleep   210
     
 
@@ -749,12 +758,16 @@ Add leaf to configuration and print traffic convergence time
     clear stats
     start traffic
     sleep  10
-    ${result}=   rest_add_fabric_role  ${leaf-name}  leaf
-    Should be true   ${result}
-    ${result}=   rest_add_leaf_group  ${leaf-name}  leaf3
-    Should be true   ${result}
-    ${result}=   rest_add_dpid  ${leaf-name}  70:72:cf:bc:ce:4e
-    Should be true   ${result}
+    #${result}=   rest_add_fabric_role  ${leaf-name}  leaf
+    #Should be true   ${result}
+    #${result}=   rest_add_leaf_group  ${leaf-name}  leaf3
+    #Should be true   ${result}
+    #${result}=   rest_add_dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
+    #Should be true   ${result}
+    rest add switch  ${leaf-name}  
+    rest add fabric role  ${leaf-name}  leaf 
+    rest add leaf group  ${leaf-name}  rack3
+    rest add dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
     sleep   210
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -771,7 +784,7 @@ Remove spine from configuration and print traffic convergence time
     start traffic
     #pause    FREEZZEEE!!!
     sleep  25   #MAC learning time, and sleep time, we can change
-    verify mac learning rate
+    #verify mac learning rate
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
     #pause   FREEZZEEE!!!!
@@ -787,19 +800,27 @@ Remove spine from configuration and print traffic convergence time
     Should Be True  ${return}
     stop traffic
     print L2 packet_loss_duration
+    rest add switch  ${spine-name}  
+    rest add fabric role  ${spine-name}  spine 
+    rest add dpid  ${spine-name}  00:00:70:72:cf:ae:b0:9e
+    sleep   210
+    
 
 
 Add spine to configuration and print traffic convergence time   
     [Tags]   con13  loss
     reconnect switch ips   ${spine}
     reconnect switch ips   ${leaf}
+    ${result}=   rest_delete_fabric_switch  ${spine-name}  
+    Should be true   ${result}
+    sleep   50
     create L2 streams
     clear stats
     apply traffic
     start traffic
     #pause    FREEZZEEE!!!
     sleep  25   #MAC learning time, and sleep time, we can change
-    verify mac learning rate
+    #verify mac learning rate
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
     #pause   FREEZZEEE!!!!
@@ -808,10 +829,13 @@ Add spine to configuration and print traffic convergence time
     stop traffic
     clear stats
     start traffic
-    ${result}=   rest_add_fabric_role  ${spine-name}  spine
-    Should be true   ${result}
-    ${result}=   rest_add_dpid  ${leaf-name}  70:72:cf:ae:b0:9e
-    Should be true   ${result}
+    #${result}=   rest_add_fabric_role  ${spine-name}  spine
+    #Should be true   ${result}
+    #${result}=   rest_add_dpid  ${leaf-name}  00:00:70:72:cf:ae:b0:9e
+    #Should be true   ${result}
+    rest add switch  ${spine-name}  
+    rest add fabric role  ${spine-name}  spine 
+    rest add dpid  ${spine-name}  00:00:70:72:cf:ae:b0:9e
     sleep   210
     ${return}=  rest verify sync state
     Should Be True  ${return}
