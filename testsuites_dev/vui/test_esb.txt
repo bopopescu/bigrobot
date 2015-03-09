@@ -21,5 +21,9 @@ Test esb: cli show running config
 
 Test esb: bsn common services (Production services)
     [Tags]  skipped
-    #@{nodes}=         create list     c1   c2
     test bsn common services
+
+Test esb: bsn common services2 (Production services)
+    [Tags]  skipped
+    @{nodes}=         create list     c1   c2
+    test bsn common services2    nodes=@{nodes}
