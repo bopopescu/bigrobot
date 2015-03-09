@@ -27,11 +27,13 @@ def task_execute(params, task_func):
     helpers.log("Starting task %s." % task_id)
 
     # Redirect logs to a separate log directory for this task.
-    suite_log_path = helpers.bigrobot_log_path_exec_instance() + '/' + task_id
+    suite_log_path = helpers.bigrobot_log_path() + '/' + task_id
     helpers.bigrobot_log_path_exec_instance(suite_log_path)
     helpers.set_env('AUTOBOT_LOG',
                     helpers.bigrobot_log_path_exec_instance() +
                     "/bigrobot_autobot.log")
+    helpers.log("BIGROBOT_LOG_PATH_EXEC_INSTANCE: %s"
+                % helpers.bigrobot_log_path_exec_instance())
 
     try:
         # esb=True is the equivalent of setting helpers.bigrobot_esb('True').

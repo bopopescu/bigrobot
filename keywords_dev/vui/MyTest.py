@@ -842,6 +842,11 @@ vui@Vuis-MacBook-Pro$
             output = res.get()
             helpers.log("task_id: %s, result: %s" % (res.task_id, output))
 
+    def test_vui_esb2(self, nodes):
+        self.test_vui_esb(nodes)
+        self.test_vui_esb(nodes)
+        self.test_vui_esb(nodes)
+        
     def test_vui_esb(self, nodes):
         # from bsn_services import sample_method_tasks as tasks
         from vui_services import tasks as tasks
