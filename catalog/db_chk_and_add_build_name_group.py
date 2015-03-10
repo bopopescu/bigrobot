@@ -32,6 +32,12 @@ BUILD_NAME group.
     parser.add_argument('--build',
                         help=("Jenkins build string,"
                               " e.g., 'bvs master #2007'"))
+    parser.add_argument('--createtime',
+                        help=("Build creation time,"
+                              " e.g., '2015-03-06T12:54:58.130'"))
+    parser.add_argument('--updatetime',
+                        help=("Build updated time,"
+                              " e.g., '2015-03-06T12:54:58.130'"))
     _args = parser.parse_args()
 
     # _args.build <=> env BUILD_NAME
@@ -49,7 +55,10 @@ BUILD_NAME group.
 if __name__ == '__main__':
     args = prog_args()
     db = TestCatalog()
-    doc = db.find_and_add_build_name_group(args.build, quiet=not args.verbose)
+    doc = db.find_and_add_build_name_group(args.build,
+                                           createtime=args.createtime,
+                                           updatetime=args.updatetime,
+                                           quiet=not args.verbose)
 
     if args.verbose: print "Doc: %s" % helpers.prettify(doc)
     print "%s" % doc["build_name"]
