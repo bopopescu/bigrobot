@@ -154,7 +154,7 @@ Create L2 devices in ixia
     ${time_mac_learning_done}  Get time
     ${time_diff}=   time diff   ${time_traffic_start}   ${time_mac_learning_done}
     Log to console    :
-    Log to console    Mac Learning rate is
+    Log to console    Mac Learning rate for all 48K macs is
     Log to console    ${time_diff}
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
