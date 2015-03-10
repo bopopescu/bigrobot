@@ -300,6 +300,27 @@ Controller Master reboot
     ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
+Controller reboot times
+    [Tags]  HA2  loss
+    ${time_reboot}=   Get time
+    ${returnVal}=  cli controller reboot
+    Should Be True  ${returnVal}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_controller_online}=   Get time
+    stop monitoring the exception
+    parse monitoring file
+    ${time_diff}    print diff   ${time_reboot}    ${time_controller_online}
+    Log to console    :
+    Log to csonole    Controller reboot times and joining to cluster without any fabric errors:
+    Log to console    ${time_diff}
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
 
 Controller Slave Reboot
     [Tags]  HA3  loss
