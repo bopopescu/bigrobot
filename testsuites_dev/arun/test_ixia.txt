@@ -588,18 +588,18 @@ Test IXIA
 	should be true  ${result}
 	[Tags]  traffic  L3  
 43_Fetching Flow stats from Ix Network stats View
-	${flow_a_to_c}=  L2 add   name=port_a_to_c  flow=a<->c  src_mac=00:70:03:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:05:00:01:01
+	${flow_a_to_b}=  L2 add   name=port_a_to_b  flow=a<->b  src_mac=00:70:03:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:05:00:01:01
 	...    dst_step=00:00:00:00:01:00  dst_cnt=3000  frame_rate=1000  frame_size=1500  vlan_id=1  vlan_cnt=3000  vlan_step=1
 	start traffic
 	sleep  2
 	stop traffic
 	sleep  2
 	start traffic
-	${ITOK}=  fetch port stats  stream=${flow_a_to_c}  flow_stats=True
-	${packet_loss_duration}=   verify nested dict key  ${ITOK}  port_a_to_c  a  Packet Loss Duration (ms)
+	${ITOK}=  fetch port stats  stream=${flow_a_to_b}  flow_stats=True
+	${packet_loss_duration}=   verify nested dict key  ${ITOK}  port_a_to_b  a  Packet Loss Duration (ms)
 	Log  ${packet_loss_duration}
-	${ITOK}=  fetch port stats  stream=${flow_a_to_c}  flow_stats=True
-	${packet_loss_duration}=   verify nested dict key  ${ITOK}  port_a_to_c  c  Packet Loss Duration (ms)
+	${ITOK}=  fetch port stats  stream=${flow_a_to_b}  flow_stats=True
+	${packet_loss_duration}=   verify nested dict key  ${ITOK}  port_a_to_b  b  Packet Loss Duration (ms)
 	Log  ${packet_loss_duration}
 	stop traffic
 	[Tags]   run

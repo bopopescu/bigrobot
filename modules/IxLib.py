@@ -1310,10 +1310,7 @@ class Ixia(object):
                                                        crc=crc, no_arp=no_arp, line_rate=line_rate)
         helpers.log('Created Traffic Stream : %s' % traffic_stream)
         self._traffic_stream[name] = traffic_stream
-        helpers.log('Applying Traffic config..')
-        self._handle.execute('apply', self._handle.getRoot() + 'traffic')
-        helpers.log('Succesfully Applied traffic Config ..')
-        self._traffi_apply = True  # Setting it False to Apply Changes while starting traffic
+        self.ix_apply_traffic()
         return traffic_stream
 
     def ix_l3_add_hosts(self, **kwargs):
@@ -2053,20 +2050,20 @@ class Ixia(object):
                     for column, value in zip(col_names, stat[0]):
                         if column == 'Tx Port':
                             print('Adding TRAFFIC ITEM Name ...!!!!')
-                            if len(port_stat) == 0:
+                            if len(temp_port_stat) == 0:
                                 helpers.Log ("skip adding port_stat in port_Stats Dic...")
                             else:
                                 helpers.log("Adding port_stat into port_stats Dic...")
-                                temp_port_stats[port_stat['Tx Port']] = temp_port_stat
-                                final_stats[port_stat["Traffic Item"]] = temp_port_stats
+                                temp_port_stats[temp_port_stat['Tx Port']] = temp_port_stat
+                                final_stats[temp_port_stat["Traffic Item"]] = temp_port_stats
                                 temp_port_stat = {}
                             temp_port_stat[column] = value
                             get_stats = True
                         if get_stats:
                             temp_port_stat[column] = value
                 helpers.log("Adding port_stat into port_stats Dic...")
-                temp_port_stats[port_stat['Tx Port']] = temp_port_stat
-                final_stats[port_stat["Traffic Item"]] = temp_port_stats
+                temp_port_stats[temp_port_stat['Tx Port']] = temp_port_stat
+                final_stats[temp_port_stat["Traffic Item"]] = temp_port_stats
                 temp_port_stat = {}
                 port_stats = final_stats
             else:
