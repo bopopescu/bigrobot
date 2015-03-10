@@ -2,7 +2,6 @@ import getpass
 import re
 from pymongo import MongoClient
 import autobot.helpers as helpers
-from IPython.utils.traitlets import Undefined
 
 
 class TestCatalog(object):
@@ -52,7 +51,10 @@ class TestCatalog(object):
         """
         Returns a list of testbeds for a product.
         """
-        return self.configs()['testbeds'][product_name]
+        if product_name in self.configs()['testbeds']:
+            return self.configs()['testbeds'][product_name]
+        else:
+            return []
 
 
     # DB access
@@ -309,7 +311,7 @@ class TestCatalog(object):
                 print "WARNING: Did not expect multiple results."
             return cursor[0]
         else:
-            # Build does not exist. Create it.
+            # Create: Build does not exist.
             if not quiet: print "Not found build '%s'. Creating." % build_name
             doc = {"build_name": build_name,
                    "createtime": self.timestamp(),
@@ -318,7 +320,11 @@ class TestCatalog(object):
             _ = self.insert_doc('builds', doc)
             return doc
 
-    def find_and_add_build_name_group(self, build_name, quiet=True):
+    def find_and_add_build_name_group(self,
+                                      build_name,
+                                      createtime=None,
+                                      updatetime=None,
+                                      quiet=True):
         """
         Check whether 'build_name' is found in build_groups collection.
         - If found, return the document.
@@ -337,8 +343,14 @@ class TestCatalog(object):
         query = {"build_name": build_group_name}
         cursor = self.build_groups_collection().find(query)
         count = cursor.count()
+        
+        if createtime == None:
+            createtime = self.timestamp()
+        if updatetime == None:
+            updatetime = self.timestamp()
+            
         if count >= 1:
-            # Found build which contains the build_name.
+            # Update: Found build which contains the build_name.
             if not quiet: print "Found build with '%s'." % build_group_name
             if count > 1:
                 print "WARNING: Did not expect multiple results."
@@ -347,15 +359,15 @@ class TestCatalog(object):
                 found_doc["testbeds"].append(testbed)
             if not helpers.in_list(found_doc["build_names"], build_name):
                 found_doc["build_names"].append(build_name)
-            found_doc["updatetime"] = self.timestamp()
+            found_doc["updatetime"] = updatetime
             doc = self.upsert_doc("build_groups", found_doc, query)
             return doc
         else:
-            # Build does not exist. Create it.
+            # Create: Build does not exist.
             if not quiet: print "Not found build '%s'. Creating." % build_group_name
             doc = {"build_name": build_group_name,
-                   "createtime": self.timestamp(),
-                   "updatetime": self.timestamp(),
+                   "createtime": createtime,
+                   "updatetime": updatetime,
                    "created_by": getpass.getuser(),
                    "testbeds": [testbed],
                    "build_names": [build_name]
