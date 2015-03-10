@@ -1193,44 +1193,60 @@ verify L2 packet_loss_duration
    
 print L2 packet_loss_duration
 
-    ${ATOC}=  fetch port stats  stream=${flow_a_to_c}
-    ${rx_value_c}=  verify dict key  ${ATOC}  port_a_to_c  packet_loss_duration_ms
+    ${ATOC}=  fetch port stats  stream=${flow_a_to_c}  flow_stats=True
+    ${rx_value_a}=  verify nested dict key  ${ATOC}  port_a_to_c  a  Packet Loss Duration (ms)
+    ${rx_value_c}=  verify nested dict key  ${ATOC}  port_a_to_c  c  Packet Loss Duration (ms)
     Log to console   Traffic loss seen:  
+    Log to console   ${rx_value_a}
     Log to console   ${rx_value_c}
     
-    ${BTOD}=  fetch port stats  stream=${flow_b_to_d}
-    ${rx_value_b}=  verify dict key  ${BTOD}  port_b_to_d  packet_loss_duration_ms
+    ${BTOD}=  fetch port stats  stream=${flow_b_to_d}  flow_stats=True
+    ${rx_value_b}=  verify nested dict key  ${BTOD}  port_b_to_d  b  Packet Loss Duration (ms)
+    ${rx_value_d}=  verify nested dict key  ${BTOD}  port_b_to_d  d  Packet Loss Duration (ms)
     Log to console   Traffic loss seen:  
     Log to console   ${rx_value_b} 
+    Log to console   ${rx_value_d} 
     
-    ${ETOG}=  fetch port stats  stream=${flow_e_to_g}
-    ${rx_value_e}=  verify dict key  ${ETOG}  port_e_to_g  packet_loss_duration_ms
+    ${ETOG}=  fetch port stats  stream=${flow_e_to_g}  flow_stats=True
+    ${rx_value_e}=  verify nested dict key  ${ETOG}  port_e_to_g  e  Packet Loss Duration (ms)
+    ${rx_value_g}=  verify nested dict key  ${ETOG}  port_e_to_g  g  Packet Loss Duration (ms)
     #Log to console     ${rx_value_e} 
+    #Log to console     ${rx_value_g} 
     
-    ${FTOH}=  fetch port stats  stream=${flow_f_to_h}
-    ${rx_value_f}=  verify dict key  ${FTOH}  port_f_to_h  packet_loss_duration_ms
+    ${FTOH}=  fetch port stats  stream=${flow_f_to_h}  flow_stats=True
+    ${rx_value_f}=  verify nested dict key  ${FTOH}  port_f_to_h  f  Packet Loss Duration (ms)
+    ${rx_value_h}=  verify nested dict key  ${FTOH}  port_f_to_h  h  Packet Loss Duration (ms)
     Log to console     Traffic loss seen:  
     Log to console   ${rx_value_f} 
+    Log to console   ${rx_value_h} 
     
-    ${ITOK}=  fetch port stats  stream=${flow_i_to_k}
-    ${rx_value_i}=  verify dict key  ${ITOK}  port_i_to_k  packet_loss_duration_ms
+    ${ITOK}=  fetch port stats  stream=${flow_i_to_k}  flow_stats=True
+    ${rx_value_i}=  verify nested dict key  ${ITOK}  port_i_to_k  i  Packet Loss Duration (ms)
+    ${rx_value_k}=  verify nested dict key  ${ITOK}  port_i_to_k  k  Packet Loss Duration (ms)
     Log to console     Traffic loss seen:  
     Log to console   ${rx_value_i} 
+    Log to console   ${rx_value_k} 
     
-    ${JTOL}=  fetch port stats  stream=${flow_j_to_l}
-    ${rx_value_j}=  verify dict key  ${JTOL}  port_j_to_l  packet_loss_duration_ms
+    ${JTOL}=  fetch port stats  stream=${flow_j_to_l}  flow_stats=True
+    ${rx_value_l}=  verify nested dict key  ${JTOL}  port_j_to_l  l  Packet Loss Duration (ms)
+    ${rx_value_j}=  verify nested dict key  ${JTOL}  port_j_to_l  j  Packet Loss Duration (ms)
     Log to console     Traffic loss seen:  
+    Log to console   ${rx_value_l} 
     Log to console   ${rx_value_j} 
     
-    ${MTOO}=  fetch port stats  stream=${flow_m_to_o}
-    ${rx_value_m}=  verify dict key  ${MTOO}  port_m_to_o  packet_loss_duration_ms
+    ${MTOO}=  fetch port stats  stream=${flow_m_to_o}  flow_stats=True
+    ${rx_value_o}=  verify nested dict key  ${MTOO}  port_m_to_o  o  Packet Loss Duration (ms)
+    ${rx_value_m}=  verify nested dict key  ${MTOO}  port_m_to_o  m  Packet Loss Duration (ms)
     Log to console     Traffic loss seen:  
+    Log to console   ${rx_value_o} 
     Log to console   ${rx_value_m} 
     
-    ${NTOP}=  fetch port stats  stream=${flow_n_to_p}
-    ${rx_value_n}=  verify dict key  ${NTOP}  port_n_to_p  packet_loss_duration_ms
+    ${NTOP}=  fetch port stats  stream=${flow_n_to_p}  flow_stats=True
+    ${rx_value_n}=  verify nested dict key  ${NTOP}  port_n_to_p  n  Packet Loss Duration (ms)
+    ${rx_value_p}=  verify nested dict key  ${NTOP}  port_n_to_p  p  Packet Loss Duration (ms)
     Log to console     Traffic loss seen:  
     Log to console   ${rx_value_n} 
+    Log to console   ${rx_value_p} 
    
    
 verify mac learning rate
