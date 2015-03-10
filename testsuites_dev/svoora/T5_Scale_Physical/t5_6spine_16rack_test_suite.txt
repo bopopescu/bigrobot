@@ -75,7 +75,9 @@ ${leaf-name}            leaf3a-7011
 ${spine-name}           spine0
 ${leaf-not-in-traffic}      s1
 ${leaf-not-in-traffic-name}     leaf0a-7005
-
+${max_timeout}      4 min  
+${poll_interval}        25 sec
+${min_poll_interval}     2 sec
 * Test Case 
 
 copy config file to controller
@@ -649,7 +651,7 @@ Shutdown spine 40g interface and print traffic convergence time
     start traffic
     ##SHUT DOWN spine 40G INTERFACE
     ${result}=   rest_disable_fabric_interface  ${spine-name}  ${spine-interface}
-    pause     feeee!!
+    #pause     feeee!!
     Should be true   ${result}
     sleep   50
     ${return}=  rest verify sync state
@@ -863,7 +865,7 @@ Restart ofad in spine and print traffic convergence time
     clear stats
     start traffic
     sleep  20
-    ${result}=   bash_restart_process  ${spine}  ofad
+    ${result}=   bash_restart_process  ${spine}  ofad   timeout=210
     Should be true  ${result}
     sleep   210
     verify fabric switch link and errors
@@ -891,7 +893,7 @@ Restart ofad in leaf and print traffic convergence time
     clear stats
     start traffic
     sleep  20
-    ${result}=   bash_restart_process  ${leaf}  ofad
+    ${result}=   bash_restart_process  ${leaf}  ofad  timeout=210
     Should be true  ${result}
     sleep   210
     verify fabric switch link and errors
@@ -908,7 +910,7 @@ restart floodlight in master controller
     apply traffic
     start traffic
     ###RESTART floodlight deamon
-    ${result}=  restart_process_on_controller  floodlight  master
+    ${result}=  restart_process_on_controller  floodlight  master  
     Should be True  ${result}
     sleep  120
     ${return}=  rest verify debug coordinator
@@ -931,7 +933,7 @@ restart floodlight in master controller
     Should be true  ${acl_table} == 3001
     
 restart floodlight in slave controller
-   [Tags]  HA2
+   [Tags]  HA2  loss
     create L2 streams
     clear stats
     apply traffic
@@ -995,9 +997,71 @@ collect tech-support
     #sleep  1200
     stop monitoring the exception
     parse monitoring file
+
+spine reboot time
+    [Tags]  reboottime
+    reconnect switch ips   ${spine}
+    Log to console   Rebooting spine switch
+    ${time_before}=   Get time
+    #Log to console   ${time_before}
+    power cycle switch   ${spine}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  Verify switch disconnected  ${spine-name}
+    ${time_disconnected}=   Get time  
+    #Log to Console   ${time_disconnected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  Verify switch connected  ${spine-name}
+    ${time_connected}=   Get time   
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    Log to console  Time spine connected to controller
+    ${time_diff}=  time diff  ${time_before}   ${time_connected}
+    Log to Console  ${time_diff}
+    Log to console   Time fabric link do no show errors
+    ${time_diff}=  time diff  ${time_before}   ${time_no_fabric_link_errors}
+    Log to Console  ${time_diff}
+    
+    
+leaf reboot time
+    [Tags]  reboottime
+    reconnect switch ips   ${leaf}
+    Log to console   Rebooting spine switch
+    ${time_before}=   Get time
+    #Log to console   ${time_before}
+    power cycle switch   ${leaf}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  Verify switch disconnected  ${leaf-name}
+    ${time_disconnected}=   Get time  
+    #Log to Console   ${time_disconnected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  Verify switch connected  ${leaf-name}
+    ${time_connected}=   Get time   
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    Log to console  Time spine connected to controller
+    ${time_diff}=  time diff  ${time_before}   ${time_connected}
+    Log to Console  ${time_diff}
+    Log to console   Time fabric link do no show errors
+    ${time_diff}=  time diff  ${time_before}   ${time_no_fabric_link_errors}
+    Log to Console  ${time_diff}
+    
+    
      
 * Keywords
+verify switch connected   
+    [Arguments]   ${spine-name}
+    Verify Switch Connection State  True  ${spine-name}
 
+Verify Switch Connection State
+    [Arguments]  ${expected_state}  ${switch_alias}
+    ${connection_state}=  Rest Get Switch Connection State  master  ${switch_alias}
+    Should Be Equal As Strings  ${expected_state}  ${connection_state}
+    ${connection_state}=  Rest Get Switch Connection State  slave  ${switch_alias}
+    Should Be Equal As Strings  ${expected_state}  ${connection_state}
+
+Verify switch disconnected
+    [Arguments]   ${spine-name}
+    Verify Switch Connection State  False  ${spine-name}
+    
+    
 create L2 streams
 
     ${flow_a_to_c}=  L2 add  name=port_a_to_c  flow=a<->c  src_mac=00:70:03:00:01:01   src_step=00:00:00:00:01:00  src_cnt=3000  dst_mac=00:70:05:00:01:01   
@@ -1110,8 +1174,9 @@ verify L2 packet_loss_duration
     ${rx_value_f}=  verify dict key  ${FTOH}  port_f_to_h  packet_loss_duration_ms
     Should be true  ${rx_value_f} == 0
     
-    ${ITOK}=  fetch port stats  stream=${flow_i_to_k}
-    ${rx_value_i}=  verify dict key  ${ITOK}  port_i_to_k  packet_loss_duration_ms
+    ${ITOK}=  fetch port stats  stream=${flow_i_to_k}  flow_stats=True
+    ${rx_value_i}=  verify dict key  ${ITOK}  port_i_to_k  tx_port_a
+    ${pkt_loss}=  verify dict key  ${rx_value_i}  port_i_to_k  packet_loss_duration_ms
     Should be true  ${rx_value_i} == 0
     
     ${JTOL}=  fetch port stats  stream=${flow_j_to_l}
