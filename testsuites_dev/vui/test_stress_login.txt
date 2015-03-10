@@ -16,5 +16,5 @@ Library         keywords_dev/vui/MyTest.py
 * Test Case
 Test SSH login loop
     #[Tags]  skipped
-    login loop    c1    5
+    login loop    c1    20
 
