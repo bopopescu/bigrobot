@@ -260,6 +260,30 @@ class T5_Scale(object):
          #   end_date += timedelta(1)  # +day
           #  assert end_date > start_date
            # return end_date - start_date
+    def cli_controller_failover(self, node='slave'):
+        ''' Function to trigger failover to slave controller via CLI.
+            Input: None
+            Output: True if successful, False otherwise
+        '''
+        t = test.Test()
+        c = t.controller(node)
+
+        helpers.log("Failover")
+        try:
+            c.config("config")
+            c.send("reauth")
+            c.expect(r"Password:")
+            c.config("adminadmin")
+            c.send("system failover")
+            c.expect(r"Failover to a standby controller node (\"y\" or \"yes\" to continue)?")
+            c.config("yes")
+            # helpers.sleep(30)
+            helpers.sleep(90)
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
 
     def parse_exception(self, role, file_name):
         t = test.Test()
