@@ -278,9 +278,32 @@ class T5_Scale(object):
             c.expect(r"Failover to a standby controller node (\"y\" or \"yes\" to continue)?")
             c.config("yes")
             # helpers.sleep(30)
-            helpers.sleep(90)
+            # helpers.sleep(90)
         except:
             helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+    def cli_controller_reboot(self, masterNode=True):
+
+        t = test.Test()
+        master = t.controller("master")
+        slave = t.controller("slave")
+
+        try:
+            if(masterNode):
+                master.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                master.enable("yes")
+                helpers.log("Master is rebooting")
+                # helpers.sleep(90)
+            else:
+                slave.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                slave.enable("yes")
+                helpers.log("Slave is rebooting")
+                # helpers.sleep(90)
+                # helpers.sleep(190)
+        except:
+            helpers.log("Node is rebooting")
             return False
         else:
             return True
