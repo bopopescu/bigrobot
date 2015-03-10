@@ -197,7 +197,7 @@ T9.11 Default TACACS Settings - default timeout and secret
 	...  flag=False
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
-	...  tacacs server key 7 secret
+	...  tacacs server key 7 foo-secret
 	[Tags]  BVS-2739
 
 T9.12 Default TACACS Settings - timeout and secret
