@@ -10,6 +10,7 @@ Force Tags       T5
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library          keywords/Mininet.py
+Library	         keywords/T5Utilities.py
 Resource	     testsuites/T5/t5_singleleaf_resource.txt
 
 * Variables
@@ -142,14 +143,16 @@ Single Leaf Dual Rack teardown
    base suite teardown
 
 T5 base test setup
+   start floodlight monitor
    base test setup
    add a tenant  A 
    add a vns  A  A
    sleep  5
    
 T5 base test teardown
-   delete a tenant  A
+   stop floodlight monitor
    base test teardown
+   delete a tenant  A
    sleep  5
    
 add a tenant  [Arguments]  ${tenant} 

@@ -696,9 +696,9 @@ send and verify traffic
     ${rx_value}=  verify dict key  ${report}  b  received_valid_frames
     ${in_range_0}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range_0}
-    ${in_range_1}=  ixia verify traffic rate  ${tx_value}  400000  50
+    ${in_range_1}=  ixia verify traffic rate  ${tx_value}  40000  50
     Should be true  ${in_range_1}
-    ${in_range_2}=  ixia verify traffic rate  ${rx_value}  400000  50
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value}  40000  50
     Should be true  ${in_range_2}
 
     ${member1_s1}=  cli return member interface stats  s1  ${s1_10g_number_1}  ethernet1  tx

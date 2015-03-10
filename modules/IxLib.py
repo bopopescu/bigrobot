@@ -1310,10 +1310,7 @@ class Ixia(object):
                                                        crc=crc, no_arp=no_arp, line_rate=line_rate)
         helpers.log('Created Traffic Stream : %s' % traffic_stream)
         self._traffic_stream[name] = traffic_stream
-        helpers.log('Applying Traffic config..')
-        self._handle.execute('apply', self._handle.getRoot() + 'traffic')
-        helpers.log('Succesfully Applied traffic Config ..')
-        self._traffi_apply = True  # Setting it False to Apply Changes while starting traffic
+        self.ix_apply_traffic()
         return traffic_stream
 
     def ix_l3_add_hosts(self, **kwargs):
@@ -1997,6 +1994,7 @@ class Ixia(object):
         helpers.log("First Checking IXIA vPort States whether Released or not..")
         self.ix_check_vport_state()
         stream = kwargs.get('stream', None)
+        flow_stats = kwargs.get('flow_stats', False)
         helpers.log('Got the Stream Arguments %s' % str(kwargs))
         handle = self._handle
         port_stats = {}
@@ -2040,37 +2038,66 @@ class Ixia(object):
         else:
             traffic_item_name = handle.getAttribute(stream, '-name')
             helpers.log('Fetching Port Stats for Traffic Item : %s' % traffic_item_name)
-            portStatistics = handle.getFilteredList(handle.getRoot() + 'statistics', 'view', '-caption', 'Traffic Item Statistics')[0]
-            col_names = handle.getAttribute(portStatistics + '/page', '-columnCaptions')
-            stats = handle.getAttribute(portStatistics + '/page', '-rowValues')
-            get_stats = False
-            port_stat = {}
-            for stat in stats:
+            if flow_stats:  # Fetching Flow stats from IxNetwork under flow_stats view
+                portStatistics = handle.getFilteredList(handle.getRoot() + 'statistics', 'view', '-caption', 'Flow Statistics')[0]
+                col_names = handle.getAttribute(portStatistics + '/page', '-columnCaptions')
+                stats = handle.getAttribute(portStatistics + '/page', '-rowValues')
+                temp_port_stat = {}
+                temp_port_stats = {}
+                final_stats = {}
                 get_stats = False
-                for column, value in zip(col_names, stat[0]):
-                    if column == 'Traffic Item':
-                        if value == traffic_item_name:
-                            helpers.log('Adding TRAFFIC ITEM Name ...!!!!')
-                            port_stat['Traffic_item'] = value
+                for stat in stats:
+                    for column, value in zip(col_names, stat[0]):
+                        if column == 'Tx Port':
+                            print('Adding TRAFFIC ITEM Name ...!!!!')
+                            if len(temp_port_stat) == 0:
+                                helpers.Log ("skip adding port_stat in port_Stats Dic...")
+                            else:
+                                helpers.log("Adding port_stat into port_stats Dic...")
+                                temp_port_stats[temp_port_stat['Tx Port']] = temp_port_stat
+                                final_stats[temp_port_stat["Traffic Item"]] = temp_port_stats
+                                temp_port_stat = {}
+                            temp_port_stat[column] = value
                             get_stats = True
-                    if get_stats:
-                        if column == 'Tx Frames':
-                            port_stat['transmitted_frames'] = value
-                        if column == 'Rx Frames':
-                            port_stat['received_frames'] = value
-                            port_stat['received_valid_frames'] = value
-                        if column == 'Loss %':
-                            port_stat['loss_percentage'] = value
-                        if column == 'Tx Frame Rate':
-                            port_stat['transmitted_frame_rate'] = value
-                        if column == 'Rx Frame Rate':
-                            port_stat['received_frame_rate'] = value
-                        if column == 'Frames Delta':
-                            port_stat['frames_delta'] = value
-                        if re.match(r'.*Loss Duration.*', column):
-                            port_stat['packet_loss_duration_ms'] = value
-            port_stats[port_stat['Traffic_item']] = port_stat
-        helpers.log('result:\n%s' % helpers.prettify(port_stats))
+                        if get_stats:
+                            temp_port_stat[column] = value
+                helpers.log("Adding port_stat into port_stats Dic...")
+                temp_port_stats[temp_port_stat['Tx Port']] = temp_port_stat
+                final_stats[temp_port_stat["Traffic Item"]] = temp_port_stats
+                temp_port_stat = {}
+                port_stats = final_stats
+            else:
+                portStatistics = handle.getFilteredList(handle.getRoot() + 'statistics', 'view', '-caption', 'Traffic Item Statistics')[0]
+                col_names = handle.getAttribute(portStatistics + '/page', '-columnCaptions')
+                stats = handle.getAttribute(portStatistics + '/page', '-rowValues')
+                get_stats = False
+                port_stat = {}
+                for stat in stats:
+                    get_stats = False
+                    for column, value in zip(col_names, stat[0]):
+                        if column == 'Traffic Item':
+                            if value == traffic_item_name:
+                                helpers.log('Adding TRAFFIC ITEM Name ...!!!!')
+                                port_stat['Traffic_item'] = value
+                                get_stats = True
+                        if get_stats:
+                            if column == 'Tx Frames':
+                                port_stat['transmitted_frames'] = value
+                            if column == 'Rx Frames':
+                                port_stat['received_frames'] = value
+                                port_stat['received_valid_frames'] = value
+                            if column == 'Loss %':
+                                port_stat['loss_percentage'] = value
+                            if column == 'Tx Frame Rate':
+                                port_stat['transmitted_frame_rate'] = value
+                            if column == 'Rx Frame Rate':
+                                port_stat['received_frame_rate'] = value
+                            if column == 'Frames Delta':
+                                port_stat['frames_delta'] = value
+                            if re.match(r'.*Loss Duration.*', column):
+                                port_stat['packet_loss_duration_ms'] = value
+                port_stats[port_stat['Traffic_item']] = port_stat
+            helpers.log('result:\n%s' % helpers.prettify(port_stats))
         return port_stats
 
     def ix_stop_traffic(self, traffic_stream=None):

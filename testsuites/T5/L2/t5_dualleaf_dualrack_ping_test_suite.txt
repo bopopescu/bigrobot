@@ -10,6 +10,7 @@ Force Tags       T5
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library          keywords/Mininet.py
+Library	         keywords/T5Utilities.py
 Resource		 testsuites/T5/t5_dualleaf_resource.txt
 
 * Variables
@@ -192,6 +193,7 @@ Tear down the config
 
 T5 base test setup
    base test setup
+   start floodlight monitor
    add a tenant  A 
    add a vns  A  A
    add a portgroup  p1 
@@ -206,6 +208,8 @@ T5 base test setup
    sleep  5
    
 T5 base test teardown
+   base test teardown
+   stop floodlight monitor
    delete a tenant  A
    delete interface from portgroup  leaf0-a  ${bm0_intf0}  p1
    delete interface from portgroup  leaf0-b  ${bm0_intf1}  p1
@@ -216,7 +220,6 @@ T5 base test teardown
    delete a portgroup  p1
    delete a portgroup  p2
    delete a portgroup  p3
-   base test teardown
    sleep  5
          
 add a tenant  [Arguments]  ${tenant} 
