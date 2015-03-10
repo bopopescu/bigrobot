@@ -505,6 +505,20 @@ class BsnCommon(object):
         '''
         return content[index][key]
 
+    def verify_nested_dict_key(self, content, *args):
+        ''' Given a nested dictionary, return the final value of the key
+
+            Input:Dictionary, index and required key.
+
+            Return Value:  return the value for a particular key
+        '''
+        final_result = ''
+        for arg in args:
+            final_result = content[arg]
+            content = content [arg]
+
+        return final_result
+
     def verify_json_key(self, content, index, key):
         ''' Given a dictionary, return the value for a particular key
 
