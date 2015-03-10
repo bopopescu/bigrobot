@@ -12,12 +12,14 @@ class TestSuite(object):
         """
         filename: output.xml file (with path)
         """
-        self._build = {}
+        self._build_name = os.environ['BUILD_NAME']
         self._suite = {}
         self._tests = []
         self._total_tests = 0
         self._filename = filename
         self._db = TestCatalog().db()
+        self._tags = []  # union
+        self._tags_intersection = []
 
         self._is_regression = is_regression
         self._is_baseline = is_baseline
@@ -26,6 +28,24 @@ class TestSuite(object):
         self.xml_str = ''.join(helpers.file_read_once(self._filename,
                                                       to_list=True)[1:])
         self._data = xmltodict.parse(self.xml_str)
+
+    def build_name(self):
+        return self._build_name
+
+    def data(self):
+        """
+        Handle to the XML data from input file (output.xml).
+        """
+        if 'robot' not in self._data:
+            helpers.environment_failure(
+                    "Fatal error: expecting data['robot']")
+        if 'suite' not in self._data['robot']:
+            helpers.environment_failure(
+                    "Fatal error: expecting data['robot']['suite']")
+        if 'test' not in self._data['robot']['suite']:
+            helpers.environment_failure(
+                    "Fatal error: expecting data['robot']['suite']['test']")
+        return self._data
 
     def db(self):
         return self._db
@@ -134,21 +154,6 @@ class TestSuite(object):
                   + arg_str + '. Inserting new record.')
             self.db_insert(rec, collection="test_cases")
 
-    def data(self):
-        """
-        Handle to the XML data from input file (output.xml).
-        """
-        if 'robot' not in self._data:
-            helpers.environment_failure(
-                    "Fatal error: expecting data['robot']")
-        if 'suite' not in self._data['robot']:
-            helpers.environment_failure(
-                    "Fatal error: expecting data['robot']['suite']")
-        if 'test' not in self._data['robot']['suite']:
-            helpers.environment_failure(
-                    "Fatal error: expecting data['robot']['suite']['test']")
-        return self._data
-
     def git_auth(self, filename):
         filename = re.sub(r'.*bigrobot/', '../', filename)
         (status, output, err_out, err_code) = helpers.run_cmd2("./git-auth " + filename, shell=True)
@@ -241,7 +246,7 @@ class TestSuite(object):
                     'total_tests': self.total_tests(),
                     'topo_type': topo_type,
                     'notes': None,
-                    'build_name': os.environ['BUILD_NAME'],
+                    'build_name': self.build_name(),
                     'created_by': getpass.getuser(),
                     }
 
@@ -299,13 +304,21 @@ class TestSuite(object):
                 'duration': None,
                 'origin_script_catalog': not self._is_regression,
                 'origin_regression_catalog': self._is_regression,
+                'author': self._suite['author'],
                 'product_suite': self._suite['product_suite'],
                 'build_number': None,
                 'build_url': None,
-                'build_name': os.environ['BUILD_NAME'],
+                'build_name': self.build_name(),
                 'notes': None,
                 'created_by': getpass.getuser(),
                 }
+
+        self._tags = helpers.set_union(self._tags, test["tags"])
+        if self._tags_intersection == []:
+            self._tags_intersection = test["tags"]  # initialize
+        else:
+            self._tags_intersection = helpers.set_intersection(self._tags_intersection, test["tags"])
+
         return test
 
     def extract_test_attributes_and_db_populate(self):
@@ -332,6 +345,8 @@ class TestSuite(object):
             self._tests.append(test)
 
         self.total_tests()
+        self._suite['tags'] = self._tags
+        self._suite['tags_common_across_tests'] = self._tags_intersection
 
     def extract_attributes(self):
         """
