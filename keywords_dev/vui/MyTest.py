@@ -1382,3 +1382,5 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
             t.node_connect(node, no_ping=True)
             c = t.controller(node)
             c.cli("show user")
+            BsnCommon().rest_show_version(node)
+

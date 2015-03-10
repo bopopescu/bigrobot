@@ -460,7 +460,6 @@ class ControllerNode(Node):
         return self.dev.monitor_reauth(state)
 
     def close(self, delete_session_cookie=True):
-        super(ControllerNode, self).close()
         if delete_session_cookie:
             try:
                 self.rest.delete_session_cookie()
@@ -470,6 +469,7 @@ class ControllerNode(Node):
         else:
             helpers.log("Argument delete_session_cookie=%s. Don't delete session cookie."
                         % delete_session_cookie)
+        super(ControllerNode, self).close()
 
 
 class MininetNode(Node):
