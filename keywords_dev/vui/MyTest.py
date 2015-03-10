@@ -907,7 +907,7 @@ vui@Vuis-MacBook-Pro$
         self.test_vui_esb(nodes)
         self.test_vui_esb(nodes)
         self.test_vui_esb(nodes)
-        
+
     def test_vui_esb(self, nodes):
         # from bsn_services import sample_method_tasks as tasks
         from vui_services import tasks as tasks
@@ -1372,3 +1372,13 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
             c.cli("exit")
         except:
             pass
+
+    def login_loop(self, node, iteration=20):
+        t = test.Test()
+
+        for i in range(1, int(iteration)):
+            helpers.log("Iteration #%s" % i)
+            t.node_disconnect(node)
+            t.node_connect(node, no_ping=True)
+            c = t.controller(node)
+            c.cli("show user")
