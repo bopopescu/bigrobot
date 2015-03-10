@@ -152,7 +152,7 @@ Create L2 devices in ixia
     #pause    freee!!
     Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify mac learning rate
     ${time_mac_learning_done}  Get time
-    ${time_diff}   print diff   ${time_traffic_started}   ${time_mac_learning_done}
+    ${time_diff}=   time diff   ${time_traffic_start}   ${time_mac_learning_done}
     Log to console    :
     Log to console    Mac Learning rate is
     Log to console    ${time_diff}
@@ -184,7 +184,7 @@ Create L3 devices in ixia
     #pause       FREEZZEEE!!!
     Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify arp learning rate   ${leaf}
     ${time_arp_done}   Get time
-    ${time_diff}    print diff   ${time_arp_start}    ${time_arp_done}
+    ${time_diff}=    time diff   ${time_arp_start}    ${time_arp_done}
     Log to console    :
     Log to console    46K ARP resolved in:
     Log to console    ${time_diff}
@@ -202,7 +202,7 @@ Controller HA failover times with L2 traffic
     #pause    freee!!
     Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify mac learning rate
     ${time_mac_learning_done}  Get time
-    ${time_diff}   print diff   ${time_traffic_started}   ${time_mac_learning_done}
+    ${time_diff}=   time diff   ${time_traffic_start}   ${time_mac_learning_done}
     Log to console    :
     Log to console    Mac Learning rate is
     Log to console    ${time_diff}
@@ -216,7 +216,7 @@ Controller HA failover times with L2 traffic
     ${time_failover_done}    Get time
     stop monitoring the exception
     parse monitoring file
-    ${time_diff}    print diff   ${time_failover_start}    ${time_failover_done}
+    ${time_diff}=    time diff   ${time_failover_start}    ${time_failover_done}
     Log to console      :
     Log to console     Failover completed without fabric errors in:
     Log to console     ${time_diff}
@@ -309,7 +309,7 @@ Controller reboot times
     ${time_controller_online}=   Get time
     stop monitoring the exception
     parse monitoring file
-    ${time_diff}    print diff   ${time_reboot}    ${time_controller_online}
+    ${time_diff}=    time diff   ${time_reboot}    ${time_controller_online}
     Log to console    :
     Log to csonole    Controller reboot times and joining to cluster without any fabric errors:
     Log to console    ${time_diff}
