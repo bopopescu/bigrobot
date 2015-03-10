@@ -190,6 +190,46 @@ Create L3 devices in ixia
     Log to console    ${time_diff}
     
     
+Controller HA failover times with L2 traffic
+    [Tags]  HA1  loss
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    ${time_traffic_start}   Get time
+    #pause    FREEZZEEE!!!
+    #sleep  40   #MAC learning time, and sleep time, we can change
+    #pause    freee!!
+    Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify mac learning rate
+    ${time_mac_learning_done}  Get time
+    ${time_diff}   print diff   ${time_traffic_started}   ${time_mac_learning_done}
+    Log to console    :
+    Log to console    Mac Learning rate is
+    Log to console    ${time_diff}
+    stop traffic
+    clear stats
+    start traffic
+    start monitoring exception during failover
+    ${time_failover_start}    Get time
+    cli controller failover
+    Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify fabric switch link and errors
+    ${time_failover_done}    Get time
+    stop monitoring the exception
+    parse monitoring file
+    ${time_diff}    print diff   ${time_failover_start}    ${time_failover_done}
+    Log to console      :
+    Log to console     Failover completed without fabric errors in:
+    Log to console     ${time_diff}
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    #verify fabric switch link and errors
+    sleep  15
+    stop traffic
+    print L2 packet_loss_duration
 
 Controller HA failover with L2 traffic
     [Tags]  HA1  loss
