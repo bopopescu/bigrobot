@@ -146,10 +146,16 @@ Create L2 devices in ixia
     clear stats
     apply traffic
     start traffic
+    ${time_traffic_start}   Get time
     #pause    FREEZZEEE!!!
-    sleep  40   #MAC learning time, and sleep time, we can change
+    #sleep  40   #MAC learning time, and sleep time, we can change
     #pause    freee!!
-    verify mac learning rate
+    Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify mac learning rate
+    ${time_mac_learning_done}  Get time
+    ${time_diff}   print diff   ${time_traffic_started}   ${time_mac_learning_done}
+    Log to console    :
+    Log to console    Mac Learning rate is
+    Log to console    ${time_diff}
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
     #pause   FREEZZEEE!!!!
@@ -172,17 +178,61 @@ Create L3 devices in ixia
     ${return}=  rest verify sync state
     Should Be True  ${return}
     create L3 streams
-    #pause    FREEZZEE!!!
+    ${time_arp_start}    Get time
     L3 start hosts    RetransmitInterval=10000   RetransmitCount=10    arp_check=False
-    sleep  120   #Sleeping for 100 seconds for the ARP to complete for 46K end points
+    #sleep  120   #Sleeping for 100 seconds for the ARP to complete for 46K end points
     #pause       FREEZZEEE!!!
-    ${l3_table}=  get L3 table count  ${leaf}
-    Should be true  ${l3_table} > 45000
+    Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify arp learning rate   ${leaf}
+    ${time_arp_done}   Get time
+    ${time_diff}    print diff   ${time_arp_start}    ${time_arp_done}
+    Log to console    :
+    Log to console    46K ARP resolved in:
+    Log to console    ${time_diff}
     
     
+Controller HA failover times with L2 traffic
+    [Tags]  HA1  loss
+    create L2 streams
+    clear stats
+    apply traffic
+    start traffic
+    ${time_traffic_start}   Get time
+    #pause    FREEZZEEE!!!
+    #sleep  40   #MAC learning time, and sleep time, we can change
+    #pause    freee!!
+    Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify mac learning rate
+    ${time_mac_learning_done}  Get time
+    ${time_diff}   print diff   ${time_traffic_started}   ${time_mac_learning_done}
+    Log to console    :
+    Log to console    Mac Learning rate is
+    Log to console    ${time_diff}
+    stop traffic
+    clear stats
+    start traffic
+    start monitoring exception during failover
+    ${time_failover_start}    Get time
+    cli controller failover
+    Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify fabric switch link and errors
+    ${time_failover_done}    Get time
+    stop monitoring the exception
+    parse monitoring file
+    ${time_diff}    print diff   ${time_failover_start}    ${time_failover_done}
+    Log to console      :
+    Log to console     Failover completed without fabric errors in:
+    Log to console     ${time_diff}
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    ${return}=  rest verify sync state
+    Should Be True  ${return}
+    #verify fabric switch link and errors
+    sleep  15
+    stop traffic
+    print L2 packet_loss_duration
 
 Controller HA failover with L2 traffic
-    [Tags]  HA1
+    [Tags]  HA1  loss
     create L2 streams
     clear stats
     apply traffic
@@ -216,7 +266,7 @@ Controller HA failover with L2 traffic
     
     
 Controller Master reboot    
-    [Tags]  HA2
+    [Tags]  HA2  loss
     create L2 streams
     clear stats
     apply traffic
@@ -250,9 +300,30 @@ Controller Master reboot
     ${acl_table}=  get ACL table count  ${leaf}
     Should be true  ${acl_table} == 3001
     
+Controller reboot times
+    [Tags]  HA2  loss
+    ${time_reboot}=   Get time
+    ${returnVal}=  cli controller reboot
+    Should Be True  ${returnVal}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_controller_online}=   Get time
+    stop monitoring the exception
+    parse monitoring file
+    ${time_diff}    print diff   ${time_reboot}    ${time_controller_online}
+    Log to console    :
+    Log to csonole    Controller reboot times and joining to cluster without any fabric errors:
+    Log to console    ${time_diff}
+    ${return}=  rest verify debug coordinator
+    Should Be True  ${return}
+    ${return}=  rest verify disk usage
+    Should Be True  ${return}
+    stop traffic
+    print L2 packet_loss_duration
+
+
 
 Controller Slave Reboot
-    [Tags]  HA3
+    [Tags]  HA3  loss
     create L2 streams
     clear stats
     apply traffic
@@ -287,7 +358,7 @@ Controller Slave Reboot
     
 
 Power off/On Master Controller
-    [Tags]  HA4
+    [Tags]  HA4  loss
     create L2 streams
     clear stats
     apply traffic
@@ -323,7 +394,7 @@ Power off/On Master Controller
 
 
 Power off/On Slave Controller
-    [Tags]  HA5
+    [Tags]  HA5  loss
     create L2 streams
     clear stats
     apply traffic
@@ -999,7 +1070,7 @@ collect tech-support
     parse monitoring file
 
 spine reboot time
-    [Tags]  reboottime
+    [Tags]  reboottime  run
     reconnect switch ips   ${spine}
     Log to console   Rebooting spine switch
     ${time_before}=   Get time
@@ -1022,7 +1093,7 @@ spine reboot time
     
     
 leaf reboot time
-    [Tags]  reboottime
+    [Tags]  reboottime  run
     reconnect switch ips   ${leaf}
     Log to console   Rebooting spine switch
     ${time_before}=   Get time
@@ -1046,6 +1117,12 @@ leaf reboot time
     
      
 * Keywords
+
+verify arp learning rate 
+    [Arguments]   ${leaf}
+    ${l3_table}=  get L3 table count  ${leaf}
+    Should be true  ${l3_table} > 45000
+
 verify switch connected   
     [Arguments]   ${spine-name}
     Verify Switch Connection State  True  ${spine-name}

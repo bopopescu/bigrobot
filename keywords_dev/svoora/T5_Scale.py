@@ -260,6 +260,53 @@ class T5_Scale(object):
          #   end_date += timedelta(1)  # +day
           #  assert end_date > start_date
            # return end_date - start_date
+    def cli_controller_failover(self, node='slave'):
+        ''' Function to trigger failover to slave controller via CLI.
+            Input: None
+            Output: True if successful, False otherwise
+        '''
+        t = test.Test()
+        c = t.controller(node)
+
+        helpers.log("Failover")
+        try:
+            c.config("config")
+            c.send("reauth")
+            c.expect(r"Password:")
+            c.config("adminadmin")
+            c.send("system failover")
+            c.expect(r"Failover to a standby controller node (\"y\" or \"yes\" to continue)?")
+            c.config("yes")
+            # helpers.sleep(30)
+            # helpers.sleep(90)
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+    def cli_controller_reboot(self, masterNode=True):
+
+        t = test.Test()
+        master = t.controller("master")
+        slave = t.controller("slave")
+
+        try:
+            if(masterNode):
+                master.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                master.enable("yes")
+                helpers.log("Master is rebooting")
+                # helpers.sleep(90)
+            else:
+                slave.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                slave.enable("yes")
+                helpers.log("Slave is rebooting")
+                # helpers.sleep(90)
+                # helpers.sleep(190)
+        except:
+            helpers.log("Node is rebooting")
+            return False
+        else:
+            return True
 
     def parse_exception(self, role, file_name):
         t = test.Test()
