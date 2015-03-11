@@ -267,10 +267,13 @@ ${GTP PROTOCOL TYPE FIELD}					xpath=//div[@data-dojo-attach-point='gtpBlock']/d
 
 ### Switches Page
 ${CONFIGURE SWITCH ALIAS POPUP}			xpath=//div[@title='Configure Switch Alias']
-${SET ALIAS MENU POPUP}					xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr
+${SET ALIAS MENU POPUP}					xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr[1]
+${DEPLOY FOR BIGTAP}					xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr[4]
+${DEPLOY FOR BIGCHAIN}					xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr[4]
+${CONFIRM SWITCH DEPLOYMENT POPUP}		xpath=//div[@title='Confirm Switch Deployment']
 ${SWITCH ALIAS FIELD}					xpath=//input[@id='dijit_form_ValidationTextBox_0']
 ${SUBMIT SWITCH ALIAS BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
-
+${DEPLOY SWITCH BUTTON}					xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Deploy')]
 
 
 ### Controller Interfaces Page
@@ -1210,7 +1213,15 @@ Delete All Security Groups
 Delete All Security RBAC
     Go To Security RBAC Page
     Delete All
-    
+
+Delete All BigChain Chains
+	Go To BigChain Chains Page
+    Delete All 
+
+Delete All BigChain Services
+	Go To BigChain Services Page
+    Delete All 
+     
 Delete All Big Tap Match Rules
 	[Arguments]  ${policy}
 	Go To Big Tap Policies Page
@@ -1246,6 +1257,9 @@ Delete All Big Tap Resources
 	Delete All Big Tap Interfaces
 	Delete All Big Tap Interface Groups
 
+Delete All Big Chain Resources
+	Delete All Big Chain Chains
+	Delete All Big Chain Services
 
 Configure User
 	[Arguments]  ${username}  ${password}  ${conf_password}  ${full_name}  ${group}
@@ -3969,7 +3983,7 @@ Add Service Instance from Chain
 
 	
 Create a BigChain Service	
-	[Arguments]  ${name}  ${type}  ${description}  ${action}  ${health check}
+	[Arguments]  ${name}  ${type}  ${description}  ${action}  ${health check}  ${rule}
 	
 	Go To BigChain Services Page	
     
@@ -3996,7 +4010,7 @@ Create a BigChain Service
 	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Mark Down if Health Check Fails')]      Mark Down
 	
 	
-    Run Keyword If  '${health check}}'=='Enabled Mark Down'
+    Run Keyword If  '${health check}'=='Enabled Mark Down'
 	...   Drag And Drop   ${HEALTH CHECK KNOB ENABLED}  target=Enabled
 	...	  Drag And Drop   ${MARK DOWN KNOB ENABLED}  target=Mark Down
 	
@@ -4004,4 +4018,32 @@ Create a BigChain Service
     Click Element  ${SAVE BUTTON}  and don't wait
     Verify Element Invisible  ${CREATE BIGCHAIN SERVICE POPUP}
     
-    Verify Page Contains Text  ${name}						
+    Verify Page Contains Text  ${name}
+    
+    
+Configure Switch Deployment Role
+	[Arguments]  ${dpid}  ${switch}  ${type}
+	
+	Go To Controller Switches Page
+    Verify Page Contains Text  ${switch}
+    ${action_menu}  Generate Action Menu Xpath  div[@id='switches_table']  ${dpid}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait]
+    Run Keyword If  '${type}'=='Big Tap'
+	...   Verify Element Visible  ${DEPLOY FOR BIGTAP}
+	Run Keyword If  '${type}'=='Big Tap'
+	...   Click Element  ${DEPLOY FOR BIGTAP}  and don't wait  
+	
+	Run Keyword If  '${type}'=='Big Chain'
+	...  Verify Element Visible  ${DEPLOY FOR BIGCHAIN}
+	Run Keyword If  '${type}'=='Big Chain'
+	...  Click Element  ${DEPLOY FOR BIGCHAIN}  and don't wait
+      
+    Verify Element Visible  ${CONFIRM SWITCH DEPLOYMENT POPUP}
+
+    Element Should Be Visible  ${DEPLOY SWITCH BUTTON}
+    Click Element  ${DEPLOY SWITCH BUTTON}   and don't wait
+
+    #Verify Element Invisible  ${CONFIRM SWITCH DEPLOYMENT POPUP}
+    Verify Element Visible  xpath=//div[@class='bsn_ellipsis' and contains (text(), '${switch}')]/parent::div/parent::td/following-sibling::td/div[@class='content']/descendant::div[@class='label' and contains(text(), '${type}')]
+							
