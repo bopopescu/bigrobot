@@ -4,8 +4,8 @@ from autobot.bsn_restclient import BsnRestClient
 
 
 class Node(object):
-    def __init__(self, name, ip, user=None, password=None, params=None,
-                 protocol=None):
+    def __init__(self, name, ip, user=None, password=None, t=None,
+                 protocol=None, no_ping=False):
         if not name:
             helpers.environment_failure("Node name is not defined")
 
@@ -16,7 +16,8 @@ class Node(object):
         self._console_info = None
         self.http_port = None
         self.base_url = None
-        self.params = params
+        self.t = t
+        self.params = t.topology_params()
         self.is_pingable = False
         self.rest = None  # REST handle
         self.dev = None  # DevConf handle (SSH)
@@ -26,7 +27,7 @@ class Node(object):
         # If name are in the form 'node-<ip_addr>', e.g., 'node-10.193.0.43'
         # then they are nodes spawned directly by the user. Don't try to
         # look up their attributes in params since they are not defined.
-        if params and not name.startswith('node-'):
+        if self.params and not name.startswith('node-'):
             self.node_params = self.params[name]
             val = helpers.params_val('set_devconf_debug_level',
                                      self.node_params)
@@ -63,7 +64,8 @@ class Node(object):
                                         % self.name())
         if helpers.is_esb():
             helpers.summary_log("ESB environment - bypassing initial ping")
-
+        elif no_ping:
+            pass
         elif helpers.params_is_false('set_init_ping', self.node_params):
             helpers.log("'set_init_ping' is disabled for '%s', bypassing"
                         " initial ping"
@@ -79,6 +81,12 @@ class Node(object):
 
     def ip(self):
         return self._ip
+
+    def port(self):
+        return self._port
+
+    def protocol(self):
+        return self._protocol
 
     def alias(self):
         return self.node_params.get('alias', None)
@@ -229,10 +237,9 @@ class Node(object):
 
 
 class ControllerNode(Node):
-    def __init__(self, name, ip, user, password, t, protocol=None):
-        super(ControllerNode, self).__init__(name, ip, user, password,
-                                             t.topology_params(),
-                                             protocol=protocol)
+    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False):
+        super(ControllerNode, self).__init__(name, ip, user, password, t,
+                                             protocol=protocol, no_ping=no_ping)
 
         self._monitor_reauth = False  # default
 
@@ -247,19 +254,19 @@ class ControllerNode(Node):
                                         self.node_params)):
             helpers.log("'set_session_ssh' is disabled for '%s', bypassing"
                         " node SSH and RestClient session setup"
-                        % name)
+                        % self.name())
             return
 
         if 'monitor_reauth' in self.node_params:
             self._monitor_reauth = self.node_params['monitor_reauth']
 
         helpers.log("name=%s host=%s user=%s password=%s"
-                    % (name, ip, user, password))
-        self.dev = self.connect(name=name,
-                                host=ip,
-                                user=user,
-                                password=password,
-                                protocol=protocol)
+                    % (self.name(), self.ip(), self.user(), self.password()))
+        self.dev = self.connect(name=self.name(),
+                                host=self.ip(),
+                                user=self.user(),
+                                password=self.password(),
+                                protocol=self.protocol())
 
         if 'http_port' in self.node_params:
             self.http_port = self.node_params['http_port']
@@ -274,15 +281,13 @@ class ControllerNode(Node):
         else:
             self.base_url = 'http://%s:%s' % (ip, self.http_port)
 
-        self.rest = BsnRestClient(name=name,
+        self.rest = BsnRestClient(name=self.name(),
                                   base_url=self.base_url,
                                   platform=self.platform(),
-                                  host=ip,
-                                  user=user,
-                                  password=password,
+                                  host=self.ip(),
+                                  user=self.user(),
+                                  password=self.password(),
                                   http_port=self.http_port)
-        self.t = t
-
         # CLI Shortcuts
         self.cli = self.dev.cli  # CLI mode
         self.enable = self.dev.enable  # Enable mode
@@ -316,9 +321,9 @@ class ControllerNode(Node):
         if not name:
             name = self.name()
         if not port:
-            port = self._port
+            port = self.port()
         if not protocol:
-            protocol = self._protocol
+            protocol = self.protocol()
         return devconf.ControllerDevConf(
                             name=name,
                             host=host,
@@ -455,7 +460,6 @@ class ControllerNode(Node):
         return self.dev.monitor_reauth(state)
 
     def close(self, delete_session_cookie=True):
-        super(ControllerNode, self).close()
         if delete_session_cookie:
             try:
                 self.rest.delete_session_cookie()
@@ -465,15 +469,15 @@ class ControllerNode(Node):
         else:
             helpers.log("Argument delete_session_cookie=%s. Don't delete session cookie."
                         % delete_session_cookie)
+        super(ControllerNode, self).close()
 
 
 class MininetNode(Node):
     def __init__(self, name, ip, user, password, t,
                  controller_ip, controller_ip2=None,
-                 openflow_port=None, protocol=None):
-        super(MininetNode, self).__init__(name, ip, user, password,
-                                          t.topology_params(),
-                                          protocol=protocol)
+                 openflow_port=None, protocol=None, no_ping=False):
+        super(MininetNode, self).__init__(name, ip, user, password, t,
+                                          protocol=protocol, no_ping=no_ping)
 
         self.controller_ip = controller_ip
         self.controller_ip2 = controller_ip2
@@ -515,11 +519,11 @@ class MininetNode(Node):
         helpers.log("Mininet type: %s" % self.mn_type)
         helpers.log("Setting up mininet ('%s')" % name)
 
-        self.dev = self.connect(name=name,
-                                host=ip,
-                                user=user,
-                                password=password,
-                                protocol=protocol)
+        self.dev = self.connect(name=self.name(),
+                                host=self.ip(),
+                                user=self.user(),
+                                password=self.password(),
+                                protocol=self.protocol())
 
         # Shortcuts
         self.cli = self.dev.cli
@@ -543,9 +547,9 @@ class MininetNode(Node):
         if not name:
             name = self.name()
         if not port:
-            port = self._port
+            port = self.port()
         if not protocol:
-            protocol = self._protocol
+            protocol = self.protocol()
 
         if self.mn_type == 't6':
             return devconf.T6MininetDevConf(
@@ -590,15 +594,15 @@ class MininetNode(Node):
 
 
 class PduNode(Node):
-    def __init__(self, name, ip, user, password, t, protocol=None):
-        super(PduNode, self).__init__(name, ip, user, password,
-                                      t.topology_params(), protocol=protocol)
+    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False):
+        super(PduNode, self).__init__(name, ip, user, password, t,
+                                      protocol=protocol, no_ping=no_ping)
 
-        self.dev = self.connect(name=name,
-                                host=ip,
-                                user=user,
-                                password=password,
-                                protocol=protocol)
+        self.dev = self.connect(name=self.name(),
+                                host=self.ip(),
+                                user=self.user(),
+                                password=self.password(),
+                                protocol=self.protocol())
 
         # Shortcuts
         self.cli = self.dev.cli  # CLI mode
@@ -616,9 +620,9 @@ class PduNode(Node):
         if not name:
             name = self.name()
         if not port:
-            port = self._port
+            port = self.port()
         if not protocol:
-            protocol = self._protocol
+            protocol = self.protocol()
         return devconf.PduDevConf(
                             name=name,
                             host=host,
@@ -636,9 +640,9 @@ class PduNode(Node):
 
 
 class HostNode(Node):
-    def __init__(self, name, ip, user, password, t, protocol=None):
-        super(HostNode, self).__init__(name, ip, user, password,
-                                       t.topology_params(), protocol=protocol)
+    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False):
+        super(HostNode, self).__init__(name, ip, user, password, t,
+                                       protocol=protocol, no_ping=no_ping)
 
         if (not t.init_completed()
             and helpers.params_is_false('set_session_ssh',
@@ -648,11 +652,11 @@ class HostNode(Node):
                         % name)
             return
 
-        self.dev = self.connect(name=name,
-                                host=ip,
-                                user=user,
-                                password=password,
-                                protocol=protocol)
+        self.dev = self.connect(name=self.name(),
+                                host=self.ip(),
+                                user=self.user(),
+                                password=self.password(),
+                                protocol=self.protocol())
 
         # Shortcuts
         self.bash = self.dev.bash
@@ -673,9 +677,9 @@ class HostNode(Node):
         if not name:
             name = self.name()
         if not port:
-            port = self._port
+            port = self.port()
         if not protocol:
-            protocol = self._protocol
+            protocol = self.protocol()
         return devconf.HostDevConf(
                             name=name,
                             host=host,
@@ -741,16 +745,15 @@ class HostNode(Node):
 
 
 class OpenStackNode(HostNode):
-    def __init__(self, name, ip, user, password, t, protocol=None):
+    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False):
         super(OpenStackNode, self).__init__(name, ip, user, password, t,
-                                            protocol=protocol)
+                                            protocol=protocol, no_ping=no_ping)
 
 
 class SwitchNode(Node):
-    def __init__(self, name, ip, user, password, t, protocol=None):
-        super(SwitchNode, self).__init__(name, ip, user, password,
-                                         t.topology_params(),
-                                         protocol=protocol)
+    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False):
+        super(SwitchNode, self).__init__(name, ip, user, password, t,
+                                         protocol=protocol, no_ping=no_ping)
 
         if (not t.init_completed()
             and helpers.params_is_false('set_session_ssh',
@@ -760,11 +763,11 @@ class SwitchNode(Node):
                         % name)
             return
 
-        self.dev = self.connect(name=name,
-                                host=ip,
-                                user=user,
-                                password=password,
-                                protocol=protocol)
+        self.dev = self.connect(name=self.name(),
+                                host=self.ip(),
+                                user=self.user(),
+                                password=self.password(),
+                                protocol=self.protocol())
 
         # Shortcuts
         self.cli = self.dev.cli  # CLI mode
@@ -789,9 +792,9 @@ class SwitchNode(Node):
         if not name:
             name = self.name()
         if not port:
-            port = self._port
+            port = self.port()
         if not protocol:
-            protocol = self._protocol
+            protocol = self.protocol()
         return devconf.SwitchDevConf(
                             name=name,
                             host=host,

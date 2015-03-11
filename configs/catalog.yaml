@@ -1,6 +1,7 @@
 # $ mongo qa-mongodb:27017/test_catalog_201412
 #
 db_server: qa-mongodb.qa.bigswitch.com
+#db_server: localhost
 db_port: 27017
 database: test_catalog_201412
 

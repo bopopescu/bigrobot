@@ -343,12 +343,12 @@ class TestCatalog(object):
         query = {"build_name": build_group_name}
         cursor = self.build_groups_collection().find(query)
         count = cursor.count()
-        
+
         if createtime == None:
             createtime = self.timestamp()
         if updatetime == None:
             updatetime = self.timestamp()
-            
+
         if count >= 1:
             # Update: Found build which contains the build_name.
             if not quiet: print "Found build with '%s'." % build_group_name

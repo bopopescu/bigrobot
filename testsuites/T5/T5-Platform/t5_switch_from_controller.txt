@@ -47,199 +47,199 @@ ${leaf_lag}=                 16
 ###
 ###
 TC01 Get and Verify the switch environment Fan 1 State information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment information of Fan 1 State from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  State 
 
 TC02 Get and Verify the switch environment Fan 1 Status information from Controller
-    [Tags]  switch-platform  environment  feature
+    [Tags]  switch-platform  environment  feature  sanity
     Log  Step 1 - Get the switch environment information of Fan 1 Status from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  Status
 
 TC03 Get and Verify the switch environment Fan 1 RPM information from Controller
-    [Tags]  switch-platform  environment  feature
+    [Tags]  switch-platform  environment  feature  sanity
     Log  Step 1 - Get the switch environment information of Fan 1 RPM from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  RPM
     
 TC04 Get and Verify the switch environment Fan 1 Speed information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment information of Fan 1 Speed from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  Speed
 
 TC05 Get and Verify the switch environment Fan 1 Airflow information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment information of Fan 1 Airflow from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  1  Airflow
     
 TC06 Get and Verify the switch environment Fan 2 State information from Controller
-    [Tags]  switch-platform  environment  feature
+    [Tags]  switch-platform  environment  feature  sanity
     Log  Step 1 - Get the switch environment of Fan 2 State from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  State 
 
 TC07 Get and Verify the switch environment Fan 2 Status information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 2 Status from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  Status
 
 TC08 Get and Verify the switch environment Fan 2 RPM information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 2 RPM from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  RPM
 
 TC09 Get and Verify the switch environment Fan 2 Speed information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 2 Speed from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  Speed
 
 TC10 Get and Verify the switch environment Fan 2 Airflow information from Controller 
-    [Tags]  switch-platform  environment  feature
+    [Tags]  switch-platform  environment  feature  sanity
     Log  Step 1 - Get the switch environment of Fan 2 Airflow from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  2  Airflow
     
 TC11 Get and Verify the switch environment Fan 3 State information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 3 State information from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  State 
 
 TC12 Get and Verify the switch environment Fan 3 Status information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 3 Status information from controller 
     ${dpid} =  rest get mac  ${switch1_name}   
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  Status
 
 TC13 Get and Verify the switch environment Fan 3 RPM information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 3 RPM from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  RPM
    
 TC14 Get and Verify the switch environment Fan 3 Speed information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 3 Speed from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  Speed
     
 TC15 Get and Verify the switch environment Fan 3 Airflow information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 3 Airflow from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  3  Airflow
      
 TC16 Get and Verify the switch environment Fan 4 State information from Controller
-    [Tags]  switch-platform  environment  feature
+    [Tags]  switch-platform  environment  feature  sanity
     Log  Step 1 - Get the switch environment of Fan 4 State from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  State 
 
 TC17 Get and Verify the switch environment Fan 4 Status information from Controller
-    [Tags]  switch-platform  environment  feature
+    [Tags]  switch-platform  environment  feature  sanity
     Log  Step 1 - Get the switch environment of Fan 4 Status from controller 
     ${dpid} =  rest get mac  ${switch1_name}   
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Status
   
 TC18 Get and Verify the switch environment Fan 4 RPM information from Controller
-    [Tags]  switch-platform  environment  feature
+    [Tags]  switch-platform  environment  feature  sanity
     Log  Step 1 - Get the switch environment of Fan 4 RPM from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  RPM
     
 TC19 Get and Verify the switch environment Fan 4 Speed information from Controller
-    [Tags]  switch-platform  environment  feature
+    [Tags]  switch-platform  environment  feature  sanity
     Log  Step 1 - Get the switch environment of Fan 4 Speed from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Speed
     
 TC20 Get and Verify the switch environment Fan 4 Airflow information from Controller
-    [Tags]  switch-platform  environment  feature
+    [Tags]  switch-platform  environment  feature  sanity
     Log  Step 1 - Get the switch environment of Fan 4 Airflow from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  4  Airflow    
 
 TC21 Get and Verify the switch environment Fan 5 State information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 5 State from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  State 
 
 TC22 Get and Verify the switch environment Fan 5 Status information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 5 Status from controller 
     ${dpid} =  rest get mac  ${switch1_name}   
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Status
     
 TC23 Get and Verify the switch environment Fan 5 RPM information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 5 RPM from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  RPM
 
 TC24 Get and Verify the switch environment Fan 5 Speed information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 5 Speed from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Speed
 
 TC25 Get and Verify the switch environment Fan 5 Airflow information from Controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch environment of Fan 5 Airflow from controller 
     ${dpid} =  rest get mac  ${switch1_name}  
     verify switch environment fan from controller  ${switch1_name}  ${dpid}  none  Fan  5  Airflow
 
 TC26 Get and Verify the switch PSU State information from controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch PSU State information from Controller 
     ${dpid} =  rest get mac  ${switch1_name}
     verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  State  
    
 TC27 Get and Verify the switch PSU Status information from controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch PSU Status information from Controller 
     ${dpid} =  rest get mac  ${switch1_name}
     verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  Status  
 
 TC28 Get and Verify the switch PSU Type information from controller
-    [Tags]  switch-platform  environment  feature 
+    [Tags]  switch-platform  environment  feature  sanity 
     Log  Step 1 - Get the switch PSU Type information from Controller 
     ${dpid} =  rest get mac  ${switch1_name}
     verify switch environment PSU from controller  ${switch1_name}  ${dpid}  none  PSU  1  Type  
 
 TC29 Verify Manufacturer of leaf switch version from controller 
-    [Tags]  switch-platform  version  feature  
+    [Tags]  switch-platform  version  feature  sanity  
     verify switch version  ${switch1_name}  ${leaf_manufcomp}  ${leaf_manuf}     
 
 TC30 Verify switch version from controller for Platform of leaf switch
-    [Tags]  switch-platform  version  feature 
+    [Tags]  switch-platform  version  feature  sanity 
     verify switch version  ${switch1_name}  ${leaf_platcomp}  ${leaf_plat}
 
 TC31 Verify switch version from controller for PlatformName of leaf switch
-    [Tags]  switch-platform  version  feature
+    [Tags]  switch-platform  version  feature  sanity
     verify switch version  ${switch1_name}  ${leaf_platnamecomp}  ${leaf_platname}
 
 TC32 Verify switch version from controller for Vendor of leaf switch
-    [Tags]  switch-platform  version  feature
+    [Tags]  switch-platform  version  feature  sanity
     verify switch version  ${switch1_name}  ${leaf_vendorcomp}  ${leaf_vendor}
 
 TC33 Verify switch version from controller for CPLD of leaf switch
-    [Tags]  switch-platform  version  feature
-    verify switch version  ${switch1_name}  ${leaf_cpldcomp}  ${leaf_cpld}
+    [Tags]  switch-platform  version  feature  sanity
+    verify switch version  ${switch1_name}  ${leaf_cpldcomp}  feature  sanity  sanity
 
 TC34 Verify switch version from controller for ONIE of leaf switch
-    [Tags]  switch-platform  version  feature
+    [Tags]  switch-platform  version  feature  sanity
     verify switch version  ${switch1_name}  ${leaf_oniecomp}  ${leaf_onie}
 
 TC35 Verify switch version from controller for LAG of leaf switch
-    [Tags]  switch-platform  version  feature
+    [Tags]  switch-platform  version  feature  sanity
     verify switch version  ${switch1_name}  ${leaf_lagcomp}  ${leaf_lag}
 
 

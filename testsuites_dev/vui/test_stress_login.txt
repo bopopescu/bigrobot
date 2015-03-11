@@ -1,0 +1,20 @@
+* Setting
+Documentation   This suite is for stress tests
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+Library         keywords/T5.py
+Library         keywords/T5Platform.py
+Library         keywords/Host.py
+Library         keywords/Controller.py
+Library         keywords_dev/vui/MyTest.py
+
+
+* Test Case
+Test SSH login loop
+    #[Tags]  skipped
+    login loop    c1    20
+

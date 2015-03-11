@@ -1252,6 +1252,27 @@ def create_uuid():
     return str(uuid.uuid1())
 
 
+def set_unique(a):
+    """
+    Return list with duplicate elements removed.
+    """
+    return list(set(a))
+
+
+def set_intersection(a, b):
+    """
+    Return list which is the intersection of two lists.
+    """
+    return list(set(a) & set(b))
+
+
+def set_union(a, b):
+    """
+    Return list which is the union of two lists.
+    """
+    return list(set(a) | set(b))
+
+
 def ds():
     """
     Return the current datestamp, e.g., 20130926.
