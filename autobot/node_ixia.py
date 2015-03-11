@@ -13,8 +13,7 @@ class IxiaNode(Node):
         self._ix_version = t.params(name, 'ix_version', '7.10')
         self._ports = t.params(name, 'ports')
 
-        super(IxiaNode, self).__init__(name, self._chassis_ip,
-                                       params=t.topology_params())
+        super(IxiaNode, self).__init__(name=name, ip=self._chassis_ip, t=t)
         self.ixia_init()
 
     def ixia_init(self):
