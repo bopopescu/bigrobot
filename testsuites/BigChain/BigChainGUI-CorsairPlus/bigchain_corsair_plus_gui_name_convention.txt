@@ -22,40 +22,47 @@ ${chain_interface_2}  ethernet6
 ####							name			switch				endpt1-if				endpt2-if				spanserv1		instance2		spanserv2	inst2		service		serv-instance
 TC01: Verify chain name can have all lower-case alphabet in its name
 	Create a BigChain Chain		mybigchain		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	Delete All BigChain Chains
 TC02: Verify chain name can have all upper-case alphabet in its name
 	Create a BigChain Chain		MYBIGCHAIN		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	Delete All BigChain Chains
 TC03: Verify chain name can have a mix of lower-case and upper-case alphabet in its name
 	Create a BigChain Chain		MyBiGcHaIn		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	Delete All BigChain Chains
 TC04: Verify chain name can have alphanumeric (alphabet all lower-case) characters in its name
 	Create a BigChain Chain		mybigchain1234		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	Delete All BigChain Chains
 TC05: Verify chain name can have alphanumeric (alphabet all upper-case) characters in its name
 	Create a BigChain Chain		MYBIGCHAIN1234		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	Delete All BigChain Chains
 TC06: Verify chain name can have an alphanumeric name with a dot
 	Create a BigChain Chain		MyBiG.cHa1n		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	Delete All BigChain Chains
 TC07: Verify chain name can have an alphanumeric name with a -
 	Create a BigChain Chain		MyBiG-cHa1n		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+	Delete All BigChain Chains
 TC08: Verify chain name can have an alphanumeric name with a _
 	Create a BigChain Chain		MyBiG_cHa1n		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
-
+	Delete All Big Chain Chains
 ### Check Service Name configuration
 ###								name				type		description		action		health check		rule
 TC09: Verify chain service name can have all lower-case alphabet in its name
 	Create a BigChain Service	mybigchain			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
 TC010: Verify chain service name can have all upper-case alphabet in its name
-	Create a BigChain Service	mybigchain			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+	Create a BigChain Service	MYBIGCHAIN			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
 TC11: Verify chain name can have a mix of lower-case and upper-case alphabet in its name
-	Create a BigChain Chain		MyBiGcHaIn			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+	Create a BigChain Service		MyBiGcHaIn			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
 TC12: Verify chain name can have alphanumeric (alphabet all lower-case) characters in its name
-	Create a BigChain Chain		mybigchain1234		All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+	Create a BigChain Service		mybigchain1234		All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
 TC13: Verify chain name can have alphanumeric (alphabet all upper-case) characters in its name
-	Create a BigChain Chain		MYBIGCHAIN1234		All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+	Create a BigChain Service		MYBIGCHAIN1234		All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
 TC14: Verify chain name can have an alphanumeric name with a dot
-	Create a BigChain Chain		MyBiG.cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+	Create a BigChain Service		MyBiG.cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
 TC15: Verify chain name can have an alphanumeric name with a -
-	Create a BigChain Chain		MyBiG-cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+	Create a BigChain Service		MyBiG-cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
 TC16: Verify chain name can have an alphanumeric name with a _
-	Create a BigChain Chain		MyBiG_cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
-		
+	Create a BigChain Service		MyBiG_cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+	Delete All Big Chain Services
 
 
 
@@ -72,19 +79,20 @@ config suite setup
     #Rest Open GUI Port
     Open Browser To Login Page
     Valid Login  admin  adminadmin
-	#Delete All Big Tap Resources
+	Delete All Big Chain Resources
 	${switch_dpid_s1}=  rest return switch dpid from ip  s1
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
     ${switch_dpid_s3}=  rest return switch dpid from ip  s3
     ${switch_dpid_s4}=  rest return switch dpid from ip  s4
     ${switch_dpid_s5}=  rest return switch dpid from ip  s5
-    #Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
-    #Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
-    #Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
-    #Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
-    #Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1 
-
+    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1 
+	Configure Switch Deployment Role   ${switch_dpid_s3}   app-rlb9-intern1  Big Chain
 config suite teardown
+	Configure Switch Deployment Role   ${switch_dpid_s3}   app-rlb9-intern1  Big Tap
 	Close Browser
     Stop Selenium Server
     base suite teardown
