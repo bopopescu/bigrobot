@@ -62,8 +62,9 @@ TC15: Verify chain name can have an alphanumeric name with a -
 	Create a BigChain Service		MyBiG-cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
 TC16: Verify chain name can have an alphanumeric name with a _
 	Create a BigChain Service		MyBiG_cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
-	Delete All Big Chain Services
-
+	
+TC017 Delete All Big Chain Services
+	Configure Switch Deployment Role   ${switch_dpid_s3}   app-rlb9-intern1  Big Tap
 
 
 * Keyword
@@ -92,7 +93,6 @@ config suite setup
     Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1 
 	Configure Switch Deployment Role   ${switch_dpid_s3}   app-rlb9-intern1  Big Chain
 config suite teardown
-	Configure Switch Deployment Role   ${switch_dpid_s3}   app-rlb9-intern1  Big Tap
 	Close Browser
     Stop Selenium Server
     base suite teardown
