@@ -5,7 +5,7 @@ from autobot.bsn_restclient import BsnRestClient
 
 class Node(object):
     def __init__(self, name, ip, user=None, password=None, t=None,
-                 protocol=None, no_ping=False):
+                 protocol=None, no_ping=False, devconf_debug_level=0):
         if not name:
             helpers.environment_failure("Node name is not defined")
 
@@ -37,6 +37,8 @@ class Node(object):
                             % (name, self.dev_debug_level))
         else:
             self.node_params = {}
+        if devconf_debug_level > 0:  # override set_devconf_debug_level
+            self.dev_debug_level = devconf_debug_level
 
         self._port = self.node_params.get('port', None)
         self._protocol = protocol if protocol else self.node_params.get('protocol', 'ssh')
@@ -237,9 +239,9 @@ class Node(object):
 
 
 class ControllerNode(Node):
-    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False):
+    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False, devconf_debug_level=0):
         super(ControllerNode, self).__init__(name, ip, user, password, t,
-                                             protocol=protocol, no_ping=no_ping)
+                                             protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
 
         self._monitor_reauth = False  # default
 
@@ -475,9 +477,9 @@ class ControllerNode(Node):
 class MininetNode(Node):
     def __init__(self, name, ip, user, password, t,
                  controller_ip, controller_ip2=None,
-                 openflow_port=None, protocol=None, no_ping=False):
+                 openflow_port=None, protocol=None, no_ping=False, devconf_debug_level=0):
         super(MininetNode, self).__init__(name, ip, user, password, t,
-                                          protocol=protocol, no_ping=no_ping)
+                                          protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
 
         self.controller_ip = controller_ip
         self.controller_ip2 = controller_ip2
@@ -586,6 +588,9 @@ class MininetNode(Node):
                             privatekey_password=self._privatekey_password,
                             privatekey_type=self._privatekey_type)
 
+    def console_reconnect(self, driver=None):
+        raise NotImplementedError()
+
     def devconf(self):
         return self.dev
 
@@ -594,9 +599,9 @@ class MininetNode(Node):
 
 
 class PduNode(Node):
-    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False):
+    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False, devconf_debug_level=0):
         super(PduNode, self).__init__(name, ip, user, password, t,
-                                      protocol=protocol, no_ping=no_ping)
+                                      protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
 
         self.dev = self.connect(name=self.name(),
                                 host=self.ip(),
@@ -635,14 +640,17 @@ class PduNode(Node):
                             privatekey_password=self._privatekey_password,
                             privatekey_type=self._privatekey_type)
 
+    def console_reconnect(self, driver=None):
+        raise NotImplementedError()
+
     def devconf(self):
         return self.dev
 
 
 class HostNode(Node):
-    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False):
+    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False, devconf_debug_level=0):
         super(HostNode, self).__init__(name, ip, user, password, t,
-                                       protocol=protocol, no_ping=no_ping)
+                                       protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
 
         if (not t.init_completed()
             and helpers.params_is_false('set_session_ssh',
@@ -745,15 +753,15 @@ class HostNode(Node):
 
 
 class OpenStackNode(HostNode):
-    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False):
+    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False, devconf_debug_level=0):
         super(OpenStackNode, self).__init__(name, ip, user, password, t,
-                                            protocol=protocol, no_ping=no_ping)
+                                            protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
 
 
 class SwitchNode(Node):
-    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False):
+    def __init__(self, name, ip, user, password, t, protocol=None, no_ping=False, devconf_debug_level=0):
         super(SwitchNode, self).__init__(name, ip, user, password, t,
-                                         protocol=protocol, no_ping=no_ping)
+                                         protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
 
         if (not t.init_completed()
             and helpers.params_is_false('set_session_ssh',
@@ -806,6 +814,9 @@ class SwitchNode(Node):
                             privatekey=self._privatekey,
                             privatekey_password=self._privatekey_password,
                             privatekey_type=self._privatekey_type)
+
+    def console_reconnect(self, driver=None):
+        raise NotImplementedError()
 
     def devconf(self):
         return self.dev

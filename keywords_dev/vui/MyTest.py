@@ -1379,8 +1379,18 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         for i in range(1, int(iteration)):
             helpers.log("Iteration #%s" % i)
             t.node_disconnect(node)
-            t.node_connect(node, no_ping=True)
+            t.node_connect(node, no_ping=True, devconf_debug=5)
             c = t.controller(node)
             c.cli("show user")
             # BsnCommon().rest_show_version(node)
 
+    def login_loop2(self, node, iteration=20):
+        t = test.Test()
+
+        ip = BsnCommon().get_node_ip(node)
+        for i in range(1, int(iteration)):
+            helpers.log("Iteration #%s" % i)
+            n = t.node_spawn(ip, no_ping=True)
+            BsnCommon().cli(node, "show user")
+            # t.node_disconnect(node)
+            n.close()

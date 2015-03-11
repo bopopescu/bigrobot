@@ -704,7 +704,7 @@ class Test(object):
 
     def node_spawn(self, ip, node=None, user=None, password=None,
                    device_type='controller', protocol='ssh', no_ping=False,
-                   quiet=0):
+                   devconf_debug_level=0, quiet=0):
         """
         node_spawn() is used by node_connect() and others. node_connect()
         should be used in most instances. node_spawn() should only be used if
@@ -726,35 +726,35 @@ class Test(object):
             user = self.controller_user() if not user else user
             if not password:
                 password = self.controller_password()
-            n = a_node.ControllerNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping)
+            n = a_node.ControllerNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
         elif device_type == 'switch':
             helpers.log("Initializing switch '%s'" % node)
             if not user:
                 user = self.switch_user()
             if not password:
                 password = self.switch_password()
-            n = a_node.SwitchNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping)
+            n = a_node.SwitchNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
         elif device_type == 'host':
             helpers.log("Initializing host '%s'" % node)
             if not user:
                 user = self.host_user()
             if not password:
                 password = self.host_password()
-            n = a_node.HostNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping)
+            n = a_node.HostNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
         elif device_type == 'openstack':
             helpers.log("Initializing OpenStack server '%s'" % node)
             if not user:
                 user = self.host_user()
             if not password:
                 password = self.host_password()
-            n = a_node.OpenStackNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping)
+            n = a_node.OpenStackNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
         elif device_type == 'pdu':
             helpers.log("Initializing PDU '%s'" % node)
             if not user:
                 user = self.pdu_user()
             if not password:
                 password = self.pdu_password()
-            n = a_node.PduNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping)
+            n = a_node.PduNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
         else:
             # !!! FIXME: Need to support other device types (see the list of
             #            devices in node_connect().
@@ -765,7 +765,7 @@ class Test(object):
 
     def node_connect(self, node, user=None, password=None,
                      controller_ip=None, controller_ip2=None,
-                     protocol="ssh", no_ping=False, quiet=0):
+                     protocol="ssh", no_ping=False, devconf_debug_level=0, quiet=0):
         # Matches the following device types:
         #  Controllers: c1, c2, controller, controller1, controller2, master, slave
         #  Mininet: mn, mn1, mn2
@@ -813,7 +813,7 @@ class Test(object):
         if helpers.is_controller(node):
             n = self.node_spawn(ip=host, node=node, user=user,
                                 password=password, device_type='controller',
-                                protocol=protocol, no_ping=no_ping, quiet=1)
+                                protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level, quiet=1)
             if helpers.is_bcf(n.platform()) and not self.is_bcf_topology():
                 helpers.log("Node '%s' is a BCF controller. This is a BCF topology." % node)
                 self.is_bcf_topology(True)
@@ -821,7 +821,7 @@ class Test(object):
             n = self.node_spawn(ip=host, node=node,
                                 user=user, password=password,
                                 device_type='switch',
-                                protocol=protocol, no_ping=no_ping, quiet=1)
+                                protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level, quiet=1)
         elif helpers.is_mininet(node):
             helpers.log("Initializing Mininet '%s'" % node)
             if not self._has_a_controller:
@@ -848,17 +848,17 @@ class Test(object):
                                    password=password,
                                    t=t,
                                    openflow_port=openflow_port,
-                                   protocol=protocol, no_ping=no_ping)
+                                   protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
         elif helpers.is_host(node):
             n = self.node_spawn(ip=host, node=node,
                                 user=user, password=password,
                                 device_type="host",
-                                protocol=protocol, no_ping=no_ping, quiet=1)
+                                protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level, quiet=1)
         elif helpers.is_openstack_server(node):
             n = self.node_spawn(ip=host, node=node,
                                 user=user, password=password,
                                 device_type="openstack",
-                                protocol=protocol, no_ping=no_ping, quiet=1)
+                                protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level, quiet=1)
         elif helpers.is_traffic_generator(node):
             helpers.log("Initializing traffic generator '%s'" % node)
             if 'platform' not in self.topology_params_nodes()[node]:
