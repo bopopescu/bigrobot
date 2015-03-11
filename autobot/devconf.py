@@ -102,7 +102,7 @@ class DevConf(object):
                     " Attempting to detect platform using 'show version'."
                     % self._name)
         try:
-            result = self.cmd("show blah")
+            result = self.cmd("show version")
             self.mode('cli')
         except:
             result = None
