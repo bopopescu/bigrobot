@@ -191,7 +191,7 @@ Create L3 devices in ixia
     
     
 Controller HA failover times with L2 traffic
-    [Tags]  HA1  loss
+    [Tags]  HA1  loss  note
     create L2 streams
     clear stats
     apply traffic
@@ -301,7 +301,7 @@ Controller Master reboot
     Should be true  ${acl_table} == 3001
     
 Controller reboot times
-    [Tags]  HA2  loss
+    [Tags]  HA2  loss  note
     ${time_reboot}=   Get time
     ${returnVal}=  cli controller reboot
     Should Be True  ${returnVal}
