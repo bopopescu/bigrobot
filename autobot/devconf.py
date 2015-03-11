@@ -92,19 +92,22 @@ class DevConf(object):
         the 'show version' output.
         """
 
-        helpers.log("Not able to find proper driver for '%s'. Possibly missing Login banner."
-                    " Attempting to detect platform using 'show version'."
-                    % self._name)
-        result = self.cmd("show version")
-        self.mode('cli')
-
         if not re.match(r'^s\d+', self._name):
             helpers.log("Devconf driver patch for '%s' failed - currently only"
                         " support switches (s1, s2, etc.), using Generic driver"
                         % self._name)
             return d
 
-        if re.search(r'Software Image Version: Switch Light', result['content']):
+        helpers.log("Not able to find proper driver for '%s'. Possibly missing Login banner."
+                    " Attempting to detect platform using 'show version'."
+                    % self._name)
+        try:
+            result = self.cmd("show version")
+            self.mode('cli')
+        except:
+            result = None
+
+        if result and re.search(r'Software Image Version: Switch Light', result['content']):
             helpers.log("Devconf driver patch for '%s' detected Switch Light OS"
                         % self._name)
             self.conn.set_driver('bsn_switch')

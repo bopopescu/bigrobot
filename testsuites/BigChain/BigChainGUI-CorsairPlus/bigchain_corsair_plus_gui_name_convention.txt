@@ -1,0 +1,90 @@
+* Settings
+Documentation   	Test suite with tests to check pages, hover over menu and check elements. The tests have
+...             	a workflow that is created using keywords from the resource file.
+Force Tags      	BigTap  GUI
+Suite Setup  		config suite setup
+Suite Teardown  	config suite teardown
+Library         	keywords/BsnCommon.py
+#Library         	keywords_dev/tomasz/BigTap.py
+Library        		keywords/BsnSelenium.py
+Library             keywords/AppController.py
+Library        		SeleniumLibrary
+Library       		String
+Resource        	../../BigTap/BigTapGUI-Corsair/bigtap_resource.txt
+
+* Variable
+
+${chain_interface_1}  ethernet5
+${chain_interface_2}  ethernet6
+
+*Test Case
+###   Check Bigchain Chain Name configuration
+####							name			switch				endpt1-if				endpt2-if				spanserv1		instance2		spanserv2	inst2		service		serv-instance
+TC01: Verify chain name can have all lower-case alphabet in its name
+	Create a BigChain Chain		mybigchain		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+TC02: Verify chain name can have all upper-case alphabet in its name
+	Create a BigChain Chain		MYBIGCHAIN		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+TC03: Verify chain name can have a mix of lower-case and upper-case alphabet in its name
+	Create a BigChain Chain		MyBiGcHaIn		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+TC04: Verify chain name can have alphanumeric (alphabet all lower-case) characters in its name
+	Create a BigChain Chain		mybigchain1234		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+TC05: Verify chain name can have alphanumeric (alphabet all upper-case) characters in its name
+	Create a BigChain Chain		MYBIGCHAIN1234		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+TC06: Verify chain name can have an alphanumeric name with a dot
+	Create a BigChain Chain		MyBiG.cHa1n		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+TC07: Verify chain name can have an alphanumeric name with a -
+	Create a BigChain Chain		MyBiG-cHa1n		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+TC08: Verify chain name can have an alphanumeric name with a _
+	Create a BigChain Chain		MyBiG_cHa1n		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
+
+### Check Service Name configuration
+###								name				type		description		action		health check		rule
+TC09: Verify chain service name can have all lower-case alphabet in its name
+	Create a BigChain Service	mybigchain			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+TC010: Verify chain service name can have all upper-case alphabet in its name
+	Create a BigChain Service	mybigchain			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+TC11: Verify chain name can have a mix of lower-case and upper-case alphabet in its name
+	Create a BigChain Chain		MyBiGcHaIn			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+TC12: Verify chain name can have alphanumeric (alphabet all lower-case) characters in its name
+	Create a BigChain Chain		mybigchain1234		All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+TC13: Verify chain name can have alphanumeric (alphabet all upper-case) characters in its name
+	Create a BigChain Chain		MYBIGCHAIN1234		All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+TC14: Verify chain name can have an alphanumeric name with a dot
+	Create a BigChain Chain		MyBiG.cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+TC15: Verify chain name can have an alphanumeric name with a -
+	Create a BigChain Chain		MyBiG-cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+TC16: Verify chain name can have an alphanumeric name with a _
+	Create a BigChain Chain		MyBiG_cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+		
+
+
+
+* Keyword
+config suite setup
+    base suite setup
+	${c1_ip}=            get node ip   master
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    Start Selenium Server  -trustAllSSLCertificates
+    #Start Selenium Server  -trustAllSSLCertificates  -firefoxProfileTemplate  /Users/sakshikalra/Documents/workspace/bigrobot/testsuites/new-profile
+    #Start Selenium Server  -firefoxProfileTemplate  Default
+    #CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+	#Delete All Big Tap Resources
+	${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+    ${switch_dpid_s3}=  rest return switch dpid from ip  s3
+    ${switch_dpid_s4}=  rest return switch dpid from ip  s4
+    ${switch_dpid_s5}=  rest return switch dpid from ip  s5
+    #Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    #Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    #Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    #Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    #Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1 
+
+config suite teardown
+	Close Browser
+    Stop Selenium Server
+    base suite teardown
