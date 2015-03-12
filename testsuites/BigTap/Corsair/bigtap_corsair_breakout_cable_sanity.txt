@@ -107,9 +107,9 @@ ${breakout_s2s1s3_4}                   ethernet16/4
 
 
 ${s3_alias}                         app-s4000-1
-${delivery_s3_1}                    ethernet3
+${delivery_s3_1}                    ethernet1
 ${delivery_nick_s3_1}               ixia-1-11
-${delivery_s3_2}                    ethernet4
+${delivery_s3_2}                    ethernet2
 ${delivery_nick_s3_2}               ixia-1-16
 ${non_breakout_s3s2_1}              ethernet51
 ${non_breakout_s3s2_2}              ethernet52
