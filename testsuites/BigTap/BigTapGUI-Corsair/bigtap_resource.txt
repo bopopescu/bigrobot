@@ -40,7 +40,8 @@ ${RBAC TITLE}				Big Tap Security - RBAC Permissions
 ${BT DHCP SERVERS TITLE}		Big Tap DHCP Servers
 ${BT DNS SERVERS TITLE}		Big Tap DNS Servers
 ${SFLOW TITLE}				Big Tap sFlow
-
+${BC CHAINS TITLE}			Big Chain Chains
+${BC SERVICES TITLE}		Big Chain Services
 #${LOGIN BUTTON}					xpath=/html/body/div/div/div/div/form/div[5]/span/span/span/span[3]
 ${LOGIN BUTTON}					xpath=//span[@id='submit_button_label']
 ${SHOW ALL BUTTON}  			xpath=//div[contains(@class, 'item') and contains(text(), 'All')]
@@ -143,7 +144,7 @@ ${RBAC BUTTON}					xpath=//div[@class='step_text' and contains(text(), '3. RBAC 
 ${USER ASSOCIATE BUTTON}		xpath=//div[@data-dojo-attach-point='usersNode']/descendant::div[@class='icon_node plus']
 ${RBAC ASSOCIATE BUTTON}		xpath=//div[@data-dojo-attach-point='rbacPermissionsNode']/descendant::div[@class='icon_node plus']
 ${APPEND SELECTED BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
-${APPEND SELECTED RBAC BUTTON}	xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
+${APPEND SELECTED RBAC BUTTON}	xpath=//descendant::span[@id='dijit_form_Button_18_label' and contains(text(), 'Append Selected')]
 ${CREATE GROUP POPUP}			xpath=//div[@title='Create Group']
 ${ADD USERS POPUP}				xpath=//div[@title='Add Users']
 ${ASSOCIATE RBAC POPUP}			xpath=//div[@title='Associate RBAC Permissions']
@@ -173,8 +174,8 @@ ${APPEND GROUP BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Butt
 #${MAIN PLUS BUTTON}				xpath=//div[@class='icon_node plus']
 ${CREATE USER POPUP}				xpath=//div[@title='Create User']
 ${MANAGE GROUPS POPUP}				xpath=//div[@title='Manage Groups']
-${SECURITY USERS/GROUPS/RBAC EDIT MENU ITEM}	 		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
-${SECURITY USERS/GROUPS/RBAC DUPLICATE MENU ITEM}     	xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Duplicate')]
+${SECURITY USERS/GROUPS/RBAC EDIT MENU ITEM}	 			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${SECURITY USERS/GROUPS/RBAC DUPLICATE MENU ITEM}     		xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Duplicate')]
 ${SECURITY USERS/GROUPS/RBAC RESET PASSWORD MENU ITEM}      xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Reset Password')]
 ${SECURITY USERS/GROUPS/RBAC DELETE MENU ITEM}              xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
 ${SECURITY USERS CONFIRM POPUP}								xpath=//div[@title='Confirm']
@@ -206,7 +207,7 @@ ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}    	xpath=//div[@data-
 ${RBAC SERVICES NODE}											xpath=//div[@data-dojo-attach-point='serviceNode']
 ${RBAC SERVICES PLUS BUTTON}									xpath=//div[@data-dojo-attach-point='serviceManager']/descendant::div[@class='icon_node plus']
 ${RBAC INCLUDE SERVICES POPUP}   								xpath=//div[@title='Include Services']
-${RBAC APPEND SELECTED SERVICES BUTTON}   						xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append Selected')]
+${RBAC APPEND SELECTED SERVICES BUTTON}   						xpath=//descendant::span[@id='dijit_form_Button_25_label' and contains(text(), 'Append Selected')]
 ${RBAC ALLOW ALL SERVICES CHECKBOX SELECTED}    				xpath=//div[@data-dojo-attach-point='serviceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='true']/descendant::input
 ${RBAC ALLOW ALL SERVICES CHECKBOX UNSELECTED}    				xpath=//div[@data-dojo-attach-point='serviceNode']/descendant::div[starts-with(@id, 'bsn_widgets_form_CheckBox_') and @aria-checked='false']/descendant::input
 ${RBAC MATCHES NODE}											xpath=//div[@data-dojo-attach-point='matchNode']
@@ -261,15 +262,21 @@ ${GTP PROTOCOL TYPE DROPDOWN BUTTON}		xpath=//div[@data-dojo-attach-point='gtpBl
 ${GTP PROTOCOL TYPE LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_7_popup']
 ${GTP PROTOCOL TYPE FIELD}					xpath=//div[@data-dojo-attach-point='gtpBlock']/descendant::div[@class= 'inline_block']/descendant::input[@id='dijit_form_FilteringSelect_7']
 
-
+${BIG TAP RBAC FILTER INTERFACES KNOB BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Filter Interfaces')]/parent::h2/parent::div/following-sibling::div/descendant::div[@data-dojo-attach-point='knobIconNode' and @class='knob_icon']
+${BIG TAP RBAC DELIVERY INTERFACES KNOB BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Delivery Interfaces')]/parent::h2/parent::div/following-sibling::div/descendant::div[@data-dojo-attach-point='knobIconNode' and @class='knob_icon']
+${BIG TAP RBAC SERVICES KNOB BUTTON}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Services')]/parent::h2/parent::div/following-sibling::div/descendant::div[@data-dojo-attach-point='knobIconNode' and @class='knob_icon']
+${BIG TAP RBAC MATCH SEQUENCES KNOB BUTTON}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match Sequences')]/parent::h2/parent::div/following-sibling::div/descendant::div[@data-dojo-attach-point='knobIconNode' and @class='knob_icon']
 
 
 ### Switches Page
 ${CONFIGURE SWITCH ALIAS POPUP}			xpath=//div[@title='Configure Switch Alias']
-${SET ALIAS MENU POPUP}					xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr
+${SET ALIAS MENU POPUP}					xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr[1]
+${DEPLOY FOR BIGTAP}					xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr[4]
+${DEPLOY FOR BIGCHAIN}					xpath=//div[@class='dijitPopup dijitMenuPopup bsn_menu_popup']/descendant::tr[4]
+${CONFIRM SWITCH DEPLOYMENT POPUP}		xpath=//div[@title='Confirm Switch Deployment']
 ${SWITCH ALIAS FIELD}					xpath=//input[@id='dijit_form_ValidationTextBox_0']
 ${SUBMIT SWITCH ALIAS BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Submit')]
-
+${DEPLOY SWITCH BUTTON}					xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Deploy')]
 
 
 ### Controller Interfaces Page
@@ -587,6 +594,54 @@ ${LIST TYPE KNOB LOCKED POLICY OVERLAP}					xpath=//tbody[@id='bigtap_widgets_Po
 ${MONITOR STATS DISMISS BUTTON}							xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Dismiss')]
 ${POLICY SUBMIT BUTTON}									xpath=//descendant::span[contains(@id, 'dijit_form_Button_12') and contains(text(), 'Submit')]
 
+
+
+###BigChain
+
+${CREATE BIGCHAIN CHAIN POPUP}						xpath=//div[@title='Create Big Chain']
+${BIGCHAIN CHAIN NAME FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${BIGCHAIN SWITCH DROPDOWN BUTTON}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Big Chain Switch')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${BIGCHAIN SWITCH LIST}								xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
+${BIGCHAIN SWITCH FIELD}							xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Big Chain Switch')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${BIGCHAIN ENDPOINT1 INTERFACE DROPDOWN BUTTON}     xpath=//h2[contains(text(), 'Endpoint 1')]/parent::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${BIGCHAIN ENDPOINT1 INTERFACE LIST}				xpath=//div[@id='dijit_form_FilteringSelect_1_popup']
+${BIGCHAIN ENDPOINT1 INTERFACE FIELD}				xpath=//h2[contains(text(), 'Endpoint 1')]/parent::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${BIGCHAIN ENDPOINT2 INTERFACE DROPDOWN BUTTON}     xpath=//h2[contains(text(), 'Endpoint 2')]/parent::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${BIGCHAIN ENDPOINT2 INTERFACE LIST}				xpath=//div[@id='dijit_form_FilteringSelect_4_popup']
+${BIGCHAIN ENDPOINT2 INTERFACE FIELD}				xpath=//h2[contains(text(), 'Endpoint 2')]/parent::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Interface')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${BIGCHAIN SPAN SERVICE1 DROPDOWN BUTTON}			xpath=//div[contains(text(), 'Span Service')]/parent::h2/parent::div/following-sibling::div/descendant::div[@id='bigtap_widgets_bigchain_form_SpanServiceSelect_0']/descendant::input[1]
+${BIGCHAIN SPAN SERVICE1 LIST}						xpath=//div[@id='dijit_form_FilteringSelect_2_popup']
+${BIGCHAIN SPAN SERVICE1 FIELD}						xpath=//div[contains(text(), 'Span Service')]/parent::h2/parent::div/following-sibling::div/descendant::div[@id='bigtap_widgets_bigchain_form_SpanServiceSelect_0']/descendant::input[3]
+${BIGCHAIN SPAN INSTANCE1 DROPDOWN BUTTON}			xpath=//div[contains(text(), 'Span Service')]/parent::h2/parent::div/following-sibling::div/descendant::div[@id='bigtap_widgets_bigchain_form_SpanServiceSelect_0']/parent::div/following-sibling::div/descendant::input[1]
+${BIGCHAIN SPAN INSTANCE1 LIST}						xpath=//div[@id='dijit_form_FilteringSelect_3_popup']
+${BIGCHAIN SPAN INSTANCE1 FIELD}					xpath=//div[contains(text(), 'Span Service')]/parent::h2/parent::div/following-sibling::div/descendant::div[@id='bigtap_widgets_bigchain_form_SpanServiceSelect_0']/parent::div/following-sibling::div/descendant::input[3]
+${BIGCHAIN SPAN SERVICE2 DROPDOWN BUTTON}			xpath=//div[contains(text(), 'Span Service')]/parent::h2/parent::div/following-sibling::div/descendant::div[@id='bigtap_widgets_bigchain_form_SpanServiceSelect_1']/descendant::input[1]
+${BIGCHAIN SPAN SERVICE2 LIST}						xpath=//div[@id='dijit_form_FilteringSelect_5_popup']
+${BIGCHAIN SPAN SERVICE2 FIELD}						xpath=//div[contains(text(), 'Span Service')]/parent::h2/parent::div/following-sibling::div/descendant::div[@id='bigtap_widgets_bigchain_form_SpanServiceSelect_1']/descendant::input[3]
+${BIGCHAIN SPAN INSTANCE2 DROPDOWN BUTTON}			xpath=//div[contains(text(), 'Span Service')]/parent::h2/parent::div/following-sibling::div/descendant::div[@id='bigtap_widgets_bigchain_form_SpanServiceSelect_1']/parent::div/following-sibling::div/descendant::input[1]
+${BIGCHAIN SPAN INSTANCE2 LIST}						xpath=//div[@id='dijit_form_FilteringSelect_6_popup']
+${BIGCHAIN SPAN INSTANCE2 FIELD}					xpath=//div[contains(text(), 'Span Service')]/parent::h2/parent::div/following-sibling::div/descendant::div[@id='bigtap_widgets_bigchain_form_SpanServiceSelect_1']/parent::div/following-sibling::div/descendant::input[3]
+${BIGCHAIN SERVICE INSTANCE STEP BUTTON}			xpath=//div[@class='step_text' and contains(text(), '2. Service Instances')]
+${ADD BIGCHAIN SERVICE INSTANCE PLUS BUTTON}		xpath=//div[@data-dojo-attach-point='instancesNode']/descendant::div[@class='icon_node plus']
+${USE SERVICE INSTANCE POPUP}						xpath=//div[@title='Use Service Instance']
+${BIGCHAIN SERVICE DROPDOWN BUTTON}  				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Service Instance')]/parent::h2/parent::div/following-sibling::div/descendant::input[1]
+${BIGCHAIN SERVICE LIST}  							xpath=//div[@id='dijit_form_FilteringSelect_7_popup']
+${BIGCHAIN SERVICE FIELD}							xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Service Instance')]/parent::h2/parent::div/following-sibling::div/descendant::input[3]
+${BIGCHAIN SERVICE INSTANCE DROPDOWN BUTTON}   		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Service Instance')]/parent::h2/parent::div/following-sibling::div/descendant::input[5]
+${BIGCHAIN SERVICE INSTANCE LIST}  					xpath=//div[@id='dijit_form_FilteringSelect_8_popup']
+${BIGCHAIN SERVICE INSTANCE FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Service Instance')]/parent::h2/parent::div/following-sibling::div/descendant::input[7]
+${BIGCHAIN APPEND SERVICE INSTANCE BUTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
+	
+${CREATE BIGCHAIN SERVICE POPUP}					xpath=//div[@title='Create Big Chain Service']
+${BIGCHAIN SERVICE NAME FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${BIGCHAIN SERVICE TYPE DROPDOWN BUTTON}  			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Type')]/parent::h2/parent::div/following-sibling::div/div[1]/input
+${BIGCHAIN SERVICE TYPE LIST}  						xpath=//div[@id='dijit_form_FilteringSelect_0_popup']
+${BIGCHAIN SERVICE TYPE FIELD}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Type')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${BIGCHAIN SERVICE DESCRIPTION FIELD}				xpath=//textarea[@id='dijit_form_SimpleTextarea_0']
+${ACTION TYPE KNOB DROP}							xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Action')]/parent::h2/parent::div/following-sibling::div/descendant::div[@class='knob_icon']
+${HEALTH CHECK KNOB ENABLED}						xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]/parent::h2/parent::div/parent::div/preceding-sibling::div[@class='inline_block bottom']/descendant::div[@class='knob_icon']
+${MARK DOWN KNOB ENABLED}							xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Mark Down')]/parent::h2/parent::div/parent::div/preceding-sibling::div[@class='inline_block bottom']/descendant::div[@class='knob_icon']
+
 *** Keywords ***
 Set URLs
 	Set Suite Variable     	${LOGIN URL}     				https://${SERVER}/login
@@ -614,7 +669,8 @@ Set URLs
 	Set Suite Variable 		${DHCP SERVERS URL}				https://${SERVER}/bigtap/dhcp_servers
 	Set Suite Variable 		${DNS SERVERS URL}				https://${SERVER}/bigtap/dns_servers
 	Set Suite Variable 		${SFLOW URL}					https://${SERVER}/bigtap/sflow
-
+	Set Suite Variable 		${BC CHAINS URL}				https://${SERVER}/bigtap/bigchain/chains
+	Set Suite Variable 		${BC SERVICES URL}				https://${SERVER}/bigtap/bigchain/services
 
 Valid Login
     [Arguments]  ${username}  ${password}
@@ -765,7 +821,18 @@ Go To Signout Page
     Title Should Contain  ${BT SIGNOUT TITLE}
     Sleep  1
 
+Go To BigChain Chains Page 
+	Go To  ${BC CHAINS URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BC CHAINS TITLE}
+    Sleep  1 
     
+Go To BigChain Services Page 
+	Go To  ${BC SERVICES URL}
+    Wait Until Page Loaded 
+    Title Should Contain  ${BC SERVICES TITLE}
+    Sleep  1 
+      
 Go To Big Tap Filter Interfaces Page
     Go To  ${BT FILTER INTERFACES URL}
     Wait Until Page Loaded 
@@ -901,11 +968,15 @@ Generate Checkbox Xpath IGroup
     
 Generate Checkbox Xpath
 	[Arguments]  ${attachment_point}  ${text}
-    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::input
+    ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and contains(text(), '  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::input
     #${xpath}   Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${text}  ')]/parent::td/parent::tr/descendant::div[@class='bsn_ellipsis']
     [Return]  ${xpath}
 
-
+Generate Checkbox Associate RBAC Xpath 
+	[Arguments]  ${attachment_point}  ${text}
+	${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  and contains(text(), '  ${text}  ')]/parent::div/parent::td/preceding-sibling::td/descendant::input
+    [Return]  ${xpath}
+    
 Generate Checkbox Xpath Nowrap
 	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/parent::tr/descendant::input
@@ -946,8 +1017,7 @@ Generate Action Menu Xpath Interface Controller
 	[Arguments]  ${attachment_point}  ${id}  ${switch}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='content' and (text()='  ${id}  ')]/parent::td/preceding-sibling::td/preceding-sibling::td/div/div[@class='bsn_ellipsis' and (text()='  ${switch}  ')]/parent::div/parent::td/parent::tr/descendant::div[@class='action_menu']
     [Return]  ${xpath}
-   
-    
+
 Generate Action Menu Service Xpath
  	[Arguments]  ${attachment_point}  ${text}
     ${xpath}  Catenate  SEPARATOR=  xpath=//  ${attachment_point}  /descendant::div[@class='bsn_ellipsis' and (text()='  ${text}  ')]/parent::div/parent::td/preceding-sibling::td/descendant::div[@class='aux_row_control']
@@ -1149,7 +1219,15 @@ Delete All Security Groups
 Delete All Security RBAC
     Go To Security RBAC Page
     Delete All
-    
+
+Delete All BigChain Chains
+	Go To BigChain Chains Page
+    Delete All 
+
+Delete All BigChain Services
+	Go To BigChain Services Page
+    Delete All 
+     
 Delete All Big Tap Match Rules
 	[Arguments]  ${policy}
 	Go To Big Tap Policies Page
@@ -1185,6 +1263,9 @@ Delete All Big Tap Resources
 	Delete All Big Tap Interfaces
 	Delete All Big Tap Interface Groups
 
+Delete All Big Chain Resources
+	Delete All Big Chain Chains
+	Delete All Big Chain Services
 
 Configure User
 	[Arguments]  ${username}  ${password}  ${conf_password}  ${full_name}  ${group}
@@ -1260,7 +1341,7 @@ Configure Group
     ${rbac}  Set Variable If  '${rbac}'=='__new__'  ${random_rbacname}  ${rbac} 
 
     ${random_username}  Generate Random Name  User  5
-    Run Keyword Unless  '${user}'=='${EMPTY}' 
+    Run Keyword Unless  '${user}'=='${EMPTY}' or '${user}'=='admin'
     ...		Configure User  ${user}  adminadmin  adminadmin  ${EMPTY}  ${EMPTY}
     ${user}  Set Variable If  '${user}'=='__new__'  ${random_username}  ${user} 
 
@@ -1332,9 +1413,10 @@ Associate RBAC
 
 	Click Element  ${RBAC ASSOCIATE BUTTON}  and don't wait
 	Verify Page Contains Element  ${ASSOCIATE RBAC POPUP} 
-	${checkbox}  Generate Checkbox Xpath  div[@id='big_console_widgets_core_form_MultiModelSelect_0']  ${rbac}
-	
-	#Verify Page Contains Element  ${checkbox}
+	${checkbox}  Generate Checkbox Associate RBAC Xpath  div[@class='bsn_ellipsis'  ${rbac}
+	#Select Checkbox And Verify  ${PRE SERVICE INTERFACES ATTACHMENT POINT}  ${rbac}
+	#${checkbox}   xpath=//div[@class='bsn_ellipsis' and contains(text(), '${rbac}')]/parent::div/parent::td/preceding-sibling::td/descendant::input
+	Verify Page Contains Element  ${checkbox}
 	Click Element  ${checkbox}  and don't wait
 	Checkbox Should Be Selected	  ${checkbox}
 
@@ -1389,8 +1471,10 @@ Associate Filter Interface
 	Verify Page Contains Element  ${FILTER INTERFACES STEP BUTTON}
 	Click Element  ${FILTER INTERFACES STEP BUTTON}  and don't wait
 	Verify Element Visible  ${RBAC FILTER INTERFACES NODE}
-	Unselect Checkbox  ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX SELECTED}  ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX UNSELECTED}
-
+	#Unselect Checkbox  ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX SELECTED}  ${RBAC ALLOW ALL FILTER INTERFACES CHECKBOX UNSELECTED}
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Filter Interfaces')]/parent::h2/parent::div/following-sibling::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Select')]  Custom
+	
+	Drag And Drop   ${BIG TAP RBAC FILTER INTERFACES KNOB BUTTON}  target=Custom	
 	Verify Element Visible  ${RBAC FILTER INTERFACES PLUS BUTTON}
 	Click Element  ${RBAC FILTER INTERFACES PLUS BUTTON}  and don't wait
 
@@ -1414,8 +1498,10 @@ Associate Delivery Interface
 	Verify Page Contains Element  ${DELIVERY INTERFACES STEP BUTTON}
 	Click Element  ${DELIVERY INTERFACES STEP BUTTON}  and don't wait
 	Verify Element Visible  ${RBAC DELIVERY INTERFACES NODE}
-	Unselect Checkbox  ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}  ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}
-
+	#Unselect Checkbox  ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX SELECTED}  ${RBAC ALLOW ALL DELIVERY INTERFACES CHECKBOX UNSELECTED}
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Delivery Interfaces')]/parent::h2/parent::div/following-sibling::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Select')]  Custom
+	
+	Drag And Drop   ${BIG TAP RBAC DELIVERY INTERFACES KNOB BUTTON}  target=Custom
 	Verify Element Visible  ${RBAC DELIVERY INTERFACES PLUS BUTTON}
 	Click Element  ${RBAC DELIVERY INTERFACES PLUS BUTTON}  and don't wait
 
@@ -1441,8 +1527,10 @@ Associate Service
 	Verify Page Contains Element  ${SERVICES STEP BUTTON}
 	Click Element  ${SERVICES STEP BUTTON}  and don't wait
 	Verify Element Visible  ${RBAC SERVICES NODE}
-	Unselect Checkbox  ${RBAC ALLOW ALL SERVICES CHECKBOX SELECTED}  ${RBAC ALLOW ALL SERVICES CHECKBOX UNSELECTED}
-
+	#Unselect Checkbox  ${RBAC ALLOW ALL SERVICES CHECKBOX SELECTED}  ${RBAC ALLOW ALL SERVICES CHECKBOX UNSELECTED}
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Services')]/parent::h2/parent::div/following-sibling::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Select')]  Custom
+	
+	Drag And Drop   ${BIG TAP RBAC SERVICES KNOB BUTTON}  target=Custom
 	Verify Element Visible  ${RBAC SERVICES PLUS BUTTON}
 	Click Element  ${RBAC SERVICES PLUS BUTTON}  and don't wait
 
@@ -1494,8 +1582,10 @@ Associate Match Rule
 	Click Element  ${RBAC MATCHES BUTTON}  and don't wait
 
 	#Verify Element Visible  ${BIGTAP POLICY MATCHES NODE}
-	Unselect Checkbox  ${RBAC ALLOW ALL MATCHES CHECKBOX SELECTED}  ${RBAC ALLOW ALL MATCHES CHECKBOX UNSELECTED}
+	#Unselect Checkbox  ${RBAC ALLOW ALL MATCHES CHECKBOX SELECTED}  ${RBAC ALLOW ALL MATCHES CHECKBOX UNSELECTED}
+	Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match Sequences')]/parent::h2/parent::div/following-sibling::div/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Select')]  Custom
 	
+	Drag And Drop   ${BIG TAP RBAC MATCH SEQUENCES KNOB BUTTON}  target=Custom
 	Verify Element Visible  ${RBAC MATCHES PLUS BUTTON}
 	Click Element  ${RBAC MATCHES PLUS BUTTON}  and don't wait
 	
@@ -3846,12 +3936,129 @@ Check Security RBAC Page for read-only user
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC DELETE MENU ITEM}
     
 
+Create a BigChain Chain
+    [Arguments]  ${name}  ${switch}  ${endpt1-if}  ${endpt2-if}  ${spanserv1}  ${span-instance1}  ${spanserv2}  ${span-instance2}  ${service}  ${serv-instance}
+    
+    Go To BigChain Chains Page
+    
+    Verify Element Visible  ${MAIN PLUS BUTTON}
+    Click Element  ${MAIN PLUS BUTTON}   and don't wait
+    
+    Verify Element Visible  ${CREATE BIGCHAIN CHAIN POPUP}
+    
+    Input Text And Verify   ${BIGCHAIN CHAIN NAME FIELD}  ${name}
+    
+    Run Keyword Unless  '${switch}' == '${EMPTY}'
+    ...			Select From List And Verify  ${BIGCHAIN SWITCH DROPDOWN BUTTON}  ${BIGCHAIN SWITCH LIST}  ${BIGCHAIN SWITCH FIELD}  ${switch}
+    
+    Run Keyword Unless  '${endpt1-if}' == '${EMPTY}'
+	...   Select From List And Verify  ${BIGCHAIN ENDPOINT1 INTERFACE DROPDOWN BUTTON}  ${BIGCHAIN ENDPOINT1 INTERFACE LIST}  ${BIGCHAIN ENDPOINT1 INTERFACE FIELD}  ${endpt1-if}
 
+	Run Keyword Unless  '${endpt2-if}' == '${EMPTY}'
+	...   Select From List And Verify  ${BIGCHAIN ENDPOINT2 INTERFACE DROPDOWN BUTTON}  ${BIGCHAIN ENDPOINT2 INTERFACE LIST}  ${BIGCHAIN ENDPOINT2 INTERFACE FIELD}  ${endpt2-if}
+			
+	Run Keyword Unless  '${spanserv1}' == '${EMPTY}'
+	...   Select From List And Verify  ${BIGCHAIN SPAN SERVICE1 DROPDOWN BUTTON}  ${BIGCHAIN SPAN SERVICE1 LIST}  ${BIGCHAIN SPAN SERVICE1 FIELD}  ${spanserv1}
+   
+    Run Keyword Unless  '${span-instance1}' == '${EMPTY}'
+	...   Select From List And Verify  ${BIGCHAIN SPAN INSTANCE1 DROPDOWN BUTTON}  ${BIGCHAIN SPAN INSTANCE1 LIST}  ${BIGCHAIN SPAN INSTANCE1 FIELD}  ${span-instance1}
+   
+    Run Keyword Unless  '${spanserv2}' == '${EMPTY}'
+	...   Select From List And Verify  ${BIGCHAIN SPAN SERVICE2 DROPDOWN BUTTON}  ${BIGCHAIN SPAN SERVICE2 LIST}  ${BIGCHAIN SPAN SERVICE2 FIELD}  ${spanserv2}
     
+    Run Keyword Unless  '${span-instance2}' == '${EMPTY}'
+	...   Select From List And Verify  ${BIGCHAIN SPAN INSTANCE2 DROPDOWN BUTTON}  ${BIGCHAIN SPAN INSTANCE2 LIST}  ${BIGCHAIN SPAN INSTANCE2 FIELD}  ${span-instance2} 
+  													
+    Run Keyword Unless  '${service}' == '${EMPTY}'
+    ...	  Add Service Instance from Chain
     
+    Verify Element Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
+    Verify Element Invisible  ${CREATE BIGCHAIN CHAIN POPUP}
     
-       
+    Verify Page Contains Text  ${name}
+
+Add Service Instance from Chain
+	[Arguments]  ${service}  ${serv-instance}
+	
+	Verify Page Contains Element  ${BIGCHAIN SERVICE INSTANCE STEP BUTTON}
+	Click Element  ${BIGCHAIN SERVICE INSTANCE STEP BUTTON}  and don't wait	
+	
+	Verify Element Visible  ${MAIN PLUS BUTTON}
+    Click Element  ${MAIN PLUS BUTTON}   and don't wait
+    
+    Verify Element Visible  ${USE SERVICE INSTANCE POPUP}
+    
+    Select From List And Verify  ${BIGCHAIN SERVICE DROPDOWN BUTTON}  ${BIGCHAIN SERVICE LIST}  ${BIGCHAIN SERVICE FIELD}  ${service}
+    Select From List And Verify  ${BIGCHAIN SERVICE INSANCE DROPDOWN BUTTON}  ${BIGCHAIN SERVICE INSANCE LIST}  ${BIGCHAIN SERVICE INSANCE FIELD}  ${serv-instance}
+    
+    Verify Element Visible  ${BIGCHAIN APPEND SERVICE INSTANCE BUTON}
+    Click Element  ${BIGCHAIN APPEND SERVICE INSTANCE BUTON}  and don't wait
+    Verify Element Invisible  ${USE SERVICE INSTANCE POPUP}
 
 	
+Create a BigChain Service	
+	[Arguments]  ${name}  ${type}  ${description}  ${action}  ${health check}  ${rule}
 	
-	  
+	Go To BigChain Services Page	
+    
+    Verify Element Visible  ${MAIN PLUS BUTTON}
+    Click Element  ${MAIN PLUS BUTTON}   and don't wait
+    
+    Verify Element Visible  ${CREATE BIGCHAIN SERVICE POPUP}
+    
+    Input Text And Verify   ${BIGCHAIN SERVICE NAME FIELD}  ${name}
+    Select From List And Verify  ${BIGCHAIN SERVICE TYPE DROPDOWN BUTTON}  ${BIGCHAIN SERVICE TYPE LIST}  ${BIGCHAIN SERVICE TYPE FIELD}  ${type}
+    
+    Run Keyword Unless  '${description}' == '${EMPTY}'
+	...   Input Text And Verify   ${BIGCHAIN SERVICE DESCRIPTION FIELD}  ${description}
+	
+	Run Keyword Unless  '${action}' == '${EMPTY}'
+	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Drop')]      Drop
+	
+    Run Keyword If  '${action}'=='Drop'
+	...   Drag And Drop   ${ACTION TYPE KNOB DROP}  target=Drop
+		
+	Run Keyword Unless  '${health check}' == '${EMPTY}'
+	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Enabled')]      Enabled
+	Run Keyword Unless  '${health check}' == '${EMPTY}'
+	...			Assign ID to Element   xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Mark Down if Health Check Fails')]      Mark Down
+	
+	
+    Run Keyword If  '${health check}'=='Enabled Mark Down'
+	...   Drag And Drop   ${HEALTH CHECK KNOB ENABLED}  target=Enabled
+	...	  Drag And Drop   ${MARK DOWN KNOB ENABLED}  target=Mark Down
+	
+	Verify Element Visible  ${SAVE BUTTON}
+    Click Element  ${SAVE BUTTON}  and don't wait
+    Verify Element Invisible  ${CREATE BIGCHAIN SERVICE POPUP}
+    
+    Verify Page Contains Text  ${name}
+    
+    
+Configure Switch Deployment Role
+	[Arguments]  ${dpid}  ${switch}  ${type}
+	
+	Go To Controller Switches Page
+    Verify Page Contains Text  ${switch}
+    ${action_menu}  Generate Action Menu Xpath  div[@id='switches_table']  ${dpid}
+    Verify Element Visible  ${action_menu}
+    Click Element  ${action_menu}  and don't wait]
+    Run Keyword If  '${type}'=='Big Tap'
+	...   Verify Element Visible  ${DEPLOY FOR BIGTAP}
+	Run Keyword If  '${type}'=='Big Tap'
+	...   Click Element  ${DEPLOY FOR BIGTAP}  and don't wait  
+	
+	Run Keyword If  '${type}'=='Big Chain'
+	...  Verify Element Visible  ${DEPLOY FOR BIGCHAIN}
+	Run Keyword If  '${type}'=='Big Chain'
+	...  Click Element  ${DEPLOY FOR BIGCHAIN}  and don't wait
+      
+    Verify Element Visible  ${CONFIRM SWITCH DEPLOYMENT POPUP}
+
+    Element Should Be Visible  ${DEPLOY SWITCH BUTTON}
+    Click Element  ${DEPLOY SWITCH BUTTON}   and don't wait
+
+    #Verify Element Invisible  ${CONFIRM SWITCH DEPLOYMENT POPUP}
+    Verify Element Visible  xpath=//div[@class='bsn_ellipsis' and contains (text(), '${switch}')]/parent::div/parent::td/following-sibling::td/div[@class='content']/descendant::div[@class='label' and contains(text(), '${type}')]
+							

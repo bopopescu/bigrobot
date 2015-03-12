@@ -505,6 +505,20 @@ class BsnCommon(object):
         '''
         return content[index][key]
 
+    def verify_nested_dict_key(self, content, *args):
+        ''' Given a nested dictionary, return the final value of the key
+
+            Input:Dictionary, index and required key.
+
+            Return Value:  return the value for a particular key
+        '''
+        final_result = ''
+        for arg in args:
+            final_result = content[arg]
+            content = content [arg]
+
+        return final_result
+
     def verify_json_key(self, content, index, key):
         ''' Given a dictionary, return the value for a particular key
 
@@ -1160,9 +1174,14 @@ class BsnCommon(object):
                 helpers.log("Output is %s" % returnVal['content'])
                 out = returnVal['content'].split('\n')
                 helpers.log("Output is %s" % out)
-                if str(ntp_zone) in out[1] :
+                controller_time_zone = out[1].replace('\r', '')
+                helpers.log("Time Zone in Controller: %s Expected: %s\n" % (controller_time_zone, ntp_zone))
+
+                if controller_time_zone in ntp_zone:
+                    helpers.log("Expected Time Zone is present")
                     return True
                 else:
+                    helpers.error_msg("Expected Time Zone is NOT present")
                     return False
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))

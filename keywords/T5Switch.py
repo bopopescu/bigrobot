@@ -693,43 +693,77 @@ class  T5Switch(object):
         c.rest.get(url)
         data = c.rest.content()
         helpers.log("The data is %s" % data)
+        
         myversiondict = {}
         out1 = data[0]["report"]
         helpers.log("The tmpdata is %s" % out1)
+        
         manu1 = re.search("Manufacturer: .*" , out1)
-        manu2 = manu1.group(0)
-        manu3 = manu2.split()
-        myversiondict['Manufacturer'] = str(manu3[1])
+        if manu1:
+            manu2 = manu1.group(0)
+            manu3 = manu2.split()
+            myversiondict['Manufacturer'] = str(manu3[1])
+        else:
+            helpers.error_msg("Did not get the manufacturer information.")
+            
         mod1 = re.search("Model: .*" , out1)
-        mod2 = mod1.group(0)
-        mod3 = mod2.split()
-        myversiondict['Model'] = str(mod3[1])
+        if mod1:
+            mod2 = mod1.group(0)
+            mod3 = mod2.split()
+            myversiondict['Model'] = str(mod3[1])
+        else:
+            helpers.error_msg("Did not get the Model information.")
+            
         plat1 = re.search("Platform: .*" , out1)
-        plat2 = plat1.group(0)
-        plat3 = plat2.split()
-        myversiondict['Platform'] = str(plat3[1])
+        if plat1:
+            plat2 = plat1.group(0)
+            plat3 = plat2.split()
+            myversiondict['Platform'] = str(plat3[1])
+        else:
+            helpers.error_msg("Did not get the Platform information.")
+            
         platname1 = re.search("Platform Name: .*" , out1)
-        platname2 = platname1.group(0)
-        platname3 = platname2.split()
-        myversiondict['Platformname'] = str(platname3[2])
+        if platname1:
+            platname2 = platname1.group(0)
+            platname3 = platname2.split()
+            myversiondict['Platformname'] = str(platname3[2])
+        else:
+            helpers.error_msg("Did not get the Platform Name information.")
+            
         vendor1 =  re.search("Vendor: .*" , out1)
-        vendor2 = vendor1.group(0)
-        vendor3 = vendor2.split()
-        myversiondict['Vendor'] = str(vendor3[1])
+        if vendor1:
+            vendor2 = vendor1.group(0)
+            vendor3 = vendor2.split()
+            myversiondict['Vendor'] = str(vendor3[1])
+        else:
+            helpers.error_msg("Did not get the Vendor information.")
+            
         cpld1 = re.search("CPLD Version: .*" , out1)
-        cpld2 = cpld1.group(0)
-        cpld3 = cpld2.split()
-        myversiondict['CPLD'] = str(cpld3[2])
+        if cpld1:
+            cpld2 = cpld1.group(0)
+            cpld3 = cpld2.split()
+            myversiondict['CPLD'] = str(cpld3[2])
+        else:
+            helpers.error_msg("Did not get the CPLD information.")
+            
         onie1 = re.search("ONIE Version: .*" , out1)
-        onie2 = onie1.group(0)
-        onie3 = onie2.split()
-        myversiondict['ONIE'] = str(onie3[2])
+        if onie1:
+            onie2 = onie1.group(0)
+            onie3 = onie2.split()
+            myversiondict['ONIE'] = str(onie3[2])
+        else:
+            helpers.error_msg("Did not get the ONIE information.")
+            
         lag1 = re.search("Maximum number of component ports in a LAG: .*", out1)
-        lag2 = lag1.group(0)
-        lag3 = lag2.split(": ")
-        helpers.log("The lag3 is %s" % lag3)
-        helpers.log("the value of lag is %s" % lag3[1])
-        myversiondict['LAG'] = str(lag3[1])       
+        if lag1:
+            lag2 = lag1.group(0)
+            lag3 = lag2.split(": ")
+            helpers.log("The lag3 is %s" % lag3)
+            helpers.log("the value of lag is %s" % lag3[1])
+            myversiondict['LAG'] = str(lag3[1])       
+        else:
+            helpers.error_msg("Did not get the LAG information.")
+            
         helpers.log("The version dict has %s" % myversiondict)
         helpers.log("The component require is %s" % component)
         componentVal = myversiondict.get(component)

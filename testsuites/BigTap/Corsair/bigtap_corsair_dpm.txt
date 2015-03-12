@@ -516,6 +516,8 @@ TC26:With policy installed and match on GTP TEID, send packet with GTP header an
 
 offset suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${return_value}=  rest enable feature  l3-l4-offset-match
     Should be true   ${return_value}
     ${return_value}=  rest add switch alias  s1  ${switch1_alias}

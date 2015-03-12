@@ -463,11 +463,16 @@ def bigrobot_log_path_exec_instance_relative(new_val=None, default=None):
                             default)
 
 
-def bigrobot_excript_debug_log_path(new_val=None, default=None):
+def bigrobot_devconf_debug_level(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
+    Set the global devconf debug level. This value overrides the
+    set_devconf_debug_level property in the topo file as well as the
+    devconf_debug_level parameter in Test.node_connect() and Test.node_spawn().
+      0:  disable
+      1-5:  where 5 is very verbose
     """
-    return _env_get_and_set('BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH',
+    return _env_get_and_set('BIGROBOT_DEVCONF_DEBUG_LEVEL',
                             new_val,
                             default)
 
@@ -1167,6 +1172,8 @@ def in_list(_list, element, case_sensitive=False):
     Return True if element is in the list and False it it isn't.
     By default, ignore case when comparing values.
     """
+    if _list == []:
+        return False
     if case_sensitive:
         if element in _list:
             return True
@@ -1250,6 +1257,27 @@ def create_uuid():
     Create a UUID based on the host ID and current time.
     """
     return str(uuid.uuid1())
+
+
+def set_unique(a):
+    """
+    Return list with duplicate elements removed.
+    """
+    return list(set(a))
+
+
+def set_intersection(a, b):
+    """
+    Return list which is the intersection of two lists.
+    """
+    return list(set(a) & set(b))
+
+
+def set_union(a, b):
+    """
+    Return list which is the union of two lists.
+    """
+    return list(set(a) | set(b))
 
 
 def ds():

@@ -26,7 +26,6 @@ ts=`date "+%Y-%m-%d_%H%M%S"`
 outfile=${TEST_CATALOG_LOG_DIR}/raw_data.`basename $0`_output.$ts.log
 errfile=${TEST_CATALOG_LOG_DIR}/raw_data.`basename $0`_errors.$ts.log
 
-#./mv_logs.sh
 ./db_chk_and_add_build_name.py
 ./_doit.sh > $outfile 2>&1
 

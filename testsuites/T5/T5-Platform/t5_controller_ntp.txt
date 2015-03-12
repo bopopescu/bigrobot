@@ -45,26 +45,26 @@ Delete NTP server and verify
 Verify Time Zone
     add ntp timezone  master  America/Los_Angeles
     Sleep  5
-    ${status}=  verify timezone  master  PST  #PDT during summer, PST during winter (daylight saving)
+    ${status}=  verify timezone  master  PST/PDT  
     Should be true  ${status}
     [Tags]  feature
 
 Verify Time Zone can be changed
     add ntp timezone  master  America/Los_Angeles
     Sleep  10
-    ${status}=  verify timezone  master  PST  
+    ${status}=  verify timezone  master  PST/PDT  
     Should be true  ${status}
     Sleep  10
     add ntp timezone  master  America/New_York
     Sleep  10    
-    ${status}=  verify timezone  master  EST  #EDT during summer, EST during winter (daylight saving)
+    ${status}=  verify timezone  master  EST/EDT  
     Should be true  ${status}
     [Tags]  feature
 
 Verify deleting NTP TimeZone reverts it to UTC
     add ntp timezone  master  America/Los_Angeles
     Sleep  5
-    ${status}=  verify timezone  master  PST  
+    ${status}=  verify timezone  master  PST/PDT  
     Should be true  ${status}
     Sleep  5
     delete ntp timezone  master

@@ -873,9 +873,9 @@ class BigChain(object):
             helpers.test_log("Could not execute command")
             return False
         else:
-            url = '/api/v1/data/controller/applications/bigtap/switch-config[switch="%s"]' % str(switch_dpid)
+            url = '/api/v1/data/controller/core/switch[dpid="{}"]'.format(str(switch_dpid))
             try:
-                c.rest.put(url, {"switch": str(switch_dpid), "role": str(mode)})
+                c.rest.patch(url, {"role": str(mode)})
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -904,7 +904,7 @@ class BigChain(object):
             helpers.test_log("Could not execute command")
             return False
         else:
-            url = '/api/v1/data/controller/applications/bigtap/switch-config[switch="%s"]' % str(switch_dpid)
+            url = '/api/v1/data/controller/core/switch[dpid="{}"]'.format(str(switch_dpid))
             try:
                 c.rest.delete(url, {"role": str(mode)})
             except:

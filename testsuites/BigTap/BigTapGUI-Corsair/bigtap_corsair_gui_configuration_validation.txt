@@ -186,7 +186,7 @@ T5.8 Configure udf0 with L4 start offset 24
 
 # ### Configure User	  	Username 			Password 			Confirm Password  			Full Name				Group
 T6.1 User with password 	
- 	Configure User			__random__			testtest			testtest					User with password		${EMPTY}
+ 	Configure User			USER				testtest			testtest					User with password		${EMPTY}
  	[Tags]  blackbird  full  feature  user
 T6.2 User no password		
  	Configure User			user1			    ${EMPTY}			${EMPTY}					User no password		${EMPTY}
@@ -201,7 +201,7 @@ T6.5 User new group
  	Configure User			user-4				adminadmin			adminadmin					User new group			group.4
  	[Tags]  blackbird  full  feature  user
 T6.6 User new group
-	Configure User			__random__			testuser			testuser					User new group			group_1
+	Configure User			UseR5				testuser			testuser					User new group			group_1
 	[Tags]  blackbird  full  feature  user
  T6 Teardown
  	Delete All Security Users
@@ -211,7 +211,7 @@ T6.6 User new group
 T7 Test Set Up:
 	Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-1			 filter	        ixia-2-9
     Configure Big Tap Interface from Big Tap Menu            ethernet1            app-rlb9-intern1       delivery       ixia-2-15
-    Configure Big Tap Interface from Big Tap Menu            ethernet2            app-rly2-1             service        ixia-4-8    	
+    Configure Big Tap Service								 ixia-4-8			  service-new-1			 service-new-2   	
 	[Tags]  blackbird  full  feature  rbac
 T7.1 RBAC Allow All		
 	Configure RBAC			 		rbac				admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}    		${EMPTY}     	${EMPTY}	
@@ -220,21 +220,21 @@ T7.2 RBAC IPv4
     Configure RBAC				 	rbac1				group_new			${EMPTY}		${EMPTY}		${EMPTY}	  	IPv4 - 0x800 (2048)		1.1.1.1		${EMPTY}
 	[Tags]  blackbird  full  feature  rbac
 T7.3 RBAC IPv4 with filter / delivery / service interfaces
-    Configure RBAC				 	rbac_2				admin				ixia-2-9		ixia-2-15		${EMPTY}	  	IPv4 - 0x800 (2048)		1.1.1.1		2.6.0.0
+    Configure RBAC				 	rbac_2				admin				ixia-2-9		ixia-2-15		ixia-4-8 	  	IPv4 - 0x800 (2048)		1.1.1.1		2.6.0.0
 	[Tags]  blackbird  full  feature  rbac
 T7.4 RBAC IPv6 with filter / delivery / service interfaces
-  	Configure RBAC				 	rbAC-3				group.ip			ixia-2-9		ixia-2-15		${EMPTY}	  	IPv6 - 0x86DD (34525)	${EMPTY}	2:2:2:2:2:2
+  	Configure RBAC				 	rbAC-3				group.ip			ixia-2-9		ixia-2-15		ixia-4-8 	  	IPv6 - 0x86DD (34525)	${EMPTY}	2:2:2:2:2:2
 	[Tags]  blackbird  full  feature  rbac
 T7.5 RBAC ARP with filter / delivery / service interfaces
- 	Configure RBAC				 	RBAc.4				admin				ixia-2-9		ixia-2-15		${EMPTY}	  	ARP - 0x806 (2054)		${EMPTY}	${EMPTY}
+ 	Configure RBAC				 	RBAc.4				admin				ixia-2-9		ixia-2-15		ixia-4-8 	  	ARP - 0x806 (2054)		${EMPTY}	3.4.5.6
 	[Tags]  blackbird  full  feature  rbac
-T7 Teardown
+T6 Teardown
  	Delete All Security RBAC
  	[Tags]  blackbird  full  feature  rbac
   
 ### Configure Group  				Group Name 			User	 			RBAC	
 T8.1 Group with new user		
- 	Configure Group			 		group-1				__new__					${EMPTY}
+ 	Configure Group			 		group-1				new_user				${EMPTY}
  	[Tags]  blackbird  full  feature  group		  			
 T8.2 Group with user admin		
  	Configure Group			 		group_2				admin					${EMPTY}
@@ -321,7 +321,7 @@ config suite setup
     Open Browser To Login Page
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
-    Set Switching Mode  L3-L4 Offset Match
+    Set Switching Mode  L3-L4 Match
     #Configure Switch Alias    00:00:5c:16:c7:1e:f3:95            app-rlb9-1                                     
     #Configure Switch Alias    00:00:5c:16:c7:1c:16:f2            app-rly2-1
     #Configure Switch Alias    00:00:08:9e:01:b3:0c:0c            app-rlb9-1                                     
@@ -331,11 +331,11 @@ config suite setup
     ${switch_dpid_s3}=  rest return switch dpid from ip  s3
     ${switch_dpid_s4}=  rest return switch dpid from ip  s4
     ${switch_dpid_s5}=  rest return switch dpid from ip  s5
-    #Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
-    #Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
-    #Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
-    #Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
-    #Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
+    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1     
     
 config suite teardown
     Close Browser

@@ -50,6 +50,7 @@ if __name__ == '__main__':
     args = prog_args()
     db = TestCatalog()
     doc = db.find_and_add_build_name(args.build, quiet=not args.verbose)
+    doc = db.find_and_add_build_name_group(args.build, quiet=not args.verbose)
 
     if args.verbose: print "Doc: %s" % helpers.prettify(doc)
     print "%s" % doc["build_name"]

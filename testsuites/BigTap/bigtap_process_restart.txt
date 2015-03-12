@@ -256,6 +256,8 @@ TC032: Controller HA: Flap eth0 on Slave Controller
 
 ha suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     rest add switch alias  s1  app-rlb9-2
     rest add switch alias  s2  app-rlb9-3
     rest add switch alias  s3  app-rly2-1

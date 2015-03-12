@@ -74,6 +74,12 @@ T1.19 Check Security RBAC Page
 T1.20 Check Signout Page
     Go To Signout Page 
     [Tags]  blackbird  sanity  feature
+T1.21 Check BigChain Chains Page
+	Go To BigChain Chains Page
+	[Tags]  bigchain  corsair-450  sanity  feature
+T1.22 Check BigChain Services Page
+	Go To BigChain Services Page
+	[Tags]  bigchain  corsair-450  sanity  feature
 
 
 ### Check Hover					Menu						Label					Destination					Title
@@ -144,6 +150,8 @@ config suite setup
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
     Start Selenium Server  -trustAllSSLCertificates
+    #Start Selenium Server  -trustAllSSLCertificates  -firefoxProfileTemplate  /Users/sakshikalra/Documents/workspace/bigrobot/testsuites/new-profile
+    #Start Selenium Server  -firefoxProfileTemplate  Default
     #CLI Start Mininet Server  tree,3
     #Rest Open GUI Port
     Open Browser To Login Page

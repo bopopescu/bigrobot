@@ -1,6 +1,7 @@
 # $ mongo qa-mongodb:27017/test_catalog_201412
 #
 db_server: qa-mongodb.qa.bigswitch.com
+#db_server: localhost
 db_port: 27017
 database: test_catalog_201412
 
@@ -20,7 +21,7 @@ testbeds:
     - common
     - virtual
 
-# Note: releases field is an ordered list to reflect precedence, e.g.,
+# Note: Releases field is an ordered list to reflect precedence, e.g.,
 #       ironhorse comes before ironhorse-plus which comes before jackfrost.
 products:
   bcf:
@@ -48,6 +49,9 @@ products:
                    - 3.0.0
           software_image_map:
                    - jf
+      - master:
+          version:
+                   - top-of-tree
 
   bigtap:
     releases:
@@ -91,6 +95,9 @@ products:
                    - 5.0.0
           software_image_map:
                    - dragon
+      - master:
+          version:
+                   - top-of-tree
 
 # Dictionary of products and the releases for each product as an ordered list.
 product_release_map:
@@ -98,10 +105,12 @@ product_release_map:
     - ironhorse        # 2.0.0
     - ironhorse-plus   # 2.1.0
     - jackfrost        # 3.0.0
+    - master           # top-of-tree
   bigtap:
     - augusta          # 2.0.0
     - blackbird        # 3.0.0
     - corsair          # 4.0.0
+    - master           # top-of-tree
 
 # Every release should define a set of interesting features.
 features:

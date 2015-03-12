@@ -209,7 +209,8 @@ class Protocol(object):
                  logfile=None,
                  termtype='dumb',
                  verify_fingerprint=True,
-                 account_factory=None):
+                 account_factory=None,
+                 debugfile=None):  # 2015-03-11 VUI: added debugfile
         """
         Constructor.
         The following events are provided:
@@ -262,21 +263,26 @@ class Protocol(object):
             self.stdout = open(os.devnull, 'w')
         else:
             self.stdout = stdout
+
         if stderr is None and debug != 0:
             # self.stderr = sys.stderr
 
-            # VUI: Workaround to stderr getting closed. See 'bin/gobot' for
-            #      more details.
+            # !!! FIXME: 2014-04-10 VUI: Exscript's Protocol.py sys.stderr is closed for some
+            #     reason, which causes SSH2._dbg() to fail. Still not able to figure out
+            #     what is causing this (it used to work fine). The workaround is to write
+            #     the Exscript debug log to a file instead.
+
             #
-            if 'BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH' in os.environ:
-                p = os.environ['BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH']
-                if not os.path.exists(p):
-                    os.makedirs(p)
-            else:
-                p = '/tmp'
-            self.stderr = open(p + "/exscript_debug.log", 'w')
+            # if 'BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH' in os.environ:
+            #    p = os.environ['BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH']
+            #    if not os.path.exists(p):
+            #        os.makedirs(p)
+            if debugfile == None:
+                debugfile = '/tmp/exscript_debug.log'
+            self.stderr = open(debugfile, 'a')
         else:
             self.stderr = stderr
+
         if logfile is None:
             self.log = None
         else:

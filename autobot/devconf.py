@@ -48,6 +48,8 @@ class DevConf(object):
         self.is_prompt_changed = False
         self._lock = False
         self._last_matched_index = self._last_matched_object = None
+        self._logfile = None
+        self._debugfile = None
 
         self._logpath = helpers.bigrobot_log_path_exec_instance()
         if not self._logpath:
@@ -56,15 +58,38 @@ class DevConf(object):
             # Create directory if it doesn't exist
             if not helpers.file_exists(self._logpath):
                 helpers.mkdir_p(self._logpath)
-        self._logfile = ('%s/devconf_conversation.%s.log'
-                         % (self._logpath, self._name))
-        helpers.file_write_append_once(self._logfile,
-                "\n\n--------- %s New devconf conversation for '%s'\n\n"
-                % (helpers.ts_long_local(), self._name))
+
+        self.log_file()  # initialize
+        self.debug_file()  # initialize
 
         self._timeout = timeout if timeout else 30  # default timeout
 
         self.connect()
+
+    def log_file(self):
+        if self._logfile == None:
+            self._logfile = ('%s/devconf_conversation.%s.log'
+                             % (self._logpath, self._name))
+            helpers.file_write_append_once(self._logfile,
+                    "\n\n--------- %s New devconf conversation for '%s'\n\n"
+                    % (helpers.ts_long_local(), self._name))
+        return self._logfile
+
+    def debug_file(self):
+        debug_global = helpers.bigrobot_devconf_debug_level()
+        if debug_global == None:
+            # Global devconf debug is not defined
+            pass
+        else:
+            self._debug = int(debug_global)
+
+        if self._debug > 0 and self._debugfile == None:
+            self._debugfile = ('%s/devconf_conversation.%s.log_debug'
+                             % (self._logpath, self._name))
+            helpers.file_write_append_once(self._debugfile,
+                    "\n\n--------- %s New devconf debug for '%s'\n\n"
+                    % (helpers.ts_long_local(), self._name))
+        return self._debugfile
 
     def _patch_driver(self, d):
         """
@@ -92,19 +117,22 @@ class DevConf(object):
         the 'show version' output.
         """
 
-        helpers.log("Not able to find proper driver for '%s'. Possibly missing Login banner."
-                    " Attempting to detect platform using 'show version'."
-                    % self._name)
-        result = self.cmd("show version")
-        self.mode('cli')
-
         if not re.match(r'^s\d+', self._name):
             helpers.log("Devconf driver patch for '%s' failed - currently only"
                         " support switches (s1, s2, etc.), using Generic driver"
                         % self._name)
             return d
 
-        if re.search(r'Software Image Version: Switch Light', result['content']):
+        helpers.log("Not able to find proper driver for '%s'. Possibly missing Login banner."
+                    " Attempting to detect platform using 'show version'."
+                    % self._name)
+        try:
+            result = self.cmd("show version")
+            self.mode('cli')
+        except:
+            result = None
+
+        if result and re.search(r'Software Image Version: Switch Light', result['content']):
             helpers.log("Devconf driver patch for '%s' detected Switch Light OS"
                         % self._name)
             self.conn.set_driver('bsn_switch')
@@ -142,11 +170,11 @@ class DevConf(object):
                 if self._protocol == 'telnet':
                     helpers.log("Telnet to host %s, port %s (user:%s)"
                                 % (self._host, self._port, self._user))
-                    conn = Telnet(debug=self._debug, logfile=self._logfile)
+                    conn = Telnet(debug=self._debug, logfile=self.log_file(), debugfile=self.debug_file())
                 elif self._protocol == 'ssh':
                     helpers.log("SSH connect to host %s, port %s %s"
                                     % (self._host, self._port, auth_info))
-                    conn = SSH2(debug=self._debug, logfile=self._logfile)
+                    conn = SSH2(debug=self._debug, logfile=self.log_file(), debugfile=self.debug_file())
 
                 conn.connect(self._host, self._port)
 
@@ -164,7 +192,7 @@ class DevConf(object):
                 else:
                     conn.login(account)
                 helpers.log("Devconf conversation for '%s' logged to %s"
-                            % (self._name, self._logfile))
+                            % (self._name, self.log_file()))
 
             else:
                 helpers.environment_failure("Supported protocols are 'telnet' and 'ssh'")

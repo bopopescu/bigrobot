@@ -77,6 +77,8 @@ TC002: Verify all positive combinations of TCP6 flags
 
 flag suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     rest add switch alias  s1  ${switch1_alias}
     #Configure filter interfaces on all switches
     rest add interface role  s1  ${switch1_filter_intf_1}  filter    intf_nickname=${switch1_filter_alias_1}

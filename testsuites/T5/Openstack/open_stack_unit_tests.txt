@@ -1,8 +1,10 @@
 *** Settings ***
-Documentation    Basic Open Stack Unit Test leveraging from Khanze's platform tests
+Documentation    Basic Open Stack Unit Test leveraging from kanzhe's platform tests
 Force Tags       T5 
 Suite Setup      base suite setup
-Test Teardown    base test teardown
+Test Setup		 T5 open stack test setup
+Test Teardown    T5 open stack test teardown
+
 Library		 OperatingSystem
 Library	 	 String
 Library          keywords/BsnCommon.py
@@ -48,3 +50,10 @@ TC02 Open Stack Unit Testcases test_t5_api
         ${count}=  Convert To String  ${count}
         Should Be Equal  ${count}  1
 
+* Keywords 
+T5 open stack test setup
+   start floodlight monitor
+   base test setup
+T5 open stack test teardown
+   stop floodlight monitor
+   base test teardown
