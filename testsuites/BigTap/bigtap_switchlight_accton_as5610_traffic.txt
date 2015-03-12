@@ -519,6 +519,8 @@ TC32: Flap Delivery Interface on AS5610 and verify traffic: frame size 1518 byte
 
 bigtap suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     Run Keyword and Ignore Error  rest add switch role  node=s1  mode=bigtap
     ${disable_crc_check}=  rest disable feature  crc
     Should be true  ${disable_crc_check}

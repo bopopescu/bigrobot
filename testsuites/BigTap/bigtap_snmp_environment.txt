@@ -237,6 +237,8 @@ TC024: Verify FAN 5B is reported correctly in CLI and in SNMP Walk Output on Sla
 * Keywords
 snmp suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     set version from controller
     ${result1}=  rest add snmp keyword  community  public
     Should be True  ${result1}

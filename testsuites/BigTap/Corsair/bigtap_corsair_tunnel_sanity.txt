@@ -1281,6 +1281,8 @@ clean config to suite setup state
     
 corsair suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     rest enable feature  tunneling
     rest add switch alias  s1  ${switch1_alias}
     rest add switch alias  s2  ${switch2_alias}

@@ -351,6 +351,8 @@ TC38: Verify CLI command show bigtap topology service
 
 cli suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     set version from controller
     rest enable feature  tracked-host
     rest enable feature  overlap
