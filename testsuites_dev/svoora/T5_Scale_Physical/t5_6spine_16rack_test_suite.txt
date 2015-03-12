@@ -152,9 +152,9 @@ Create L2 devices in ixia
     #pause    freee!!
     Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify mac learning rate
     ${time_mac_learning_done}  Get time
-    ${time_diff}   print diff   ${time_traffic_started}   ${time_mac_learning_done}
+    ${time_diff}=   time diff   ${time_traffic_start}   ${time_mac_learning_done}
     Log to console    :
-    Log to console    Mac Learning rate is
+    Log to console    Mac Learning rate for all 48K macs is
     Log to console    ${time_diff}
     ${ep_count}=  rest get active end point count
     Should be true  ${ep_count} >= 48000
@@ -184,14 +184,14 @@ Create L3 devices in ixia
     #pause       FREEZZEEE!!!
     Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify arp learning rate   ${leaf}
     ${time_arp_done}   Get time
-    ${time_diff}    print diff   ${time_arp_start}    ${time_arp_done}
+    ${time_diff}=    time diff   ${time_arp_start}    ${time_arp_done}
     Log to console    :
     Log to console    46K ARP resolved in:
     Log to console    ${time_diff}
     
     
 Controller HA failover times with L2 traffic
-    [Tags]  HA1  loss
+    [Tags]  HA1  loss  note
     create L2 streams
     clear stats
     apply traffic
@@ -202,7 +202,7 @@ Controller HA failover times with L2 traffic
     #pause    freee!!
     Wait Until Keyword Succeeds  ${max_timeout}  ${min_poll_interval}  verify mac learning rate
     ${time_mac_learning_done}  Get time
-    ${time_diff}   print diff   ${time_traffic_started}   ${time_mac_learning_done}
+    ${time_diff}=   time diff   ${time_traffic_start}   ${time_mac_learning_done}
     Log to console    :
     Log to console    Mac Learning rate is
     Log to console    ${time_diff}
@@ -216,7 +216,7 @@ Controller HA failover times with L2 traffic
     ${time_failover_done}    Get time
     stop monitoring the exception
     parse monitoring file
-    ${time_diff}    print diff   ${time_failover_start}    ${time_failover_done}
+    ${time_diff}=    time diff   ${time_failover_start}    ${time_failover_done}
     Log to console      :
     Log to console     Failover completed without fabric errors in:
     Log to console     ${time_diff}
@@ -301,7 +301,7 @@ Controller Master reboot
     Should be true  ${acl_table} == 3001
     
 Controller reboot times
-    [Tags]  HA2  loss
+    [Tags]  HA2  loss  note
     ${time_reboot}=   Get time
     ${returnVal}=  cli controller reboot
     Should Be True  ${returnVal}
@@ -309,7 +309,7 @@ Controller reboot times
     ${time_controller_online}=   Get time
     stop monitoring the exception
     parse monitoring file
-    ${time_diff}    print diff   ${time_reboot}    ${time_controller_online}
+    ${time_diff}=    time diff   ${time_reboot}    ${time_controller_online}
     Log to console    :
     Log to csonole    Controller reboot times and joining to cluster without any fabric errors:
     Log to console    ${time_diff}
@@ -368,11 +368,19 @@ Power off/On Master Controller
     sleep  5
     clear stats
     start traffic
-    {active}=  get node name   master
-    power down switch  {active}
+    ${active}=  get node name   master
+    ${time_connected}=   Get time   
+    power down switch  ${active}
     sleep  5
     power up switch  ${active}
-    sleep  180
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff    ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time Power Off/On Master Controller and  connected without any fabric errors
+    Log to console    ${time_diff}
+    #sleep  180
     
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
@@ -404,17 +412,25 @@ Power off/On Slave Controller
     sleep  5
     clear stats
     start traffic
-    {slave}=  get node name   slave
-    power down switch  {slave}
+    ${slave}=  get node name   slave
+    ${time_connected}=   Get time   
+    power down switch  ${slave}
     sleep  5
     power up switch  ${slave}
-    sleep  180
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff    ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time Power Off/On Slave Controller and  connected without any fabric errors
+    Log to console    ${time_diff}
+    #sleep  180
     
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
     Should Be True  ${return}
-    verify fabric switch link and errors
+    #verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
@@ -484,8 +500,16 @@ Reboot spine print traffic convergence time
     stop traffic
     clear stats
     start traffic
+    ${time_connected}=   Get time   
     power cycle switch   ${spine}
-    sleep   210
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff    ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time Spine connected without any fabric errors
+    Log to console    ${time_diff}
+    #sleep   210
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -520,7 +544,8 @@ PowerOff spine print traffic convergence time
     stop traffic
     print L2 packet_loss_duration
     power up switch   ${spine}
-    sleep  120
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    #sleep  120
 
 PowerOn spine print traffic convergence time   
     [Tags]   con2  loss
@@ -545,8 +570,16 @@ PowerOn spine print traffic convergence time
     stop traffic
     clear stats
     start traffic
+    ${time_connected}=   Get time   
     power up switch   ${spine}
-    sleep   210
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff    ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time Spine connected without any fabric errors
+    Log to console    ${time_diff}
+    #sleep   210
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -573,8 +606,16 @@ Reboot leaf print traffic convergence time
     stop traffic
     clear stats
     start traffic
+    ${time_connected}=   Get time   
     power cycle switch   ${leaf-not-in-traffic}
-    sleep   280
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff    ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time leaf connected without any fabric errors
+    Log to console    ${time_diff}
+    #sleep   280
     verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
@@ -607,7 +648,8 @@ PowerOff leaf print traffic convergence time
     stop traffic
     print L2 packet_loss_duration
     power up switch   ${leaf-not-in-traffic}
-    sleep   250
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    #sleep   250
     #verify fabric switch link and errors
     
 
@@ -635,8 +677,16 @@ PowerOn leaf print traffic convergence time
     stop traffic
     clear stats
     start traffic
+    ${time_connected}=   Get time   
     power up switch   ${leaf-not-in-traffic}
-    sleep   250
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff    ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time leaf connected without any fabric errors
+    Log to console    ${time_diff}
+    #sleep   250
     #verify fabric switch link and errors
     stop traffic
     print L2 packet_loss_duration
@@ -804,7 +854,8 @@ Remove leaf from configuration and print traffic convergence time
     rest add fabric role  ${leaf-name}  leaf 
     rest add leaf group  ${leaf-name}  rack3
     rest add dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
-    sleep   210
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    #sleep   210
     
 
 
@@ -837,11 +888,19 @@ Add leaf to configuration and print traffic convergence time
     #Should be true   ${result}
     #${result}=   rest_add_dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
     #Should be true   ${result}
+    ${time_connected}=   Get time   
     rest add switch  ${leaf-name}  
     rest add fabric role  ${leaf-name}  leaf 
     rest add leaf group  ${leaf-name}  rack3
     rest add dpid  ${leaf-name}  00:00:70:72:cf:bc:ce:4e
-    sleep   210
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff    ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time leaf connected without any fabric errors
+    Log to console    ${time_diff}
+    #sleep   210
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
@@ -876,7 +935,8 @@ Remove spine from configuration and print traffic convergence time
     rest add switch  ${spine-name}  
     rest add fabric role  ${spine-name}  spine 
     rest add dpid  ${spine-name}  00:00:70:72:cf:ae:b0:9e
-    sleep   210
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    #sleep   210
     
 
 
@@ -906,10 +966,18 @@ Add spine to configuration and print traffic convergence time
     #Should be true   ${result}
     #${result}=   rest_add_dpid  ${leaf-name}  00:00:70:72:cf:ae:b0:9e
     #Should be true   ${result}
+    ${time_connected}=   Get time   
     rest add switch  ${spine-name}  
     rest add fabric role  ${spine-name}  spine 
     rest add dpid  ${spine-name}  00:00:70:72:cf:ae:b0:9e
-    sleep   210
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff    ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time spine connected without any fabric errors
+    Log to console    ${time_diff}
+    #sleep   210
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
@@ -936,10 +1004,18 @@ Restart ofad in spine and print traffic convergence time
     clear stats
     start traffic
     sleep  20
-    ${result}=   bash_restart_process  ${spine}  ofad   timeout=210
+    ${time_connected}=   Get time   
+    ${result}=   bash_restart_process  ${spine}  ofad  timeout=210
     Should be true  ${result}
-    sleep   210
-    verify fabric switch link and errors
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff    ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time ofad in spine restart and connected without any fabric errors
+    Log to console    ${time_diff}
+    #sleep   210
+    #verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
@@ -964,10 +1040,18 @@ Restart ofad in leaf and print traffic convergence time
     clear stats
     start traffic
     sleep  20
+    ${time_connected}=   Get time   
     ${result}=   bash_restart_process  ${leaf}  ofad  timeout=210
     Should be true  ${result}
-    sleep   210
-    verify fabric switch link and errors
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff    ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time ofad in leaf restart and connected without any fabric errors
+    Log to console    ${time_diff}
+    #sleep   210
+    #verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
     stop traffic
@@ -981,9 +1065,17 @@ restart floodlight in master controller
     apply traffic
     start traffic
     ###RESTART floodlight deamon
+    ${time_connected}=   Get time   
     ${result}=  restart_process_on_controller  floodlight  master  
     Should be True  ${result}
-    sleep  120
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff    ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time Master controller connected to cluster without any fabric errors
+    Log to console    ${time_diff}
+    #sleep  120
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
@@ -1010,14 +1102,21 @@ restart floodlight in slave controller
     apply traffic
     start traffic
     ###RESTART floodlight deamon
+    ${time_connected}=   Get time   
     ${result}=  restart_process_on_controller  floodlight  slave
     Should be True  ${result}
-    sleep  120
+    #Log To Console   ${time_connected}
+    Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    ${time_no_fabric_link_errors}=  Get time   
+    ${time_diff}=    time diff   ${time_connected}    ${time_no_fabric_link_errors}
+    Log to console  :
+    Log to console    Time slave controller connected to cluster without any fabric errors
+    Log to console    ${time_diff}
+    #sleep  120
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
     ${return}=  rest verify disk usage
     Should Be True  ${return}
-    verify fabric switch link and errors
     ${return}=  rest verify sync state
     Should Be True  ${return}
     sleep  5
