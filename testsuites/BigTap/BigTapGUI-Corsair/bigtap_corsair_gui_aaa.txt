@@ -10,7 +10,7 @@ Library             keywords/BsnSelenium.py
 Library             keywords/BigTap.py
 Library             SeleniumLibrary
 Library             keywords/AppController.py
-Resource            testsuites/BigTap/BigTapGUI-Corsair/bigtap_resource.txt
+Resource            bigtap_resource.txt
 Library             String
 
 
