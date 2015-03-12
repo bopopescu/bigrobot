@@ -1172,6 +1172,8 @@ def in_list(_list, element, case_sensitive=False):
     Return True if element is in the list and False it it isn't.
     By default, ignore case when comparing values.
     """
+    if _list == []:
+        return False
     if case_sensitive:
         if element in _list:
             return True

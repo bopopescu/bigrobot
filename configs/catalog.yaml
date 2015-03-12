@@ -21,7 +21,7 @@ testbeds:
     - common
     - virtual
 
-# Note: releases field is an ordered list to reflect precedence, e.g.,
+# Note: Releases field is an ordered list to reflect precedence, e.g.,
 #       ironhorse comes before ironhorse-plus which comes before jackfrost.
 products:
   bcf:
