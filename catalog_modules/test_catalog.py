@@ -150,6 +150,9 @@ class TestCatalog(object):
         Build name 'ironhorse_bcf_10G-4083' and 'ironhorse_bcf_virtual-4083'
         are in the same group - 'ironhorse_bcf_*-4083'.
 
+        If checks to make sure that the testbed exists for the product
+        (as defined in configs/catalog.yaml).
+
         Returns:
           - True if in group
           - False if not in group or does not match the build_name format
@@ -350,12 +353,12 @@ class TestCatalog(object):
             updatetime = self.timestamp()
 
         if count >= 1:
-            # Update: Found build which contains the build_name.
+            # Update: Found build_name.
             if not quiet: print "Found build with '%s'." % build_group_name
             if count > 1:
-                print "WARNING: Did not expect multiple results."
+                print "WARNING: Did not expect multiple results. Will only look at first result."
             found_doc = cursor[0]
-            if not helpers.in_list(found_doc["testbeds"], testbed):
+            if testbed and not helpers.in_list(found_doc["testbeds"], testbed):
                 found_doc["testbeds"].append(testbed)
             if not helpers.in_list(found_doc["build_names"], build_name):
                 found_doc["build_names"].append(build_name)
@@ -365,11 +368,15 @@ class TestCatalog(object):
         else:
             # Create: Build does not exist.
             if not quiet: print "Not found build '%s'. Creating." % build_group_name
+            if testbed:
+                testbeds = [testbed]
+            else:
+                testbeds = []
             doc = {"build_name": build_group_name,
                    "createtime": createtime,
                    "updatetime": updatetime,
                    "created_by": getpass.getuser(),
-                   "testbeds": [testbed],
+                   "testbeds": testbeds,
                    "build_names": [build_name]
                    }
             _ = self.insert_doc('build_groups', doc)
