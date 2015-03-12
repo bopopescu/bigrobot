@@ -71,15 +71,16 @@ T1.18 Check Security Groups Page
 T1.19 Check Security RBAC Page
     Go To Security RBAC Page
     [Tags]  blackbird  sanity  feature
-T1.20 Check Signout Page
-    Go To Signout Page 
-    [Tags]  blackbird  sanity  feature
-T1.21 Check BigChain Chains Page
+T1.20 Check BigChain Chains Page
 	Go To BigChain Chains Page
 	[Tags]  bigchain  corsair-450  sanity  feature
-T1.22 Check BigChain Services Page
+T1.21 Check BigChain Services Page
 	Go To BigChain Services Page
 	[Tags]  bigchain  corsair-450  sanity  feature
+T1.22 Check Signout Page
+    Go To Signout Page 
+    [Tags]  blackbird  sanity  feature
+
 
 
 ### Check Hover					Menu						Label					Destination					Title
