@@ -68,6 +68,7 @@ TC16 Miscellaneous-II
     [Tags]  full  feature
 TC17 Teardown
 	Delete All Big Tap Policies
+	Set Switching Mode       L3-L4 Match
     [Tags]  full  feature
 			
 * Keyword
