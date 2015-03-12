@@ -275,7 +275,7 @@ class T5_Scale(object):
             c.expect(r"Password:")
             c.config("adminadmin")
             c.send("system failover")
-            c.expect(r"Currently: STANDBY. Continue failover to this node (\"y\" or \"yes\" to continue):")
+            c.expect(r"Currently: STANDBY. Continue failover to this node \(\"y\" or \"yes\" to continue\):")
             c.send("yes")
             # helpers.sleep(30)
             # helpers.sleep(90)
