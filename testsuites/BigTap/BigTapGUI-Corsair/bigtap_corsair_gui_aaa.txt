@@ -143,13 +143,14 @@ AAA Suite Setup
     Open Browser To Login Page
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
+    Set Switching Mode  L3-L4 Offset Match 
 	#BT Cli Run  master  enable; config; ssh connection timeout 300
 	BT Cli Run  master  enable; config; tacacs server host 10.2.3.201 timeout 5 key secret
 	Configure User  local  local   local   ${EMPTY}  ${EMPTY}
 	Configure User  taco-user  local   local   ${EMPTY}  ${EMPTY}
 	Configure User  longevity  local   local   ${EMPTY}  ${EMPTY}
-	#BT Cli Run  master  enable; config; group read-only; associate user local
-	Configure Group	 read-only  local  ${EMPTY}
+	BT Cli Run  master  enable; config; group read-only; associate user local
+	#Configure Group	 read-only  local  ${EMPTY}
 	Configure User  rbac-user  local   local   ${EMPTY}  ${EMPTY}
 	Configure User  local-rbac-user  local   local   ${EMPTY}  ${EMPTY}
 	Configure RBAC	 local-rbac	 ${EMPTY}  ${EMPTY}	  ${EMPTY}	${EMPTY}	${EMPTY}   ${EMPTY}   ${EMPTY}
