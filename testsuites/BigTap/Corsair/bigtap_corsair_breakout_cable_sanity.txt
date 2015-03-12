@@ -4,7 +4,7 @@ Suite Setup             breakout suite setup
 Suite Teardown          breakout suite teardown
 Test Setup              breakout test setup
 Test Teardown           breakout test teardown 
-Force Tags              BigTap  corsair-411  Accton-AS5710  Dell-S4810  Dell-S6000  breakout
+Force Tags              BigTap  corsair-411  Accton-AS5710  Dell-S4810  Dell-S6000  Dell-S4000   breakout
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
