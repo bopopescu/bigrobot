@@ -4,7 +4,7 @@ Suite Setup             breakout suite setup
 Suite Teardown          breakout suite teardown
 Test Setup              breakout test setup
 Test Teardown           breakout test teardown 
-Force Tags              BigTap  corsair-411  Accton-AS5710  Dell-S4810  Dell-S6000  breakout
+Force Tags              BigTap  corsair-411  Accton-AS5710  Dell-S4810  Dell-S6000  Dell-S4000   breakout
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -106,11 +106,11 @@ ${breakout_s2s1s3_3}                   ethernet16/3
 ${breakout_s2s1s3_4}                   ethernet16/4
 
 
-${s3_alias}                         app-rly2-1
+${s3_alias}                         app-s4000-1
 ${delivery_s3_1}                    ethernet3
-${delivery_nick_s3_1}               ixia-1-21
+${delivery_nick_s3_1}               ixia-1-11
 ${delivery_s3_2}                    ethernet4
-${delivery_nick_s3_2}               ixia-1-23
+${delivery_nick_s3_2}               ixia-1-16
 ${non_breakout_s3s2_1}              ethernet51
 ${non_breakout_s3s2_2}              ethernet52
 ${pre_service_s3}                   ethernet47
