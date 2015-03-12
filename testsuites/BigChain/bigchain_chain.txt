@@ -1725,8 +1725,8 @@ chain suite teardown
     ${content12}=  cli_content  node=s4
     Should Not Contain  ${content12}  Error
     #### Unconfigure controller
-    ${result1}=  rest delete switch role  node=s1  mode=bigchain
-    Should be true  ${result1}
+    ${result2}=  rest add switch role  node=s1  mode=bigtap
+    Should be true  ${result2}
     sleep  5
     ${result3}=  rest delete switch alias  s1
     Should be true  ${result3}
