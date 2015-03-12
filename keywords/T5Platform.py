@@ -136,7 +136,7 @@ class T5Platform(object):
             c.config("adminadmin")
             c.send("system failover")
             c.expect(r"Failover to a standby controller node (\"y\" or \"yes\" to continue)?")
-            c.config("yes")
+            c.send("yes")
             # helpers.sleep(30)
             helpers.sleep(90)
         except:
