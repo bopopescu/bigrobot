@@ -612,6 +612,8 @@ verify packet count
 
 corsair suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     rest add switch alias  s1  ${switch_alias}
     rest enable feature  l3-l4-offset-match
     rest add interface role  s1  ${switch_filter_intf}      filter        intf_nickname=${switch_filter_alias}

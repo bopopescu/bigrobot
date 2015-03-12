@@ -307,6 +307,8 @@ TC041: Verify filter and delivery names can have alphanumeric name with a _ in t
 
 bigtap suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     rest add switch alias  s1  app-ras6700-1    
 
 bigtap test setup

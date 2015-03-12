@@ -215,6 +215,8 @@ TC033: Verify username userChkPassword can have a alphanumeric password with a `
 
 bigtap suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     set version from controller
     rest add user  userChkPassword
     rest add user password  userChkPassword  bsnbsn

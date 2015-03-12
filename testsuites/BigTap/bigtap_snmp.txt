@@ -270,6 +270,8 @@ TC39: HW Appliance: Verify Fan Speed
 * Keywords
 snmp suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     set version from controller
     rest add snmp keyword  community  public
     rest add snmp keyword  contact  Big Switch Networks

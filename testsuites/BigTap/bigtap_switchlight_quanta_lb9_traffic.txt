@@ -499,6 +499,8 @@ TC32: Flap Delivery Interface on LB9 and verify traffic: frame size 1518 bytes
 
 bigtap suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${disable_crc_check}=  rest disable feature  crc
     Should be true  ${disable_crc_check}              
     rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}   

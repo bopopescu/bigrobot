@@ -188,6 +188,8 @@ TC14: Create 2000 users and assign each user to unique group. Verify user can lo
 * Keyword
 rbac suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}        
     rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
     rest add interface role  s2  ${filter_2}  filter  ${filter_nick_2}      

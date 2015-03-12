@@ -224,6 +224,8 @@ TC012: Verify policy with start time in the past does not get installed if durat
 
 time suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${result1}=  rest add switch alias  s1  ${switch1_alias}
     Should be true  ${result1}
     #Configure filter interfaces on all switches

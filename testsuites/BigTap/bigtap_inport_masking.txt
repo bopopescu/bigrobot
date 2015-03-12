@@ -883,6 +883,8 @@ TC17:Verify inport masking with 2 filter interfaces on S1 and S4 and 2 delivery 
 
 inport suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${config1}=  rest add switch alias  s1  app-rlb9-1
     Should be true  ${config1}
     ${config2}=  rest add switch alias  s2  app-rlb9-4

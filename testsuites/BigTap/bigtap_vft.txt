@@ -219,6 +219,8 @@ TC14 : Flap management interface on switch and verify no traffic drop
 * Keywords
 bigtap suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     rest add switch alias  s1  ${switch_alias}
     rest add interface role  s1  ${filter_1}  filter  ${fnick_1}   
     rest add interface role  s1  ${delivery_1}  delivery  ${dnick_1}
