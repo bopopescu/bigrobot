@@ -50,6 +50,7 @@ Test lsb_release command
     bash_restart_networking_service  h1
 
 Test shell prompt
+    [Tags]  skipped
     bash             h1    pwd
     #bash             h1    cd /var/www/regression_logs/root/slim_T5_L3_physical_inter_t5_layer3_physical_inter_20141001_161352/L3_inter_tenant_traceroute_with_icmp_and_udp_probe/c2
     sudo             h1    mkdir -p /var/www/regression_logs/root/slim_T5_L3_physical_inter_t5_layer3_physical_inter_20141001_161352/L3_inter_tenant_traceroute_with_icmp_and
@@ -59,3 +60,8 @@ Test shell prompt
     #bash             h1    cd /tmp/path1/path2/path3/path4/path5/path6/path7
     #bash             h1    cd /tmp/path1/path2/path3/path4/path5/path6/path7
     bash             h1    pwd
+
+Test bash content
+    #[Tags]  skipped
+    bash me          h1
+
