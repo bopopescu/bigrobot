@@ -1,0 +1,11 @@
+c1:
+  ip: dummy
+  #set_devconf_debug_level: 5
+  console:
+    type: telnet
+    ip: 10.1.8.99
+    port: 7002
+    user: admin
+    password: adminadmin
+  set_init_ping: false
+  set_session_ssh: false
