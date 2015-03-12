@@ -3899,10 +3899,11 @@ Check Security Users Page for read-only user
 	Go To Security Users Page
 	Verify Element Invisible  ${MAIN PLUS BUTTON}
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
-	Verify Element Invisible  ${CHECKBOX ALL}
+	#Verify Element Invisible  ${CHECKBOX ALL}
+	Verify Page Does Not Contain Element  ${CHECKBOX ALL}
 	${action_menu}  Generate Action Menu Xpath Users  div[@id='users_table']  admin
     Verify Element Invisible  ${action_menu}
-    Click Element  ${action_menu}  and don't wait
+    
 
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC EDIT MENU ITEM}
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC DUPLICATE MENU ITEM}
@@ -3913,10 +3914,11 @@ Check Security Groups Page for read-only user
 	Go To Security Groups Page
 	Verify Element Invisible  ${MAIN PLUS BUTTON}
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
-	Verify Element Invisible  ${CHECKBOX ALL}
+	#Verify Element Invisible  ${CHECKBOX ALL}
+	Verify Page Does Not Contain Element  ${CHECKBOX ALL}
 	${action_menu}  Generate Action Menu Xpath Users  div[@id='groups_table']  admin
     Verify Element Invisible  ${action_menu}
-    Click Element  ${action_menu}  and don't wait
+    
 
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC EDIT MENU ITEM}
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC DUPLICATE MENU ITEM}
@@ -3926,10 +3928,11 @@ Check Security RBAC Page for read-only user
 	Go To Security RBAC Page
 	Verify Element Invisible  ${MAIN PLUS BUTTON}
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
-	Verify Element Invisible  ${CHECKBOX ALL}
+	#Verify Element Invisible  ${CHECKBOX ALL}
+	Verify Page Does Not Contain Element  ${CHECKBOX ALL}
 	${action_menu}  Generate Action Menu Xpath Users  div[@id='groups_table']  admin
     Verify Element Invisible  ${action_menu}
-    Click Element  ${action_menu}  and don't wait
+    
 
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC EDIT MENU ITEM}
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC DUPLICATE MENU ITEM}
