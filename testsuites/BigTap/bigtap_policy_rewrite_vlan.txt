@@ -1007,6 +1007,8 @@ TC039: Verify traffic with match on IPv6 Multicast Dst-IP Address
 
 bigtap suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${config1}=  rest add switch alias  s1  ${switch_1_alias}
     Should be true  ${config1}
     ${config2}=  rest add switch alias  s2  ${switch_2_alias}

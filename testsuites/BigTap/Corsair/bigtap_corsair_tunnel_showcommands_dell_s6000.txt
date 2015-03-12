@@ -330,6 +330,8 @@ arista tunnel teardown   [Arguments]  ${arista_tunnel_interface}  ${tunnel_addre
 
 corsair suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     rest enable feature  tunneling
     rest add switch alias  s1  ${switch1_alias}
     #CRC packets to be dropped

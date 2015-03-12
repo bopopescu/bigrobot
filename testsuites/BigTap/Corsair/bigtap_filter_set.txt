@@ -144,6 +144,8 @@ Verify filter-set can be added to a bigtap policy
 
 filter suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     rest add switch alias  s1  ${switch1_alias}
     rest add switch alias  s2  ${switch2_alias}    
     #Configure filter interfaces on all switches

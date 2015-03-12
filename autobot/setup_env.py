@@ -150,18 +150,6 @@ def bigrobot_env_init(is_gobot='True'):
     helpers.bigrobot_log_archiver()
     helpers.bigrobot_debug(default=1)
 
-    # !!! FIXME: 2014-04-10 Exscript's Protocol.py sys.stderr is closed for some
-    #     reason, which causes SSH2._dbg() to fail. Still not able to figure out
-    #     what is causing this (it used to work fine). The workaround is to write
-    #     the Exscript debug log to a file instead. We achieve this by setting
-    #     an environment variable BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH which
-    #      Exscript's Protocol will pick up.
-    #
-    #     Note: This env should only be set after bigrobot_log_path_exec_instance()
-    #           is set.
-    helpers.bigrobot_excript_debug_log_path(
-          default=helpers.bigrobot_log_path_exec_instance())
-
     helpers.bigrobot_listener_log(
           default=(helpers.bigrobot_log_path_exec_instance() +
                    '/bigrobot_listener.log'))

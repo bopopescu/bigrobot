@@ -694,6 +694,8 @@ TC015: Verify bigtap policy with port-channel (hash-mode:L3) as service interfac
 * Keywords
 portchannel suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${add_alias}=   rest add switch alias  s1  ${sw1_alias}
     Should be true  ${add_alias}
     ${add_alias}=   rest add switch alias  s2  ${sw2_alias}

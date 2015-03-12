@@ -1859,6 +1859,8 @@ TC064: Configure overlapping policy with S1F1, S1F2, S1F3, S1F4, S3D1, S3D2 and 
 * Keywords
 overlap suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${ovelap_enabled}=  rest enable feature  overlap
     Should be true  ${ovelap_enabled}
     ${full_match_enabled}=  rest enable feature  full-match
