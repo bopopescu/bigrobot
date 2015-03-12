@@ -5,7 +5,7 @@
 Documentation    T5 Controller Platform Test Suite - L3
 #Suite Setup      base suite setup
 #Suite Teardown   base suite teardown
-#Test Setup       T5 Platform test setup
+Test Setup       T5 Platform test setup
 Test Teardown    T5 Platform test teardown
 Force Tags       IronHorse  Platform  HA  L3
 Library          keywords/BsnCommon.py
@@ -570,6 +570,7 @@ Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
    
 
 T5 Platform test setup
+	base test setup
 	start floodlight monitor
 
 T5 Platform test teardown 

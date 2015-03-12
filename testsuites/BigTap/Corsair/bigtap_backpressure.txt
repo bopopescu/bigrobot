@@ -1491,6 +1491,8 @@ TC031: Trident Plus: Restart process OFAD on switch and verify buffering behavio
 backpressure suite setup
     base suite setup
     sleep  10
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${output_2a}=  rest add switch alias  s1  ${switch_alias_1}
     Should be true  ${output_2a}
     ${output_2b}=  rest add switch alias  s2  ${switch_alias_2}

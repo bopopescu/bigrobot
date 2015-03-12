@@ -1,5 +1,7 @@
 import autobot.helpers as helpers
 import autobot.test as test
+# from datetime import datetime, time as datetime_time, timedelta
+from datetime import datetime
 import re
 
 # import autobot.helpers as helpers
@@ -151,7 +153,45 @@ class T5_Scale(object):
         helpers.log("Enabling the tail and redirecting to filename")
         c1.sudo('tail -f /var/log/switch/* | grep faultd | grep \"/bin/ofad\" > c1_%s &' % (file_name))
 
+    def start_monitor_exception_during_failover(self, file_name):
+        t = test.Test()
+        c1 = t.controller('c1')
+        c2 = t.controller('c2')
+        helpers.log("INFO: connecting to bash mode in both controllers")
+        helpers.log("INFO: Checking if file already exist in the controller")
+        result = c1.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C1: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C1, deleting the file")
+            c1.sudo('rm -rf c1_%s' % (file_name))
+        result = c2.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C2: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C2, deleting the file")
+            c2.sudo('rm -rf c2_%s' % (file_name))
+        helpers.log("Enabling the tail and redirecting to filename")
+        c1.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v DebugCounter > c1_%s &' % (file_name))
+        c2.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v DebugCounter > c2_%s &' % (file_name))
 
+    def start_monitor_exception_during_reboot(self, file_name):
+        t = test.Test()
+        c1 = t.controller('c1')
+        c2 = t.controller('c2')
+        helpers.log("INFO: connecting to bash mode in both controllers")
+        helpers.log("INFO: Checking if file already exist in the controller")
+        result = c1.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C1: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C1, deleting the file")
+            c1.sudo('rm -rf c1_%s' % (file_name))
+        result = c2.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file under C2: %s" % (result['content']))
+        if re.findall(file_name, result['content']):
+            helpers.log("File found under C2, deleting the file")
+            c2.sudo('rm -rf c2_%s' % (file_name))
+        helpers.log("Enabling the tail and redirecting to filename")
+        c1.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v ABSRPCCH7002 > c1_%s &' % (file_name))
+        c2.sudo('tail -f /var/log/floodlight/floodlight.log | grep ERROR | grep -v ABSRPCCH7002 > c2_%s &' % (file_name))
 
     def pid_return_monitor_file(self, role):
         t = test.Test()
@@ -201,6 +241,72 @@ class T5_Scale(object):
         # #FIXME: Need to check if pid got killed or not
         helpers.log(" monitor file pid killed")
 
+    def time_diff(self, start, end):
+        start_date = datetime.strptime(start, "%Y-%m-%d %H:%M:%S")
+        end_date = datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
+        print start_date
+        print end_date
+        # if isinstance(start_date, datetime_time):
+         #   helpers.log("in if converting times")  # convert to datetime
+          #  assert isinstance(end_date, datetime_time)
+           # start, end = [datetime.combine(datetime.min, t) for t in [start, end]]
+        helpers.log("times are %s and %s" % (start, end))
+        return end_date - start_date
+        # if start_date <= end_date:
+         #   diff = end_date - start_date
+          #  helpers.log(diff)  # e.g., 10:33:26-11:15:49
+           # return diff
+        # else:  # end < start e.g., 23:55:00-00:25:00
+         #   end_date += timedelta(1)  # +day
+          #  assert end_date > start_date
+           # return end_date - start_date
+    def cli_controller_failover(self, node='slave'):
+        ''' Function to trigger failover to slave controller via CLI.
+            Input: None
+            Output: True if successful, False otherwise
+        '''
+        t = test.Test()
+        c = t.controller(node)
+
+        helpers.log("Failover")
+        try:
+            c.config("config")
+            c.send("reauth")
+            c.expect(r"Password:")
+            c.config("adminadmin")
+            c.send("system failover")
+            c.expect(r"Failover to a standby controller node (\"y\" or \"yes\" to continue)?")
+            c.config("yes")
+            # helpers.sleep(30)
+            # helpers.sleep(90)
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+    def cli_controller_reboot(self, masterNode=True):
+
+        t = test.Test()
+        master = t.controller("master")
+        slave = t.controller("slave")
+
+        try:
+            if(masterNode):
+                master.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                master.enable("yes")
+                helpers.log("Master is rebooting")
+                # helpers.sleep(90)
+            else:
+                slave.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                slave.enable("yes")
+                helpers.log("Slave is rebooting")
+                # helpers.sleep(90)
+                # helpers.sleep(190)
+        except:
+            helpers.log("Node is rebooting")
+            return False
+        else:
+            return True
 
     def parse_exception(self, role, file_name):
         t = test.Test()
@@ -288,43 +394,71 @@ class T5_Scale(object):
         helpers.log("Checking fabric errors")
         t = test.Test()
         c = t.controller()
-        url = '%s/api/v1/data/controller/applications/bvs/info/fabric/errors/dual-tor/peer-link-absent' % (c.base_url)
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/switch-not-connected-to-standby' % (c.base_url)
         c.rest.get(url)
         data = c.rest.content()
         return_flag = 0
         if len(data) != 0:
-            helpers.test_failure("Fabric error reported for peer-links %s" % data)
+            helpers.test_failure("Fabric error reported for switches not connected to standby %s" % data)
             return_flag = 1
         else:
-            helpers.log("No Fabric errors Reported for peer-links %s" % data)
+            helpers.log("No Fabric errors Reported for switches not connected to standby %s" % data)
             # return_flag = True
-        url = '%s/api/v1/data/controller/applications/bvs/info/fabric/errors?select=uni-directional-links' % (c.base_url)
-        c.rest.get(url)
-        data = c.rest.content()
-        if data[0] != {}:
-            helpers.test_failure("Fabric error reported for uni-directional-links %s" % data)
-            return_flag = return_flag + 1
-        else:
-            helpers.log("No Fabric error Reported for uni-directional links %s" % data)
-            # return_flag = True
-        url = '%s/api/v1/data/controller/applications/bvs/info/fabric/errors/dual-tor/remote-leaf-groups-inconsistent' % (c.base_url)
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/pending-disconnect-switch' % (c.base_url)
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
-            helpers.test_failure("Fabric error reported for remote leaf groups %s" % data)
+            helpers.test_failure("Fabric error reported for disconnect switches %s" % data)
             return_flag = return_flag + 1
         else:
-            helpers.log("No Fabric error Reported for remote leaf groups %s" % data)
+            helpers.log("No Fabric error Reported for disconnect switches %s" % data)
             # return_flag = True
-        url = '%s/api/v1/data/controller/applications/bvs/info/fabric/errors/dual-tor/no-port-group-configured-interface' % (c.base_url)
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/suspended-switch' % (c.base_url)
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
-            helpers.test_failure("Fabric error reported for port-groups %s" % data)
+            helpers.test_failure("Fabric error reported for suspended switches %s" % data)
             return_flag = return_flag + 1
         else:
-            helpers.log("No Fabric error Reported for prot-groups %s" % data)
+            helpers.log("No Fabric error Reported for suspended switches %s" % data)
             # return_flag = True
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/error-threshold-member-count-exceeded-lag' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+            helpers.test_failure("Fabric error reported for error threashold member count %s" % data)
+            return_flag = return_flag + 1
+        else:
+            helpers.log("No Fabric error Reported for error threashold member count %s" % data)
+            # return_flag = True
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/invalid-link' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+            helpers.test_failure("Fabric error reported for invalid links %s" % data)
+            return_flag = return_flag + 1
+        else:
+            helpers.log("No Fabric error Reported for invalid links %s" % data)
+
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/missing-link' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+            helpers.test_failure("Fabric error reported for missing links %s" % data)
+            return_flag = return_flag + 1
+        else:
+            helpers.log("No Fabric error Reported for missing links %s" % data)
+
+        url = '%s/api/v1/data/controller/applications/bcf/info/errors/fabric/breakout-failed-interface' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+            helpers.test_failure("Fabric error reported for break-out links %s" % data)
+            return_flag = return_flag + 1
+        else:
+            helpers.log("No Fabric error Reported for break-out links %s" % data)
+
+
         return return_flag
 
 
@@ -354,6 +488,45 @@ class T5_Scale(object):
         else:
             helpers.log("config digest do not match between controllers")
             return False
+    def rest_shutdown_interface(self, switch, interface):
+        ''' Function to shutdown given switch interface
+        Input: switch and interface
+        Output: True/False
+        '''
+
+        t = test.Test()
+        c = t.controller('master')
+        # /api/v1/data/controller/core/switch-config[name="leaf0a"]/interface[name="ethernet24"] {"shutdown": true}
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
+        try:
+            c.rest.post(url, {"shutdown": True})
+        except:
+            # helpers.test_failure(c.rest.error())
+            return False
+        else:
+            # helpers.test_log("Output: %s" % c.rest.result_json())
+            # return c.rest.content()
+            return True
+
+    def rest_noshutdown_interface(self, switch, interface):
+        ''' Function to no shutdown given switch interface
+        Input: switch and interface
+        Output: True/False
+        '''
+
+        t = test.Test()
+        c = t.controller('master')
+        # /api/v1/data/controller/core/switch-config[name="leaf0a"]/interface[name="ethernet24"]/shutdown {}
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]/shutdown' % (switch, interface)
+        try:
+            c.rest.delete(url, {})
+        except:
+            # helpers.test_failure(c.rest.error())
+            return False
+        else:
+            # helpers.test_log("Output: %s" % c.rest.result_json())
+            # return c.rest.content()
+            return True
 
     def rest_verify_disk_usage(self):
         ''' Function to verify disk usage assert if it reaches 100%
@@ -432,7 +605,7 @@ class T5_Scale(object):
         for line in temp:
             helpers.log("***line is: %s  \n" % line)
             line = line.lstrip()
-            match = re.match(r'L3_HOST_ROUTE (\d+)\s+(\d+).*', line)
+            match = re.match(r'L3_HOST_ROUTE\s+(\d+)\s+(\d+).*', line)
             if match:
                 helpers.log("INFO: Total L3 table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
                 return match.group(2)
@@ -466,7 +639,7 @@ class T5_Scale(object):
         for line in temp:
             helpers.log("***line is: %s  \n" % line)
             line = line.lstrip()
-            match = re.match(r'INGRESS_ACL (\d+)\s+(\d+).*', line)
+            match = re.match(r'INGRESS_ACL\s+(\d+)\s+(\d+).*', line)
             if match:
                 helpers.log("INFO: Total INGRESS_ACL table size is %s,  and current allocation is: %s" % (match.group(1), match.group(2)))
                 return match.group(2)

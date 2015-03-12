@@ -869,6 +869,8 @@ TC040: Change configuration execute HA Failback and verify overlapping policies 
 
 overlap suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${ovelap_enabled}=  rest enable feature  overlap
     Should be true  ${ovelap_enabled}  
     #Configure Switch 1

@@ -555,6 +555,8 @@ TC019: Reboot switch and verify priority
 * Keyword
 priority suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${output_1}=  rest enable feature  full-match
     Should be true  ${output_1}
     ${output_2}=  rest add switch alias  s1  ${switch_alias}

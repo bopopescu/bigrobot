@@ -15,13 +15,13 @@ Resource        testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Case
 
 Test PDU consoles
-	[Tags]  skipped
-	power down switch  s7
-	power down switch  s8
-	power up switch  s7
-	power up switch  s8
-	power cycle switch  s7
-	power cycle switch  s8
+	[Tags]  power-cycle
+	power down switch  s7  2
+	power down switch  s8  2
+	power up switch  s7  2
+	power up switch  s8  2
+	power cycle switch  s7  2
+	power cycle switch  s8  2
 	
 Test switch console
 	[Tags]

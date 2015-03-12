@@ -703,7 +703,16 @@ class Test(object):
             return self.topology(*args, **kwargs)
 
     def node_spawn(self, ip, node=None, user=None, password=None,
-                   device_type='controller', protocol='ssh', quiet=0):
+                   device_type='controller', protocol='ssh', no_ping=False,
+                   devconf_debug_level=0, quiet=0):
+        """
+        node_spawn() is used by node_connect() and others. node_connect()
+        should be used in most instances. node_spawn() should only be used if
+        you need to connect to an IP address, or a PDU (every device may have
+        a PDU configured for it).
+
+        Note: node_spawn() does not support mininet and traffic generators.
+        """
         t = self
         if not node:
             node = 'node-%s-%s' % (ip, re.match(r'\w+-\w+-\w+-\w+-(\w+)',
@@ -717,37 +726,46 @@ class Test(object):
             user = self.controller_user() if not user else user
             if not password:
                 password = self.controller_password()
-            n = a_node.ControllerNode(node, ip, user, password, t)
+            n = a_node.ControllerNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
         elif device_type == 'switch':
             helpers.log("Initializing switch '%s'" % node)
             if not user:
                 user = self.switch_user()
             if not password:
                 password = self.switch_password()
-            n = a_node.SwitchNode(node, ip, user, password, t)
+            n = a_node.SwitchNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
         elif device_type == 'host':
             helpers.log("Initializing host '%s'" % node)
             if not user:
                 user = self.host_user()
             if not password:
                 password = self.host_password()
-            n = a_node.HostNode(node, ip, user, password, t, protocol=protocol)
+            n = a_node.HostNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
+        elif device_type == 'openstack':
+            helpers.log("Initializing OpenStack server '%s'" % node)
+            if not user:
+                user = self.host_user()
+            if not password:
+                password = self.host_password()
+            n = a_node.OpenStackNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
         elif device_type == 'pdu':
-            helpers.log("Initializing host '%s'" % node)
+            helpers.log("Initializing PDU '%s'" % node)
             if not user:
                 user = self.pdu_user()
             if not password:
                 password = self.pdu_password()
-            n = a_node.PduNode(node, ip, user, password, t, protocol=protocol)
+            n = a_node.PduNode(node, ip, user, password, t, protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
         else:
             # !!! FIXME: Need to support other device types (see the list of
             #            devices in node_connect().
             helpers.environment_failure("You can only spawn nodes for device"
-                                        " types: 'controller', 'switch', 'host'")
+                                        " types: 'controller', 'switch',"
+                                        " 'host', 'openstack', 'pdu'")
         return n
 
     def node_connect(self, node, user=None, password=None,
-                     controller_ip=None, controller_ip2=None, quiet=0):
+                     controller_ip=None, controller_ip2=None,
+                     protocol="ssh", no_ping=False, devconf_debug_level=0, quiet=0):
         # Matches the following device types:
         #  Controllers: c1, c2, controller, controller1, controller2, master, slave
         #  Mininet: mn, mn1, mn2
@@ -755,6 +773,8 @@ class Test(object):
         #  Hosts: h1, h2, h3
         #  OpenStack servers: os1, os2
         #  Traffic generators: tg1, tg2, ixia1
+        #
+        # Note: No node_connect support for PDUs. Use node_spawn().
         #
         match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+|os\d+|ixia\d*)$', node)
         if not match:
@@ -793,14 +813,15 @@ class Test(object):
         if helpers.is_controller(node):
             n = self.node_spawn(ip=host, node=node, user=user,
                                 password=password, device_type='controller',
-                                quiet=1)
+                                protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level, quiet=1)
             if helpers.is_bcf(n.platform()) and not self.is_bcf_topology():
                 helpers.log("Node '%s' is a BCF controller. This is a BCF topology." % node)
                 self.is_bcf_topology(True)
         elif helpers.is_switch(node):
-            n = self.node_spawn(ip=host, node=node, user=user,
-                                password=password, device_type='switch',
-                                quiet=1)
+            n = self.node_spawn(ip=host, node=node,
+                                user=user, password=password,
+                                device_type='switch',
+                                protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level, quiet=1)
         elif helpers.is_mininet(node):
             helpers.log("Initializing Mininet '%s'" % node)
             if not self._has_a_controller:
@@ -826,36 +847,18 @@ class Test(object):
                                    user=user,
                                    password=password,
                                    t=t,
-                                   openflow_port=openflow_port)
-
+                                   openflow_port=openflow_port,
+                                   protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
         elif helpers.is_host(node):
-            helpers.log("Initializing host '%s'" % node)
-
-            if not user:
-                user = self.host_user()
-            if not password:
-                password = self.host_password()
-
-            n = a_node.HostNode(node,
-                                host,
-                                user=user,
-                                password=password,
-                                t=t)
-
+            n = self.node_spawn(ip=host, node=node,
+                                user=user, password=password,
+                                device_type="host",
+                                protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level, quiet=1)
         elif helpers.is_openstack_server(node):
-            helpers.log("Initializing OpenStack server '%s'" % node)
-
-            if not user:
-                user = self.host_user()
-            if not password:
-                password = self.host_password()
-
-            n = a_node.OpenStackNode(node,
-                                      host,
-                                      user=user,
-                                      password=password,
-                                      t=t)
-
+            n = self.node_spawn(ip=host, node=node,
+                                user=user, password=password,
+                                device_type="openstack",
+                                protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level, quiet=1)
         elif helpers.is_traffic_generator(node):
             helpers.log("Initializing traffic generator '%s'" % node)
             if 'platform' not in self.topology_params_nodes()[node]:
@@ -880,7 +883,6 @@ class Test(object):
             else:
                 helpers.environment_failure("Unsupported traffic generator '%s'"
                                             % platform)
-
         else:
             helpers.environment_failure("Not able to initialize device '%s'"
                                         % node)
@@ -1112,35 +1114,37 @@ class Test(object):
         helpers.log("BigRobot environment variables:\n%s%s"
                     % (helpers.indent_str(helpers.bigrobot_env_variables()),
                        br_utils.end_of_output_marker()))
-        helpers.log("BigRobot dependencies:\n%s%s"
-                    % (helpers.bigrobot_module_dependencies(),
-                       br_utils.end_of_output_marker()))
-        helpers.log("BigRobot repository (Git):\n%s%s"
-                    % (helpers.run_cmd2("/usr/bin/git branch -lvv",
-                                        shell=True,
-                                        quiet=True)[1],
-                       br_utils.end_of_output_marker()))
-        helpers.log("Staging system uname:\n%s%s"
-                    % (helpers.uname(),
-                       br_utils.end_of_output_marker()))
-        helpers.log("Staging system uptime:\n%s%s"
-                    % (helpers.uptime(),
-                       br_utils.end_of_output_marker()))
-        helpers.log("Staging system ulimit:\n%s%s"
-                    % (helpers.ulimit(),
-                       br_utils.end_of_output_marker()))
-        helpers.log("Staging User ID:\n%s%s"
-                    % (helpers.user_id(),
-                       br_utils.end_of_output_marker()))
 
-        jenkins_env = [x for x in ['BUILD_NAME', 'BUILD_URL'] if os.environ.get(x, None)]
-        for i in range(0, len(jenkins_env)):
-            if i == 0:
-                helpers.log("Jenkins environment:")
-            if i + 1 == len(jenkins_env):
-                helpers.log("\t%s: %s%s" % (jenkins_env[i], os.environ[jenkins_env[i]], br_utils.end_of_output_marker()))
-            else:
-                helpers.log("\t%s: %s" % (jenkins_env[i], os.environ[jenkins_env[i]]))
+        if not helpers.is_esb():
+            helpers.log("BigRobot dependencies:\n%s%s"
+                        % (helpers.bigrobot_module_dependencies(),
+                           br_utils.end_of_output_marker()))
+            helpers.log("BigRobot repository (Git):\n%s%s"
+                        % (helpers.run_cmd2("/usr/bin/git branch -lvv",
+                                            shell=True,
+                                            quiet=True)[1],
+                           br_utils.end_of_output_marker()))
+            helpers.log("Staging system uname:\n%s%s"
+                        % (helpers.uname(),
+                           br_utils.end_of_output_marker()))
+            helpers.log("Staging system uptime:\n%s%s"
+                        % (helpers.uptime(),
+                           br_utils.end_of_output_marker()))
+            helpers.log("Staging system ulimit:\n%s%s"
+                        % (helpers.ulimit(),
+                           br_utils.end_of_output_marker()))
+            helpers.log("Staging User ID:\n%s%s"
+                        % (helpers.user_id(),
+                           br_utils.end_of_output_marker()))
+
+            jenkins_env = [x for x in ['BUILD_NAME', 'BUILD_URL'] if os.environ.get(x, None)]
+            for i in range(0, len(jenkins_env)):
+                if i == 0:
+                    helpers.log("Jenkins environment:")
+                if i + 1 == len(jenkins_env):
+                    helpers.log("\t%s: %s%s" % (jenkins_env[i], os.environ[jenkins_env[i]], br_utils.end_of_output_marker()))
+                else:
+                    helpers.log("\t%s: %s" % (jenkins_env[i], os.environ[jenkins_env[i]]))
 
         self._init_in_progress = True  # pylint: disable=W0201
 
@@ -1375,7 +1379,6 @@ class Test(object):
         else:
             helpers.log("reconfig_reauth=%s" % reconfig_reauth)
 
-        helpers.log("I am here... status1=%s status2=%s" % (status1, status2))
         if status1 or status2:
             # Reconnect to device if updates were made to idle/reauth
             # properties.
@@ -1623,9 +1626,10 @@ class Test(object):
         # be sure to check if devconf handle exists before running any kind of
         # REST/CLI command.
 
-        for key in params:
-            if helpers.is_controller(key):
-                self.controller_cli_show_version(key)
+        if not helpers.is_esb():
+            for key in params:
+                if helpers.is_controller(key):
+                    self.controller_cli_show_version(key)
 
         for key in params:
             if helpers.is_controller(key):

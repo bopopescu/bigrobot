@@ -737,7 +737,7 @@ TC007: Verify policy statistics across monitoring fabric two policies use same m
     Should be True      ${return_value}
     change interface role to  delivery      ${sw1_tgdelivery_intf_1}        ${sw1_tgdelivery_alias_1}           s1
     change interface role to  filter        ${sw2_tgfilter_intf_1}          ${sw2_tgfilter_alias_1}             s2      
-    [Tags]  full  feature  traffic
+    [Tags]  full  feature  traffic 
     
 TC008: Verify policy statistics across monitoring fabric with a overlapping policy
     change interface role to  delivery  ${sw2_tgdelivery_intf_2}    ${sw2_tgdelivery_alias_2}       s2
@@ -885,9 +885,10 @@ TC009: Verify drop counters work when core interface is over-subscribed
     ${s5_dpid}=  rest return switch dpid from ip  s5    
     ${s5_delivery_value}=    rest return policy stats  ${statistics_policy_1}   interface_type=core       stat_info=packet-count-rx-drop    switch_dpid=${s5_dpid}  interface_direction=rx  
     ${output_value}=  Convert To Integer  ${s5_delivery_value}
+    pause
     ${return_value}=  verify value is in range  ${output_value}  100000  100000000      
     Should be True  ${return_value}                                                                        
-    [Tags]  full  feature  traffic
+    [Tags]  full  feature  traffic   run
                 
 TC010: Verify drop counters work when delivery interface is over-subscribed
     ## Drop is seen on filter interface
@@ -1683,6 +1684,8 @@ TC017: Verify switch interface statistics on controller, with an overlapping pol
 * Keywords
 statistics suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${return_value}=    rest disable feature    inport-mask
     Should be True      ${return_value}
     ${return_value}=    rest add switch alias   s1   ${sw1_alias}

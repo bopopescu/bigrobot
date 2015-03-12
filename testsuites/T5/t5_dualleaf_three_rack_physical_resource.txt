@@ -6,7 +6,7 @@ Library	 keywords/T5Platform.py
 Library	 String
 
 * Variables
-${long}   5
+${long}   30
 * Keywords
 
 fabric infra suite setup	

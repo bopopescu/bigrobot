@@ -319,14 +319,15 @@ def test_failure(msg, soft_error=False):
         raise TestFailure(msg)
 
 
-def test_error(msg, soft_error=False):
+def test_error(msg, soft_error=False, dump_error_stack=True):
     """
     Call this on test error.
     """
     if not is_bool(soft_error):
         environment_failure("helpers.test_error() argument 'soft_error' must"
                             " be a boolean.")
-    log("Dumping the error stack:\n" + exception_info())
+    if dump_error_stack:
+        log("Dumping the error stack:\n" + exception_info())
     if soft_error:
         log("Soft test error: %s" % msg)
         return False
@@ -462,11 +463,16 @@ def bigrobot_log_path_exec_instance_relative(new_val=None, default=None):
                             default)
 
 
-def bigrobot_excript_debug_log_path(new_val=None, default=None):
+def bigrobot_devconf_debug_level(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
+    Set the global devconf debug level. This value overrides the
+    set_devconf_debug_level property in the topo file as well as the
+    devconf_debug_level parameter in Test.node_connect() and Test.node_spawn().
+      0:  disable
+      1-5:  where 5 is very verbose
     """
-    return _env_get_and_set('BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH',
+    return _env_get_and_set('BIGROBOT_DEVCONF_DEBUG_LEVEL',
                             new_val,
                             default)
 
@@ -1161,6 +1167,22 @@ def to_json(python_data, is_raw=False):
         return json.dumps(python_data, indent=4, sort_keys=True)
 
 
+def in_list(_list, element, case_sensitive=False):
+    """
+    Return True if element is in the list and False it it isn't.
+    By default, ignore case when comparing values.
+    """
+    if _list == []:
+        return False
+    if case_sensitive:
+        if element in _list:
+            return True
+    else:
+        if element.lower() in [x.lower() for x in _list]:
+            return True
+    return False
+
+
 def unicode_to_ascii(u):
     """
     Convert a Unicode string to an ASCII string.
@@ -1235,6 +1257,27 @@ def create_uuid():
     Create a UUID based on the host ID and current time.
     """
     return str(uuid.uuid1())
+
+
+def set_unique(a):
+    """
+    Return list with duplicate elements removed.
+    """
+    return list(set(a))
+
+
+def set_intersection(a, b):
+    """
+    Return list which is the intersection of two lists.
+    """
+    return list(set(a) & set(b))
+
+
+def set_union(a, b):
+    """
+    Return list which is the union of two lists.
+    """
+    return list(set(a) | set(b))
 
 
 def ds():

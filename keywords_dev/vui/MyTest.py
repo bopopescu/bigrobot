@@ -842,6 +842,72 @@ vui@Vuis-MacBook-Pro$
             output = res.get()
             helpers.log("task_id: %s, result: %s" % (res.task_id, output))
 
+    def test_bsn_common_services2(self, nodes):
+        # from bsn_services import sample_method_tasks as tasks
+        from bsn_common_services import tasks as tasks
+
+        t = test.Test()
+        helpers.log("***** params: %s" % helpers.prettify(t.params()))
+
+        results = []
+        result_dict = {}
+
+        task = tasks.UpgradeCommands()
+
+        for node in nodes:
+            res1 = task.cli_show_version.delay(t.params(), node)
+            task_id = res1.task_id
+            helpers.log("Task_id: %s" % task_id)
+            results.append(res1)
+            result_dict[task_id] = { "node": node, "action": "show version" }
+
+        #
+        # Check task status - are we done yet?
+        #
+        is_pending = True
+        iterations = 0
+        max_tries = 10
+        while is_pending and iterations <= max_tries:
+            is_pending = False
+            iterations += 1
+            helpers.sleep(3)
+            for res in results:
+                task_id = res.task_id
+                action = result_dict[task_id]["node"] + ' ' + result_dict[task_id]["action"]
+                if res.ready() == True:
+                    helpers.log("****** %d.READY     - task_id(%s)['%s']"
+                                % (iterations, res.task_id, action))
+                else:
+                    helpers.log("****** %d.NOT-READY - task_id(%s)['%s']"
+                                % (iterations, res.task_id, action))
+                    is_pending = True
+
+        helpers.log("*** Parallel tasks completed")
+        for res in results:
+            task_id = res.task_id
+            helpers.log_task_output(task_id)  # display URL of task output
+
+        if is_pending and iterations > max_tries:
+            helpers.log("Not able to retrieve results from ESB")
+            return False
+
+        #
+        # Check task output
+        #
+        for res in results:
+            task_id = res.task_id
+            helpers.log("Getting result for task_id: %s" % task_id)
+            output = res.get()
+            result_dict[task_id]["result"] = output
+
+        helpers.log("***** result_dict:\n%s" % helpers.prettify(result_dict))
+        return True
+
+    def test_vui_esb2(self, nodes):
+        self.test_vui_esb(nodes)
+        self.test_vui_esb(nodes)
+        self.test_vui_esb(nodes)
+
     def test_vui_esb(self, nodes):
         # from bsn_services import sample_method_tasks as tasks
         from vui_services import tasks as tasks
@@ -1306,3 +1372,25 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
             c.cli("exit")
         except:
             pass
+
+    def login_loop(self, node, iteration=20):
+        t = test.Test()
+
+        for i in range(1, int(iteration)):
+            helpers.log("Iteration #%s" % i)
+            t.node_disconnect(node)
+            t.node_connect(node, no_ping=True, devconf_debug=5)
+            c = t.controller(node)
+            c.cli("show user")
+            # BsnCommon().rest_show_version(node)
+
+    def login_loop2(self, node, iteration=20):
+        t = test.Test()
+
+        ip = BsnCommon().get_node_ip(node)
+        for i in range(1, int(iteration)):
+            helpers.log("Iteration #%s" % i)
+            n = t.node_spawn(ip, no_ping=True)
+            BsnCommon().cli(node, "show user")
+            # t.node_disconnect(node)
+            n.close()

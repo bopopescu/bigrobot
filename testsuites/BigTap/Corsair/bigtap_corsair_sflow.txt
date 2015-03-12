@@ -24,11 +24,17 @@ ${switch_2_alias}   del_switch
 
 ${policy_name_1}    POLICY1
 ${policy_name_2}    POLICY2
+${policy_mul_fil1}   POL_MUL1
+${policy_mul_fil2}   POL_MUL2
 
 ${filter_1}         ethernet2  
 ${filter_1_nick}    ixia-2-25 
-${delivery_1}       ethernet2  
-${delivery_1_nick}  ixia-1-26
+${filter_2}         ethernet7
+${filter_2_nick}    s2:eth7:fil
+${delivery_2}       ethernet1 
+${delivery_2_nick}  ixia-1-26
+${delivery_1}       ethernet8 
+${delivery_1_nick}  s2:eth8:del
 ${col_ip}			10.8.33.10
 
 
@@ -41,7 +47,7 @@ TC01: Configure and verify sflow collector config
     Should be true  ${collector_return}
     ${sample}=  switch sflow counters   s1
     Should be true  ${sample} 
-    [Tags]  feature  sanity 
+    [Tags]  feature  sanity   run
     
 TC02: Configure and verify sflow collector config with udp-port 0
 	${config_sflow}=  rest config sflow collector   ${col_ip}   col_param=udp-port  col_param_val=0 
@@ -134,6 +140,7 @@ TC07: Config 4 sflow collectors make sure the config is pushed to switch
     Should be true    ${sflow_delete}
     ${sflow_delete}=  delete sflow collector smplrt cntr hdr  collector  10.8.33.13
     Should be true    ${sflow_delete}  
+    sleep  10
     ${collector_ip}=  switch sflow collector   s1   ${col_ip}
     Should not be true  ${collector_ip}
     ${collector_ip}=  switch sflow collector   s1   10.8.33.11
@@ -144,7 +151,7 @@ TC07: Config 4 sflow collectors make sure the config is pushed to switch
     Should not be true  ${collector_ip}          
     ${sample}=  switch sflow counters   s1
     Should not be true  ${sample} 
-    [Tags]  feature   
+    [Tags]  feature   runnow
  
 TC08: Configure sample rate of 0 and make sure sampling is not happening
 	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=0   
@@ -183,7 +190,7 @@ TC10: Flap filter interface and make sure counters are incrementing after the fl
     sleep  60
     ${sample}=  switch sflow counters   s1
     Should be true  ${sample}   
-    [Tags]  feature       
+    [Tags]  feature      
 
 
 TC11: Stop the traffic and make sure sampling is not happening
@@ -258,25 +265,29 @@ TC15: Give a negative value for counter-interval and see for error
 TC16: Configure a header-size of more than 256 and look for error
 	${config_header}=  rest config sflow collector  header_size=257
 	Should not be true  ${config_header}   
-	[Tags]  feature  run
+	[Tags]  feature 
 	
 TC17: Perform ha failover
+	${config_sflow}=  rest config sflow collector   ${col_ip} 
+	Should be true  ${config_sflow}
     rest execute ha failover
     sleep  90
     ${sample}=  switch sflow counters   s1
     Should be true  ${sample} 
-	[Tags]  feature  run   
+	[Tags]  feature  run
             
 TC18: Reboot master controller and verify if sflow config is intact
 	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
 	Should be true   ${config_ret}
+    ${sample}=  switch sflow counters   s1
+    Should be true  ${sample}	
     restart controller  Master
     sleep  300
 	${counter_ret}=  rest verify sflow config   collector   ${col_ip}  
 	Should be true  ${counter_ret}    
     ${sample}=  switch sflow counters   s1
     Should be true  ${sample} 
-	[Tags]  feature  run 
+	[Tags]  feature   run
 	
 TC19: Reboot slave controller and verify if sflow config is looking okay
 	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
@@ -287,7 +298,7 @@ TC19: Reboot slave controller and verify if sflow config is looking okay
 	Should be true  ${counter_ret}    
     ${sample}=  switch sflow counters   s1
     Should be true  ${sample} 
-	[Tags]  feature  run 
+	[Tags]  feature    run 
 	 
 	 
 TC20: Reboot filter switch and verify if sampling is happening after the switch is up
@@ -298,7 +309,7 @@ TC20: Reboot filter switch and verify if sampling is happening after the switch 
     sleep  100
     ${sample}=  switch sflow counters   s1
     Should be true  ${sample} 
-	[Tags]  feature  run 
+	[Tags]  feature    run 
 	
 TC21: Restart floodlight process on master controller
 	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
@@ -307,7 +318,7 @@ TC21: Restart floodlight process on master controller
     Sleep  120
     ${sample}=  switch sflow counters   s1
     Should be true  ${sample} 
-	[Tags]  feature  run    
+	[Tags]  feature    run 
        
 
 TC22: Restart floodlight process on slave controller
@@ -317,7 +328,7 @@ TC22: Restart floodlight process on slave controller
     Sleep  120
     ${sample}=  switch sflow counters   s1
     Should be true  ${sample} 
-	[Tags]  feature  run    
+	[Tags]  feature     run
 
 TC23: Restart ofad on switch and make sure sampling is happening after it
 	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
@@ -329,7 +340,7 @@ TC23: Restart ofad on switch and make sure sampling is happening after it
     Should be true  ${clear}
     ${sample}=  switch sflow counters   s1
     Should be true  ${sample} 
-	[Tags]  feature  run   
+	[Tags]  feature     run  
 
 TC24: Upgrade controllers and make sure sampling is happening after upgrade
 	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
@@ -338,7 +349,7 @@ TC24: Upgrade controllers and make sure sampling is happening after upgrade
 	sleep  100
 	${sample}=  switch sflow counters   s1
     Should be true  ${sample} 
-	[Tags]  feature  run 
+	[Tags]  feature 
 	
 TC25: Upgrade switch and see if sampling is happening
 	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
@@ -347,10 +358,18 @@ TC25: Upgrade switch and see if sampling is happening
     sleep  600
 	${sample}=  switch sflow counters   s1
     Should be true  ${sample} 
-	[Tags]  feature  run
+	[Tags]  feature 
 
-
-   
+TC26: Policy with multiple filter interfaces 
+    policy with multiple filter and delivery interface
+    pause
+	${config_ret}=  rest config sflow collector  ${col_ip}   sample_rate=3000   counter_interval=600    header_size=32
+	Should be true   ${config_ret}
+	${sample}=  switch sflow counters   s1
+    Should be true  ${sample} 
+	${sample}=  switch sflow counters   s2
+    Should be true  ${sample} 
+	[Tags]  feature  run_mul   
             
 * Keyword
 
@@ -370,6 +389,8 @@ unshut interface  [Arguments]  ${switch}  ${interface}
 
 sFlow suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     rest add switch alias  s1  ${switch_1_alias}
     rest add switch alias  s2  ${switch_2_alias}
 
@@ -388,9 +409,15 @@ sFlow suite setup
 sFlow suite teardown
 	delete traffic
     rest delete policy  admin-view   ${policy_name_1}
+    rest delete policy  admin-view   ${policy_mul_fil1}
+    rest delete policy  admin-view   ${policy_mul_fil2}
     rest delete interface role  s1  ${filter_1}  filter  ${filter_1_nick} 
     rest delete interface role  s2  ${delivery_1}  delivery  ${delivery_1_nick}
-    rest delete interface  s1  ${filter_1}  switch_alias=${switch_1_alias}  
+    rest delete interface role  s2  ${filter_2}  filter  ${filter_2_nick} 
+    rest delete interface role  s1  ${delivery_2}  delivery  ${delivery_2_nick}
+    rest delete interface  s1  ${filter_1}  switch_alias=${switch_1_alias} 
+    rest delete interface  s2  ${filter_2}  switch_alias=${switch_2_alias} 
+    rest delete interface  s1  ${delivery_2}  switch_alias=${switch_1_alias}  
     rest delete interface  s2  ${delivery_1}  switch_alias=${switch_2_alias}  
     rest delete switch alias  s1
     rest delete switch alias  s2
@@ -404,6 +431,45 @@ base test teardown
 	delete sflow collector smplrt cntr hdr  counter-interval  600
 	delete sflow collector smplrt cntr hdr  header-size   32
 	
+delete policy with single filter and single delivery
+    rest delete policy  admin-view   ${policy_name_1}
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_1_nick} 
+    rest delete interface role  s2  ${delivery_1}  delivery  ${delivery_1_nick}
+    rest delete interface  s1  ${filter_1}  switch_alias=${switch_1_alias}  
+    rest delete interface  s2  ${delivery_1}  switch_alias=${switch_2_alias}  
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch  s1
+    rest delete switch  s2
+    
+policy with multiple filter and delivery interface	
+    rest delete policy  admin-view   ${policy_name_1}
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_1_nick} 
+    rest delete interface role  s2  ${delivery_1}  delivery  ${delivery_1_nick}
+    rest delete interface  s1  ${filter_1}  switch_alias=${switch_1_alias}  
+    rest delete interface  s2  ${delivery_1}  switch_alias=${switch_2_alias}  
+    rest add interface role  s1  ${filter_1}  filter  ${filter_1_nick}  
+    rest add interface role  s2  ${delivery_1}  delivery  ${delivery_1_nick}
+    
+
+    rest add interface role  s1  ${filter_1}  filter  ${filter_1_nick}  
+    rest add interface role  s2  ${filter_2}  filter  ${filter_2_nick}  
+    rest add interface role  s2  ${delivery_1}  delivery  ${delivery_1_nick}          
+    rest add interface role  s1  ${delivery_2}  delivery  ${delivery_2_nick}
+    rest add policy  admin-view  ${policy_mul_fil1}  forward
+    rest add policy match  admin-view  ${policy_mul_fil1}  10  {"any-traffic": true, "sequence": 10}
+    rest add policy interface  admin-view  ${policy_mul_fil1}  ${filter_1_nick}  filter
+    rest add policy interface  admin-view  ${policy_mul_fil1}  ${delivery_1_nick}  delivery 
+    rest add policy  admin-view  ${policy_mul_fil2}  forward
+    rest add policy match  admin-view  ${policy_mul_fil2}  12  {"any-traffic": true, "sequence": 12}
+    rest add policy interface  admin-view  ${policy_mul_fil2}  ${filter_2_nick}  filter
+    rest add policy interface  admin-view  ${policy_mul_fil2}  ${delivery_2_nick}  delivery 
+    delete traffic
+    ${stream}=  L2 add  flow=a->b  frame_rate=100000  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    	
 
 
 #sFlow suite setup

@@ -505,6 +505,20 @@ class BsnCommon(object):
         '''
         return content[index][key]
 
+    def verify_nested_dict_key(self, content, *args):
+        ''' Given a nested dictionary, return the final value of the key
+
+            Input:Dictionary, index and required key.
+
+            Return Value:  return the value for a particular key
+        '''
+        final_result = ''
+        for arg in args:
+            final_result = content[arg]
+            content = content [arg]
+
+        return final_result
+
     def verify_json_key(self, content, index, key):
         ''' Given a dictionary, return the value for a particular key
 
@@ -1160,9 +1174,14 @@ class BsnCommon(object):
                 helpers.log("Output is %s" % returnVal['content'])
                 out = returnVal['content'].split('\n')
                 helpers.log("Output is %s" % out)
-                if str(ntp_zone) in out[1] :
+                controller_time_zone = out[1].replace('\r', '')
+                helpers.log("Time Zone in Controller: %s Expected: %s\n" % (controller_time_zone, ntp_zone))
+
+                if controller_time_zone in ntp_zone:
+                    helpers.log("Expected Time Zone is present")
                     return True
                 else:
+                    helpers.error_msg("Expected Time Zone is NOT present")
                     return False
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))
@@ -2001,13 +2020,33 @@ class BsnCommon(object):
         """
         Get the name of a node
 
-        Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
+        Input:
+        | node | logical node name, e.g., 'c1', 'master', 'slave', etc. |
 
         Return Value:  actual node name, e.g., 'c1', 'c2', 's1'
         """
         t = test.Test()
         n = t.node(node)
         return n.name()
+
+    def get_node_hostname(self, node, soft_error=False):
+        """
+        Get the hostname of a node
+
+        Input:
+        | node | logical node name, e.g., 'c1', 'master', 'slave', etc. |
+        | soft_error | Default is ${false} which will generate an exception if hostname does not exist. If ${true} then return ${none} if hostname does not exist. |
+
+        Return Value:  actual hostname of the node
+        """
+        t = test.Test()
+        n = t.node(node)
+        hostname = n.hostname()
+        if hostname == None:
+            helpers.test_error("Hostname for '%s' is not defined" % node,
+                               soft_error=soft_error,
+                               dump_error_stack=False)
+        return hostname
 
     def get_node_id(self, node):
         """

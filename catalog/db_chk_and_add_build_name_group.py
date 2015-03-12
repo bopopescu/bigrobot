@@ -18,12 +18,12 @@ from catalog_modules.test_catalog import TestCatalog
 
 def prog_args():
     descr = """\
-Check the database collection 'builds' for a document which matches the env
-BUILD_NAME.
-   - If found, return the build name.
-   - If not found, create a new document, then return the build name.
+Check the database collection 'build_groups' for a document which matches the
+BUILD_NAME group.
+   - If found, return the build name group.
+   - If not found, create a new document, then return the build name group.
 """
-    parser = argparse.ArgumentParser(prog='db_chk_and_add_build_name',
+    parser = argparse.ArgumentParser(prog='db_chk_and_add_build_name_group',
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=descr)
     parser.add_argument('--verbose', action='store_true',
@@ -32,6 +32,12 @@ BUILD_NAME.
     parser.add_argument('--build',
                         help=("Jenkins build string,"
                               " e.g., 'bvs master #2007'"))
+    parser.add_argument('--createtime',
+                        help=("Build creation time,"
+                              " e.g., '2015-03-06T12:54:58.130'"))
+    parser.add_argument('--updatetime',
+                        help=("Build updated time,"
+                              " e.g., '2015-03-06T12:54:58.130'"))
     _args = parser.parse_args()
 
     # _args.build <=> env BUILD_NAME
@@ -49,8 +55,10 @@ BUILD_NAME.
 if __name__ == '__main__':
     args = prog_args()
     db = TestCatalog()
-    doc = db.find_and_add_build_name(args.build, quiet=not args.verbose)
-    doc = db.find_and_add_build_name_group(args.build, quiet=not args.verbose)
+    doc = db.find_and_add_build_name_group(args.build,
+                                           createtime=args.createtime,
+                                           updatetime=args.updatetime,
+                                           quiet=not args.verbose)
 
     if args.verbose: print "Doc: %s" % helpers.prettify(doc)
     print "%s" % doc["build_name"]

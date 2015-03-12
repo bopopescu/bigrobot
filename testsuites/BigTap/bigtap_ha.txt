@@ -252,6 +252,8 @@ TC012: Enable and disable feature inport-mask 50 times
 
 ha suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${config1}=  rest add switch alias  s1  app-rlb9-2
     Should be true  ${config1}
     ${config2}=  rest add switch alias  s2  app-rlb9-3

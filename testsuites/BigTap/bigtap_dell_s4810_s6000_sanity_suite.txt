@@ -1042,6 +1042,8 @@ TC52: Restart process OFAD on switch S3
 
 dell suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     rest add switch alias  s1  ${s1_alias}
     rest add switch alias  s2  ${s2_alias}
     rest add switch alias  s3  ${s3_alias}

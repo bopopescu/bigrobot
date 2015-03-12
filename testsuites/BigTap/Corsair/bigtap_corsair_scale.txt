@@ -187,6 +187,8 @@ TC2: Create 42 transmit/receive tunnels across same parent interface and verify 
 * Keyword
 corsair suite setup
     base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
     ${enable_tunnel}=  rest enable feature  tunneling
     Should be true  ${enable_tunnel}  
     ${enable_fmm}=  rest enable feature  full-match
