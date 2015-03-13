@@ -547,11 +547,14 @@ class T6(object):
         i = 2
         count = int(count)
         count = count + 1
+        status = True
         while (i <= count):
             nat_profile = name
             nat_profile += str(i)
-            self.rest_verify_nat_endpoint(tenant, nat_profile, remote_tenant, remote_segment)
+            if self.rest_verify_nat_endpoint(tenant, nat_profile, remote_tenant, remote_segment) == False:
+                status = False
             i = i + 1
+        return status
             
         
         
