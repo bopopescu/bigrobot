@@ -609,7 +609,7 @@ class  T5Switch(object):
 
     def rest_config_breakout_interface(self, switch, intf):
         ''' Function to configure force breakout interface
-           input - switch , interface 
+           input - switch , interface
            output - returns true
         '''
         try:
@@ -621,25 +621,25 @@ class  T5Switch(object):
             c.rest.patch(url2, {"breakout": True})
             helpers.sleep(20)
             return True
-       
-        except: 
+
+        except:
             helpers.log("Could not get the rest output.see log for errors\n")
             return  False
 
 
     def rest_delete_breakout_interface(self, switch, intf, timeout=30):
         ''' Function to delete force breakout interface
-           input - switch , interface 
+           input - switch , interface
            output - returns true
         '''
-        try: 
+        try:
             t = test.Test()
             c = t.controller('master')
             url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
             c.rest.delete(url, {"breakout": None})
             helpers.sleep(20)
             return True
-        
+
         except:
             helpers.log("Could not get the rest output.see log for errors\n")
             return  False
@@ -650,7 +650,7 @@ class  T5Switch(object):
            input - switch , interface, state
            output - returns true if state compared
         '''
-        
+
         t = test.Test()
         c = t.controller('master')
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
@@ -660,12 +660,12 @@ class  T5Switch(object):
         url = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         c.rest.get(url)
         data = c.rest.content()
-            
+
         if len(data) != 0:
             rstate = str(data[0]["interface"][0]["state"])
             expstate = str(expstate)
             helpers.log("Got the intf state as %s" % rstate)
-            helpers.log("expected state %s" % expstate)             
+            helpers.log("expected state %s" % expstate)
             if expstate == rstate:
                 helpers.log("Verified the intfstate- %s and exp state- %s" % (rstate, expstate))
                 return True
@@ -674,12 +674,12 @@ class  T5Switch(object):
                 return False
         else:
             helpers.log("Could not get the intf state for intf %s" % intf)
-            return False 
-   
-   
-    def rest_get_switch_version_leaf_from_controller(self, switch, component="None", expectedVal= "None"):
+            return False
+
+
+    def rest_get_switch_version_leaf_from_controller(self, switch, component="None", expectedVal="None"):
         ''' Function to get switch version output
-           input - switch 
+           input - switch
            output - returns the component asked
         '''
         t = test.Test()
@@ -693,11 +693,11 @@ class  T5Switch(object):
         c.rest.get(url)
         data = c.rest.content()
         helpers.log("The data is %s" % data)
-        
+
         myversiondict = {}
         out1 = data[0]["report"]
         helpers.log("The tmpdata is %s" % out1)
-        
+
         manu1 = re.search("Manufacturer: .*" , out1)
         if manu1:
             manu2 = manu1.group(0)
@@ -705,7 +705,7 @@ class  T5Switch(object):
             myversiondict['Manufacturer'] = str(manu3[1])
         else:
             helpers.error_msg("Did not get the manufacturer information.")
-            
+
         mod1 = re.search("Model: .*" , out1)
         if mod1:
             mod2 = mod1.group(0)
@@ -713,7 +713,7 @@ class  T5Switch(object):
             myversiondict['Model'] = str(mod3[1])
         else:
             helpers.error_msg("Did not get the Model information.")
-            
+
         plat1 = re.search("Platform: .*" , out1)
         if plat1:
             plat2 = plat1.group(0)
@@ -721,7 +721,7 @@ class  T5Switch(object):
             myversiondict['Platform'] = str(plat3[1])
         else:
             helpers.error_msg("Did not get the Platform information.")
-            
+
         platname1 = re.search("Platform Name: .*" , out1)
         if platname1:
             platname2 = platname1.group(0)
@@ -729,23 +729,23 @@ class  T5Switch(object):
             myversiondict['Platformname'] = str(platname3[2])
         else:
             helpers.error_msg("Did not get the Platform Name information.")
-            
-        vendor1 =  re.search("Vendor: .*" , out1)
+
+        vendor1 = re.search("Vendor: .*" , out1)
         if vendor1:
             vendor2 = vendor1.group(0)
             vendor3 = vendor2.split()
             myversiondict['Vendor'] = str(vendor3[1])
         else:
             helpers.error_msg("Did not get the Vendor information.")
-            
-        cpld1 = re.search("CPLD Version: .*" , out1)
+
+        cpld1 = re.search("CPLD Version.*: (.*)" , out1)
         if cpld1:
             cpld2 = cpld1.group(0)
             cpld3 = cpld2.split()
             myversiondict['CPLD'] = str(cpld3[2])
         else:
             helpers.error_msg("Did not get the CPLD information.")
-            
+
         onie1 = re.search("ONIE Version: .*" , out1)
         if onie1:
             onie2 = onie1.group(0)
@@ -753,17 +753,17 @@ class  T5Switch(object):
             myversiondict['ONIE'] = str(onie3[2])
         else:
             helpers.error_msg("Did not get the ONIE information.")
-            
+
         lag1 = re.search("Maximum number of component ports in a LAG: .*", out1)
         if lag1:
             lag2 = lag1.group(0)
             lag3 = lag2.split(": ")
             helpers.log("The lag3 is %s" % lag3)
             helpers.log("the value of lag is %s" % lag3[1])
-            myversiondict['LAG'] = str(lag3[1])       
+            myversiondict['LAG'] = str(lag3[1])
         else:
             helpers.error_msg("Did not get the LAG information.")
-            
+
         helpers.log("The version dict has %s" % myversiondict)
         helpers.log("The component require is %s" % component)
         componentVal = myversiondict.get(component)
@@ -775,5 +775,4 @@ class  T5Switch(object):
         else:
             helpers.log("The component is %s expectedVal= %s and actual componentVal=%s" % (component, expectedVal, componentVal))
             return False
-            
-        
+
