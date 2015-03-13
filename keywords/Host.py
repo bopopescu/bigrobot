@@ -491,6 +491,23 @@ class Host(object):
             helpers.test_error("lsb_release command output is invalid",
                                soft_error=soft_error)
 
+    def bash_get_distributor(self, node,soft_error=False):
+        """
+        Return the distributor id: Ubuntu
+        """
+        t = test.Test()
+        n = t.node(node)
+        content = n.bash("lsb_release -i")['content']
+        match = re.search(r'Distributor ID:\s+(.*)', content, re.M)
+        if match:
+            return  match.group(1)
+           
+        else:
+            helpers.test_error("lsb_release command output is invalid",
+                               soft_error=soft_error)
+
+
+
     def bash_restart_networking_service(self, node, timeout=None):
         """
         Restart networking service.

@@ -5674,7 +5674,7 @@ class T5Platform(object):
                     helpers.log("Node reconnect for '%s'" % c.name())
                     c = t.node_reconnect(c.name())
                     c.enable('show switch')
-                    t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
+                    # t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
                 else:
                     helpers.log("INFO: self.verify_controller_reachable is false")
 
@@ -5711,7 +5711,7 @@ class T5Platform(object):
                     helpers.log("Node reconnect for '%s'" % c.name())
                     c = t.node_reconnect(c.name())
                     c.enable('show switch')
-                    t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
+                    # t.cli_add_controller_idle_and_reauth_timeout(c.name(), reconfig_reauth=False)
                 else:
                     helpers.log("INFO: self.verify_controller_reachable is false")
 
