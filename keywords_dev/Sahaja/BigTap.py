@@ -3981,7 +3981,7 @@ class BigTap(object):
         c = t.controller('master')
 
         try:
-            url = '/api/v1/data/controller/core/switch?select=alias'
+            url = '/api/v1/data/controller/core/switch?select=alias'  # "show switch" command
             helpers.log("Trying to issue the command %s" % (url))
             c.rest.get(url)
             helpers.log("Could issue the command")
@@ -4006,14 +4006,16 @@ class BigTap(object):
         except:
             helpers.test_failure(c.rest.error())
         data1 = c.rest.content()
-        helpers.log("Data received from link cmd is %s" % (data1))
+        helpers.log("Data received from link cmd is {} and length is {}".format(data1, len(data1)))
 
         lis_dic = []
         for elem in data1:
+            # helpers.log("##########Going to parse element {}".format(elem))
             l_dic = {}
             if elem[u'src'][u'switch-dpid'] != elem[u'dst'][u'switch-dpid']:
-                l_dic[elem[u'src'][u'switch-dpid']] = elem[u'src'][u'interface'][u'number']
-                l_dic[elem[u'dst'][u'switch-dpid']] = elem[u'dst'][u'interface'][u'number']
+                # helpers.log("Entered the if loop as src and dst dpid are not same and here are the values {}    and    {}".format(elem[u'src'][u'switch-dpid'], elem[u'dst'][u'switch-dpid']))
+                l_dic[elem[u'src'][u'switch-dpid']] = elem[u'src'][u'interface'][u'name']
+                l_dic[elem[u'dst'][u'switch-dpid']] = elem[u'dst'][u'interface'][u'name']
                 lis_dic.append(l_dic)
 
         lis_dic = [dict(y) for y in set(tuple(x.items()) for x in lis_dic)]  # To remove the duplicate entries fo ex: [{'00:00:70:72:cf:c7:cd:7d': 'ethernet21', '00:00:70:72:cf:c7:ce:a5': 'ethernet6'}, {'00:00:70:72:cf:c7:cd:7d': 'ethernet21', '00:00:70:72:cf:c7:ce:a5': 'ethernet6'}]
@@ -4181,11 +4183,13 @@ class BigTap(object):
         for pair in lis:
             for key1, key2 in [tuple(pair.keys())]:
                 if key1 in s_dpid:
+                    # helpers.log("key1 is {} and s_dpid is {}".format(key1, s_dpid))
                     for out in dic_op_dpid[key1]:
-                        if int(out['Port']) == pair[key1]:
+                        # helpers.log("Out is {} and dic_op_dpid[key1] is {}".format(out, dic_op_dpid[key1]))
+                        if str(out['Port']) == str(pair[key1]):
                             helpers.log("port {} for dpid {}".format(out['Port'], key1))
                             for out1 in dic_op_dpid[key2]:
-                                if int(out1['Port']) == pair[key2]:
+                                if str(out1['Port']) == str(pair[key2]):
                                     if out['Model'] == out1['Model']:
                                         helpers.log("Same sfp switch1 {} port {} model {} switch 2 {} port {}".format(key1, pair[key1], out['Model'], key2, pair[key2]))
 
