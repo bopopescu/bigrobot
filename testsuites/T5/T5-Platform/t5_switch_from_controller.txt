@@ -232,7 +232,7 @@ TC32 Verify switch version from controller for Vendor of leaf switch
 
 TC33 Verify switch version from controller for CPLD of leaf switch
     [Tags]  switch-platform  version  feature  sanity
-    verify switch version  ${switch1_name}  ${leaf_cpldcomp}  feature  sanity  sanity
+    verify switch version  ${switch1_name}  ${leaf_cpldcomp}  ${leaf_cpld}
 
 TC34 Verify switch version from controller for ONIE of leaf switch
     [Tags]  switch-platform  version  feature  sanity
