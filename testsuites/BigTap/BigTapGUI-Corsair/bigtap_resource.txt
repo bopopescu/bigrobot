@@ -179,7 +179,7 @@ ${SECURITY USERS/GROUPS/RBAC DUPLICATE MENU ITEM}     		xpath=//td[contains(@id,
 ${SECURITY USERS/GROUPS/RBAC RESET PASSWORD MENU ITEM}      xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Reset Password')]
 ${SECURITY USERS/GROUPS/RBAC DELETE MENU ITEM}              xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
 ${SECURITY USERS CONFIRM POPUP}								xpath=//div[@title='Confirm']
-
+${ACTION MENU}												xpath=//div[@class='action_menu']
 
 ### RBAC Page
 ${CREATE RBAC POPUP}					xpath=//div[@title='Create RBAC Permission']
@@ -3901,9 +3901,9 @@ Check Security Users Page for read-only user
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
 	#Verify Element Invisible  ${CHECKBOX ALL}
 	Verify Page Does Not Contain Element  ${CHECKBOX ALL}
-	${action_menu}  Generate Action Menu Xpath Users  div[@id='users_table']  admin
-    Verify Element Invisible  ${action_menu}
-    
+	#${action_menu}  Generate Action Menu Xpath Users  div[@id='users_table']  admin
+    #Verify Element Invisible  ${action_menu}
+    Verify Page Does Not Contain Element  ${ACTION MENU}
 
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC EDIT MENU ITEM}
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC DUPLICATE MENU ITEM}
@@ -3916,8 +3916,9 @@ Check Security Groups Page for read-only user
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
 	#Verify Element Invisible  ${CHECKBOX ALL}
 	Verify Page Does Not Contain Element  ${CHECKBOX ALL}
-	${action_menu}  Generate Action Menu Xpath Users  div[@id='groups_table']  admin
-    Verify Element Invisible  ${action_menu}
+	#${action_menu}  Generate Action Menu Xpath Users  div[@id='groups_table']  admin
+    #Verify Element Invisible  ${action_menu}
+    Verify Page Does Not Contain Element  ${ACTION MENU}
     
 
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC EDIT MENU ITEM}
@@ -3930,8 +3931,9 @@ Check Security RBAC Page for read-only user
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
 	#Verify Element Invisible  ${CHECKBOX ALL}
 	Verify Page Does Not Contain Element  ${CHECKBOX ALL}
-	${action_menu}  Generate Action Menu Xpath Users  div[@id='groups_table']  admin
-    Verify Element Invisible  ${action_menu}
+	#${action_menu}  Generate Action Menu Xpath Users  div[@id='groups_table']  admin
+    #Verify Element Invisible  ${action_menu}
+    Verify Page Does Not Contain Element  ${ACTION MENU}
     
 
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC EDIT MENU ITEM}
