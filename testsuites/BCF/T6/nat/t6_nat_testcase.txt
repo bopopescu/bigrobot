@@ -57,6 +57,10 @@ Verify floating IP in NAT which is outside the subnet of exteral segment
 	[Tags]
 Verify floating IP in one NAT porfile same as other NAT profiles public IP
 	[Tags]
+verify floating IP mac does not fall under multicast range
+	[Tags]
+show command for NAT/floating IP
+	[Tags]
 	
 Functionality Test (NAT/Floating IP)
 +++++++++++++++++++++++++++++++++++++
@@ -104,6 +108,8 @@ Verify debug logs associatation with Floating IP profile
 	[Tags]
 Verify forwarding entries in pswitch/vswitch for NAT and floating IP table
 	[Tags]
+verify single vswitch NAT container capacity and check the log messages in floodlight logs
+	[Tags]
 
 Failover Cases
 ++++++++++++++
@@ -115,6 +121,45 @@ Test connectivity with bringing down Interface for Vswitch NAT container
 	[Tags]
 Test connectivity with NAT switch failover
 	[Tags]
+	
+PNAT/Floating IP with Openstack
++++++++++++++++++++++++++++++++
+verify PNAT configuration workflow with openstack tenant routes
+	[Tags]
+verify PNAT default behaviour when user creates tenant/network/endpoint
+	[Tags]
+verify VM connectivity using openstack endpoint creation (NAT applied)
+	[Tags]
+verify floating IP configuration workflow with Openstack
+	[Tags]
+verify VM connectivity using floating IP 
+	[Tags]
+Test PNAT/Floating IP with fixed nat container
+	[Tags]
+create a floating IP exaust case and check the behaviour BCF/NAT container
+	[Tags]
+verify floating IP with multiple external networks part of different tenants
+	[Tags]
+verify VM connectivity with nat container interface failover
+	[Tags]
+verify VM connectivity with NAT container failover (dynamic and fixed NAT switch)
+	[Tags]
+verify VM connecitiy with BCF controller failover
+	[Tags]
+verify NAT/Floating IP with neutron server failover
+	[Tags]
+verify vm connectivity with NAT switch reboot scenario
+	[Tags]
+create a scenario where single vswitch to be exceeded the ports using pnat/floating IP
+	[Tags]
+verify packet contents with PNAT and floating IP together in a tenant
+	[Tags]
+verify openstack tenant with no NAT configuration workflow
+	[Tags]
+exhaust floating IP network in openstack and check the BCF NAT container behaviour
+	[Tags]
+
+
 	
 
 	
