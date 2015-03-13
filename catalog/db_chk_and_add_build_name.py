@@ -23,15 +23,20 @@ BUILD_NAME.
    - If found, return the build name.
    - If not found, create a new document, then return the build name.
 """
-    parser = argparse.ArgumentParser(prog='db_chk_and_add_build_name',
-                                     formatter_class=argparse.RawDescriptionHelpFormatter,
-                                     description=descr)
+    parser = argparse.ArgumentParser(
+                    prog='db_chk_and_add_build_name',
+                    formatter_class=argparse.RawDescriptionHelpFormatter,
+                    description=descr)
     parser.add_argument('--verbose', action='store_true',
                         default=False,
                         help=("Print verbose output"))
     parser.add_argument('--build',
                         help=("Jenkins build string,"
                               " e.g., 'bvs master #2007'"))
+    parser.add_argument('--regression-tags',
+                        default='daily',
+                        help=("Supported regression tags are 'daily' or 'full'."
+                              " Default is 'daily'."))
     _args = parser.parse_args()
 
     # _args.build <=> env BUILD_NAME
@@ -43,13 +48,17 @@ BUILD_NAME.
     else:
         os.environ['BUILD_NAME'] = _args.build
 
+    if not _args.regression_tags in ['daily', 'full']:
+        helpers.error_exit("Regression tags must be 'daily' or 'full'")
     return _args
 
 
 if __name__ == '__main__':
     args = prog_args()
     db = TestCatalog()
-    doc = db.find_and_add_build_name(args.build, quiet=not args.verbose)
+    doc = db.find_and_add_build_name(args.build,
+                                     regression_tags=args.regression_tags,
+                                     quiet=not args.verbose)
     doc = db.find_and_add_build_name_group(args.build, quiet=not args.verbose)
 
     if args.verbose: print "Doc: %s" % helpers.prettify(doc)
