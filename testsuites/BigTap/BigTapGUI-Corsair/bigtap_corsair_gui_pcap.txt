@@ -70,6 +70,7 @@ T2.7 Schedule policy to start after a delay of 15 minutes, run for 10 minute(s) 
     [Tags]  full  feature  packet-capture
 T2.8 Teardown
 	Delete All Big Tap Policies
+	Set Switching Mode        	 L3-L4 Match
     [Tags]  sanity  feature  packet-capture
 
 * Keyword

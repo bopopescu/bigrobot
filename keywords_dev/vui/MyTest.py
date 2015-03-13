@@ -1394,3 +1394,15 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
             BsnCommon().cli(node, "show user")
             # t.node_disconnect(node)
             n.close()
+
+    def bash_me(self, node):
+        t = test.Test()
+        h = t.host(node)
+        # result = h.bash('uname -a')['content']
+        result = h.bash('')['content']
+        helpers.pretty_log(result)
+
+    def cisco_console(self, node):
+        t = test.Test()
+        con = t.dev_console(node)
+        con.cli("show version")

@@ -306,7 +306,7 @@ T10.11 Enable Tunneling
     Configure Match Mode                                           Tunneling
     [Tags]  corsair  full  feature  match-mode
 T10.12 Enable L3-L4 Offset Match                     
-     Set Switching Mode                                            L3-L4 Offset Match    
+     Set Switching Mode                                            L3-L4 Match    
     [Tags]  corsair  full  feature  match-mode
                         
 * Keyword
