@@ -3874,7 +3874,7 @@ Check Big Tap IP Lists Page for read-only user
     Mouse Up  ${action_menu}
     #Click Element  ${action_menu}  and don't wait
     Highlight Element   ${SHOW HIDE COLUMNS MENU ITEM}
-    Verify Element Visible  ${SHOW HIDE COLUMNS MENU ITEM}
+    #Verify Element Visible  ${SHOW HIDE COLUMNS MENU ITEM}
     Verify Element Invisible  ${MAIN PLUS BUTTON}
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
     
@@ -4038,7 +4038,10 @@ Create a BigChain Service
     
     Verify Page Contains Text  ${name}
     
-    
+Verify Switch Mode  
+	[Arguments]  ${switch}  ${mode}
+	Verify Element Visible  xpath=//div[@class='bsn_ellipsis' and contains (text(), '${switch}')]/parent::div/parent::td/following-sibling::td/div[@class='content']/descendant::div[@class='label' and contains(text(), '${mode}')]
+
 Configure Switch Deployment Role
 	[Arguments]  ${dpid}  ${switch}  ${type}
 	
@@ -4063,5 +4066,5 @@ Configure Switch Deployment Role
     Click Element  ${DEPLOY SWITCH BUTTON}   and don't wait
 
     #Verify Element Invisible  ${CONFIRM SWITCH DEPLOYMENT POPUP}
-    Verify Element Visible  xpath=//div[@class='bsn_ellipsis' and contains (text(), '${switch}')]/parent::div/parent::td/following-sibling::td/div[@class='content']/descendant::div[@class='label' and contains(text(), '${type}')]
+    Verify Switch Mode   ${switch}  ${type}
 							
