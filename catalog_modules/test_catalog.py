@@ -298,7 +298,8 @@ class TestCatalog(object):
             _ = self.insert_doc('aggregated_builds', doc)
             return doc
 
-    def find_and_add_build_name(self, build_name, quiet=True):
+    def find_and_add_build_name(self, build_name, regression_tags="daily",
+                                quiet=True):
         """
         Check whether 'build_name' is found in builds collection.
         - If found, return the document.
@@ -318,7 +319,11 @@ class TestCatalog(object):
             if not quiet: print "Not found build '%s'. Creating." % build_name
             doc = {"build_name": build_name,
                    "createtime": self.timestamp(),
-                   "created_by": getpass.getuser()
+                   "updatetime": self.timestamp(),
+                   "created_by": getpass.getuser(),
+                   "regression_tags": [regression_tags],
+                   "is_toxic": False,
+                   "comments": '',
                    }
             _ = self.insert_doc('builds', doc)
             return doc
@@ -346,7 +351,7 @@ class TestCatalog(object):
         query = {"build_name": build_group_name}
         cursor = self.build_groups_collection().find(query)
         count = cursor.count()
-
+        regression_tags = self.get_regression_tags(build_name)
         if createtime == None:
             createtime = self.timestamp()
         if updatetime == None:
@@ -363,6 +368,12 @@ class TestCatalog(object):
             if not helpers.in_list(found_doc["build_names"], build_name):
                 found_doc["build_names"].append(build_name)
             found_doc["updatetime"] = updatetime
+            if "regression_tags" in found_doc:
+                found_doc["regression_tags"] = helpers.set_union(
+                                    found_doc["regression_tags"],
+                                    regression_tags)
+            else:
+                found_doc["regression_tags"] = regression_tags
             doc = self.upsert_doc("build_groups", found_doc, query)
             return doc
         else:
@@ -377,7 +388,8 @@ class TestCatalog(object):
                    "updatetime": updatetime,
                    "created_by": getpass.getuser(),
                    "testbeds": testbeds,
-                   "build_names": [build_name]
+                   "build_names": [build_name],
+                   "regression_tags": regression_tags,
                    }
             _ = self.insert_doc('build_groups', doc)
             return doc
@@ -424,6 +436,14 @@ class TestCatalog(object):
             query["tags"] = { "$all": helpers.list_flatten([release, tags]) }
         return self.find_docs(collection=collection,
                               query=query)
+
+    def get_regression_tags(self, build_name):
+        query = {"build_name": build_name}
+        cursor = self.find_docs(collection="builds", query=query)
+        if cursor.count() > 0:
+            return cursor[0]['regression_tags']
+        else:
+            return []
 
     def find_test_cases_archive_matching_build(self, *args, **kwargs):
         new_kwargs = dict(kwargs)
