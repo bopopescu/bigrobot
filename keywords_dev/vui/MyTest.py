@@ -980,6 +980,10 @@ vui@Vuis-MacBook-Pro$
         for res in results:
             task_id = res.task_id
             helpers.log_task_output(task_id)  # display URL of task output
+            helpers.log("       status: %s" % (res.status))
+            if res.status == "FAILURE":
+                helpers.log("       Task traceback:\n%s" % res.traceback)
+            helpers.log("-------------")
 
         if is_pending and iterations > max_tries:
             helpers.log("Not able to retrieve results from ESB")
