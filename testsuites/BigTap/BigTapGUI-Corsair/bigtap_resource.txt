@@ -3873,7 +3873,7 @@ Check Big Tap IP Lists Page for read-only user
 	Mouse Down  ${action_menu}
     Mouse Up  ${action_menu}
     #Click Element  ${action_menu}  and don't wait
-    Highlight Element   ${SHOW HIDE COLUMNS MENU ITEM}
+    #Highlight Element   ${SHOW HIDE COLUMNS MENU ITEM}
     #Verify Element Visible  ${SHOW HIDE COLUMNS MENU ITEM}
     Verify Element Invisible  ${MAIN PLUS BUTTON}
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
