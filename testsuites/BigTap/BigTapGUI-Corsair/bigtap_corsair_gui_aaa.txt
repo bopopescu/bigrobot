@@ -177,10 +177,10 @@ AAA Suite Setup
 
 AAA Suite Teardown
 	${status}=  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
-    Run Keyword If  '${status}'=='False'  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+    Run Keyword If  '${status}'=='None'  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
 	Delete All Big Tap Resources
 	BT Cli Run  master  enable; config; no tacacs server host 10.2.3.201
-	BT Cli Run  master  enable; config; ssh connection timeout 0
+	#BT Cli Run  master  enable; config; ssh connection timeout 0
 	Base Suite Teardown
 
 Verify admin access
