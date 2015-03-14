@@ -161,12 +161,13 @@ Verify L3 ICMP traffic
 
         
 Verify L3 Traffic: VLAN Tagged Traffic
+    rest delete tenant  ${tenant_1}
+    t5 tenant add  2048
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=128  ethertype=8100  vlan_id=2048  
     ...     src_mac=00:01:03:04:05:06  dst_mac=00:02:03:04:05:07
     ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
     ...     src_gw=${src_gw}   dst_gw=${dst_gw}   
-    rest delete tenant  ${tenant_1}
-    t5 tenant add  2048
+
     sleep  10
     clear stats  
     start traffic  ${stream}
@@ -181,7 +182,7 @@ Verify L3 Traffic: VLAN Tagged Traffic
     stop traffic   ${stream}     
     rest delete tenant  ${tenant_1}
     t5 tenant add  -1  
-    [Tags]  feature  traffic  L3  l3vlan  skipped
+    [Tags]  feature  traffic  L3  l3vlan  daily-sanity
 
 Verify L3 traffic: frame size 2048 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=2048
