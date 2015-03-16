@@ -10,22 +10,29 @@ ${version}			Switch Light OS SWL-BT-4.5.0
 * Test Case
 
 TC01: Switch Upgrade
-#    copy image
-    Run Keyword And Ignore Error  bash upgrade switch   s1   autobuilds/bt-4.5.0-beta3/latest.switchlight-BT-4.5.0-powerpc-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s2   autobuilds/bt-4.5.0-beta3/latest.switchlight-BT-4.5.0-powerpc-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s3   autobuilds/bt-4.5.0-beta3/latest.switchlight-BT-4.5.0-powerpc-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s4   autobuilds/bt-4.5.0-beta3/latest.switchlight-BT-4.5.0-powerpc-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s5   autobuilds/bt-4.5.0-beta3/latest.switchlight-BT-4.5.0-powerpc-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s6   autobuilds/bt-4.5.0-beta3/latest.switchlight-BT-4.5.0-powerpc-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s7   autobuilds/bt-4.5.0-beta3/latest.switchlight-BT-4.5.0-powerpc-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s8   autobuilds/bt-4.5.0-beta3/latest.switchlight-BT-4.5.0-amd64-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s9   autobuilds/bt-4.5.0-beta3/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    copy image
+    Run Keyword And Ignore Error  bash upgrade switch   s1   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s2   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s3   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s4   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s5   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s6   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s7   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s8   autobuilds/master/latest.switchlight-BT-4.5.0-amd64-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s9   autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
     #Run Keyword And Ignore Error  bash upgrade switch   s10  autobuilds/master/latest.switchlight-BT-4.5.0-amd64-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s11  autobuilds/bt-4.5.0-beta3r/latest.switchlight-BT-4.5.0-powerpc-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s12  autobuilds/bt-4.5.0-beta3/latest.switchlight-BT-4.5.0-powerpc-internal.swi
-    Run Keyword And Ignore Error  bash upgrade switch   s13  autobuilds/bt-4.5.0-beta3/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s11  autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s12  autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
+    Run Keyword And Ignore Error  bash upgrade switch   s13  autobuilds/master/latest.switchlight-BT-4.5.0-powerpc-internal.swi
 
     sleep  600
+    cli  node=c1  cmd=show version
+    ${content1}=  cli_content  node=c1
+    
+    cli  node=c2  cmd=show version
+    ${content1}=  cli_content  node=c2
+    
+    
     cli  node=s1  cmd=show version
     ${content1}=  cli_content  node=s1
     Should Contain  ${content1}  ${version}
