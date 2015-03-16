@@ -620,6 +620,93 @@ class SwitchLight(object):
         except:
             helpers.test_log("Could not execute ping. Please check log for errors")
             return False
+
+    def cli_show_interface_link_flap_count(self, node, direction, intf_name):
+        '''
+            Objective:
+            - Return the Link Up Count of a given interface on a switch
+
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | direction | Up or Down count eg.  'up' or 'down' |
+            | intf_name | Interface Name eg. ethernet1 or ethernet2 |
+
+            Return Value:
+            - Flap count of an interface on success.
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            value = None
+            input1 = "show interface %s detail" %intf_name
+            s1.enable(input1)
+            content = string.split(s1.cli_content(), '\n')
+
+            for i in content:
+              m = re.search(r'up count\s(\d+),\s+down count\s(\d+)',i)
+              if m:
+                if direction == 'up':
+                  value = m.group(1)
+                  helpers.log('Value found in up_count = %s' % (value))
+                  break
+                if direction == 'down':
+                  value = m.group(2)
+                  helpers.log('Value found in down_count = %s' % (value))
+                  break
+
+            return int(value)
+        except:
+            helpers.test_log("Could not get flap count. Please check log for errors")
+            return False
+
+    def cli_show_interface_link_flap_time(self, node, intf_name):
+        '''
+            Objective:
+            - Return the last flap time in secs or 'never up' of a given interface on a switch
+
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | intf_name | Interface Name eg. ethernet1 or ethernet2 |
+
+            Return Value:
+            -  'never up' or seconds since the last interface transition
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            value = None
+            input1 = "show interface %s detail" %intf_name
+            s1.enable(input1)
+            content = string.split(s1.cli_content(), '\n')
+
+            for i in content:
+              m = re.search(r'Link: (up|down) for (\d+) days, (\d+):(\d+):(\d+)',i)
+              n = re.search(r'Link: (never up)',i)
+              if m:
+                dd = m.group(2)
+                hh = m.group(3)
+                mm = m.group(4)
+                ss = m.group(5)
+
+                value = int(ss)
+                value += int(mm) * 60
+                value += int(hh) * 3600
+                value += int(dd) * 86400
+
+                helpers.log('Last flap: %s days %s hours %s minutes %s seconds' % (dd,hh,mm,ss))
+                helpers.log('In seconds: %s' % (value))
+                return int(value)
+                break
+              if n:
+                value = 'never up'
+                return value
+                break
+
+            return value
+        except:
+            helpers.test_log("Could not get last flap time. Please check log for errors")
+            return False
+
 #######################################################################
 # All Common Controller Verification Commands Go Here:
 #######################################################################
