@@ -3,7 +3,7 @@ Documentation  		Various CLI commands
 Suite Setup  		AAA Suite Setup
 Suite Teardown		AAA Suite Teardown
 Test Setup   		Base Test Setup
-Test Teardown  		Base Test Teardown
+Test Teardown  		AAA Test Teardown
 Force Tags   		Big Tap  AAA
 Library             keywords/BsnCommon.py
 Library             keywords/BigTap.py
@@ -128,6 +128,7 @@ T16.0 Authorization - remote > local, authentication remote
 *** Keywords ***
 AAA Suite Setup
 	Base Suite Setup
+	Bash  master  cp /opt/bigswitch/bigdb/db/config-bigtap.json /opt/bigswitch/bigdb/db/startup-config.json
 	BT Cli Run  master  enable; config; ssh connection timeout 300
 	BT Cli Run  master  enable; config; tacacs server host 10.2.3.201 timeout 5 key secret
 	BT Cli Run  master  enable; config; user local; password local
@@ -141,23 +142,20 @@ AAA Suite Setup
 	BT Cli Run  master  enable; config; group local-bigtap-rbac; associate user local-rbac-user; associate rbac-permission local-rbac
 	BT Cli Run  master  enable; config; group bigtap-rbac; associate rbac-permission remote-rbac
 	BT Cli Run  master  enable; config; group local-bigtap-rbac; associate user taco-user
+    Bash  master  cp /opt/bigswitch/bigdb/db/config-bigtap.json /opt/bigswitch/bigdb/db/test-config.json
 
 AAA Suite Teardown
-	${status}=  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
-    Run Keyword If  '${status}'=='False'  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
-	BT Cli Run  master  enable; config; no group local-bigtap-rbac
-	BT Cli Run  master  enable; config; no group bigtap-rbac
-	BT Cli Run  master  enable; config; no group local-bigtap-rbac
-	#BT Cli Run  master  enable; config; no rbac-permission local-rbac bigtap
-	#BT Cli Run  master  enable; config; no rbac-permission remote-rbac bigtap
-	BT Cli Run  master  enable; config; no user rbac-user
-	BT Cli Run  master  enable; config; no user local-rbac-user
-	BT Cli Run  master  enable; config; no user local
-	BT Cli Run  master  enable; config; no user taco-user
-	BT Cli Run  master  enable; config; no user longevity
-	BT Cli Run  master  enable; config; no tacacs server host 10.2.3.201
-	BT Cli Run  master  enable; config; ssh connection timeout 0
+    BT Cli Run  master  sudo cp /opt/bigswitch/bigdb/db/startup-config.json /opt/bigswitch/bigdb/db/config-bigtap.json  user=recovery  password=bsn
+    BT Cli Run  master  sudo service floodlight restart  user=recovery  password=bsn
+    Sleep  10
 	Base Suite Teardown
+
+AAA Test Teardown
+    Run Keyword If Test Failed
+    ...  BT Cli Run  master  sudo cp /opt/bigswitch/bigdb/db/test-config.json /opt/bigswitch/bigdb/db/config-bigtap.json; sudo service floodlight restart  user=recovery  password=bsn
+    Run Keyword If Test Failed
+    ...  Sleep  10
+    Base Test Teardown
 
 Verify admin access
 	Verify local admin
