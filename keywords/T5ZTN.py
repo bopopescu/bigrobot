@@ -1148,7 +1148,7 @@ class T5ZTN(object):
                     running_config_temp.append(temp_line)
                     helpers.log("Rearranging line: %s" % temp_line)
                     continue
-                if re.match(r'\Ahash', running_config_line):
+                if re.match(r'^hash.*', running_config_line):
                     helpers.log("Skipping line: %s" % running_config_line)
                     continue
                 running_config_temp.append(running_config_line)
