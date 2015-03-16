@@ -16,7 +16,7 @@ Library         keywords_dev/vui/MyTest.py
 Test esb: cli show running config
     #[Tags]  skipped
     @{nodes}=         create list     c1   c2
-    ${status}=        test vui esb2   nodes=@{nodes}
+    ${status}=        test vui esb   nodes=@{nodes}
     #Should be true    ${status}
 
 Test esb: bsn common services (Production services)

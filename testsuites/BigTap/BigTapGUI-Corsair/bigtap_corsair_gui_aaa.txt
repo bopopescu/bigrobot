@@ -10,7 +10,7 @@ Library             keywords/BsnSelenium.py
 Library             keywords/BigTap.py
 Library             SeleniumLibrary
 Library             keywords/AppController.py
-Resource            testsuites/BigTap/BigTapGUI-Corsair/bigtap_resource.txt
+Resource            bigtap_resource.txt
 Library             String
 
 
@@ -19,26 +19,26 @@ Library             String
 *** Test Cases ***
 T1.0 Authorization - remote > local, authentication remote > local
 	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default group tacacs+ local
-	Verify admin access
-	Verify read-only access
+	#Verify admin access
+	#Verify read-only access
 	Verify rbac access
 
 T2.0 Authorization - remote > local, authentication local > remote
 	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default local group tacacs+
-	Verify admin access
-	Verify read-only access
+	#Verify admin access
+	#Verify read-only access
 	Verify rbac access
 
 T3.0 Authorization - local > remote, authentication local > remote
 	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default local group tacacs+
-	Verify admin access
-	Verify read-only access
+	#Verify admin access
+	#Verify read-only access
 	Verify rbac access
 
 T4.0 Authorization - local > remote, authentication remote > local
 	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default group tacacs+ local
-	Verify admin access
-	Verify read-only access
+	#Verify admin access
+	#Verify read-only access
 	Verify rbac access
 	
 	#Intermission
@@ -143,13 +143,24 @@ AAA Suite Setup
     Open Browser To Login Page
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+    ${switch_dpid_s3}=  rest return switch dpid from ip  s3
+    ${switch_dpid_s4}=  rest return switch dpid from ip  s4
+    ${switch_dpid_s5}=  rest return switch dpid from ip  s5
+    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
+    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
+    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
+    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1  
+    Set Switching Mode  L3-L4 Offset Match 
 	#BT Cli Run  master  enable; config; ssh connection timeout 300
 	BT Cli Run  master  enable; config; tacacs server host 10.2.3.201 timeout 5 key secret
 	Configure User  local  local   local   ${EMPTY}  ${EMPTY}
 	Configure User  taco-user  local   local   ${EMPTY}  ${EMPTY}
 	Configure User  longevity  local   local   ${EMPTY}  ${EMPTY}
-	#BT Cli Run  master  enable; config; group read-only; associate user local
-	Configure Group	 read-only  local  ${EMPTY}
+	BT Cli Run  master  enable; config; group read-only; associate user local
+	#Configure Group	 read-only  local  ${EMPTY}
 	Configure User  rbac-user  local   local   ${EMPTY}  ${EMPTY}
 	Configure User  local-rbac-user  local   local   ${EMPTY}  ${EMPTY}
 	Configure RBAC	 local-rbac	 ${EMPTY}  ${EMPTY}	  ${EMPTY}	${EMPTY}	${EMPTY}   ${EMPTY}   ${EMPTY}
@@ -166,10 +177,11 @@ AAA Suite Setup
 
 AAA Suite Teardown
 	${status}=  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
-    Run Keyword If  '${status}'=='False'  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+    Run Keyword If  '${status}'=='None'  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
+	Valid Login  admin  adminadmin
 	Delete All Big Tap Resources
-	BT Cli Run  master  enable; config; no tacacs server host 10.2.3.201
-	BT Cli Run  master  enable; config; ssh connection timeout 0
+	#BT Cli Run  master  enable; config; no tacacs server host 10.2.3.201
+	#BT Cli Run  master  enable; config; ssh connection timeout 0
 	Base Suite Teardown
 
 Verify admin access
@@ -430,5 +442,5 @@ Verify remote rbac-user using shell:roles=bigtap-rbac
 Verify remote rbac-user using BSN-User-Role=bigtap-rbac
 	Valid Login   	bsn-vsa-bigtap-rbac-user   bsnbsn
 	Configure Big Tap Policy  policy-remote-2   remote-rbac		Forward		IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  ${EMPTY}	  	${EMPTY}	 ${EMPTY}
-	Delete Big Tap Policy  policy-remote-1 
+	Delete Big Tap Policy  policy-remote-2 
 	

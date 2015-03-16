@@ -980,6 +980,10 @@ vui@Vuis-MacBook-Pro$
         for res in results:
             task_id = res.task_id
             helpers.log_task_output(task_id)  # display URL of task output
+            helpers.log("       status: %s" % (res.status))
+            if res.status == "FAILURE":
+                helpers.log("       Task traceback:\n%s" % res.traceback)
+            helpers.log("-------------")
 
         if is_pending and iterations > max_tries:
             helpers.log("Not able to retrieve results from ESB")
@@ -1394,3 +1398,15 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
             BsnCommon().cli(node, "show user")
             # t.node_disconnect(node)
             n.close()
+
+    def bash_me(self, node):
+        t = test.Test()
+        h = t.host(node)
+        # result = h.bash('uname -a')['content']
+        result = h.bash('')['content']
+        helpers.pretty_log(result)
+
+    def cisco_console(self, node):
+        t = test.Test()
+        con = t.dev_console(node)
+        con.cli("show version")

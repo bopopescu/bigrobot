@@ -179,7 +179,7 @@ ${SECURITY USERS/GROUPS/RBAC DUPLICATE MENU ITEM}     		xpath=//td[contains(@id,
 ${SECURITY USERS/GROUPS/RBAC RESET PASSWORD MENU ITEM}      xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Reset Password')]
 ${SECURITY USERS/GROUPS/RBAC DELETE MENU ITEM}              xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
 ${SECURITY USERS CONFIRM POPUP}								xpath=//div[@title='Confirm']
-
+${ACTION MENU}												xpath=//div[@class='action_menu']
 
 ### RBAC Page
 ${CREATE RBAC POPUP}					xpath=//div[@title='Create RBAC Permission']
@@ -578,8 +578,8 @@ ${SWITCH CREATE TUNNEL MENU ITEM}						xpath=//td[contains(@id, 'dijit_MenuItem'
 ${CONTROLLER CONFIGURE SELECTED INTERFACE MENU ITEM}	xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Configure Selected Interfaces for Big Tap')]
 ${BIG TAP POLICY VIEW MENU ITEM}						xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'View')]
 ${BIG TAP POLICY EDIT MENU ITEM}						xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
-${BIG TAP POLICY DUPLICATE MENU ITEM}					xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
-${BIG TAP POLICY DELETE MENU ITEM}						xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${BIG TAP POLICY DUPLICATE MENU ITEM}					xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Duplicate')]
+${BIG TAP POLICY DELETE MENU ITEM}						xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
 ${MONITOR STATS MENU ITEM}								xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Monitor Selected Stats')]
 ${START POLICY MENU ITEM}								xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Start Policy From Selected Interfaces')]
 ${CANCEL BUTTON}										xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Cancel')]
@@ -1339,7 +1339,7 @@ Configure Group
     Run Keyword Unless  '${rbac}'=='${EMPTY}'  
     ...		Configure RBAC  ${rbac}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}  ${EMPTY}
     ${rbac}  Set Variable If  '${rbac}'=='__new__'  ${random_rbacname}  ${rbac} 
-
+	
     ${random_username}  Generate Random Name  User  5
     Run Keyword Unless  '${user}'=='${EMPTY}' or '${user}'=='admin'
     ...		Configure User  ${user}  adminadmin  adminadmin  ${EMPTY}  ${EMPTY}
@@ -3873,8 +3873,8 @@ Check Big Tap IP Lists Page for read-only user
 	Mouse Down  ${action_menu}
     Mouse Up  ${action_menu}
     #Click Element  ${action_menu}  and don't wait
-    Highlight Element   ${SHOW HIDE COLUMNS MENU ITEM}
-    Verify Element Visible  ${SHOW HIDE COLUMNS MENU ITEM}
+    #Highlight Element   ${SHOW HIDE COLUMNS MENU ITEM}
+    #Verify Element Visible  ${SHOW HIDE COLUMNS MENU ITEM}
     Verify Element Invisible  ${MAIN PLUS BUTTON}
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
     
@@ -3899,10 +3899,11 @@ Check Security Users Page for read-only user
 	Go To Security Users Page
 	Verify Element Invisible  ${MAIN PLUS BUTTON}
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
-	Verify Element Invisible  ${CHECKBOX ALL}
-	${action_menu}  Generate Action Menu Xpath Users  div[@id='users_table']  admin
-    Verify Element Visible  ${action_menu}
-    Click Element  ${action_menu}  and don't wait
+	#Verify Element Invisible  ${CHECKBOX ALL}
+	Verify Page Does Not Contain Element  ${CHECKBOX ALL}
+	#${action_menu}  Generate Action Menu Xpath Users  div[@id='users_table']  admin
+    #Verify Element Invisible  ${action_menu}
+    Verify Page Does Not Contain Element  ${ACTION MENU}
 
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC EDIT MENU ITEM}
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC DUPLICATE MENU ITEM}
@@ -3913,10 +3914,12 @@ Check Security Groups Page for read-only user
 	Go To Security Groups Page
 	Verify Element Invisible  ${MAIN PLUS BUTTON}
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
-	Verify Element Invisible  ${CHECKBOX ALL}
-	${action_menu}  Generate Action Menu Xpath Users  div[@id='groups_table']  admin
-    Verify Element Visible  ${action_menu}
-    Click Element  ${action_menu}  and don't wait
+	#Verify Element Invisible  ${CHECKBOX ALL}
+	Verify Page Does Not Contain Element  ${CHECKBOX ALL}
+	#${action_menu}  Generate Action Menu Xpath Users  div[@id='groups_table']  admin
+    #Verify Element Invisible  ${action_menu}
+    Verify Page Does Not Contain Element  ${ACTION MENU}
+    
 
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC EDIT MENU ITEM}
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC DUPLICATE MENU ITEM}
@@ -3926,10 +3929,12 @@ Check Security RBAC Page for read-only user
 	Go To Security RBAC Page
 	Verify Element Invisible  ${MAIN PLUS BUTTON}
 	Verify Element Invisible  ${MAIN MINUS BUTTON}
-	Verify Element Invisible  ${CHECKBOX ALL}
-	${action_menu}  Generate Action Menu Xpath Users  div[@id='groups_table']  admin
-    Verify Element Visible  ${action_menu}
-    Click Element  ${action_menu}  and don't wait
+	#Verify Element Invisible  ${CHECKBOX ALL}
+	Verify Page Does Not Contain Element  ${CHECKBOX ALL}
+	#${action_menu}  Generate Action Menu Xpath Users  div[@id='groups_table']  admin
+    #Verify Element Invisible  ${action_menu}
+    Verify Page Does Not Contain Element  ${ACTION MENU}
+    
 
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC EDIT MENU ITEM}
     Verify Page Does Not Contain Element  ${SECURITY USERS/GROUPS/RBAC DUPLICATE MENU ITEM}
@@ -4035,7 +4040,10 @@ Create a BigChain Service
     
     Verify Page Contains Text  ${name}
     
-    
+Verify Switch Mode  
+	[Arguments]  ${switch}  ${mode}
+	Verify Element Visible  xpath=//div[@class='bsn_ellipsis' and contains (text(), '${switch}')]/parent::div/parent::td/following-sibling::td/div[@class='content']/descendant::div[@class='label' and contains(text(), '${mode}')]
+
 Configure Switch Deployment Role
 	[Arguments]  ${dpid}  ${switch}  ${type}
 	
@@ -4060,5 +4068,5 @@ Configure Switch Deployment Role
     Click Element  ${DEPLOY SWITCH BUTTON}   and don't wait
 
     #Verify Element Invisible  ${CONFIRM SWITCH DEPLOYMENT POPUP}
-    Verify Element Visible  xpath=//div[@class='bsn_ellipsis' and contains (text(), '${switch}')]/parent::div/parent::td/following-sibling::td/div[@class='content']/descendant::div[@class='label' and contains(text(), '${type}')]
+    Verify Switch Mode   ${switch}  ${type}
 							

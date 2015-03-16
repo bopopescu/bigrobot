@@ -20,6 +20,8 @@ ${snmp_ccommunity_1}        ro public
 ${snmp_community_1}         public
 ${snmp_ccommunity_2}        ro bigswitch
 ${snmp_community_2}         bigswitch
+${snmp_ccommunity_3}        rw private 
+${snmp_community_3}         private 
 ${snmp_contact_1}           snmphost@bigswitch.com
 ${snmp_contact_2}           host@bigswitch.com
 ${snmp_location_1}          CS-214-6012
@@ -256,10 +258,70 @@ TC33: Restart process SNMPD and verify SNMP Stats
     Should Contain  ${snmp_key}  ${snmp_contact_1} 
     [Tags]  ha  robustness  full  process-restart
 
+
+TC34: Verify switch SN in SNMP Get Output read-only community
+    ${switch_dict}=  cli show version  s1
+    ${cli_value}=  Convert To String  ${switch_dict['SerialNumber']}
+    ${snmp_value}=  snmp cmd   s1   snmpget    ${snmp_community_1}   .1.3.6.1.4.1.37538.2.1000.1.1.3
+    Should Contain  ${snmp_value}  ${cli_value}
+    [Tags]  sanity  feature
+
+TC35: Verify Switch SN in SNMP Walk Output read-only community
+    ${switch_dict}=  cli show version  s1
+    ${cli_value}=  Convert To String  ${switch_dict['SerialNumber']}
+    ${snmp_value}=  snmp cmd   s1   snmpwalk   ${snmp_community_1}   .1.3.6.1.4.1.37538.2.1000.1.1.3
+    Should Contain  ${snmp_value}  ${cli_value}
+    [Tags]  full  feature
+
+TC36: Verify Switch SN in SNMP Bulk Walk Output read-only community
+    ${switch_dict}=  cli show version  s1
+    ${cli_value}=  Convert To String  ${switch_dict['SerialNumber']}
+    ${snmp_value}=  snmp cmd   s1   snmpbulkwalk   ${snmp_community_1}   .1.3.6.1.4.1.37538.2.1000.1.1.3
+    Should Contain  ${snmp_value}  ${cli_value}
+    [Tags]  full  feature
+
+TC37: Verify Switch SN in SNMP Get Output read-write community
+    ${switch_dict}=  cli show version  s1
+    ${cli_value}=  Convert To String  ${switch_dict['SerialNumber']}
+    ${snmp_value}=  snmp cmd   s1   snmpget   ${snmp_community_3}   .1.3.6.1.4.1.37538.2.1000.1.1.3
+    Should Contain  ${snmp_value}  ${cli_value}
+    [Tags]  full  feature
+
+TC38: Verify Switch SN in SNMP Get Output read-only community change
+    cli delete snmp keyword   s1   community  ${snmp_ccommunity_1}
+    cli add snmp keyword   s1   community  ${snmp_ccommunity_2}
+    ${switch_dict}=  cli show version  s1
+    ${cli_value}=  Convert To String  ${switch_dict['SerialNumber']}
+    ${snmp_value}=  snmp cmd   s1   snmpget   ${snmp_community_2}   .1.3.6.1.4.1.37538.2.1000.1.1.3
+    Should Contain  ${snmp_value}  ${cli_value}
+    cli delete snmp keyword   s1   community  ${snmp_ccommunity_2}
+    cli add snmp keyword   s1   community  ${snmp_ccommunity_1}
+    [Tags]  full  feature
+
+TC39: Verify Switch SN in SNMP Get Output read-only community reboot
+    cli execute command  s1  copy running-config startup-config
+    cli restart switch  s1
+    Sleep   90
+    ${switch_dict}=  cli show version  s1
+    ${cli_value}=  Convert To String  ${switch_dict['SerialNumber']}
+    ${snmp_value}=  snmp cmd   s1   snmpget    ${snmp_community_1}   .1.3.6.1.4.1.37538.2.1000.1.1.3
+    Should Contain  ${snmp_value}  ${cli_value}
+    [Tags]  full  feature  reboot
+
+TC40: Verify Switch SN in SNMP Set Output read-write community negative
+    ${switch_dict}=  cli show version  s1
+    ${snmp_value}=  snmp cmd   s1   snmpset   ${snmp_community_3}   .1.3.6.1.4.1.37538.2.1000.1.1.3 str ivan
+    Should be empty  ${snmp_value}
+    [Tags]  full  feature
+
+
+
+
 * Keywords  
 snmp suite setup
     base suite setup 
     cli add snmp keyword   s1   community   ${snmp_ccommunity_1}
+    cli add snmp keyword   s1   community   ${snmp_ccommunity_3}
     cli add snmp keyword   s1   location    ${snmp_location_1}
     cli add snmp keyword   s1   contact     ${snmp_contact_1}
     cli add snmp host   s1   ${snmp_trap_svr_1}   traps   ${snmp_community_1}   162

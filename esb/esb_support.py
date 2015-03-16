@@ -1,17 +1,17 @@
 from celery import current_task
 import gzip
 import autobot.helpers as helpers
+import autobot.utils as br_utils
 import autobot.test as test
 
 
 def _archive_logs(task_id):
-    helpers.log("Archiving logs for task %s before ending task." % task_id)
-
     server = helpers.bigrobot_log_archiver()
     dest_path = '/var/www/bigrobot_esb'
     user = 'root'
     password = 'bsn'
     helpers.scp_put(server, helpers.bigrobot_log_path_exec_instance(), dest_path, user, password)
+
 
 def task_execute(params, task_func):
     """
@@ -24,8 +24,6 @@ def task_execute(params, task_func):
     http://qa-tools1.qa.bigswitch.com/bigrobot_esb/vui_services_cf298f75-533b-4333-96a9-24406ed53fd1/
     """
     task_id = current_task.request.id
-    helpers.log("Starting task %s." % task_id)
-
     # Redirect logs to a separate log directory for this task.
     suite_log_path = helpers.bigrobot_log_path() + '/' + task_id
     helpers.bigrobot_log_path_exec_instance(suite_log_path)
@@ -38,6 +36,7 @@ def task_execute(params, task_func):
     try:
         # esb=True is the equivalent of setting helpers.bigrobot_esb('True').
         t = test.Test(esb=True, params=params)
+        helpers.log("Starting task %s." % task_id)
 
         content = task_func()
 
@@ -50,7 +49,9 @@ def task_execute(params, task_func):
         _archive_logs(task_id)
         raise
     else:
-        helpers.log("Ending task %s on success. Archiving logs." % task_id)
+        helpers.log("Ending task %s on success." % task_id)
+        helpers.log("Result from task %s:\n%s%s" % (task_id, content, br_utils.end_of_output_marker()))
+        helpers.log("Archiving logs for task %s before ending task." % task_id)
         _archive_logs(task_id)
         return content
 

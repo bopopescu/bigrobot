@@ -18,25 +18,24 @@ from catalog_modules.test_catalog import TestCatalog
 
 def prog_args():
     descr = """\
-Check the database collection 'builds' for a document which matches the env
-BUILD_NAME.
-   - If found, return the build name.
-   - If not found, create a new document, then return the build name.
+Update the regression tags for a build. The currently supported tags are
+'daily' and 'full'.
+
+Usage:
+% BUILD_NAME=ihplus_bcf_10G-490 ./update_regression_tags.py --tags full
 """
-    parser = argparse.ArgumentParser(
-                    prog='db_chk_and_add_build_name',
-                    formatter_class=argparse.RawDescriptionHelpFormatter,
-                    description=descr)
+    parser = argparse.ArgumentParser(prog='update_regression_tags',
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     description=descr)
     parser.add_argument('--verbose', action='store_true',
                         default=False,
                         help=("Print verbose output"))
     parser.add_argument('--build',
                         help=("Jenkins build string,"
                               " e.g., 'bvs master #2007'"))
-    parser.add_argument('--regression-tags',
-                        default='daily',
-                        help=("Supported regression tags are 'daily' or 'full'."
-                              " Default is 'daily'."))
+    parser.add_argument('--tags', metavar=('tag1', 'tag2'), nargs='*',
+                        help=("Regression tags,"
+                              " e.g., 'full', 'daily'"))
     _args = parser.parse_args()
 
     # _args.build <=> env BUILD_NAME
@@ -48,18 +47,16 @@ BUILD_NAME.
     else:
         os.environ['BUILD_NAME'] = _args.build
 
-    if not _args.regression_tags in ['daily', 'full']:
-        helpers.error_exit("Regression tags must be 'daily' or 'full'")
     return _args
 
 
 if __name__ == '__main__':
     args = prog_args()
     db = TestCatalog()
-    doc = db.find_and_add_build_name(args.build,
-                                     regression_tags=args.regression_tags,
-                                     quiet=not args.verbose)
-    doc = db.find_and_add_build_name_group(args.build, quiet=not args.verbose)
+    doc = db.update_regression_tags(args.build, tags=args.tags)
 
-    if args.verbose: print "Doc: %s" % helpers.prettify(doc)
-    print "%s" % doc["build_name"]
+    if doc:
+        print("build_name: %s, changed regression_tags from '%s' to '%s'."
+              % (doc["build_name"], [helpers.unicode_to_ascii(x) for x in doc["regression_tags"]], args.tags))
+    else:
+        print "build_name '%s' not in the catalog." % args.build

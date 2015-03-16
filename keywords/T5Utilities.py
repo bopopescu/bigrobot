@@ -2,6 +2,7 @@ import autobot.helpers as helpers
 import autobot.test as test
 import re
 from BsnCommon import BsnCommon as bsnCommon
+from random import shuffle
 
 '''
     ::::::::::    README    ::::::::::::::
@@ -815,7 +816,9 @@ class T5Utilities(object):
         return pidList
 
 
-    def cli_run(self, node, command, cmd_timeout=45, user='admin', password='adminadmin', soft_error=False):
+    def cli_run(self, node, command, cmd_timeout=60, user='admin',
+                password='adminadmin', soft_error=False, console=False,
+                reauth=False, ip_address=None):
         """
         Run given CLI command
 
@@ -826,28 +829,116 @@ class T5Utilities(object):
         | user | Username to use when logging into the node |
         | password | Password for the user |
         | soft_error | Soft Error flag |
+        | console | If True, node will be accessed via serial console |
+        | reauth | If True, reauth command will be executed first |
+        | ip_address | Address to connect to |
 
         Return Value:
         - True if command executed with no errors, False otherwise
         """
 
         helpers.test_log("Running command: %s on node %s" % (command, node))
-        t = test.Test()
-        if user == 'admin':
-            c = t.controller(node)
-        else:
+        helpers.test_log("Console flag value is: %s" % (console))
+        if (node == 'master') or (node == 'slave'):
+            helpers.test_log("Going to get node alias")
             bsn_common = bsnCommon()
-            ip_addr = bsn_common.get_node_ip(node)
-            c = t.node_spawn(ip=ip_addr, user=user, password=password)
+            node = bsn_common.get_node_name(node)
+            helpers.test_log("Node alias is %s" % node)
+
+        t = test.Test()
+        if console:
+            try:
+                helpers.test_log("Spawning console connection")
+                t.node_disconnect();
+                n = t.node(node)
+                c = n.console()
+                c.send(helpers.ctrl('c'))
+                helpers.sleep(3)
+                options = c.expect([r'login:', c.get_prompt()])
+                if options[0] == 0:  # User has to log in
+                    helpers.test_log("Logging in as %s: %s" % (user, password))
+                    c.send(user)
+                    c.expect(r'Password')
+                    c.send(password)
+                    c.expect(c.get_prompt())
+                elif options[0] == 1:  # User already logged in
+                    helpers.test_log("Console open. Logging out.")
+                    c.send('logout')
+                    options_logout = c.expect([r'login:', c.get_prompt()])
+                    if options_logout[0] == 1:
+                        c.send('logout')
+                        c.expect(r'login')
+                    helpers.test_log("Logging in as %s: %s" % (user, password))
+                    c.send(user)
+                    c.expect(r'Password')
+                    c.send(password)
+                    c.expect(c.get_prompt())
+
+                    if "Error" in c.content():
+                        c.close()
+                        helpers.test_failure(c.content(), soft_error)
+                        return False
+                else:
+                    helpers.test_log("Did not initialize console")
+            except:
+                    helpers.log(helpers.exception_info_traceback())
+                    if 'c' in locals():
+                        output = c.content()
+                        c.close()
+                    else:
+                        output = "Console login error"
+                    helpers.test_failure(output, soft_error)
+                    return False
+        else:
+            helpers.test_log("Spawning SSH connection")
+            if (ip_address is not None):
+                c = t.node_spawn(ip=ip_address, user=user, password=password, no_ping=True)
+            else:
+                helpers.test_log("Going to BSN common")
+                bsn_common = bsnCommon()
+                helpers.test_log("Going to get node IP")
+                ip_addr = t.params(node=node, key='ip')
+                if (reauth):
+                    helpers.test_log("Spawning new node")
+                    t.node_disconnect();
+                    c = t.node_spawn(ip=ip_addr, user=user, password=password, no_ping=True)
+                else:
+                    helpers.test_log("Possibly reusing existing connection")
+                    c = t.controller(node)
         try:
-            c.config(command, timeout=cmd_timeout)
-            if "Error" in c.cli_content():
-                helpers.test_failure(c.cli_content(), soft_error)
+            if user == 'recovery':
+                c.send(command)
+                c.expect(c.get_prompt(), timeout=cmd_timeout)
+            else:
+                c.cli(command, timeout=cmd_timeout)
+
+            if console:
+                output = c.content()
+            else:
+                output = c.cli_content()
+            helpers.log(output)
+            if re.search(r'Error|forbidden|insufficient|reauth', output):
+                log_msg = ("Error running '%s' as user %s, %s; console - %s"
+                           % (command, user, password, console))
+                helpers.log(log_msg)
+                if console: c.close()
+                helpers.test_failure(output, soft_error)
                 return False
         except:
-            helpers.test_failure(c.cli_content(), soft_error)
+            helpers.log(helpers.exception_info_traceback())
+            if console:
+                output = c.content()
+
+            else:
+                if (c):
+                    output = c.cli_content()
+                else:
+                    output = "Login failure"
+            if console: c.close()
+            helpers.test_failure(output, soft_error)
             return False
         else:
+            if console: c.close()
             return True
 
 
@@ -1096,6 +1187,49 @@ class T5Utilities(object):
         else:
             helpers.log("Running Configs didn't match between file1 & file2 ")
             return False
+
+
+    def randomize_list(self, list1):
+        helpers.log("Randomizing list")
+        for line in list1:
+            helpers.log(line)
+        shuffle(list1)
+        for line in list1:
+            helpers.log(line)
+        return list1
+
+    def restore_firstboot_config(self, node, user='recovery', password='bsn'):
+        helpers.log("Logging in as recovery and restoring firstboot-config")
+        t = test.Test()
+        t.node_disconnect();
+        ip_addr = t.params(node=node, key='ip')
+        c = t.node_spawn(ip=ip_addr, user=user, password=password)
+        helpers.log("Getting firstboot session cookie")
+        # cat /var/lib/floodlight/localSessions/firstboot.json
+        content = c.cli("cat /var/lib/floodlight/"
+                       "localSessions/firstboot.json; echo")['content']
+        output = helpers.strip_cli_output(content)
+        lines = helpers.str_to_list(output)
+        helpers.log("Extracting from line %s" % lines[1])
+        split_line = lines[1].split(":")
+        cookie = split_line[1]
+        cookie = re.sub(',', '', cookie)
+        helpers.log("Extracted cookie: %s" % cookie)
+        c.cli("floodlight-cli -K %s" % cookie)
+        c.cli("enable; config; copy snapshot://firstboot-config running-config",
+               timeout=100)
+        c.cli("show run")
+        c.close()
+        return True
+
+    def cli_send(self, node, cmd):
+        helpers.log("Sending command: '%s' at node %s" % (cmd, node))
+        t = test.Test()
+        c = t.controller(node)
+        c.send(cmd)
+        return True
+
+
 
 
 

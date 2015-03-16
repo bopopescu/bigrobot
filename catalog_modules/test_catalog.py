@@ -298,7 +298,8 @@ class TestCatalog(object):
             _ = self.insert_doc('aggregated_builds', doc)
             return doc
 
-    def find_and_add_build_name(self, build_name, quiet=True):
+    def find_and_add_build_name(self, build_name, regression_tags="daily",
+                                quiet=True):
         """
         Check whether 'build_name' is found in builds collection.
         - If found, return the document.
@@ -318,7 +319,11 @@ class TestCatalog(object):
             if not quiet: print "Not found build '%s'. Creating." % build_name
             doc = {"build_name": build_name,
                    "createtime": self.timestamp(),
-                   "created_by": getpass.getuser()
+                   "updatetime": self.timestamp(),
+                   "created_by": getpass.getuser(),
+                   "regression_tags": [regression_tags],
+                   "is_toxic": False,
+                   "comments": '',
                    }
             _ = self.insert_doc('builds', doc)
             return doc
@@ -330,7 +335,8 @@ class TestCatalog(object):
                                       quiet=True):
         """
         Check whether 'build_name' is found in build_groups collection.
-        - If found, return the document.
+        - If found, update testbeds, build_names, and regression_tags, then
+          return the document.
         - If not found, create a new build document, and return it.
 
         If build_name does not match the group format, add it to the
@@ -346,27 +352,46 @@ class TestCatalog(object):
         query = {"build_name": build_group_name}
         cursor = self.build_groups_collection().find(query)
         count = cursor.count()
-
+        regression_tags = self.get_regression_tags(build_name)
         if createtime == None:
             createtime = self.timestamp()
         if updatetime == None:
             updatetime = self.timestamp()
 
         if count >= 1:
-            # Update: Found build_name.
+            # Update: Found build group.
             if not quiet: print "Found build with '%s'." % build_group_name
             if count > 1:
                 print "WARNING: Did not expect multiple results. Will only look at first result."
             found_doc = cursor[0]
+
+            # Update testbeds field
             if testbed and not helpers.in_list(found_doc["testbeds"], testbed):
                 found_doc["testbeds"].append(testbed)
+
+            # Update build_names field
             if not helpers.in_list(found_doc["build_names"], build_name):
                 found_doc["build_names"].append(build_name)
+
+            # Update updatetime field
             found_doc["updatetime"] = updatetime
+
+            # Update regression_tags field
+            if "regression_tags" in found_doc:
+                found_doc["regression_tags"] = regression_tags
+                for n in found_doc["build_names"]:
+                    tags = self.get_regression_tags(n)
+                    found_doc["regression_tags"] = helpers.set_union(
+                                        found_doc["regression_tags"],
+                                        tags)
+            else:
+                found_doc["regression_tags"] = regression_tags
+
+            # Update document
             doc = self.upsert_doc("build_groups", found_doc, query)
             return doc
         else:
-            # Create: Build does not exist.
+            # Create: Build group does not exist.
             if not quiet: print "Not found build '%s'. Creating." % build_group_name
             if testbed:
                 testbeds = [testbed]
@@ -377,7 +402,8 @@ class TestCatalog(object):
                    "updatetime": updatetime,
                    "created_by": getpass.getuser(),
                    "testbeds": testbeds,
-                   "build_names": [build_name]
+                   "build_names": [build_name],
+                   "regression_tags": regression_tags,
                    }
             _ = self.insert_doc('build_groups', doc)
             return doc
@@ -430,6 +456,33 @@ class TestCatalog(object):
         if 'collection' not in new_kwargs:
             new_kwargs['collection'] = 'test_cases_archive'
         return self.find_test_cases_matching_build(*args, **new_kwargs)
+
+    def get_regression_tags(self, build_name):
+        query = {"build_name": build_name}
+        cursor = self.find_docs(collection="builds", query=query)
+        if cursor.count() > 0:
+            return cursor[0]['regression_tags']
+        else:
+            return []
+
+    def update_regression_tags(self, build_name, tags):
+        """
+        Update the regression_tags field in builds collection. Then update
+        the build_groups collection. Also change the update timestamp.
+
+        Note: tags argument must be a list type.
+        """
+        query = {"build_name": build_name}
+        cursor = self.find_docs(collection="builds", query=query)
+        if cursor.count() > 0:
+            found_doc = cursor[0]
+            found_doc['regression_tags'] = tags
+            found_doc['updatetime'] = self.timestamp()
+            updated_doc = self.upsert_doc("builds", found_doc, query)
+            self.find_and_add_build_name_group(build_name)
+            return updated_doc
+        else:
+            return None
 
     def remove_docs(self, collection, query):
         count = self.db()[collection].find(query).count()

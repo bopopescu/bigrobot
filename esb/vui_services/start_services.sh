@@ -11,10 +11,11 @@ fi
 
 pwd=`pwd`
 app=`basename $pwd`
+hostname=`uname -n`
 set -x
 export BIGROBOT_ESB=True
 export BIGROBOT_LOG_PATH='/tmp/bigrobot_esb_log'
 log=${BIGROBOT_LOG_PATH}/start_services-${app}.log
 cd ..
-(celery -A $app worker --app $app.celery_app:app --loglevel info -n $app 2>&1 | tee -a $log)
+(celery -A $app worker --app $app.celery_app:app --hostname $hostname --loglevel info -n $app 2>&1 | tee -a $log)
 set +x

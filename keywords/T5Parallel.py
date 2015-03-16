@@ -47,6 +47,10 @@ class T5Parallel(object):
         for res in results:
             task_id = res.task_id
             helpers.log_task_output(task_id)
+            helpers.log("       status: %s" % (res.status))
+            if res.status == "FAILURE":
+                helpers.log("       Task traceback:\n%s" % res.traceback)
+            helpers.log("-------------")
 
         if is_pending:
             helpers.log("Not able to run ESB tasks successfully.")
