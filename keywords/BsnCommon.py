@@ -467,6 +467,8 @@ class BsnCommon(object):
                                       % (node, if_name), soft_error=soft_error)
         return interfaces[if_name]
 
+    interface = interfaces
+
     def params_global(self, *args, **kwargs):
         """
         Return the value for a 'global' params attributes.
