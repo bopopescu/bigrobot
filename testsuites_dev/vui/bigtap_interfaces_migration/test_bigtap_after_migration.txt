@@ -1,0 +1,56 @@
+* Setting
+Documentation   This suite is my sandbox for experimentation.
+Suite Setup     my base suite setup
+Suite Teardown  my base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+Library         keywords/BigTap.py
+
+* Variables
+${s1_filter_intf_1}        ${none}
+${s1_filter_alias_1}       ${none}
+${s1_filter_intf_2}        ${none}
+${s1_filter_alias_2}       ${none}
+
+* Test Case
+Test 1: Looking up interface names
+    #[Tags]  skipped
+    Log      Filter interface s1_filter_intf_1 is '${s1_filter_intf_1}'
+    Log      Filter alias s1_filter_alias_1 is '${s1_filter_alias_1}'
+    Log      Filter interface s1_filter_intf_2 is '${s1_filter_intf_2}'
+    Log      Filter alias s1_filter_alias_2 is '${s1_filter_alias_2}'
+
+
+* Keywords
+
+my base suite setup
+    base suite setup
+    init interface variables
+
+my base suite teardown
+    #clear interface variables
+    base suite teardown
+
+init interface variables
+    ${var} =               interface   s1    filter_intf_1
+    set global variable    ${s1_filter_intf_1}    ${var}
+
+    ${var} =               interface   s1    filter_alias_1
+    set global variable    ${s1_filter_alias_1}    ${var}
+
+    ${var} =               interface   s1    filter_intf_2
+    set global variable    ${s1_filter_intf_2}    ${var}
+
+    ${var} =               interface   s1    filter_alias_2
+    set global variable    ${s1_filter_alias_2}    ${var}
+
+clear interface variables
+    # You don't necessarily want to do this. I'm putting it hear as an example.
+
+    set global variable    ${s1_filter_intf_1}     ${none}
+    set global variable    ${s1_filter_alias_1}    ${none}
+    set global variable    ${s1_filter_intf_2}     ${none}
+    set global variable    ${s1_filter_alias_2}    ${none}
+

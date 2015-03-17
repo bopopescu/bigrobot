@@ -122,6 +122,19 @@ class T6(object):
         else:
             return True
         
+    def rest_delete_nat_pool(self):
+        '''Function to delete all nat switch from pool
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/nat-pool'
+        try:
+            c.rest.delete(url, {})
+        except:
+            return False
+        else:
+            return True
+        
     def rest_add_nat_profile(self, tenant, nat_profile):
         '''Function to add nat profile in logical router
         Input: tenant name, nat profile name to be created

@@ -1,0 +1,19 @@
+c1:
+  ip: 1.2.3.4
+  set_session_ssh: false
+  set_init_ping: false
+
+s1:
+  ip: 1.2.3.4
+  set_session_ssh: false
+  set_init_ping: false
+  interfaces:
+     filter_intf_1: ethernet13
+     filter_alias_1: app-rlb9-1-f1
+     filter_intf_2: ethernet15
+     filter_alias_2: app-rlb9-1-f2
+
+s2:
+  ip: 1.2.3.4
+  set_session_ssh: false
+  set_init_ping: false
