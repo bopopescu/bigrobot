@@ -1410,3 +1410,9 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         t = test.Test()
         con = t.dev_console(node)
         con.cli("show version")
+
+    def test_sudo(self, node):
+        t = test.Test()
+        h = t.host(node)
+        h.sudo("cat /etc/passwd")
+        h.sudo("uptime")
