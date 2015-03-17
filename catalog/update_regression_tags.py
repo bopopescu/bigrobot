@@ -60,5 +60,5 @@ if __name__ == '__main__':
               % (doc["build_name"], [helpers.unicode_to_ascii(x) for x in doc["regression_tags"]], args.tags))
         sys.exit(0)
     else:
-        print "build_name '%s' not in the catalog." % args.build
+        print "ERROR: build_name '%s' not in the catalog." % args.build
         sys.exit(1)
