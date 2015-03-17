@@ -30,7 +30,7 @@ Library         Dialogs
 #---------------------------------------------
 
 T1 Interface sement-interface add/remove redirect(next-hop) policy src-ip to dest-ip
-	[Tags]  feature  daily-sanity
+	[Tags]  feature  sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -103,7 +103,7 @@ T2 Interface sement-interface add/remove redirect(next-hop) policy src-ip to any
 
 
 T3 Interface sement-interface add/remove redirect(next-hop) policy src-ip to tenant
-	[Tags]  feature  daily-sanity
+	[Tags]  feature  sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
 	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -202,7 +202,7 @@ T5 Interface sement-interface add/remove deny policy src-ip to dest-ip
     delete traffic
 
 T6 Interface sement-interface add/remove redirect(next-hop) policy src-ip-port to dest-ip-port
-	[Tags]  feature  daily-sanity
+	[Tags]  feature  sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
 	${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -387,7 +387,7 @@ T10 Interface sement-interface add/reboot master controller/remove redirect(next
     delete traffic
 
 T11 Interface sement-interface add/reboot standby controller/remove redirect(next-hop) policy src-ip-port to tenant
-    [Tags]  feature  ha  daily-sanity
+    [Tags]  feature  ha  sanity
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
     ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -483,7 +483,7 @@ T12 Interface sement-interface add/reboot leaf switch/remove redirect(next-hop) 
 
 
 T13 Interface sement-interface redirect(next-hop) policy src-ip to dest-ip check policy counter
-    [Tags]  feature  counter  daily-sanity
+    [Tags]  feature  counter  sanity
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}

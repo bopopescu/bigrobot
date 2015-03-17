@@ -21,7 +21,7 @@ def prog_args():
 Update the regression tags for a build. The currently supported tags are
 'daily' and 'full'.
 
-Usage:
+Example:
 % BUILD_NAME=ihplus_bcf_10G-490 ./update_regression_tags.py --tags full
 """
     parser = argparse.ArgumentParser(prog='update_regression_tags',
@@ -58,5 +58,7 @@ if __name__ == '__main__':
     if doc:
         print("build_name: %s, changed regression_tags from '%s' to '%s'."
               % (doc["build_name"], [helpers.unicode_to_ascii(x) for x in doc["regression_tags"]], args.tags))
+        sys.exit(0)
     else:
-        print "build_name '%s' not in the catalog." % args.build
+        print "ERROR: build_name '%s' not in the catalog." % args.build
+        sys.exit(1)

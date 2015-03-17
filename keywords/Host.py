@@ -537,3 +537,64 @@ class Host(object):
         n.sudo("arp -s %s %s" % (ipaddr, hwaddr))
         return True
 
+    def Host_reboot(self,host):
+
+        ''' Reboot a host and wait for it to come back.           
+        '''
+        t = test.Test()
+        node = t.node(host)   
+        ipAddr = node.ip()
+        content = node.bash('reboot')['content']       
+        helpers.log("*****Output is :*******\n%s" % content)
+        if re.search(r'The system is going down for reboot NOW!', content): 
+            helpers.log("system is rebooting")
+            helpers.sleep(120)       
+        else:
+            helpers.log("USR ERROR: system did NOT reboot") 
+            return False
+        count = 0
+        while (True):
+            loss = helpers.ping(ipAddr)
+            helpers.log("loss is: %s" % loss)
+            if(loss != 0):
+                if (count > 5):
+                    helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr)
+                    return False
+                helpers.sleep(60)
+                count += 1
+                helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
+            else:
+                helpers.log("USR INFO:  system just came alive. Waiting for it to become fully functional")
+                helpers.sleep(30)
+                break
+
+        return True
+
+    def Host_powercycle(self,host):
+
+        ''' power cycle a host and wait for it to come back.           
+        '''
+        t = test.Test()
+        node = t.node(host)   
+        ipAddr = node.ip()
+        t.power_cycle(host, minutes= 0)          
+        helpers.log("*****system went through power cycle********")
+         
+        helpers.sleep(120) 
+        count = 0
+        while (True):
+            loss = helpers.ping(ipAddr)
+            helpers.log("loss is: %s" % loss)
+            if(loss != 0):
+                if (count > 10):
+                    helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr)
+                    return False
+                helpers.sleep(60)
+                count += 1
+                helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
+            else:
+                helpers.log("USR INFO:  system just came alive. Waiting for it to become fully functional")
+                helpers.sleep(30)
+                break
+
+        return True        

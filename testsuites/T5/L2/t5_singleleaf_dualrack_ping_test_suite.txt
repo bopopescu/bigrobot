@@ -143,14 +143,14 @@ Single Leaf Dual Rack teardown
    base suite teardown
 
 T5 base test setup
-   start floodlight monitor
+   #start floodlight monitor
    base test setup
    add a tenant  A 
    add a vns  A  A
    sleep  5
    
 T5 base test teardown
-   stop floodlight monitor
+   #stop floodlight monitor
    base test teardown
    delete a tenant  A
    sleep  5

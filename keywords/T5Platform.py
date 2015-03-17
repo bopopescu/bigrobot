@@ -130,15 +130,32 @@ class T5Platform(object):
 
         helpers.log("Failover")
         try:
-            c.config("config")
-            c.send("reauth")
-            c.expect(r"Password:")
-            c.config("adminadmin")
-            c.send("system failover")
-            c.expect(r"Failover to a standby controller node (\"y\" or \"yes\" to continue)?")
-            c.send("yes")
-            # helpers.sleep(30)
-            helpers.sleep(90)
+            version = c.cli('show version | grep "Ci job name"')['content']
+            split_version = version.split('\n')
+            bcf_master = False
+            for line in split_version:
+                if re.match(r'.*bcf_master.*', line):
+                    bcf_master = True
+            if bcf_master:
+                c.config("config")
+                c.send("reauth")
+                c.expect(r"Password:")
+                c.config("adminadmin")
+                c.send("system failover")
+                c.expect(r".*:")
+                c.send("yes")
+                # helpers.sleep(30)
+                helpers.sleep(90)
+            else:
+                c.config("config")
+                c.send("reauth")
+                c.expect(r"Password:")
+                c.config("adminadmin")
+                c.send("system failover")
+                c.expect(r"Failover to a standby controller node (\"y\" or \"yes\" to continue)?")
+                c.send("yes")
+                # helpers.sleep(30)
+                helpers.sleep(90)
         except:
             helpers.test_log(c.cli_content())
             return False

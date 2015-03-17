@@ -93,11 +93,11 @@ T5 With default QoS leaf to leaf traffic with priority 0 traffic
     #pause   FREEZEE!
     clear stats
     sleep  2
-    ${tx_before}=  get hw queue counters  s1  82  0
+    ${tx_before}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  0
     start traffic  ${stream_01}
     sleep  5
     stop traffic  ${stream_01}
-    ${tx_after}=  get hw queue counters  s1  82  0
+    ${tx_after}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  0
     ${traffic_summary}=  fetch port stats
     ${rx_value}=  verify dict key  ${traffic_summary}  a  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after}
@@ -112,11 +112,11 @@ T6 With default QoS leaf to leaf traffic with priority 2 traffic
     #pause   FREEZEE!
     clear stats
     sleep  2
-    ${tx_before}=  get hw queue counters  s1  82  1
+    ${tx_before}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  1
     start traffic  ${stream_01}
     sleep  5
     stop traffic  ${stream_01}
-    ${tx_after}=  get hw queue counters  s1  82  1
+    ${tx_after}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  1
     ${traffic_summary}=  fetch port stats
     ${rx_value}=  verify dict key  ${traffic_summary}  a  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after}
@@ -131,11 +131,11 @@ T7 With default QoS leaf to leaf traffic with priority 4 traffic
     #pause   FREEZEE!
     clear stats
     sleep  2
-    ${tx_before}=  get hw queue counters  s1  82  2
+    ${tx_before}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  2
     start traffic  ${stream_01}
     sleep  5
     stop traffic  ${stream_01}
-    ${tx_after}=  get hw queue counters  s1  82  2
+    ${tx_after}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  2
     ${traffic_summary}=  fetch port stats
     ${rx_value}=  verify dict key  ${traffic_summary}  a  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after}
@@ -150,11 +150,11 @@ T8 With default QoS leaf to leaf traffic with priority 6 traffic
     #pause   FREEZEE!
     clear stats
     sleep  2
-    ${tx_before}=  get hw queue counters  s1  82  3
+    ${tx_before}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  3
     start traffic  ${stream_01}
     sleep  5
     stop traffic  ${stream_01}
-    ${tx_after}=  get hw queue counters  s1  82  3
+    ${tx_after}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  3
     ${traffic_summary}=  fetch port stats
     ${rx_value}=  verify dict key  ${traffic_summary}  a  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after}
@@ -182,38 +182,38 @@ T9 With default QoS leaf to leaf/spine traffic with .1p priority 0/2/4/6 and que
     #pause   FREEZEE!
     clear stats
     sleep  2
-    ${tx_before_0}=  get hw queue counters  s1  82  0
+    ${tx_before_0}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  0
     start traffic  ${stream_01}
     sleep  2
-    ${tx_before_2}=  get hw queue counters  s1  82  1
+    ${tx_before_2}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  1
     start traffic  ${stream_02}
     sleep  2
-    ${tx_before_4}=  get hw queue counters  s1  82  2
+    ${tx_before_4}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  2
     start traffic  ${stream_03}
     sleep  2
-    ${tx_before_6}=  get hw queue counters  s1  82  3
+    ${tx_before_6}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  3
     start traffic  ${stream_04}
     sleep  5
     stop traffic  ${stream_01}
     stop traffic  ${stream_02}
     stop traffic  ${stream_03}
     stop traffic  ${stream_04}
-    ${tx_after_0}=  get hw queue counters  s1  82  0
+    ${tx_after_0}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  0
     ${traffic_summary}=  fetch port stats  stream=${stream_01}
     ${rx_value}=  verify dict key  ${traffic_summary}  queue_0_1  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_0}
     Should be true  ${in_range}
-    ${tx_after_2}=  get hw queue counters  s1  82  1
+    ${tx_after_2}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  1
     ${traffic_summary}=  fetch port stats  stream=${stream_02}
     ${rx_value}=  verify dict key  ${traffic_summary}  queue_2_3  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_2}
     Should be true  ${in_range}
-    ${tx_after_4}=  get hw queue counters  s1  82  2
+    ${tx_after_4}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  2
     ${traffic_summary}=  fetch port stats  stream=${stream_03}
     ${rx_value}=  verify dict key  ${traffic_summary}  queue_4_5  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_4}
     Should be true  ${in_range}
-    ${tx_after_6}=  get hw queue counters  s1  82  3
+    ${tx_after_6}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  3
     ${traffic_summary}=  fetch port stats  stream=${stream_04}
     ${rx_value}=  verify dict key  ${traffic_summary}  queue_6_7  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_6}
@@ -243,16 +243,16 @@ T10 With default QoS leaf to leaf/spine traffic with .1p priority 0/2/4/6 and qu
     #pause   FREEZEE!
     clear stats
     sleep  2
-    ${tx_before_0}=  get hw queue counters  s1  82  0
+    ${tx_before_0}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  0
     start traffic  ${stream_01}
     sleep  2
-    ${tx_before_2}=  get hw queue counters  s1  82  1
+    ${tx_before_2}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  1
     start traffic  ${stream_02}
     sleep  2
-    ${tx_before_4}=  get hw queue counters  s1  82  2
+    ${tx_before_4}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  2
     start traffic  ${stream_03}
     sleep  2
-    ${tx_before_6}=  get hw queue counters  s1  82  3
+    ${tx_before_6}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  3
     start traffic  ${stream_04}
     sleep  5
     #pause  FREEZEEEEE!
@@ -301,16 +301,16 @@ T11 With default QoS leaf to leaf/spine traffic with different frame sizes and w
     #pause   FREEZEE!
     clear stats
     sleep  2
-    ${tx_before_0}=  get hw queue counters  s1  82  0
+    ${tx_before_0}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  0
     start traffic  ${stream_01}
     sleep  2
-    ${tx_before_2}=  get hw queue counters  s1  82  1
+    ${tx_before_2}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  1
     start traffic  ${stream_02}
     sleep  2
-    ${tx_before_4}=  get hw queue counters  s1  82  2
+    ${tx_before_4}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  2
     start traffic  ${stream_03}
     sleep  2
-    ${tx_before_6}=  get hw queue counters  s1  82  3
+    ${tx_before_6}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  3
     start traffic  ${stream_04}
     sleep  5
     #pause  FREEZEEEEE!
@@ -359,16 +359,16 @@ T12 With default QoS leaf to leaf/spine traffic with different cell sizes and wi
     #pause   FREEZEE!
     clear stats
     sleep  2
-    ${tx_before_0}=  get hw queue counters  s1  82  0
+    ${tx_before_0}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  0
     start traffic  ${stream_01}
     sleep  2
-    ${tx_before_2}=  get hw queue counters  s1  82  1
+    ${tx_before_2}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  1
     start traffic  ${stream_02}
     sleep  2
-    ${tx_before_4}=  get hw queue counters  s1  82  2
+    ${tx_before_4}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  2
     start traffic  ${stream_03}
     sleep  2
-    ${tx_before_6}=  get hw queue counters  s1  82  3
+    ${tx_before_6}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  3
     start traffic  ${stream_04}
     sleep  5
     #pause  FREEZEEEEE!
@@ -425,16 +425,16 @@ T13 With QoS enabled leaf to leaf/spine traffic with .1p priority 0/2/4/6 and qu
     #pause   FREEZEE!
     clear stats
     sleep  2
-    ${tx_before_0}=  get hw queue counters  s1  82  0
+    ${tx_before_0}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  0
     start traffic  ${stream_01}
     sleep  2
-    ${tx_before_2}=  get hw queue counters  s1  82  1
+    ${tx_before_2}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  1
     start traffic  ${stream_02}
     sleep  2
-    ${tx_before_4}=  get hw queue counters  s1  82  2
+    ${tx_before_4}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  2
     start traffic  ${stream_03}
     sleep  2
-    ${tx_before_6}=  get hw queue counters  s1  82  3
+    ${tx_before_6}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  3
     start traffic  ${stream_04}
     sleep  5
     
@@ -442,22 +442,22 @@ T13 With QoS enabled leaf to leaf/spine traffic with .1p priority 0/2/4/6 and qu
     stop traffic  ${stream_02}
     stop traffic  ${stream_03}
     stop traffic  ${stream_04}
-    ${tx_after_0}=  get hw queue counters  s1  82  0
+    ${tx_after_0}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  0
     ${traffic_summary}=  fetch port stats  stream=${stream_01}
     ${rx_value}=  verify dict key  ${traffic_summary}  queue_0_1  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_0}
     Should be true  ${in_range}
-    ${tx_after_2}=  get hw queue counters  s1  82  1
+    ${tx_after_2}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  1
     ${traffic_summary}=  fetch port stats  stream=${stream_02}
     ${rx_value}=  verify dict key  ${traffic_summary}  queue_2_3  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_2}
     Should be true  ${in_range}
-    ${tx_after_4}=  get hw queue counters  s1  82  2
+    ${tx_after_4}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  2
     ${traffic_summary}=  fetch port stats  stream=${stream_03}
     ${rx_value}=  verify dict key  ${traffic_summary}  queue_4_5  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_4}
     Should be true  ${in_range}
-    ${tx_after_6}=  get hw queue counters  s1  82  3
+    ${tx_after_6}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  3
     ${traffic_summary}=  fetch port stats  stream=${stream_04}
     ${rx_value}=  verify dict key  ${traffic_summary}  queue_6_7  received_frames
     ${in_range}=  ixia verify traffic rate  ${rx_value}  ${tx_after_6}
@@ -494,16 +494,16 @@ T14 With QoS enabled leaf to leaf/spine traffic with .1p priority 0/2/4/6 and qu
     
     clear stats
     sleep  2
-    ${tx_before_0}=  get hw queue counters  s1  82  0
+    ${tx_before_0}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  0
     start traffic  ${stream_01}
     sleep  2
-    ${tx_before_2}=  get hw queue counters  s1  82  1
+    ${tx_before_2}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  1
     start traffic  ${stream_02}
     sleep  2
-    ${tx_before_4}=  get hw queue counters  s1  82  2
+    ${tx_before_4}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  2
     start traffic  ${stream_03}
     sleep  2
-    ${tx_before_6}=  get hw queue counters  s1  82  3
+    ${tx_before_6}=  get hw queue counters  s1  ${gpid_s1_ixia_int1}  3
     start traffic  ${stream_04}
     sleep  5
     #pause  FREEZEEEEE!
@@ -653,7 +653,10 @@ test setup topology
 
 	REST add static routes							X							0.0.0.0/0			 {"tenant": "system"}
 	REST add static routes							Y							0.0.0.0/0			 {"tenant": "system"}
-	REST add static routes							Z							0.0.0.0/0			 {"tenant": "system"}	
+	REST add static routes							Z							0.0.0.0/0			 {"tenant": "system"}
+	${s1_ixia_int1}=								interface   s1  ixia1_int0
+	${gpid_s1_ixia_int1}=							get gpid switch int  ${s1_ixia_int1}   	
+	Set Suite Variable    							${gpid_s1_ixia_int1}
 	
 
 test teardown topology

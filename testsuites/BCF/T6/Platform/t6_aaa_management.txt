@@ -16,7 +16,7 @@ Library  Collections.py
 
 * Variable
 ${projectname}  Big Cloud Fabric Appliance
-@{radius_servers}  10.2.3.201  10.8.67.3  10.8.67.4
+@{radius_servers}  10.2.3.201  10.8.67.2  10.8.67.3
 @{tacacs_servers}  10.2.3.201  10.9.18.2  10.8.67.3
 @{servers}
 ${type}
@@ -1313,6 +1313,9 @@ T4.3.2 Verify that Authorization uses round-robin (if revivew)
 T4.4 Verify help texts
     #placeholder
     [Tags]  skipped
+T4.5 Verify behavior when floodlight is stopped
+    #placeholder
+    [Tags]  skipped
 
 * Keywords
 Verify Admin Can Log In via SSH
@@ -1332,12 +1335,16 @@ Verify Local User Can Log In via Serial Console
     Cli Run  ${slave_name}  terminal length 0; show run  user=local  password=local  console=True
 
 Verify Remote User Can Log In via SSH
-    Cli Run  ${master_name}  show run  user=remote  password=remote  reauth=True
-    Cli Run  ${slave_name}  show run  user=remote  password=remote  reauth=True
+    Cli Run  ${master_name}  show run  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
+    Cli Run  ${slave_name}  show run  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
+    #Cli Run  ${master_name}  show run  user=bsn-vsa-read-only-user  password=bsnbsn  reauth=True
+    #Cli Run  ${slave_name}  show run  user=bsn-vsa-read-only-user  password=bsnbsn  reauth=True
 
 Verify Remote User Can Log In via Serial Console
-    Cli Run  ${master_name}  terminal length 0; show run  user=remote  password=remote  console=True
-    Cli Run  ${slave_name}  terminal length 0; show run  user=remote  password=remote  console=True
+    Cli Run  ${master_name}  terminal length 0; show run  user=bsn-vsa-admin-user  password=adminadmin  console=True
+    Cli Run  ${slave_name}  terminal length 0; show run  user=bsn-vsa-admin-user  password=adminadmin  console=True
+    #Cli Run  ${master_name}  terminal length 0; show run  user=bsn-vsa-read-only-user  password=bsnbsn  console=True
+    #Cli Run  ${slave_name}  terminal length 0; show run  user=bsn-vsa-read-only-user  password=bsnbsn  console=True
 
 Verify Recovery Can Log In via SSH
     Cli Run  ${master_name}  free  user=recovery  password=bsn
@@ -1370,22 +1377,19 @@ Configure Local User
     Cli Run  ${master_name}  enable; configure; user local; password local  reauth=True
     Cli Run  ${master_name}  enable; configure; group admin; associate user local  reauth=True
 
-Configure Remote User
-    Cli Run  ${master_name}  enable; configure; group admin; associate user remote  reauth=True
-
 Clear User Sessions
     Cli Run  ${master_name}  clear session user remote
     Cli Run  ${master_name}  clear session user local
     Cli Send  ${master_name}  clear session user admin  
 
 Set Authentication to Local
-    Cli Run  ${master_name}  enable; configure; aaa authentication login default local; aaa accounting exec default start-stop local  reauth=True
+    Cli Run  ${master_name}  enable; configure; aaa authentication login default local; aaa authorization exec default local; aaa accounting exec default start-stop local  reauth=True
 Set Authentication to Remote
-    Cli Run  ${master_name}  enable; configure; aaa authentication login default group ${type}; aaa accounting exec default start-stop group ${type}  reauth=True
+    Cli Run  ${master_name}  enable; configure; aaa authentication login default group ${type}; aaa authorization exec default group ${type}; aaa accounting exec default start-stop group ${type}  reauth=True
 Set Authentication to Local then Remote
-    Cli Run  ${master_name}  enable; configure; aaa authentication login default local group ${type}; aaa accounting exec default start-stop local group ${type}  reauth=True
+    Cli Run  ${master_name}  enable; configure; aaa authentication login default local group ${type}; aaa authorization exec default local group ${type}; aaa accounting exec default start-stop local group ${type}  reauth=True
 Set Authentication to Remote then Local
-    Cli Run  ${master_name}  enable; configure; aaa authentication login default group ${type} local; aaa accounting exec default start-stop local group ${type}  reauth=True
+    Cli Run  ${master_name}  enable; configure; aaa authentication login default group ${type} local; aaa authorization exec default group ${type} local; aaa accounting exec default start-stop local group ${type}  reauth=True
 
 AAA Suite Setup
     Base Suite Setup
@@ -1400,7 +1404,6 @@ AAA Suite Setup
     Cli Run  ${master_name}  enable; configure; terminal length 0  reauth=True
     Cli Run  ${master_name}  enable; configure; copy snapshot://firstboot-config running-config  reauth=True
     Configure Local User
-    Configure Remote User
     ${tmp}=  Get Environment Variable  AAA_TYPE
     Set Suite Variable  ${type}  ${tmp}
     @{tmp_radius}=  Randomize List  ${radius_servers}

@@ -467,6 +467,8 @@ class BsnCommon(object):
                                       % (node, if_name), soft_error=soft_error)
         return interfaces[if_name]
 
+    interface = interfaces
+
     def params_global(self, *args, **kwargs):
         """
         Return the value for a 'global' params attributes.
@@ -2151,6 +2153,8 @@ class BsnCommon(object):
         s1:
             interfaces:
                 int_key: ethernet24
+
+        Note: There's a BsnCommon.interfaces keyword which is more robust. Consider using it instead.
         '''
         t = test.Test()
         if node in t.params():
@@ -2165,6 +2169,7 @@ class BsnCommon(object):
         else:
             helpers.log("No Node: %s  Defined in Topo File.." % str(node))
             return False
+
     def get_next_mac(self, *args, **kwargs):
         """
         Contributor: Mingtao Yang
@@ -2296,6 +2301,20 @@ class BsnCommon(object):
         else:
             return "10" + id_string
 
+    def get_gpid_switch_int(self, interface=None):
+        '''
+            This function is use to convert given interface to snmp id to check on data traps
+            To FIX:   support Breakout cables
+            -Arun mallina
+        '''
+        if interface is None:
+            helpers.log("Please interface name like: ethernet45, ethernet47")
+            helpers.exit_robot_immediately("Exiting to fix passing interface ..")
+        match = re.match(r"ethernet(.*)", interface)
+        id_string = ''
+        if match:
+            id_string = match.group(1)
+        return id_string
     def pretty_log(self, *args, **kwargs):
         """
         To print out a Python data structure, consider using this keyword.

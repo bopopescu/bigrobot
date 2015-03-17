@@ -11,6 +11,7 @@ Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library			 keywords/T5L3.py
 Library			 keywords/T6.py
+Library			 keywords/T5Platform.py
 Library          keywords/Mininet.py
 Resource		 testsuites/BCF/T6/t6_virtual_resource.txt
 
@@ -45,7 +46,7 @@ ${hv5_switch}  hv5
 * Test Case 
 
 basic cli show commands test case
-   [Tags]  nat    feature 
+   [Tags]   
    cli  c1  show version
    cli  c1  show version detail
    cli  c1  show running-config
@@ -57,7 +58,7 @@ basic cli show commands test case
    enable  c1  show switch
    
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]  nat   feature     
+   [Tags]      
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -65,7 +66,7 @@ add Fabric setup Dual Rack Dual Leaf
    rest verify fabric link common  20
    
 Verify nat-pool CLI and output
-	[Tags]  nat   feature
+	[Tags]  
 	rest add nat switch  ${hv1_switch}
 	${result}=  rest verify nat switch  ${hv1_switch}
 	Should be True  ${result}
@@ -73,8 +74,23 @@ Verify nat-pool CLI and output
 	${result}=  rest verify nat switch  ${hv1_switch}
 	Should not be True  ${result}
 
+verify nat-pool remove all switches
+	[Tags]
+	rest add nat switch  ${hv0_switch}
+	${result}=  rest verify nat switch  ${hv0_switch}
+	Should be True  ${result}
+	rest add nat switch  ${hv1_switch}
+	${result}=  rest verify nat switch  ${hv1_switch}
+	Should be True  ${result}
+	rest delete nat pool
+	sleep  5
+	${result}=  rest verify nat switch  ${hv0_switch}
+	Should not be True  ${result}
+	${result}=  rest verify nat switch  ${hv1_switch}
+	Should not be True  ${result}
+	
 verify nat-profile CLI and output
-	[Tags]  nat    feature 
+	[Tags]   
 	rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  
@@ -146,7 +162,7 @@ verification of logical router show command
 	rest show tenant logical router default route state  A  nat1
 	
 Applying default router using nat next-hop cli test
-	[Tags]  nat        
+	[Tags]          
 	rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  
@@ -161,7 +177,7 @@ Applying default router using nat next-hop cli test
 	Should not be True  ${result}
 
 verify connectivity tenant VM - external different rack using nat next-hop
-   [Tags]  nat  feature     
+   [Tags]      
     rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  
@@ -184,7 +200,7 @@ verify connectivity tenant VM - external different rack using nat next-hop
     Should Be True  ${loss} == 0
 
 verify connectivity vm0-vm4 different rack using fixed nat-switch
-	[Tags]  nat  feature    
+	[Tags]      
 	rest add nat switch  ${hv1_switch}
 	${result}=  rest verify nat switch  ${hv1_switch}
 	Should be True  ${result}
@@ -205,7 +221,7 @@ verify connectivity vm0-vm4 different rack using fixed nat-switch
     rest delete nat profile  A  nat1
     
 verify connectivity vm0 - vm4 different rack using changing nat-switch 
-   [Tags]  nat  feature    
+   [Tags]      
     rest add nat switch  ${hv1_switch}
 	${result}=  rest verify nat switch  ${hv1_switch}
 	Should be True  ${result}

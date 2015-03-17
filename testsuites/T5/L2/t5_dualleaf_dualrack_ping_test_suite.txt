@@ -193,7 +193,7 @@ Tear down the config
 
 T5 base test setup
    base test setup
-   start floodlight monitor
+   #start floodlight monitor
    add a tenant  A 
    add a vns  A  A
    add a portgroup  p1 
@@ -209,7 +209,7 @@ T5 base test setup
    
 T5 base test teardown
    base test teardown
-   stop floodlight monitor
+   #stop floodlight monitor
    delete a tenant  A
    delete interface from portgroup  leaf0-a  ${bm0_intf0}  p1
    delete interface from portgroup  leaf0-b  ${bm0_intf1}  p1
