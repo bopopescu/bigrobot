@@ -1,0 +1,1147 @@
+*Settings
+Documentation                           BigChain High Availability Test Suite
+Suite Setup                             sanity suite setup
+Suite Teardown                          sanity suite teardown
+Test Setup                              sanity test setup
+Test Teardown                           sanity test teardown
+Force Tags                              bigchain  corsair-450  accton-AS5710
+Library                                 keywords/BsnCommon.py
+Library                                 keywords/AppController.py
+Library                                 keywords/BigTap.py
+Library                                 keywords/BigChain.py
+Library                                 keywords/SwitchLight.py
+Library                                 keywords/Ixia.py
+Library                                 Collections.py
+Library                                 OperatingSystem.py
+Library                                 String.py
+
+* Variable
+${switch1_alias}                        app-ras5710-1
+${switch2_alias}                        app-ras5710-2
+
+
+##Switch1: Accton AS5710 10.9.19.7
+${chain_name_1}                         HACHAIN1
+${chain_s1s3_intf_1}                    ethernet32
+${chain_s1s4_intf_1}                    ethernet34
+${service_name_s1_1}                    HA_S1_SERVICE1
+${service_in_s1_interface1}             ethernet13
+${service_out_s1_interface1}            ethernet14
+${service_name_s1_2}                    HA_S1_SERVICE2
+${service_in_s1_interface2}             ethernet15
+${service_out_s1_interface2}            ethernet16
+${service_name_s1_3}                    HA_S1_SERVICE3
+${service_in_s1_interface3}             ethernet17
+${service_out_s1_interface3}            ethernet18
+${span_service_name_s1s3_1}             HA_S1S3_SPAN1
+${span_service_s1s3_1}                  ethernet31
+${span_service_name_s1s4_1}             HA_S1S4_SPAN1
+${span_service_s1s4_1}                  ethernet4
+
+##Switch2: Accton AS5710 10.9.19.20
+${chain_name_2}                         HACHAIN2
+${chain_s2s3_intf_1}                    ethernet10
+${chain_s2s4_intf_1}                    ethernet11
+${service_name_s2_1}                    HA_S2_SERVICE1
+${service_in_s2_interface1}             ethernet13
+${service_out_s2_interface1}            ethernet14
+${service_name_s2_2}                    HA_S2_SERVICE2
+${service_in_s2_interface2}             ethernet15
+${service_out_s2_interface2}            ethernet16
+${service_name_s2_3}                    HA_S2_SERVICE3
+${service_in_s2_interface3}             ethernet17
+${service_out_s2_interface3}            ethernet18
+${span_service_name_s2s3_1}             HA_S2S3_SPAN1
+${span_service_s2s3_1}                  ethernet9
+${span_service_name_s2s4_1}             HA_S2S4_SPAN1
+${span_service_s2s4_1}                  ethernet12
+
+##Switch3: Arista-1 10.9.19.3
+${arista_ixia_interface_s3}             ethernet1
+${chain_s3s1_intf_1}                    ethernet4
+${chain_s3s2_intf_1}                    ethernet6
+${arista_portchannel_interface_s3}      Port-Channel 1
+${portchannel_s3_1_number}              1
+${span_service_s3s1_1}                  ethernet3
+${span_service_s3s2_1}                  ethernet5
+
+##Switch4: Arista-1 10.9.19.26
+${arista_ixia_interface_s4}             ethernet1
+${chain_s4s1_intf_1}                    ethernet10
+${chain_s4s2_intf_1}                    ethernet11
+${arista_portchannel_interface_s4}      Port-Channel 1
+${portchannel_s4_1_number}              1
+${span_service_s4s1_1}                  ethernet26
+${span_service_s4s2_1}                  ethernet12
+
+* Test Case
+TC001: Verify initial configuration
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bichain chain config  s1  chain_name=${chain_name_1}  endpoint1=${chain_s1s3_intf_1}  endpoint2=${chain_s1s4_intf_1}
+    Should be true  ${result2}
+    ${result3}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result3}
+    ${result4}=  rest verify bichain chain config  s2  chain_name=${chain_name_2}  endpoint1=${chain_s2s3_intf_1}  endpoint2=${chain_s2s4_intf_1}
+    Should be true  ${result4}
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  10
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames  50
+    verify results  a  b  received_valid_frames  transmitted_frames  50
+    [Tags]  full  ha
+
+TC002: Switch HA:Clear interface statistics on switch and verify chain 
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  50
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  50
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  50
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  50
+    sleep  5
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames  50
+    verify results  a  b  received_valid_frames  transmitted_frames  50
+    [Tags]  full  ha
+
+TC003: Switch HA:Clear flowtable statistics on switch and verify chain
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  50
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  50
+    config  node=s1  cmd=clear flowtable statistics
+    config  node=s2  cmd=clear flowtable statistics
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  50
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  50
+    sleep  5
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames  50
+    verify results  a  b  received_valid_frames  transmitted_frames  50
+    [Tags]  full  ha
+
+TC004: Switch HA:Disconnect controller from switch and verify flows are not cleared and traffic is hitless 
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
+    delete existing controllers  s2  c1
+    delete existing controllers  s2  c2
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    sleep  5
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames  100
+    verify results  a  b  received_valid_frames  transmitted_frames  100
+    [Teardown]  custom test teardown one
+    [Tags]  full  ha  
+
+TC005: Switch HA:Reconnect controller and switch and verify flows are not cleared and traffic is hitless 
+    delete existing controllers  s1  c1
+    delete existing controllers  s1  c2
+    delete existing controllers  s2  c1
+    delete existing controllers  s2  c2
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    add openflow controller  s1  c1
+    add openflow controller  s1  c2
+    add openflow controller  s2  c1
+    add openflow controller  s2  c2
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    sleep  5
+    stop traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frames  received_valid_frames  100
+    verify results  a  b  received_valid_frames  transmitted_frames  100
+    [Tags]  full  ha  
+
+TC006: Switch HA:Shutdown service interface on s1 and verify chain is in failed state. Re-enable interface and verify chain is re-installed
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    cli disable interface  s1  ${service_in_s1_interface1}
+    sleep  3
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should not be true  ${result1}
+    sleep  3
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    cli enable interface  s1  ${service_in_s1_interface1}
+    sleep  10
+    config  node=s1  cmd=show interface ${service_in_s1_interface1} detail
+    bash  node=s1  cmd=ofad-ctl bigchain portgroup
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC007: Switch HA:Shutdown span service interface on s1 and verify chain is in failed state. Re-enable interface and verify chain is re-installed
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    cli disable interface  s1  ${span_service_s1s3_1}
+    sleep  3
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should not be true  ${result1}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    sleep  3
+    cli enable interface  s1  ${span_service_s1s3_1}
+    sleep  10
+    config  node=s1  cmd=show interface ${span_service_s1s3_1} detail
+    bash  node=s1  cmd=ofad-ctl bigchain portgroup
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC008: Switch HA:Shutdown span service interface on s3 and verify chain is in failed state. Re-enable interface and verify chain is re-installed
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    config  node=s3  cmd=interface ${span_service_s3s1_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=shutdown
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    sleep  3
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should not be true  ${result1}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    sleep  3
+    config  node=s3  cmd=no shutdown
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    sleep  10
+    config  node=s1  cmd=show interface ${span_service_s1s3_1} detail
+    bash  node=s1  cmd=ofad-ctl bigchain portgroup
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC009: Switch HA: Shutdown chain endpoint1 on s1 and verify chain is in failed state. Re-enable interface and verify chain is re-installed
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    cli disable interface  s1  ${chain_s1s3_intf_1}
+    sleep  3
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should not be true  ${result1}
+    sleep  3
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    cli enable interface  s1  ${chain_s1s3_intf_1}
+    sleep  10
+    config  node=s1  cmd=show interface ${chain_s1s3_intf_1} detail
+    bash  node=s1  cmd=ofad-ctl bigchain portgroup
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha  
+
+TC010: Switch HA: Shutdown chain endpoint1 on s3 and verify chain is in failed state. Re-enable interface and verify chain is re-installed
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    config  node=s3  cmd=interface ${chain_s3s1_intf_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=shutdown
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    sleep  3
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should not be true  ${result1}
+    sleep  3
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    sleep  3
+    config  node=s3  cmd=no shutdown
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    sleep  10
+    config  node=s1  cmd=show interface ${chain_s1s3_intf_1} detail
+    bash  node=s1  cmd=ofad-ctl bigchain portgroup
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha  
+
+TC011: Switch HA: Shutdown chain endpoint2 on s1 and verify chain is in failed state. Re-enable interface and verify chain is re-installed
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    cli disable interface  s1  ${chain_s1s4_intf_1}
+    sleep  3
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should not be true  ${result1}
+    sleep  3
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    cli enable interface  s1  ${chain_s1s4_intf_1}
+    sleep  10
+    config  node=s1  cmd=show interface ${chain_s1s4_intf_1} detail
+    bash  node=s1  cmd=ofad-ctl bigchain portgroup
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC012: Switch HA: Shutdown chain endpoint2 on s3 and verify chain is in failed state. Re-enable interface and verify chain is re-installed
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    config  node=s4  cmd=interface ${chain_s4s1_intf_1}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=shutdown
+    ${content2}=  cli_content  node=s4
+    Should Not Contain  ${content2}  Error
+    sleep  3
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should not be true  ${result1}
+    sleep  3
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    sleep  3
+    config  node=s4  cmd=no shutdown
+    ${content2}=  cli_content  node=s4
+    Should Not Contain  ${content2}  Error
+    sleep  10
+    config  node=s1  cmd=show interface ${chain_s1s4_intf_1} detail
+    bash  node=s1  cmd=ofad-ctl bigchain portgroup
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+    
+TC013: Switch HA:Restart process OFAD on switch and verify chain
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    bash restart process  s1  ofad
+    Sleep  20
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should not be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    sleep  120
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC014: Switch HA: Reboot switch and verify chain
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    cli restart switch  s1  save_config="yes"
+    Sleep  20
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should not be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    sleep  120
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC015: Controller HA: Change bigtap match mode to full-match and verify no effect on chain.
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    ${config}=  rest enable feature  full-match
+    Should be True  ${config}
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC016: Controller HA: Change bigtap match mode to l3-l4-match and verify no effect on chain.
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    ${config}=  rest enable feature  l3-l4-mode
+    Should be True  ${config}
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC017: Controller HA: Change bigtap match mode to l3-l4-offset-match and verify no effect on chain
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    ${config}=  rest enable feature  l3-l4-offset-match
+    Should be True  ${config}
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC018: Controller HA: Restart process floodlight on standby controller and verify chain is hitless
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    restart process on controller  floodlight  Slave
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    Sleep  120
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC019: Controller HA: Restart process floodlight on active controller and verify chain is hitless
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    restart process on controller  floodlight  Master
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    Sleep  120
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC020: Controller HA: Restart process keepalived on standby controller and verify chain is hitless
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    restart process on controller  keepalived  Slave
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    Sleep  120
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC021: Controller HA: Restart process keepalived on active controller and verify chain is hitless
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    restart process on controller  keepalived  Master
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    Sleep  120
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC022: Controller HA: Execute HA failover and verify chain is hitless
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    rest execute ha failover
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    Sleep  90
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC023: Controller HA: Execute HA failback and verify chain is hitless
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    rest execute ha failover
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    Sleep  90
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC024: Controller HA: Flap eth0 on active controller and verify chain is hitless
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    flap eth0 controller  Master
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    Sleep  60
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC025: Controller HA: Flap eth0 on standby controller and verify chain is hitless
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    flap eth0 controller  Slave
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    Sleep  60
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC026: Controller HA: Reboot standby controller and verify chain is hitless
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    restart controller  Slave
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    Sleep  180
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC027: Controller HA: Reboot active controller and verify chain is hitless
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    restart controller  Master
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    Sleep  180
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+TC028: Controller HA: Reboot both controllers and verify chain is hitless 
+    ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
+    clear stats
+    cli clear interface statistics  s1
+    cli clear interface statistics  s2
+    start traffic  ${stream_new}
+    sleep  5
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    restart controller  Master
+    restart controller  Slave
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    Sleep  300
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
+    verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
+    stop traffic  ${stream_new}
+    [Tags]  full  ha
+
+
+* Keywords
+
+sanity suite setup
+    base suite setup
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+    ${result1}=  rest add switch alias  s1  ${switch1_alias}
+    Should be true  ${result1}
+    ${result2}=  rest add switch alias  s2  ${switch2_alias}
+    Should be true  ${result2}
+    #### Set deployment mode to bigchain
+    config  node=master  cmd=switch ${switch_dpid_s1}
+    ${content1}=   cli_content   node=master
+    Should not contain  ${content1}  Error
+    config  node=master  cmd=deployment role bigchain
+    ${content2}=   cli_content   node=master
+    Should not contain  ${content2}  Error
+    config  node=master  cmd=exit
+    ${content3}=   cli_content   node=master
+    Should not contain  ${content3}  Error
+    config  node=master  cmd=switch ${switch_dpid_s2}
+    ${content4}=   cli_content   node=master
+    Should not contain  ${content4}  Error
+    config  node=master  cmd=deployment role bigchain
+    ${content5}=   cli_content   node=master
+    Should not contain  ${content5}  Error
+    ## START: configure passive lag on s3 (app-arista-1)
+    config  node=s3  cmd=interface ${arista_ixia_interface_s3}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${arista_portchannel_interface_s3}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${chain_s3s1_intf_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=shutdown
+    sleep  2
+    config  node=s3  cmd=no shutdown
+    config  node=s3  cmd=channel-group ${portchannel_s3_1_number} mode active
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=interface ${chain_s3s2_intf_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=shutdown
+    sleep  2
+    config  node=s3  cmd=no shutdown
+    config  node=s3  cmd=channel-group ${portchannel_s3_1_number} mode active
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+
+
+    ## START: configure passive lag on s4 (app-arista-2)
+    config  node=s4  cmd=interface ${arista_ixia_interface_s4}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=switchport
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=exit
+    config  node=s4  cmd=interface ${arista_portchannel_interface_s4}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=switchport
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=exit
+    config  node=s4  cmd=interface ${chain_s4s1_intf_1}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=shutdown
+    sleep  2
+    config  node=s4  cmd=no shutdown
+    config  node=s4  cmd=channel-group ${portchannel_s4_1_number} mode active
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=exit
+    config  node=s4  cmd=interface ${chain_s4s2_intf_1}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=shutdown
+    sleep  2
+    config  node=s4  cmd=no shutdown
+    config  node=s4  cmd=channel-group ${portchannel_s4_1_number} mode active
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=exit
+    #### Configure Chain on switch 1
+    config  node=master  cmd=bigchain chain ${chain_name_1}
+    ${content6}=   cli_content   node=master
+    Should not contain  ${content6}  Error
+    config  node=master  cmd=endpoint-pair switch ${switch1_alias} endpoint1 ${chain_s1s3_intf_1} endpoint2 ${chain_s1s4_intf_1}
+    ${content7}=   cli_content   node=master
+    Should not contain  ${content7}  Error
+    config  node=master  cmd=exit
+    #### Configure Chain on switch 2
+    config  node=master  cmd=bigchain chain ${chain_name_2}
+    ${content6}=   cli_content   node=master
+    Should not contain  ${content6}  Error
+    config  node=master  cmd=endpoint-pair switch ${switch2_alias} endpoint1 ${chain_s2s3_intf_1} endpoint2 ${chain_s2s4_intf_1}
+    ${content7}=   cli_content   node=master
+    Should not contain  ${content7}  Error
+    config  node=master  cmd=exit
+    sleep  5
+    setup three services and span and attach to chains
+    sleep  5
+
+sanity test setup
+    ${config}=  rest enable feature  l3-l4-mode
+    Should be True  ${config}
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result}=  start syslog monitor
+    Should be true  ${result}
+    ixia initialize  tg1  init=true
+
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}  ${range}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${range}
+    Should be true  ${in_range}
+
+add a service via rest  [Arguments]  ${sname}  ${sid}  ${sdesc}  ${snode}  ${sin}  ${sout}  ${smatch_num}  ${user_data}
+    ${result1}=  rest add a bigchain service  chain_service_name=${sname}  service_type=custom  instance_id=${sid}
+    Should be True  ${result1}
+    ${result2}=  rest add a bigchain service description  chain_service_name=${sname}  descrption=${sdesc}
+    Should be True  ${result2}
+    ${result3}=  rest add a bigchain service instance interface pair  node=${snode}  chain_service_name=${sname}  instance_id=${sid}  inintf=${sin}  outintf=${sout}
+    Should be True  ${result3}
+    ${result4}=  rest update bigchain policy action  chain_service_name=${sname}
+    Should be True  ${result4}
+    ${result5}=  rest add a bigchain policy match  chain_service_name=${sname}  match_number=${smatch_num}  data=${user_data}
+    Should be True  ${result5}
+    sleep  5
+
+setup three services and span and attach to chains
+    ### Configure on S1
+    add a service via rest  ${service_name_s1_1}  1  service1  s1  ${service_in_s1_interface1}  ${service_out_s1_interface1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    ${config1}=  rest add a bigchain policy match  chain_service_name=${service_name_s1_1}  match_number=2  data={"src-ip-mask": "255.255.255.255", "sequence": 2, "src-ip": "100.1.1.2", "ether-type": 2048}
+    Should be true  ${config1}
+    add a service via rest  ${service_name_s1_2}  1  service2  s1  ${service_in_s1_interface2}  ${service_out_s1_interface2}  1  {"dst-ip-mask": "255.255.255.255", "sequence": 1, "dst-ip": "100.1.1.2", "ether-type": 2048}
+    ${config2}=  rest add a bigchain policy match  chain_service_name=${service_name_s1_2}  match_number=2  data={"dst-ip-mask": "255.255.255.255", "sequence": 2, "dst-ip": "100.1.1.1", "ether-type": 2048}
+    Should be true  ${config2}
+    add a service via rest  ${service_name_s1_3}  1  service3  s1  ${service_in_s1_interface3}  ${service_out_s1_interface3}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    ${config3}=  rest add a bigchain policy match  chain_service_name=${service_name_s1_3}  match_number=2  data={"ether-type": 2048, "dst-tp-port": 1234, "ip-proto": 6, "sequence": 2}
+    Should be true  ${config3}
+    ${config3A}=  rest add bigchain span service  s1  span_service_name=${span_service_name_s1s3_1}  span_instance_id=1  span_interface=${span_service_s1s3_1}
+    Should be True  ${config3A}
+    ${config3B}=  rest add bigchain span service  s1  span_service_name=${span_service_name_s1s4_1}  span_instance_id=1  span_interface=${span_service_s1s4_1}
+    Should be True  ${config3B}
+    sleep  5
+    ${config4}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_s1_1}  instance=1  sequence=1
+    Should be True  ${config4}
+    ${config5}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_s1_2}  instance=1  sequence=2
+    Should be True  ${config5}
+    ${config6}=  rest add service to chain  chain_name=${chain_name_1}  service_name=${service_name_s1_3}  instance=1  sequence=3
+    Should be True  ${config6}
+    ${result6A}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_s1s3_1}   span_instance_id=1
+    Should be True  ${result6A}
+    ${result6B}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint2=${true}   span_service_name=${span_service_name_s1s4_1}   span_instance_id=1
+    Should be True  ${result6B}
+    ### Configure on S2
+    add a service via rest  ${service_name_s2_1}  1  service1  s2  ${service_in_s2_interface1}  ${service_out_s2_interface1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
+    ${config7}=  rest add a bigchain policy match  chain_service_name=${service_name_s2_1}  match_number=2  data={"src-ip-mask": "255.255.255.255", "sequence": 2, "src-ip": "100.1.1.2", "ether-type": 2048}
+    Should be true  ${config7}
+    add a service via rest  ${service_name_s2_2}  1  service2  s2  ${service_in_s2_interface2}  ${service_out_s2_interface2}  1  {"dst-ip-mask": "255.255.255.255", "sequence": 1, "dst-ip": "100.1.1.2", "ether-type": 2048}
+    ${config8}=  rest add a bigchain policy match  chain_service_name=${service_name_s2_2}  match_number=2  data={"dst-ip-mask": "255.255.255.255", "sequence": 2, "dst-ip": "100.1.1.1", "ether-type": 2048}
+    Should be true  ${config8}
+    add a service via rest  ${service_name_s2_3}  1  service3  s2  ${service_in_s2_interface3}  ${service_out_s2_interface3}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    ${config9}=  rest add a bigchain policy match  chain_service_name=${service_name_s2_3}  match_number=2  data={"ether-type": 2048, "dst-tp-port": 1234, "ip-proto": 6, "sequence": 2}
+    Should be true  ${config9}
+    ${config9A}=  rest add bigchain span service  s2  span_service_name=${span_service_name_s2s3_1}  span_instance_id=1  span_interface=${span_service_s2s3_1}
+    Should be True  ${config9A}
+    ${config9B}=  rest add bigchain span service  s2  span_service_name=${span_service_name_s2s4_1}  span_instance_id=1  span_interface=${span_service_s2s4_1}
+    Should be True  ${config9B}
+    sleep  5
+    ${config10}=  rest add service to chain  chain_name=${chain_name_2}  service_name=${service_name_s2_1}  instance=1  sequence=1
+    Should be True  ${config10}
+    ${config11}=  rest add service to chain  chain_name=${chain_name_2}  service_name=${service_name_s2_2}  instance=1  sequence=2
+    Should be True  ${config11}
+    ${config12}=  rest add service to chain  chain_name=${chain_name_2}  service_name=${service_name_s2_3}  instance=1  sequence=3
+    Should be True  ${config12}
+    ${result13}=  rest add span service to chain  chain_name=${chain_name_2}   endpoint1=${true}   span_service_name=${span_service_name_s2s3_1}   span_instance_id=1
+    Should be True  ${result13}
+    ${result14}=  rest add span service to chain  chain_name=${chain_name_2}   endpoint2=${true}   span_service_name=${span_service_name_s2s4_1}   span_instance_id=1
+    Should be True  ${result14}
+
+delete existing controllers  [Arguments]  ${switch}  ${controller}
+    ${ret_value_1}=  cli delete controller  ${switch}  ${controller}
+    Should Be True  ${ret_value_1}
+
+add openflow controller  [Arguments]  ${switch}  ${controller}
+    ${ret_value_1}=  cli add controller  ${switch}  ${controller}
+    Should Be True  ${ret_value_1}    
+
+custom test teardown one
+    add openflow controller  s1  c1
+    add openflow controller  s1  c2
+    add openflow controller  s2  c1
+    add openflow controller  s2  c2
+    sanity test teardown
+    
+sanity test teardown
+    cli enable interface  s1  ${service_in_s1_interface1}
+    cli enable interface  s1  ${span_service_s1s3_1}
+    config  node=s3  cmd=interface ${span_service_s3s1_1}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no shutdown
+    ${content2}=  cli_content  node=s3
+    Should Not Contain  ${content2}  Error
+    delete traffic
+    sleep  2
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+
+sanity suite teardown
+    config  node=master  cmd=no bigchain chain ${chain_name_1}
+    ${content1}=  cli_content  node=master
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=no bigchain service ${service_name_s1_1}
+    ${content2}=  cli_content  node=master
+    Should Not Contain  ${content2}  Error
+    config  node=master  cmd=no bigchain service ${service_name_s1_2}
+    ${content3}=  cli_content  node=master
+    Should Not Contain  ${content3}  Error
+    config  node=master  cmd=no bigchain service ${service_name_s1_3}
+    ${content4}=  cli_content  node=master
+    Should Not Contain  ${content4}  Error
+    config  node=master  cmd=no bigchain chain ${chain_name_2}
+    ${content5}=  cli_content  node=master
+    Should Not Contain  ${content5}  Error
+    config  node=master  cmd=no bigchain service ${service_name_s2_1}
+    ${content6}=  cli_content  node=master
+    Should Not Contain  ${content6}  Error
+    config  node=master  cmd=no bigchain service ${service_name_s2_2}
+    ${content7}=  cli_content  node=master
+    Should Not Contain  ${content7}  Error
+    config  node=master  cmd=no bigchain service ${service_name_s2_3}
+    ${content8}=  cli_content  node=master
+    Should Not Contain  ${content8}  Error
+    config  node=master  cmd=no bigchain span-service ${span_service_name_s1s3_1}
+    ${content9}=  cli_content  node=master
+    Should Not Contain  ${content9}  Error
+    config  node=master  cmd=no bigchain span-service ${span_service_name_s1s4_1}
+    ${content10}=  cli_content  node=master
+    Should Not Contain  ${content10}  Error
+    config  node=master  cmd=no bigchain span-service ${span_service_name_s2s3_1}
+    ${content11}=  cli_content  node=master
+    Should Not Contain  ${content11}  Error
+    config  node=master  cmd=no bigchain span-service ${span_service_name_s2s4_1}
+    ${content12}=  cli_content  node=master
+    Should Not Contain  ${content12}  Error
+    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    ${switch_dpid_s2}=  rest return switch dpid from ip  s2
+    config  node=s3  cmd=interface ${arista_ixia_interface_s3}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport mode trunk
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s3  cmd=no interface ${arista_portchannel_interface_s3}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=interface ${arista_ixia_interface_s4}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=no switchport
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=no switchport mode trunk
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=no switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=exit
+    config  node=s4  cmd=no interface ${arista_portchannel_interface_s4}
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=master  cmd=switch ${switch_dpid_s1}
+    config  node=master  cmd=deployment role bigtap
+    config  node=master  cmd=exit
+    config  node=master  cmd=switch ${switch_dpid_s2}
+    config  node=master  cmd=deployment role bigtap
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch  s1
+    rest delete switch  s2
+    base suite teardown
