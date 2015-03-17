@@ -16,7 +16,7 @@ Library  Collections.py
 
 * Variable
 ${projectname}  Big Cloud Fabric Appliance
-@{radius_servers}  10.2.3.201  10.8.67.3  10.8.67.4
+@{radius_servers}  10.2.3.201  10.8.67.2  10.8.67.3
 @{tacacs_servers}  10.2.3.201  10.9.18.2  10.8.67.3
 @{servers}
 ${type}
@@ -1311,6 +1311,9 @@ T4.3.2 Verify that Authorization uses round-robin (if revivew)
     #placeholder
     [Tags]  skipped
 T4.4 Verify help texts
+    #placeholder
+    [Tags]  skipped
+T4.5 Verify behavior when floodlight is stopped
     #placeholder
     [Tags]  skipped
 
