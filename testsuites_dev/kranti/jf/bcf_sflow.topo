@@ -1,0 +1,51 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+# tg1 : Tester like Ixia
+
+c1:
+  ip:  10.8.67.55
+  
+c2:
+  ip:  10.8.67.56
+
+s1:
+  alias: leaf0-a
+  mac: 70:72:cf:c6:fd:35
+  fabric-role: leaf
+  leaf-group: rack0
+#  platform: AS5710 
+  console:
+    ip:  10.1.8.183
+    protocol: telnet
+    port: 6020
+  set_session_ssh: false
+  set_init_ping: false
+   
+s3:
+  alias: leaf1-a
+  mac: 70:72:cf:bd:da:22
+  fabric-role: leaf
+  leaf-group: rack1
+  console:
+    ip:  10.1.8.183
+    protocol: telnet
+    port: 6022
+  set_session_ssh: false
+  set_init_ping: false  
+ 
+s7:
+  alias: spine0
+  mac: 70:72:cf:c8:f9:a7
+  fabric-role: spine
+  console:
+    ip:  10.1.8.183
+    protocol: telnet
+    port: 6018
+  set_session_ssh: false
+  set_init_ping: false
+
+  
