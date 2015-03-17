@@ -275,9 +275,10 @@ class T5_Scale(object):
             c.expect(r"Password:")
             c.config("adminadmin")
             c.send("system failover")
-            if (c.expect(r"Currently: STANDBY. Continue failover to this node \(\"y\" or \"yes\" to continue\):")):
+            options = c.expect([r'Currently: STANDBY.*', r'Failover to a standby controller*'])
+            if options[0] == 0:
                 c.send("yes")
-            elif(c.expect(r"Failover to a standby controller node \(\"y\" or \"yes\" to continue)\?")):
+            elif options[0] == 1:
                 c.send("yes")
             # helpers.sleep(30)
             # helpers.sleep(90)
