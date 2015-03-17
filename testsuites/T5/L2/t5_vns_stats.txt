@@ -20,7 +20,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Single Leaf Three Rack setup
-   [Tags]  L2  feature  IronHorse  daily-sanity 
+   [Tags]  L2  feature  IronHorse  sanity 
    bigrobot test ztn  False
    add fabric switch
    Set swith int variables
@@ -32,7 +32,7 @@ add Single Leaf Three Rack setup
    Wait Until Keyword Succeeds   10 min  30 sec   rest verify fabric link common  6
 	
 verify show vns and tenant counters CLI output
-	[Tags]  L2  feature  IronHorse    daily-sanity
+	[Tags]  L2  feature  IronHorse    sanity
 	rest add tenant  t1
 	rest add vns  t1  v1	
 	${result}=  cli  c1  show vns v1 counter 
@@ -44,7 +44,7 @@ verify show vns and tenant counters CLI output
 	rest delete tenant  t1
 
 verify show vns and tenant rate CLI output
-	[Tags]  L2  feature  IronHorse   daily-sanity
+	[Tags]  L2  feature  IronHorse   sanity
 	rest add tenant  t1
 	rest add vns  t1  v1	
 	${result}=  cli  c1  show vns v1 rate 
@@ -68,7 +68,7 @@ verify CLI interface rx and tx counter output for all possible options
 	rest delete tenant  t1
 
 verify CLI interface rx and tx rate output for all possible options
-	[Tags]  L2  feature  IronHorse   daily-sanity
+	[Tags]  L2  feature  IronHorse   sanity
 	rest add tenant  t1
 	rest add vns  t1  v1	
 	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} rx-rate  
@@ -78,7 +78,7 @@ verify CLI interface rx and tx rate output for all possible options
 	rest delete tenant  t1
 	
 verify CLI switch interface rx and tx counter output for all possible options
-	[Tags]  L2  feature  IronHorse   daily-sanity
+	[Tags]  L2  feature  IronHorse   sanity
 	rest add tenant  t1
 	rest add vns  t1  v1	
 	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} rx-counter  
@@ -90,7 +90,7 @@ verify CLI switch interface rx and tx counter output for all possible options
 	rest delete tenant  t1
 	
 verify CLI switch interface rx and tx rate output for all possible options
-	[Tags]  L2  feature  IronHorse   daily-sanity
+	[Tags]  L2  feature  IronHorse   sanity
 	rest add tenant  t1
 	rest add vns  t1  v1	
 	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} rx-rate  
@@ -100,7 +100,7 @@ verify CLI switch interface rx and tx rate output for all possible options
 	rest delete tenant  t1
 	
 Verify single VNS rx/tx stats between rack
-	[Tags]  L2  feature  IronHorse      daily-sanity    
+	[Tags]  L2  feature  IronHorse      sanity    
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -163,7 +163,7 @@ Verify single VNS rx/tx stats within same rack
     sleep  125
     
 Verify single vns rx/tx rates same rack
-	[Tags]  L2  feature  IronHorse   daily-sanity
+	[Tags]  L2  feature  IronHorse   sanity
     rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
@@ -198,7 +198,7 @@ Verify single vns rx/tx rates same rack
     sleep  125
 
 verify single vns rx/tx rates different rack
-	[Tags]  L2  feature  IronHorse      daily-sanity
+	[Tags]  L2  feature  IronHorse      sanity
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -251,7 +251,7 @@ verify interface rx/tx stats different rack
     rest delete tenant  t1
    
 verify interface rx/tx stats same rack
-	[Tags]  L2  feature  IronHorse    daily-sanity
+	[Tags]  L2  feature  IronHorse    sanity
        
 	rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
@@ -286,7 +286,7 @@ verify interface rx/tx stats same rack
     sleep  125
 	
 verify interface rx/tx rates different rack
-	[Tags]  L2  feature  IronHorse   daily-sanity
+	[Tags]  L2  feature  IronHorse   sanity
 
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -347,7 +347,7 @@ verify interface rx/tx rates same rack
     sleep  125
 
 verify interface rx/tx broadcast packet stats different rack
-	[Tags]  L2  feature  IronHorse  daily-sanity   
+	[Tags]  L2  feature  IronHorse  sanity   
 	ixia initialize  tg1  init=True
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -544,7 +544,7 @@ verify the single tenant stats
     rest delete tenant  t1
 	
 verify single tenant stats using multiple VNS 
-	[Tags]  L2  feature  IronHorse   daily-sanity
+	[Tags]  L2  feature  IronHorse   sanity
 	ixia initialize  tg1  init=True
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -626,7 +626,7 @@ verify multiple tenant stats
     rest delete tenant  t2
     
 verify multiple tenant rates 
- 	[Tags]  L2  feature  IronHorse   daily-sanity  
+ 	[Tags]  L2  feature  IronHorse   sanity  
 	ixia initialize  tg1  init=True
  	rest add tenant  t1
 	rest add vns  t1  v1
