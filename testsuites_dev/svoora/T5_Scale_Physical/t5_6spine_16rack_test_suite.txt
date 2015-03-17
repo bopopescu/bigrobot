@@ -75,7 +75,7 @@ ${leaf-name}            leaf3a-7011
 ${spine-name}           spine0
 ${leaf-not-in-traffic}      s1
 ${leaf-not-in-traffic-name}     leaf0a-7005
-${max_timeout}      4 min  
+${max_timeout}      8 min  
 ${poll_interval}        25 sec
 ${min_poll_interval}     2 sec
 ${mgmt-1}                 arista-1
@@ -312,11 +312,10 @@ Controller reboot times
     [Tags]  HA2  loss  note
     ${time_reboot}=   Get time
     ${returnVal}=  cli controller reboot
-    Should Be True  ${returnVal}
+    sleep   3
+    #Should Be True  ${returnVal}
     Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
     ${time_controller_online}=   Get time
-    stop monitoring the exception
-    parse monitoring file
     ${time_diff}=    time diff   ${time_reboot}    ${time_controller_online}
     Log to console    :
     Log to csonole    Controller reboot times and joining to cluster without any fabric errors:
@@ -325,9 +324,7 @@ Controller reboot times
     Should Be True  ${return}
     ${return}=  rest verify disk usage
     Should Be True  ${return}
-    stop traffic
-    print L2 packet_loss_duration
-
+    
 
 
 Controller Slave Reboot
