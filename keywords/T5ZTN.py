@@ -918,6 +918,14 @@ class T5ZTN(object):
                 if "logging remote" in ztn_config_line:
                     ztn_config_line = ztn_config_line.replace("remote",
                                       "host")
+                    if len(ztn_config_line.split(' ')) > 3:
+                        port = ztn_config_line.split(' ')[3]
+                        ztn_config_line = ztn_config_line.replace(
+                                          port, "port %s" % port)
+                    else:
+                        ztn_config_line = (ztn_config_line +
+                                           " port 514")
+
                     helpers.log("Rearranging config line: %s" % ztn_config_line)
                 ztn_config_temp.append(ztn_config_line)
                 helpers.log("Keeping line in ztn-config: %s" % ztn_config_line)
@@ -1139,6 +1147,9 @@ class T5ZTN(object):
                     temp_line = running_config_line.replace("\'", "")
                     running_config_temp.append(temp_line)
                     helpers.log("Rearranging line: %s" % temp_line)
+                    continue
+                if re.match(r'^hash.*', running_config_line):
+                    helpers.log("Skipping line: %s" % running_config_line)
                     continue
                 running_config_temp.append(running_config_line)
                 helpers.log("Keeping line in running-config: %s"

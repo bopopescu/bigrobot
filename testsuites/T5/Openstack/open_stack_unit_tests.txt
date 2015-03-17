@@ -52,8 +52,8 @@ TC02 Open Stack Unit Testcases test_t5_api
 
 * Keywords 
 T5 open stack test setup
-   start floodlight monitor
+   #start floodlight monitor
    base test setup
 T5 open stack test teardown
-   stop floodlight monitor
+   #stop floodlight monitor
    base test teardown

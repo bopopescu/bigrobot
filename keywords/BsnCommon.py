@@ -467,6 +467,8 @@ class BsnCommon(object):
                                       % (node, if_name), soft_error=soft_error)
         return interfaces[if_name]
 
+    interface = interfaces
+
     def params_global(self, *args, **kwargs):
         """
         Return the value for a 'global' params attributes.
@@ -2151,6 +2153,8 @@ class BsnCommon(object):
         s1:
             interfaces:
                 int_key: ethernet24
+
+        Note: There's a BsnCommon.interfaces keyword which is more robust. Consider using it instead.
         '''
         t = test.Test()
         if node in t.params():
@@ -2165,6 +2169,7 @@ class BsnCommon(object):
         else:
             helpers.log("No Node: %s  Defined in Topo File.." % str(node))
             return False
+
     def get_next_mac(self, *args, **kwargs):
         """
         Contributor: Mingtao Yang

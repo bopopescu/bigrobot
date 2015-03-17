@@ -1,0 +1,31 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+
+c1:
+ ip: 10.8.4.127
+ set_session_ssh: false
+ set_init_ping: false
+ user: recovery
+ password: bsn
+ console: 
+   ip: 10.8.0.56
+   libvirt_vm_name: tomaszklimczyk_c1_03131250
+   user: root
+   password: bsn
+c2:
+ ip: 10.8.4.128
+ set_session_ssh: false
+ set_init_ping: false
+ user: recovery
+ password: bsn
+ console: 
+   ip: 10.8.0.56
+   libvirt_vm_name: tomaszklimczyk_c2_03131254
+   user: root
+   password: bsn
+

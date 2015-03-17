@@ -1,0 +1,14 @@
+c1:
+  ip: 1.2.3.4
+  set_session_ssh: false
+  set_init_ping: false
+
+s1:
+  ip: 1.2.3.4
+  set_session_ssh: false
+  set_init_ping: false
+
+s2:
+  ip: 1.2.3.4
+  set_session_ssh: false
+  set_init_ping: false
