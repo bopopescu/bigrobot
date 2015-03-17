@@ -571,10 +571,10 @@ Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 
 T5 Platform test setup
 	base test setup
-	start floodlight monitor
+	#start floodlight monitor
 
 T5 Platform test teardown 
 	base test teardown
-	stop floodlight monitor
+	#stop floodlight monitor
 	
 	

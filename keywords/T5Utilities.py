@@ -808,8 +808,6 @@ class T5Utilities(object):
         t = test.Test()
         c = t.controller(role)
         helpers.log("Verifing for monitor job")
-        # doing this to flush out previous content in buffer
-        c.sudo('')
         c_result = c.sudo('ps ax | grep tail | grep sudo | awk \'{print $1}\'')
         split = re.split('\n', c_result['content'])
         pidList = split[1:-1]
