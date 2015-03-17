@@ -33,7 +33,7 @@ Library         Dialogs
 #---------------------------------------------
 
 T48 Interface system tenant add/remove permit policy src-ip to dest-ip 
-	[Tags]  feature  systemt  deny
+	[Tags]  feature  systemt  deny  sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy							${tenant_system}		${tenant2_polname}		
@@ -123,7 +123,7 @@ T50 Interface system tenant add/remove permit policy src-ip to dest-vns
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1 
 
 T51 Interface system tenant add/remove deny policy src-ip to dest-vns
-	[Tags]  feature  systemt
+	[Tags]  feature  systemt  sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
 	rest add policy							${tenant_system}		${tenant2_polname}		
@@ -180,7 +180,7 @@ T52 Interface system tenant add/remove permit policy src-ip to dest-tenant
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 T53 Interface system tenant add/remove deny policy src-ip to dest-tenant
-	[Tags]  feature  systemt  T6
+	[Tags]  feature  systemt  T6  sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	rest add policy							${tenant_system}		${tenant2_polname}		
@@ -238,7 +238,7 @@ T54 Interface system tenant add/remove permit policy src-ip to any
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 ######  **  ANY **  ########	
 T55 Interface system tenant add/remove deny policy src-ip to any
-	[Tags]  feature  systemt
+	[Tags]  feature  systemt  sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	#${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	rest add policy							${tenant_system}		${tenant2_polname}		
@@ -323,7 +323,7 @@ T57 Interface system tenant add/remove deny policy src-tenant to dest-ip
     ${report}=             fetch port stats  stream=${stream}
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 T58 Interface system tenant add/remove permit policy src-tenant to dest-tenant
-	[Tags]  feature  systemt
+	[Tags]  feature  systemt  sanity
 	${src_dict}=  Create Dictionary  tenant  ${tenantY}
 	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	rest add policy							${tenant_system}		${tenant2_polname}		
@@ -840,7 +840,7 @@ T75 Interface system tenant add/remove deny policy any to dest-tenant
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 ######  **  ANY need more investigation  **  ########	
 T76 Interface system tenant add/remove permit policy any to dest-vns
-	[Tags]  feature  systemT29
+	[Tags]  feature  systemT29  sanity
 	#${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX} 
 	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
 	rest add policy							${tenant_system}		${tenant2_polname}		
