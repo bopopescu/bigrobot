@@ -78,6 +78,8 @@ ${leaf-not-in-traffic-name}     leaf0a-7005
 ${max_timeout}      4 min  
 ${poll_interval}        25 sec
 ${min_poll_interval}     2 sec
+${mgmt-1}                 arista-1
+${mgmt-2}                 arista-2
 * Test Case 
 
 copy config file to controller
@@ -142,6 +144,8 @@ Create L2 devices in ixia
     reconnect switch ips   ${leaf}
     ${return}=  rest verify sync state
     Should Be True  ${return}
+    ${return}=   rest clear endpoint all
+    Should Be True   ${return}
     create L2 streams
     clear stats
     apply traffic
@@ -177,6 +181,8 @@ Create L3 devices in ixia
     reconnect switch ips   ${leaf}
     ${return}=  rest verify sync state
     Should Be True  ${return}
+    ${return}=   rest clear endpoint all
+    Should Be True   ${return}
     create L3 streams
     ${time_arp_start}    Get time
     L3 start hosts    RetransmitInterval=10000   RetransmitCount=10    arp_check=False
@@ -192,6 +198,8 @@ Create L3 devices in ixia
     
 Controller HA failover times with L2 traffic
     [Tags]  HA1  loss  note
+    ${return}=   rest clear endpoint all
+    Should Be True   ${return}
     create L2 streams
     clear stats
     apply traffic
@@ -1213,7 +1221,31 @@ leaf reboot time
     ${time_diff}=  time diff  ${time_before}   ${time_no_fabric_link_errors}
     Log to Console  ${time_diff}
     
+Reboot Mgmt switch
+    [Tags]   mgmt
+    #reconnect switch ips   ${leaf}
+    #${return}=  rest verify debug coordinator
+    #Should Be True  ${return}
+    #${return}=  rest verify disk usage
+    #Should Be True  ${return}
+    #${return}=  rest verify sync state
+    #Should Be True  ${return}
+    #verify fabric switch link and errors
+    #start monitoring the exception during reboot
+    #${time_reboot_issued}     Get time
+    ${reboot_result}=   reboot mgmt    ${mgmt-1}
+    should be true   ${reboot_result}
+    #${time_reboot_done}      Get time
+    #Wait Until Keyword Succeeds  ${max_timeout}  ${poll_interval}  verify fabric switch link and errors
+    #${time_no_fabric_errors}    Get time
+    #stop monitoring the excpetion
+    #parse exception file
+    #${time_diff}=    time diff   ${time_reboot_issued}     ${time_no_fabric_errors}
+    #Log to console      :
+    #Log to console      Mgmt switch reboot, and controller stablized in:
+    #Log to console      ${time_diff}
     
+        
      
 * Keywords
 
