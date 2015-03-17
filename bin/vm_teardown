@@ -63,8 +63,6 @@ def main(*args):
         else:
             helpers.log("VM TearDown Failure!!\n%s" % result['status_descr'])
 
-        time.sleep(10)  # sleep for jenkins to run Teardowns
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

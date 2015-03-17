@@ -30,7 +30,7 @@ Library         Dialogs
 #---------------------------------------------
 
 T1 Interface tenant add/remove permit policy src-ip to dest-ip 
-	[Tags]  feature  daily-sanity
+	[Tags]  feature  sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy							${tenantX}		${tenant2_polname}		
@@ -62,7 +62,7 @@ T1 Interface tenant add/remove permit policy src-ip to dest-ip
 
 
 T2 Interface tenant add/removedeny policy src-ip to dest-ip 
-	[Tags]  feature  deny  daily-sanity
+	[Tags]  feature  deny  sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy							${tenantX}		${tenant2_polname}		
@@ -181,7 +181,7 @@ T5 Interface tenant add/remove permit policy src-ip to dest-tenant
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 T6 Interface tenant add/remove deny policy src-ip to dest-tenant
-	[Tags]  feature  daily-sanity
+	[Tags]  feature  sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
@@ -211,7 +211,7 @@ T6 Interface tenant add/remove deny policy src-ip to dest-tenant
 
 ######  **  ANY **  ########	
 T7 Interface tenant add/remove permit policy src-ip to any
-	[Tags]  feature  daily-sanity
+	[Tags]  feature  sanity
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	#${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
@@ -357,7 +357,7 @@ T11 Interface tenant add/remove permit policy src-tenant to dest-tenant
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
     
 T12 Interface tenant add/remove deny policy src-tenant to dest-tenant
-	[Tags]  feature  daily-sanity
+	[Tags]  feature  sanity
 	${src_dict}=  Create Dictionary  tenant  ${tenantY}
 	${dst_dict}=  Create Dictionary  tenant  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
@@ -540,7 +540,7 @@ T17 Interface tenant add/remove permit policy src-vns to dest-ip
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 T18 Interface tenant add/remove deny policy src-vns to dest-ip
-	[Tags]  feature  daily-sanity
+	[Tags]  feature  sanity
 	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}
 	rest add policy								X		${tenant1_polname}		
@@ -627,7 +627,7 @@ T20 Interface tenant add/remove deny policy src-vns to dest-tenant
     verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 T21 Interface tenant add/remove permit policy src-vns to dest-vns
-	[Tags]  smoke  feature  daily-sanity
+	[Tags]  smoke  feature  sanity
 	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant  ${tenantY}
 	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
