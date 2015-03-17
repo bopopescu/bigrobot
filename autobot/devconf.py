@@ -487,7 +487,9 @@ class DevConf(object):
         self.last_result = { 'content': self.conn.response }
 
         if helpers.not_quiet(quiet, [1, 5]):
-            helpers.log("Command content:\n%s" % self.content(), level=level)
+            helpers.log("Command content:\n%s%s"
+                        % (self.content(), br_utils.end_of_output_marker()),
+                        level=level)
 
         if timeout: self.timeout()
 
@@ -673,9 +675,12 @@ class BsnDevConf(DevConf):
                 else:
                     # Supports BSN controllers, BSN SwitchLight
                     bash_cmd = "debug bash"
+
+                # NOTE: 2015-03-17 Vui: Changed quiet from 5 to 0, to allow
+                #   more verbose logging for debugging sudo issue.
                 super(BsnDevConf, self).cmd(bash_cmd,
                                             mode=self._mode_before_bash,
-                                            quiet=5, level=level)
+                                            quiet=0, level=level)
 
                 # 2014-09-30 It seems this is causing havoc on console
                 # sessions. Disable for now.
@@ -701,19 +706,6 @@ class BsnDevConf(DevConf):
                            br_utils.end_of_output_marker()),
                            level=level)
 
-        """
-        if helpers.is_bsn_controller(self.platform()):
-            if re.search(r"^Timeout: exiting '\w+' mode to '\w+' mode", self.content(), re.M):
-                helpers.log("Found mode mismatch on '%s'. Possibly triggered by idle timeout."
-                            " Resetting mode to 'cli' and re-running command."
-                            % (self.name()))
-                self.mode('cli')
-                self.cmd(cmd, quiet=quiet, mode=mode, prompt=prompt,
-                         timeout=timeout, level=level)
-            else:
-                # helpers.log("!!!!! No mode mismatch. All is well!")
-                pass
-        """
         return self.result()
 
     def cmd(self, *args, **kwargs):
@@ -753,23 +745,23 @@ class BsnDevConf(DevConf):
             self.expect_exception(None, "Unexpected error", soft_error=True)
             raise
 
-    def cli(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
+    def cli(self, cmd, quiet=0, prompt=None, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt,
                         timeout=timeout, level=level)
 
-    def enable(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
+    def enable(self, cmd, quiet=0, prompt=None, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='enable', prompt=prompt,
                         timeout=timeout, level=level)
 
-    def config(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
+    def config(self, cmd, quiet=0, prompt=None, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='config', prompt=prompt,
                         timeout=timeout, level=level)
 
-    def bash(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
+    def bash(self, cmd, quiet=0, prompt=None, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='bash', prompt=prompt,
                         timeout=timeout, level=level)
 
-    def sudo(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
+    def sudo(self, cmd, quiet=0, prompt=None, timeout=None, level=5):
         return self.cmd(' '.join(('sudo', cmd)), quiet=quiet, mode='bash',
                         prompt=prompt, timeout=timeout, level=level)
 
@@ -975,7 +967,7 @@ class MininetDevConf(DevConf):
         super(MininetDevConf, self).cmd('exit', mode='bash', quiet=5)
         helpers.log("Current mode is %s" % self.mode())
 
-    def _cmd(self, cmd, quiet=0, mode='cli', prompt=False, timeout=None,
+    def _cmd(self, cmd, quiet=0, mode='cli', prompt=None, timeout=None,
              level=4):
 
         if mode == 'cli':
@@ -1029,11 +1021,11 @@ class MininetDevConf(DevConf):
             raise
         return result
 
-    def cli(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
+    def cli(self, cmd, quiet=0, prompt=None, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt,
                         timeout=timeout, level=level)
 
-    def bash(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
+    def bash(self, cmd, quiet=0, prompt=None, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='bash', prompt=prompt,
                         timeout=timeout, level=level)
 
@@ -1147,7 +1139,7 @@ class HostDevConf(DevConf):
         super(HostDevConf, self).__init__(*args, **kwargs)
         self.bash('uname -a')
 
-    def _cmd(self, cmd, quiet=0, prompt=False, timeout=None, level=4):
+    def _cmd(self, cmd, quiet=0, prompt=None, timeout=None, level=4):
         if helpers.not_quiet(quiet, [2, 5]):
             helpers.log("Execute command on '%s': '%s' (timeout: %s)"
                         % (self.name(), cmd,
@@ -1185,11 +1177,11 @@ class HostDevConf(DevConf):
     # Alias
     bash = cmd
 
-    def sudo(self, cmd, quiet=0, prompt=False, timeout=None, level=5):
+    def sudo(self, cmd, quiet=0, prompt=None, timeout=None, level=5):
         return self.bash(' '.join(('sudo', cmd)), quiet=quiet, prompt=prompt,
                          timeout=timeout, level=level)
 
     def close(self):
-        helpers.debugh("Closing HostDevConf '%s' (%s)"
+        helpers.debug("Closing HostDevConf '%s' (%s)"
                        % (self.name(), self._host))
         super(HostDevConf, self).close()

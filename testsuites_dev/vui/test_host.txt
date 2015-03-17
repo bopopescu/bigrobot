@@ -62,6 +62,8 @@ Test shell prompt
     bash             h1    pwd
 
 Test bash content
-    #[Tags]  skipped
+    [Tags]  skipped
     bash me          h1
 
+Test sudo
+    test sudo        h1   
