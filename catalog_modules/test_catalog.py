@@ -126,12 +126,13 @@ class TestCatalog(object):
                  match.group(1) == image release name
                  match.group(2) == product name
                  match.group(3) == testbed
+                 match.group(4) == build id
            - string matching the field
         """
 
         # !!! FIXME: The regex match is not very stringent at this point.
         #            Will need to tighten down on requirements in the future.
-        match = re.match(r'^([A-Za-z0-9-]+)_([A-Za-z0-9-]+)_([A-Za-z0-9-]+)-.+', build_name)
+        match = re.match(r'^([A-Za-z0-9-]+)_([A-Za-z0-9-]+)_([A-Za-z0-9-]+)-(.+)', build_name)
         result = None
         if match:
             if field == 'release':
@@ -140,6 +141,8 @@ class TestCatalog(object):
                 result = match.group(2)
             elif field == 'testbed':
                 result = match.group(3)
+            elif field == 'build_id':
+                result = match.group(4)
             else:
                 result = match
         return result
@@ -238,7 +241,7 @@ class TestCatalog(object):
         Returns a list of actual builds in an aggregated build. Data is
         retrieved from the aggregated_build collection.
         """
-        query = {"name": build_name}
+        query = {"build_name": build_name}
         cursor = self.aggregated_builds_collection().find(query)
         count = cursor.count()
 
@@ -264,7 +267,7 @@ class TestCatalog(object):
             query = {"build_names": {"$all": [build_name]}}
         else:
             query = {"build_names": {"$all": [build_name]},
-                     "name": aggregated_build_name}
+                     "build_name": aggregated_build_name}
         cursor = self.aggregated_builds_collection().find(query)
         count = cursor.count()
         if count >= 1:
@@ -274,7 +277,7 @@ class TestCatalog(object):
                 print "WARNING: Did not expect multiple results."
             return cursor[0]
 
-        query = {"name": aggregated_build_name}
+        query = {"build_name": aggregated_build_name}
         cursor = self.aggregated_builds_collection().find(query)
 
         if cursor.count() >= 1:
@@ -288,12 +291,16 @@ class TestCatalog(object):
         else:
             # Aggregated build for year/week does not exist. Create it.
             if not quiet: print "Not found aggregated build '%s'. Creating." % aggregated_build_name
-            doc = {"name": aggregated_build_name,
+            doc = {"build_name": aggregated_build_name,
+                   "build_id": "wk" + week_num + ", " + year,
+                   "release": self.match_build_name(build_name, "release"),
                    "week_num": week_num,
                    "year": year,
                    "build_names": [build_name],
                    "createtime": self.timestamp(),
                    "updatetime": self.timestamp(),
+                   "created_by": getpass.getuser(),
+                   "comments": '',
                    }
             _ = self.insert_doc('aggregated_builds', doc)
             return doc
@@ -305,6 +312,11 @@ class TestCatalog(object):
         - If found, return the document.
         - If not found, create a new build document, and return it.
         """
+        if self.in_build_name_group(build_name):
+            testbed = self.match_build_name(build_name, "testbed")
+        else:
+            testbed = None
+
         query = {"build_name": build_name}
         cursor = self.builds_collection().find(query)
         count = cursor.count()
@@ -317,10 +329,19 @@ class TestCatalog(object):
         else:
             # Create: Build does not exist.
             if not quiet: print "Not found build '%s'. Creating." % build_name
+
+            if testbed:
+                testbeds = [testbed]
+            else:
+                testbeds = []
+
             doc = {"build_name": build_name,
+                   "build_id": self.match_build_name(build_name, "build_id"),
+                   "release": self.match_build_name(build_name, "release"),
                    "createtime": self.timestamp(),
                    "updatetime": self.timestamp(),
                    "created_by": getpass.getuser(),
+                   "testbeds": testbeds,
                    "regression_tags": [regression_tags],
                    "is_toxic": False,
                    "comments": '',
@@ -393,17 +414,22 @@ class TestCatalog(object):
         else:
             # Create: Build group does not exist.
             if not quiet: print "Not found build '%s'. Creating." % build_group_name
+
             if testbed:
                 testbeds = [testbed]
             else:
                 testbeds = []
+
             doc = {"build_name": build_group_name,
+                   "build_id": self.match_build_name(build_name, "build_id"),
+                   "release": self.match_build_name(build_name, "release"),
                    "createtime": createtime,
                    "updatetime": updatetime,
                    "created_by": getpass.getuser(),
                    "testbeds": testbeds,
                    "build_names": [build_name],
                    "regression_tags": regression_tags,
+                   "comments": '',
                    }
             _ = self.insert_doc('build_groups', doc)
             return doc

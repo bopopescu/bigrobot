@@ -890,7 +890,7 @@ def bigrobot_devcmd_write(s, no_timestamp=False):
             file_write_append_once(bigrobot_devcmd_log(), s)
         else:
             file_write_append_once(bigrobot_devcmd_log(),
-                                   ts_logger() + ' ' + s)
+                                   ts_logger() + ' - ' + s)
 
 
 def python_path(new_val=None, default=None):
