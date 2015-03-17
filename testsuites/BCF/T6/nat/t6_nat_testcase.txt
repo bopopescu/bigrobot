@@ -130,6 +130,8 @@ verify PNAT default behaviour when user creates tenant/network/endpoint
 	[Tags]
 verify VM connectivity using openstack endpoint creation (NAT applied)
 	[Tags]
+check NSAPI workflow when there is no interfaces to router
+	[Tags]
 verify floating IP configuration workflow with Openstack
 	[Tags]
 verify VM connectivity using floating IP 
@@ -157,6 +159,12 @@ verify packet contents with PNAT and floating IP together in a tenant
 verify openstack tenant with no NAT configuration workflow
 	[Tags]
 exhaust floating IP network in openstack and check the BCF NAT container behaviour
+	[Tags]
+verify multiple external network floating IP workflow
+	[Tags]
+verify multiple external network PNAT workflow
+	[Tags]
+verify nat stats counter on vswitch 
 	[Tags]
 
 
