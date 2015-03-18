@@ -338,10 +338,12 @@ corsair suite setup
     bash  s1  ofad-ctl crc enable
     #Setup tunnels across  Accton AS5710 (app-ac5710-1)
     #### CORE IS TUNNEL
-    arista tunnel setup  ${arista1_sw1_tunnel_intf1}  ${arista1_sw1_tunnel_ip}  ${arista1_sw1_tunnel_mask}
+    #arista tunnel setup  ${arista1_sw1_tunnel_intf1}  ${arista1_sw1_tunnel_ip}  ${arista1_sw1_tunnel_mask}
+    cli arista add ip address  s2  ${arista1_sw1_tunnel_ip}  24  ${arista1_sw1_tunnel_intf1}  speed=forced 40gfull
+    cli arista add mtu interface  s2  ${arista1_sw1_tunnel_intf1}  9212
     ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  loopback=${tunnel_sw1_loopback}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}  vpnkey=${tunnel_sw1_vpnkey}
-    Should be true  ${verify_add_tun_sw1}          
-    Sleep  5     
+    Should be true  ${verify_add_tun_sw1}
+    Sleep  5
 
 corsair test setup
     ${result}=  write version to file
@@ -369,5 +371,7 @@ corsair suite teardown
     Run Keyword and Ignore Error  rest delete switch alias  s1
     Run Keyword and Ignore Error  rest delete switch  s1
     Run Keyword and Ignore Error  rest disable feature  tunneling
-    arista tunnel teardown  ${arista1_sw1_tunnel_intf1}  ${arista1_sw1_tunnel_ip}  ${arista1_sw1_tunnel_mask}
-    Run Keyword and Ignore Error  base suite teardown  
+    #arista tunnel teardown  ${arista1_sw1_tunnel_intf1}  ${arista1_sw1_tunnel_ip}  ${arista1_sw1_tunnel_mask}
+    cli arista delete ip address  s2  ${arista1_sw1_tunnel_ip}  24  ${arista1_sw1_tunnel_intf1}  speed=forced 40gfull
+    cli arista delete mtu interface  s2  ${arista1_sw1_tunnel_intf1}  9212
+    Run Keyword and Ignore Error  base suite teardown
