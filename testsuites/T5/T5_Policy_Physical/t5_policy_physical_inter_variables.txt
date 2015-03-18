@@ -74,3 +74,17 @@ ${ixia6_mac}		00:66:01:00:00:00
 ${tenant1_polname}	x1-to-x3
 ${tenant2_polname}	x4-to-x1
 
+
+
+${nexthop}          10.251.3.2
+${zero_ip}          0.0.0.0/0
+
+${ixia1_ipsubnet}         10.251.1.0/24
+${ixia2_ipsubnet}         10.251.3.0/24
+${ixia3_ipsubnet}         10.251.2.0/24
+
+
+${next-hop-grp}     nhgrp
+${next-hop-ip}      10.251.3.2
+${next-hop-gw}      10.251.3.1
+${in_range}         30
