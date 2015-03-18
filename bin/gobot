@@ -150,11 +150,17 @@ def copy_suite(f, p, quiet=False):
     if not os.path.exists(p):
         os.makedirs(p)
 
-    for ext in ('txt', 'topo'):
+    for ext in ['txt']:
         filename = ''.join((f, '.', ext))
         if os.path.exists(filename):
+            #print("Copying %s to %s" % (filename, p))
             shutil.copy(filename, p)
-
+    
+    topo_file = helpers.bigrobot_topology()
+    if os.path.exists(topo_file):
+        #print("Copying %s to %s" % (topo_file, p))
+        shutil.copy(topo_file, p)
+    
 
 def touch_log_files():
     log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html',
