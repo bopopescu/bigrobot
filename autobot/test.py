@@ -703,7 +703,7 @@ class Test(object):
             return self.topology(*args, **kwargs)
 
     def node_spawn(self, ip, node=None, user=None, password=None,
-                   device_type='controller', protocol='ssh', no_ping=False,
+                   device_type='controller', protocol=None, no_ping=False,
                    devconf_debug_level=0, quiet=0):
         """
         node_spawn() is used by node_connect() and others. node_connect()
@@ -765,7 +765,7 @@ class Test(object):
 
     def node_connect(self, node, user=None, password=None,
                      controller_ip=None, controller_ip2=None,
-                     protocol="ssh", no_ping=False, devconf_debug_level=0, quiet=0):
+                     protocol=None, no_ping=False, devconf_debug_level=0, quiet=0):
         # Matches the following device types:
         #  Controllers: c1, c2, controller, controller1, controller2, master, slave
         #  Mininet: mn, mn1, mn2
