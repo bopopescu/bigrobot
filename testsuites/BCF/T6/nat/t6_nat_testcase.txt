@@ -61,6 +61,8 @@ verify floating IP mac does not fall under multicast range
 	[Tags]
 show command for NAT/floating IP
 	[Tags]
+CLI command to add policy with nat next-hop
+	[Tags]
 	
 Functionality Test (NAT/Floating IP)
 +++++++++++++++++++++++++++++++++++++
@@ -110,6 +112,8 @@ Verify forwarding entries in pswitch/vswitch for NAT and floating IP table
 	[Tags]
 verify single vswitch NAT container capacity and check the log messages in floodlight logs
 	[Tags]
+verify connectivity with policy applied to router with nat-next-hop
+	[Tags]
 
 Failover Cases
 ++++++++++++++
@@ -129,6 +133,8 @@ verify PNAT configuration workflow with openstack tenant routes
 verify PNAT default behaviour when user creates tenant/network/endpoint
 	[Tags]
 verify VM connectivity using openstack endpoint creation (NAT applied)
+	[Tags]
+check NSAPI workflow when there is no interfaces to router
 	[Tags]
 verify floating IP configuration workflow with Openstack
 	[Tags]
@@ -157,6 +163,14 @@ verify packet contents with PNAT and floating IP together in a tenant
 verify openstack tenant with no NAT configuration workflow
 	[Tags]
 exhaust floating IP network in openstack and check the BCF NAT container behaviour
+	[Tags]
+verify multiple external network floating IP workflow
+	[Tags]
+verify multiple external network PNAT workflow
+	[Tags]
+verify nat stats counter on vswitch 
+	[Tags]
+workflow to test policy next-hop using nat
 	[Tags]
 
 
