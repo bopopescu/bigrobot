@@ -928,7 +928,7 @@ inport suite setup
     ${config20}=  rest add interface role  s3  ${s3_delivery_intf_1}      delivery      ${s3_delivery_alias_1}
     Should be true  ${config20}
     ${config21}=  rest add interface role  s3  ${s3_delivery_intf_2}      delivery      ${s3_delivery_alias_2}
-    Should be true  ${config22}
+    Should be true  ${config21}
     ${config23}=  rest add interface role  s3  ${s3_delivery_intf_3}      delivery      ${s3_delivery_alias_3}
     Should be true  ${config23}
     ${config24}=  rest add interface role  s3  ${s3_delivery_intf_4}      delivery      ${s3_delivery_alias_4}

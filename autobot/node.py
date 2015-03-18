@@ -37,6 +37,7 @@ class Node(object):
                             % (name, self.dev_debug_level))
         else:
             self.node_params = {}
+
         if devconf_debug_level > 0:  # override set_devconf_debug_level
             self.dev_debug_level = devconf_debug_level
 
