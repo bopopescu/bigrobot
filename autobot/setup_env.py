@@ -128,19 +128,21 @@ def bigrobot_env_init(is_gobot='True'):
                    helpers.bigrobot_log_path_exec_instance_relative()))
 
     if helpers.bigrobot_suite():
-        _topo_p = helpers.bigrobot_suite() + ".physical.topo"
-        _topo_v = helpers.bigrobot_suite() + ".virtual.topo"
-        _topo_u = helpers.bigrobot_suite() + ".topo"  # p or v unspecified
+        if helpers.bigrobot_topology() == None:
+            _topo_p = helpers.bigrobot_suite() + ".physical.topo"
+            _topo_v = helpers.bigrobot_suite() + ".virtual.topo"
+            _topo_u = helpers.bigrobot_suite() + ".topo"  # p or v unspecified
+    
+            # There should exist a topo file for the test suite.
+            if helpers.file_exists(_topo_p):
+                topo_file = _topo_p
+            elif helpers.file_exists(_topo_v):
+                topo_file = _topo_v
+            else:
+                topo_file = _topo_u
 
-        # There should exist a topo file for the test suite.
-        if helpers.file_exists(_topo_p):
-            topo_file = _topo_p
-        elif helpers.file_exists(_topo_v):
-            topo_file = _topo_v
-        else:
-            topo_file = _topo_u
+            helpers.bigrobot_topology(default=topo_file)
 
-        helpers.bigrobot_topology(default=topo_file)
         print("BigRobot suite: %s" % helpers.bigrobot_suite())
         print("BigRobot suite topology: %s" % helpers.bigrobot_topology())
 
