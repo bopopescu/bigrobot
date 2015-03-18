@@ -61,6 +61,8 @@ verify floating IP mac does not fall under multicast range
 	[Tags]
 show command for NAT/floating IP
 	[Tags]
+CLI command to add policy with nat next-hop
+	[Tags]
 	
 Functionality Test (NAT/Floating IP)
 +++++++++++++++++++++++++++++++++++++
@@ -109,6 +111,8 @@ Verify debug logs associatation with Floating IP profile
 Verify forwarding entries in pswitch/vswitch for NAT and floating IP table
 	[Tags]
 verify single vswitch NAT container capacity and check the log messages in floodlight logs
+	[Tags]
+verify connectivity with policy applied to router with nat-next-hop
 	[Tags]
 
 Failover Cases
@@ -165,6 +169,8 @@ verify multiple external network floating IP workflow
 verify multiple external network PNAT workflow
 	[Tags]
 verify nat stats counter on vswitch 
+	[Tags]
+workflow to test policy next-hop using nat
 	[Tags]
 
 
