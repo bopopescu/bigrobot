@@ -621,7 +621,7 @@ class SwitchLight(object):
             helpers.test_log("Could not execute ping. Please check log for errors")
             return False
 
-    def cli_show_interface_link_flap_count(self, node, direction, intf_name):
+    def cli_show_interface_link_flap_count(self, node, direction, intf_name, soft_error=True):
         '''
             Objective:
             - Return the Link Up Count of a given interface on a switch
@@ -646,20 +646,21 @@ class SwitchLight(object):
               m = re.search(r'up count\s(\d+),\s+down count\s(\d+)',i)
               if m:
                 if direction == 'up':
-                  value = m.group(1)
-                  helpers.log('Value found in up_count = %s' % (value))
-                  break
-                if direction == 'down':
-                  value = m.group(2)
-                  helpers.log('Value found in down_count = %s' % (value))
-                  break
-
-            return int(value)
+                  value = int(m.group(1))
+                  helpers.log('Value found in up_count = %s' % value)
+                elif direction == 'down':
+                  value = int(m.group(2))
+                  helpers.log('Value found in down_count = %s' % value)
+                else:
+                  helpers.log('direction argument must be up or down')
+                break
+            return value  ##return the flap count as an integer or None if failed
         except:
-            helpers.test_log("Could not get flap count. Please check log for errors")
-            return False
+            return helpers.test_error("Could not get flap count.",
+                                      soft_error=soft_error)
 
-    def cli_show_interface_link_flap_time(self, node, intf_name):
+
+    def cli_show_interface_link_flap_time(self, node, intf_name, soft_error=True):
         '''
             Objective:
             - Return the last flap time in secs or 'never up' of a given interface on a switch
@@ -694,7 +695,7 @@ class SwitchLight(object):
                 value += int(dd) * 86400
 
                 helpers.log('Last flap: %s days %s hours %s minutes %s seconds' % (dd,hh,mm,ss))
-                helpers.log('In seconds: %s' % (value))
+                helpers.log('In seconds: %s' % value)
                 return int(value)
                 break
               if n:
@@ -704,8 +705,8 @@ class SwitchLight(object):
 
             return value
         except:
-            helpers.test_log("Could not get last flap time. Please check log for errors")
-            return False
+            return helpers.test_error("Could not get last flap time.",
+                                       soft_error=soft_error)
 
 #######################################################################
 # All Common Controller Verification Commands Go Here:
