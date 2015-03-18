@@ -16,6 +16,9 @@ c2:
    libvirt_vm_name: amallina_snt-c2_06251553
    user: root
    password: bsn
+  pdu:
+    ip: pdu-314-b.bigswitch.com
+    port: 19
 s1:
 #  ip: 10.195.0.33
   alias: leaf0-a
