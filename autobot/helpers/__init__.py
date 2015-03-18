@@ -1375,6 +1375,21 @@ def day():
     return datetime.date.today().day
 
 
+def datetime_format(s):
+    """
+    Input in seconds. Return the time in hours:minutes:seconds. If the total
+    seconds exceeds a day, return number of days also. E.g.,
+        03:25:45
+        1d 01:57:03  
+    """
+    days = int(s / 86400)
+    date_str = time.strftime('%H:%M:%S', time.gmtime(s % 86400))
+    if days == 0:
+        return date_str
+    else:
+        return "%dd " % days + date_str
+
+
 def format_robot_timestamp(timestamp, is_datestamp=False):
     """
     Robot Framework records the local time uses the following timestamp format:
