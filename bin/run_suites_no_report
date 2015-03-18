@@ -32,10 +32,6 @@ if [ ! -x "./gobot" ]; then
     err_exit "Error: Script can only be run from bin/ of bigrobot path."
 fi
 
-if [ $# -eq 0 ]; then
-    usage
-fi
-
 set -x
 testsuites=$1
 test_type=$2

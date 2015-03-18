@@ -1124,8 +1124,8 @@ class Test(object):
                                             shell=True,
                                             quiet=True)[1],
                            br_utils.end_of_output_marker()))
-            helpers.log("Staging system uname:\n%s%s"
-                        % (helpers.uname(),
+            helpers.log("Staging system info:\n%s%s"
+                        % (helpers.sysinfo(),
                            br_utils.end_of_output_marker()))
             helpers.log("Staging system uptime:\n%s%s"
                         % (helpers.uptime(),
@@ -1255,6 +1255,10 @@ class Test(object):
         n.config('exit')
 
     def _sudo_with_error_code(self, name, cmd):
+        """
+        Run command on node (name) using sudo. Return command output and error
+        code.
+        """
         n = self.topology(name)
         cmd_output = n.sudo(cmd)['content']
         content = n.bash('echo $?')['content']
@@ -1319,6 +1323,8 @@ class Test(object):
         (_, error_code) = self._sudo_with_error_code(name,
                                 'grep -E "(BigRobot|QA) mod" %s' % source_file)
         if error_code == 0:
+            # Found BigRobot signature which is an indication that it had
+            # previously modified Floodlight settings, so all is well.
             helpers.log("'%s' - QA reauth timeout modifications have already been applied."
                         % name)
             return False
@@ -1327,7 +1333,11 @@ class Test(object):
                             name,
                             'grep -E "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
                             % source_file)
+        
         if error_code == 0:
+            # sessionCacheSpec is the property used to configure reauth timetout.
+            # Found sessionCacheSpec but BigRobot didn't put it there, so
+            # likely Floodlight settings have changed. 
             helpers.environment_failure("Found sessionCacheSpec in %s on '%s'. Possibly a change was recently made to Floodlight source which conflicts with QA mod."
                                         % (source_file, name))
 

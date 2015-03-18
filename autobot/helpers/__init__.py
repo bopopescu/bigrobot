@@ -66,7 +66,8 @@ def bigrobot_module_dependencies():
     import Crypto
     # import pexpect
     import httplib2
-
+    import celery
+    
     s = "BigRobot version        %s\n" % get_version()
 
     try:
@@ -80,6 +81,8 @@ def bigrobot_module_dependencies():
     s += "Crypto version          %s\n" % Crypto.__version__
     # s += "Pexpect version         %s\n" % pexpect.__version__
     s += "Httplib2 version        %s\n" % httplib2.__version__
+    s += "Celery version          %s\n" % celery.VERSION_BANNER
+    
     pversion = sys.version_info
     s += "Python version          %s.%s.%s" % (pversion.major,
                                                pversion.minor,
@@ -463,14 +466,14 @@ def bigrobot_log_path_exec_instance_relative(new_val=None, default=None):
                             default)
 
 
-def bigrobot_devconf_debug_level(new_val=None, default=None):
+def bigrobot_devconf_debug_level(new_val=None, default=5):
     """
     Category: Get/set environment variables for BigRobot.
     Set the global devconf debug level. This value overrides the
     set_devconf_debug_level property in the topo file as well as the
     devconf_debug_level parameter in Test.node_connect() and Test.node_spawn().
       0:  disable
-      1-5:  where 5 is very verbose
+      1-6:  where 6 is extremely verbose
     """
     return _env_get_and_set('BIGROBOT_DEVCONF_DEBUG_LEVEL',
                             new_val,
@@ -890,7 +893,7 @@ def bigrobot_devcmd_write(s, no_timestamp=False):
             file_write_append_once(bigrobot_devcmd_log(), s)
         else:
             file_write_append_once(bigrobot_devcmd_log(),
-                                   ts_logger() + ' ' + s)
+                                   ts_logger() + ' - ' + s)
 
 
 def python_path(new_val=None, default=None):
@@ -1850,6 +1853,33 @@ def uname():
     _, output, _, _ = run_cmd2('uname -a', shell=False, quiet=True)
     return output.strip()
 
+
+def version_macos():
+    """
+    Dump output from 'sw_vers'.
+    """
+    _, output, _, _ = run_cmd2('sw_vers', shell=False, quiet=True)
+    return output.strip()
+
+
+def version_ubuntu():
+    """
+    Dump output from 'lsb_release'.
+    """
+    _, output, _, _ = run_cmd2('lsb_release -a', shell=False, quiet=True)
+    return output.strip()
+
+
+def sysinfo():
+    """
+    Dump system info.
+    """
+    output = uname()
+    if re.match(r'.*darwin.*', output, re.I):
+        output += "\n" + version_macos()
+    elif re.match(r'.*ubuntu.*', output, re.I):
+        output += "\n" + version_ubuntu()
+    return output
 
 def ulimit():
     """

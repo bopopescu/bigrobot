@@ -177,6 +177,20 @@ class T6(object):
         else:
             return True
     
+    def rest_delete_pat(self, tenant, nat_profile):
+        '''Function to delete all sub from pat
+        Input: tenant name , nat_profile name
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/pat' % (tenant, nat_profile)
+        try:
+            c.rest.delete(url, {})
+        except:
+            return False
+        else:
+            return True
+        
     def rest_add_pat_public_ip(self, tenant, nat_profile, public_ip):
         ''' Function to enable pat for a nat-profile
         Input: tenant name, nat profile name, public IP to be configured in NAT

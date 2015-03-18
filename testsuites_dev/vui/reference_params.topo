@@ -1,9 +1,6 @@
 c1:
-  #ip: 10.8.1.214      # vui_c1_09091021
-  #ip: 10.9.16.46      # Reg-HW-C1 (hardware appliance)
-  #ip: 10.8.1.224      # vui_c1_09160942 (build# 3338)
-  ip: 10.8.3.195      # vui_c1_session_01201758 (build# 3819)
-  #ip: 10.9.18.7        # Animesh's bigtap controller (also .5, .6, .8)
+  #ip: 10.8.3.195      # vui_c1_session_01201758 (build# 3819)
+  ip: 10.8.4.142       # vui_c1_latest_03180609 (image controller-bcf_master_virtual-4189.qcow2)
 c2:
   #ip: 10.8.1.215      # vui_c2_09091025
   ip: 10.8.1.225      # vui_c2_09160946 (build# 3338)
