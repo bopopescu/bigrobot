@@ -82,7 +82,7 @@ def convert_table_to_dict(input_list):
 
 
 def end_of_output_marker():
-    return '\n\n----'
+    return '\n\n------'
 
 
 def marker():

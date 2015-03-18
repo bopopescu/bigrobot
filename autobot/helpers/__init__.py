@@ -463,14 +463,14 @@ def bigrobot_log_path_exec_instance_relative(new_val=None, default=None):
                             default)
 
 
-def bigrobot_devconf_debug_level(new_val=None, default=None):
+def bigrobot_devconf_debug_level(new_val=None, default=5):
     """
     Category: Get/set environment variables for BigRobot.
     Set the global devconf debug level. This value overrides the
     set_devconf_debug_level property in the topo file as well as the
     devconf_debug_level parameter in Test.node_connect() and Test.node_spawn().
       0:  disable
-      1-5:  where 5 is very verbose
+      1-6:  where 6 is extremely verbose
     """
     return _env_get_and_set('BIGROBOT_DEVCONF_DEBUG_LEVEL',
                             new_val,
@@ -890,7 +890,7 @@ def bigrobot_devcmd_write(s, no_timestamp=False):
             file_write_append_once(bigrobot_devcmd_log(), s)
         else:
             file_write_append_once(bigrobot_devcmd_log(),
-                                   ts_logger() + ' ' + s)
+                                   ts_logger() + ' - ' + s)
 
 
 def python_path(new_val=None, default=None):
