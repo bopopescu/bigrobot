@@ -191,7 +191,7 @@ class support(object):
         '''
         node_mac = self.get_node_mac_address(node_name)
         node_mac = re.sub(':', '', node_mac)
-        result = True
+        result = False
         support_bundle_folder = re.sub('\.tar\.gz', '', support_bundle_folder)
         for root, dirs, files in os.walk(support_bundle_folder):
             helpers.log("Dir Name: %s  File Name: %s" % (dirs, files))
@@ -204,14 +204,15 @@ class support(object):
                             if file_name == 'support.log':
                                 helpers.log("Skipping checking for support.log")
                             else:
-                                output = helpers.run_cmd2('cat %s/%s | grep "%s" | wc -l' % (support_bundle_folder, file_name, switch_cmd), shell=True)
+                                output = helpers.run_cmd2('cat %s/%s | grep -i "%s" | wc -l' % (support_bundle_folder, file_name, switch_cmd), shell=True)
                                 outputs = output[1]
                                 helpers.log(str(outputs))
                                 match = re.match(r'.*(\d+).*', str(outputs))
                                 if match:
                                     helpers.log(str(match.group(0)))
-                                    if int(match.group(0)) == 0:
-                                        result = False
+                                    if int(match.group(0)) > 0:
+                                        helpers.log("Found the given match string in switch log..!")
+                                        result = True
         return result
 
     def check_controller_cli_cmds(self, support_bundle_folder=None, node_name='master'):
