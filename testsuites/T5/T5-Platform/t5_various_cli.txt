@@ -479,6 +479,7 @@ T32 Show running config when cookie session expired
 	Cli Run and Verify Output  master
 	...  show running-config
 	...  Warning: Running config incomplete due to expired authentication token
+    Run Keyword and Ignore Error  Cli Run  ${name}  reauth admin adminadmin
 	[Tags]  BSC-5343  session
 
 T33 Show banner simple test
