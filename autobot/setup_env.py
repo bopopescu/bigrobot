@@ -169,13 +169,13 @@ def bigrobot_env_init(is_gobot='True'):
     helpers.bigrobot_path()
     # helpers.bigtest_path()
     helpers.python_path()
-    helpers.bigrobot_test_setup()  # (default=True)
-    helpers.bigrobot_test_postmortem()  # (default=True)
-    helpers.bigrobot_test_clean_config()  # (default=True)
-    helpers.bigrobot_test_pause_on_fail()  # (default=False)
-    helpers.bigrobot_test_ztn()  # (default=False)
-    helpers.bigrobot_ignore_mininet_exception_on_close()  # (default=False)
-    helpers.bigrobot_preserve_mininet_screen_session_on_fail()  # (default=False)
+    helpers.bigrobot_test_setup()
+    helpers.bigrobot_test_postmortem()
+    helpers.bigrobot_test_clean_config()
+    helpers.bigrobot_test_pause_on_fail()
+    helpers.bigrobot_test_ztn()
+    helpers.bigrobot_ignore_mininet_exception_on_close()
+    helpers.bigrobot_preserve_mininet_screen_session_on_fail()
     helpers.bigrobot_esb()
     helpers.bigrobot_esb_broker()
     helpers.bigrobot_ztn_reload()
@@ -185,6 +185,7 @@ def bigrobot_env_init(is_gobot='True'):
     helpers.bigrobot_quiet_output()
     helpers.bigrobot_reconfig_reauth()
     helpers.bigrobot_selenium_browser()
+    helpers.bigrobot_devconf_debug_level()
 
 
 def big_setup(is_gobot='True', auto_package_install=True):
