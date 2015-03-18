@@ -318,7 +318,7 @@ Controller reboot times
     ${time_controller_online}=   Get time
     ${time_diff}=    time diff   ${time_reboot}    ${time_controller_online}
     Log to console    :
-    Log to csonole    Controller reboot times and joining to cluster without any fabric errors:
+    Log to console    Controller reboot times and joining to cluster without any fabric errors:
     Log to console    ${time_diff}
     ${return}=  rest verify debug coordinator
     Should Be True  ${return}
