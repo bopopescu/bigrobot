@@ -33,7 +33,7 @@ s1:
     user: apc
     password: apc
   interfaces:
-    spine0_int0: ethernet32
+    spine0_int0: ethernet10
     leaf0b_int0: ethernet39
     ixia1_int0: ethernet24
     spine1_int0: ethernet31
@@ -130,7 +130,7 @@ s5:
     port: 7007
   pdu:
     ip: pdu-314-b.bigswitch.com
-    port: 20
+    port: 19
     user: apc
     password: apc
   interfaces:
@@ -155,7 +155,7 @@ s6:
     port: 7008
   pdu:
     ip: pdu-314-b.bigswitch.com
-    port: 19
+    port: 20
     user: apc
     password: apc
   interfaces:

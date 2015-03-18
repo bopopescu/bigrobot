@@ -31,7 +31,7 @@ ${ecmp_fake}          2.2.2.2
 ##### ECMP Cases####
 
 T17 Interface sement-interface add/remove redirect(ecmp) policy src-ip to dest-ip
-    [Tags]  feature  T17  ecmp
+    [Tags]  feature  T17  ecmp  sanity
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -77,7 +77,7 @@ T17 Interface sement-interface add/remove redirect(ecmp) policy src-ip to dest-i
     delete traffic
 
 T18 Interface sement-interface add/remove redirect(ecmp) policy src-ip to any
-    [Tags]  feature  T18  ecmp
+    [Tags]  feature  T18  ecmp  sanity
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
     #${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -177,7 +177,7 @@ T19 Interface sement-interface add/remove redirect(ecmp) policy src-ip to tenant
 
 
 T20 Interface sement-interface add/remove redirect(ecmp) policy src-ip-port to dest-ip-port
-    [Tags]  feature  T20  ecmp
+    [Tags]  feature  T20  ecmp  sanity
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -376,7 +376,7 @@ T23 Interface sement-interface add/fail-over controller/remove redirect(ecmp) po
     delete traffic
 
 T24 Interface sement-interface add/reboot master controller/remove redirect(ecmp) policy src-ip-port to tenant
-    [Tags]  feature  T24  ecmp
+    [Tags]  feature  T24  ecmp  sanity
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
     ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -488,7 +488,7 @@ T25 Interface sement-interface add/reboot standby controller/remove redirect(ecm
 
 
 T26 Interface sement-interface add/reboot leaf switch/remove redirect(ecmp) policy src-ip-port to tenant
-    [Tags]  feature  T26  ecmp
+    [Tags]  feature  T26  ecmp  sanity
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
     ${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
