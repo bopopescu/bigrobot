@@ -341,9 +341,9 @@ class Protocol(object):
         if self.log is not None:
             # VUI: Adding timestamp to log messages
 
-            #if text[-1] == "\n":
+            # if text[-1] == "\n":
             #    self.log.write(text + ts() + " - ")
-            #else:
+            # else:
             #    self.log.write(text)
 
             self.log.write(text.replace("\n", "\n" + ts() + " - "))
@@ -370,9 +370,13 @@ class Protocol(object):
         return False
 
     def _dbg(self, level, msg):
+        # VUI: Adding timestamp to debug messages
         if self.debug < level:
             return
-        self.stderr.write(ts() + " - " + self.get_driver().name + ': ' + msg + '\n')
+        # self.stderr.write(ts() + " - " + self.get_driver().name + ': ' + msg + '\n')
+        s = self.get_driver().name + ': ' + msg + '\n'
+        # self.stderr.write(s.replace("\n", "\n" + ts() + " - "))
+        self.stderr.write(ts() + " - L%s %s" % (level, s))
 
     def set_driver(self, driver=None):
         """
@@ -1024,7 +1028,9 @@ class Protocol(object):
 
         # We skip the first line because it contains the echo of the command
         # sent.
-        self._dbg(5, "Checking %s for errors" % repr(self.response))
+
+        # VUI: tweaks
+        self._dbg(6, "Checking %s for errors" % repr(self.response))
         for line in self.response.split('\n')[1:]:
             for prompt in self.get_error_prompt():
                 if not prompt.search(line):
