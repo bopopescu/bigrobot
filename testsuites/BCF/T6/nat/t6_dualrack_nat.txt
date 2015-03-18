@@ -105,6 +105,22 @@ verify nat-profile CLI and output
 	${result}=  rest verify nat profile  A  nat1
 	Should not be True  ${result}
 	
+verify nat-profile CLI and delete pat for tenant
+	[Tags]   
+	rest add nat profile  A  nat1
+	rest add pat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.254  
+	rest add nat remote tenant  A  nat1  external  E
+	${result}=  rest verify nat profile  A  nat1
+	Should be True  ${result}
+	sleep  5
+    rest verify pat profile  A  nat1
+	rest verify nat endpoint  A  nat1  external  E
+	rest verify tenant route nat  A  nat1
+	rest delete pat  A  nat1
+	${result}=  rest verify nat profile  A  nat1
+	Should not be True  ${result}
+
 validation error test public ip for nat same as public ip for another nat
 	[Tags]
 	rest add nat profile  A  nat1
