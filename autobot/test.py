@@ -1124,8 +1124,8 @@ class Test(object):
                                             shell=True,
                                             quiet=True)[1],
                            br_utils.end_of_output_marker()))
-            helpers.log("Staging system uname:\n%s%s"
-                        % (helpers.uname(),
+            helpers.log("Staging system info:\n%s%s"
+                        % (helpers.sysinfo(),
                            br_utils.end_of_output_marker()))
             helpers.log("Staging system uptime:\n%s%s"
                         % (helpers.uptime(),
