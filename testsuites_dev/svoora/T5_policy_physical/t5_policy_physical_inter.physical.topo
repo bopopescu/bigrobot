@@ -40,12 +40,12 @@ s2:
   ip: 10.8.0.150
   alias: leaf0-b
   leaf-group: rack0
-  mac: 70:72:cf:ab:39:58
+  mac: 90:b1:1c:f4:c8:a3
   #user: admin
   #password: adminadmin
   console:
     ip: 10.1.8.107
-    port: 6004
+    port: 6011
   set_session_ssh: false
   set_init_ping: false
 s3:
@@ -96,7 +96,38 @@ s6:
     port: 6008
   set_session_ssh: false
   set_init_ping: false
+
+
 s7:
+  ip: 10.8.0.152
+  alias: leaf3-a
+  leaf-group: rack2
+  mac: 70:72:cf:c7:cd:33
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.107
+    port: 6004
+  set_session_ssh: false
+  set_init_ping: false
+
+s8:
+  ip: 10.8.0.152
+  alias: leaf3-b
+  leaf-group: rack2
+  mac: 90:b1:1c:f4:b4:fc
+  #user: admin
+  #password: adminadmin
+  console:
+    ip: 10.1.8.107
+    port: 6010
+  set_session_ssh: false
+  set_init_ping: false
+
+
+
+
+s9:
   ip: 10.8.0.153
   alias: spine0
   fabric-role: spine
@@ -111,7 +142,8 @@ s7:
     #port: 19
   set_session_ssh: false
   set_init_ping: false
-s8:
+
+s10:
   ip: 10.8.0.149
   alias: spine1
   fabric-role: spine

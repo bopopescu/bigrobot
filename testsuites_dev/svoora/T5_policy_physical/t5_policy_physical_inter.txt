@@ -3884,7 +3884,7 @@ test setup topology
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
 	REST add interface to vns						X							X1				leaf0-a					${ixia1}	-1
 	REST add interface to vns						X							X2				leaf0-a					${ixia3}	-1
-	REST add interface to vns						X							X3				leaf0-b					${ixia2}	-1
+	REST add interface to vns						X							X3				leaf3-a					${ixia2}	-1
 	REST add interface to vns						Y							Y1				leaf1-a					${ixia4}	-1
 	REST add interface to vns						Z							Z1				leaf1-a					${ixia7}	-1
 	
