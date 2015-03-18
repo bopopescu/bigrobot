@@ -275,8 +275,11 @@ class T5_Scale(object):
             c.expect(r"Password:")
             c.config("adminadmin")
             c.send("system failover")
-            c.expect(r"Currently: STANDBY. Continue failover to this node \(\"y\" or \"yes\" to continue\):")
-            c.send("yes")
+            options = c.expect([r'Currently: STANDBY.*', r'Failover to a standby controller*'])
+            if options[0] == 0:
+                c.send("yes")
+            elif options[0] == 1:
+                c.send("yes")
             # helpers.sleep(30)
             # helpers.sleep(90)
         except:
@@ -593,6 +596,24 @@ class T5_Scale(object):
         helpers.log("Total number of end points are %s" % (ep_count))
         return ep_count
 
+    def rest_clear_endpoint_all(self):
+        ''' Function to get active end point count
+        Input:
+        Output: return end point count
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/clear'
+        try:
+            c.rest.get(url)
+        except:
+            # helpers.test_failure(c.rest.error())
+            return False
+        else:
+            # helpers.test_log("Output: %s" % c.rest.result_json())
+            # return c.rest.content()
+            return True
+
 
     def get_L3_table_count(self, node):
         t = test.Test()
@@ -646,6 +667,25 @@ class T5_Scale(object):
 
         return 0
 
+
+    def reboot_mgmt(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n_console = n.console()
+        n_console.send('')
+        n_console.expect(r'Switch>')
+
+        n_console.send('en')
+        n_console.password(r'Password:')
+
+        n_console.send('adminadmin')
+        n_console.expect(r'Switch#')
+
+        n_console.send('config')
+        n_console.expect(r'Configuring from terminal, memory, or network \[terminal\]\?')
+
+        n_console.send('terminal')
+        n_console.expect(r'Switch\(config\)\#')
 
 
 

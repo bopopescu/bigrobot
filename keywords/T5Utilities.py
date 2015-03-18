@@ -892,11 +892,11 @@ class T5Utilities(object):
             if (ip_address is not None):
                 c = t.node_spawn(ip=ip_address, user=user, password=password, no_ping=True)
             else:
-                helpers.test_log("Going to BSN common")
-                bsn_common = bsnCommon()
-                helpers.test_log("Going to get node IP")
-                ip_addr = t.params(node=node, key='ip')
                 if (reauth):
+                    helpers.test_log("Going to BSN common")
+                    bsn_common = bsnCommon()
+                    helpers.test_log("Going to get node IP")
+                    ip_addr = t.params(node=node, key='ip')
                     helpers.test_log("Spawning new node")
                     t.node_disconnect();
                     c = t.node_spawn(ip=ip_addr, user=user, password=password, no_ping=True)
@@ -908,7 +908,7 @@ class T5Utilities(object):
                 c.send(command)
                 c.expect(c.get_prompt(), timeout=cmd_timeout)
             else:
-                c.cli(command, timeout=cmd_timeout)
+                c.config(command, timeout=cmd_timeout)
 
             if console:
                 output = c.content()

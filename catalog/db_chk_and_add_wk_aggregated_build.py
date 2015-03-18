@@ -71,5 +71,5 @@ if __name__ == '__main__':
                     quiet=not args.verbose)
 
     if args.verbose: print "Doc: %s" % helpers.prettify(doc)
-    print "%s" % doc["name"]
+    print "%s" % doc["build_name"]
     sys.exit(0)

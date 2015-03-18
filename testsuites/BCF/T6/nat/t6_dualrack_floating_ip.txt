@@ -11,6 +11,7 @@ Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library			 keywords/T5L3.py
 Library			 keywords/T6.py
+Library			 keywords/T5Platform.py
 Library          keywords/Mininet.py
 Resource		 testsuites/BCF/T6/t6_virtual_resource.txt
 
@@ -48,7 +49,7 @@ ${hv5_switch}  hv5
 * Test Case 
  
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]   
+   [Tags]     
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -62,6 +63,7 @@ Verify floating-ip CLI and output
 	rest add floating ip  A  nat1  10.0.4.200
 	rest add private ip  A  nat1  10.0.4.200  ${vm0_ip}
 	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	sleep  5
 	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${vm0_ip}
 	Should be True  ${result}
 	rest delete floating ip  A  nat1  10.0.4.200
@@ -75,6 +77,7 @@ verify floating IP cli with changing private IP
 	rest add floating ip  A  nat1  10.0.4.200
 	rest add private ip  A  nat1  10.0.4.200  ${vm0_ip}
 	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	sleep  5
 	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${vm0_ip}
 	Should be True  ${result}
 	rest add private ip  A  nat1  10.0.4.200  ${vm1_ip}
@@ -89,6 +92,7 @@ Verify floating-ip CLI for public segment which is not present
 	rest add floating ip  A  nat1  10.0.5.200
 	rest add private ip  A  nat1  10.0.5.200  ${vm0_ip}
 	rest add public mac  A  nat1  10.0.5.200  00:00:11:11:11:11
+	sleep  5
 	${result}=  rest verify floating ip  A  nat1  10.0.5.200  ${vm0_ip}
 	Should Not be True  ${result}
 	rest delete floating ip  A  nat1  10.0.5.200
@@ -174,6 +178,7 @@ verify vm connectivity single floating IP
 	rest add floating ip  A  nat1  10.0.4.200
 	rest add private ip  A  nat1  10.0.4.200  ${vm0_ip}
 	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	sleep  5
 	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${vm0_ip}
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
@@ -185,12 +190,13 @@ verify vm connectivity single floating IP
     Should Be True  ${loss} == 100 
 	
 verify vm connectivity multiple floating IP
-	[Tags]    
+	[Tags]      
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
 	rest add private ip  A  nat1  10.0.4.200  ${vm0_ip}
 	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	sleep  5
 	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${vm0_ip}
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
@@ -198,6 +204,7 @@ verify vm connectivity multiple floating IP
 	rest add floating ip  A  nat1  10.0.4.201
 	rest add private ip  A  nat1  10.0.4.201  ${vm1_ip}
 	rest add public mac  A  nat1  10.0.4.201  00:00:11:11:11:12
+	sleep  5
 	${result}=  rest verify floating ip  A  nat1  10.0.4.201  ${vm1_ip}
 	Should be True  ${result}
 	mininet ping  vm0  ${vm4_ip}
@@ -214,6 +221,7 @@ verify vm connectivity after changing floating ip assignment
 	rest add floating ip  A  nat1  10.0.4.200
 	rest add private ip  A  nat1  10.0.4.200  ${vm0_ip}
 	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	sleep  5
 	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${vm0_ip}
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
@@ -238,6 +246,7 @@ verify baremetal connectivity with floating ip
 	rest add floating ip  A  nat1  10.0.4.200
 	rest add private ip  A  nat1  10.0.4.200  ${bm0_ip}
 	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	sleep  5
 	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${bm0_ip}
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
@@ -273,8 +282,10 @@ verify floating IP and PNAT together in a tenant and single nat profile
 	mininet ping  bm0  ${vm4_ip}
 	${loss}=  mininet ping  bm0  ${vm4_ip}
     Should Be True  ${loss} == 0
+    mininet ping  vm0  ${vm4_ip}
 	${loss}=  mininet ping  vm0  ${vm4_ip}
     Should Be True  ${loss} == 0
+    mininet ping  vm2  ${vm4_ip}
     ${loss}=  mininet ping  vm2  ${vm4_ip}
     Should Be True  ${loss} == 0
  
@@ -308,7 +319,7 @@ verify floating IP and PNAT together in a tenant and different nat profile
     Should Be True  ${loss} == 0
         
 verify floating IP connection after controller failover
-	[Tags]  skipped
+	[Tags]  
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -327,11 +338,12 @@ verify floating IP connection after controller failover
     mininet ping  vm0  ${vm4_ip}
 	${loss}=  mininet ping  vm0  ${vm4_ip}
     Should Be True  ${loss} == 0
+    mininet ping  vm1  ${vm4_ip}
     ${loss}=  mininet ping  vm1  ${vm4_ip}
     Should Be True  ${loss} == 100
 
 verify floating IP connectivity after controller failover and failback
-	[Tags]  skipped
+	[Tags]  skipped  
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
@@ -360,12 +372,13 @@ verify floating IP connectivity after controller failover and failback
     Should Be True  ${loss} == 100
     
 verify floating IP config change after controller failover
-	[Tags]  skipped
+	[Tags]  skipped  
 	rest add nat profile  A  nat1
 	rest add nat remote tenant  A  nat1  external  E
 	rest add floating ip  A  nat1  10.0.4.200
 	rest add private ip  A  nat1  10.0.4.200  ${vm0_ip}
 	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	sleep  5
 	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${vm0_ip}
 	Should be True  ${result}
 	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
@@ -379,6 +392,7 @@ verify floating IP config change after controller failover
 	rest add floating ip  A  nat1  10.0.4.201
 	rest add private ip  A  nat1  10.0.4.201  ${vm1_ip}
 	rest add public mac  A  nat1  10.0.4.201  00:00:11:11:11:12
+	sleep  5
 	${result}=  rest verify floating ip  A  nat1  10.0.4.201  ${vm1_ip}
 	Should be True  ${result}
 	mininet ping  vm0  ${vm4_ip}

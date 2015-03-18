@@ -128,19 +128,21 @@ def bigrobot_env_init(is_gobot='True'):
                    helpers.bigrobot_log_path_exec_instance_relative()))
 
     if helpers.bigrobot_suite():
-        _topo_p = helpers.bigrobot_suite() + ".physical.topo"
-        _topo_v = helpers.bigrobot_suite() + ".virtual.topo"
-        _topo_u = helpers.bigrobot_suite() + ".topo"  # p or v unspecified
+        if helpers.bigrobot_topology() == None:
+            _topo_p = helpers.bigrobot_suite() + ".physical.topo"
+            _topo_v = helpers.bigrobot_suite() + ".virtual.topo"
+            _topo_u = helpers.bigrobot_suite() + ".topo"  # p or v unspecified
+    
+            # There should exist a topo file for the test suite.
+            if helpers.file_exists(_topo_p):
+                topo_file = _topo_p
+            elif helpers.file_exists(_topo_v):
+                topo_file = _topo_v
+            else:
+                topo_file = _topo_u
 
-        # There should exist a topo file for the test suite.
-        if helpers.file_exists(_topo_p):
-            topo_file = _topo_p
-        elif helpers.file_exists(_topo_v):
-            topo_file = _topo_v
-        else:
-            topo_file = _topo_u
+            helpers.bigrobot_topology(default=topo_file)
 
-        helpers.bigrobot_topology(default=topo_file)
         print("BigRobot suite: %s" % helpers.bigrobot_suite())
         print("BigRobot suite topology: %s" % helpers.bigrobot_topology())
 
@@ -169,13 +171,13 @@ def bigrobot_env_init(is_gobot='True'):
     helpers.bigrobot_path()
     # helpers.bigtest_path()
     helpers.python_path()
-    helpers.bigrobot_test_setup()  # (default=True)
-    helpers.bigrobot_test_postmortem()  # (default=True)
-    helpers.bigrobot_test_clean_config()  # (default=True)
-    helpers.bigrobot_test_pause_on_fail()  # (default=False)
-    helpers.bigrobot_test_ztn()  # (default=False)
-    helpers.bigrobot_ignore_mininet_exception_on_close()  # (default=False)
-    helpers.bigrobot_preserve_mininet_screen_session_on_fail()  # (default=False)
+    helpers.bigrobot_test_setup()
+    helpers.bigrobot_test_postmortem()
+    helpers.bigrobot_test_clean_config()
+    helpers.bigrobot_test_pause_on_fail()
+    helpers.bigrobot_test_ztn()
+    helpers.bigrobot_ignore_mininet_exception_on_close()
+    helpers.bigrobot_preserve_mininet_screen_session_on_fail()
     helpers.bigrobot_esb()
     helpers.bigrobot_esb_broker()
     helpers.bigrobot_ztn_reload()
@@ -185,6 +187,7 @@ def bigrobot_env_init(is_gobot='True'):
     helpers.bigrobot_quiet_output()
     helpers.bigrobot_reconfig_reauth()
     helpers.bigrobot_selenium_browser()
+    helpers.bigrobot_devconf_debug_level()
 
 
 def big_setup(is_gobot='True', auto_package_install=True):

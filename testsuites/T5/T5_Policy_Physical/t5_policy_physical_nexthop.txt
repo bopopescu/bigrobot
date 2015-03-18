@@ -32,7 +32,7 @@ Library         Dialogs
 #---------------------------------------------
 
 T94 policy add/remove redirect(next-hop) from src-ip to dest-ip
-    [Tags]  feature  nhg
+    [Tags]  feature  nhg  sanity
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -77,7 +77,7 @@ T94 policy add/remove redirect(next-hop) from src-ip to dest-ip
 
 
 T95 policy add/remove redirect(next-hop) from src-ip to dest-vns
-    [Tags]  feature  T95   nhg
+    [Tags]  feature  T95   nhg  sanity
     ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -174,7 +174,7 @@ T96 policy add/remove redirect(next-hop) from src-ip to dest-tenant
 
 ######  **  ANY **  ########    
 T97 policy add/remove redirect(next-hop) from src-ip to any
-    [Tags]  feature  T97   nhg
+    [Tags]  feature  T97   nhg  sanity
     #${dst_dict}=  Create Dictionary  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -394,7 +394,7 @@ T101 policy add/remove redirect(next-hop) from src-tenant to any
 
 
 T102 policy add/remove redirect(next-hop) from src-vns to dest-ip
-    [Tags]  feature  T102    nhg
+    [Tags]  feature  T102    nhg  sanity
     ${src_dict}=  Create Dictionary  segment  ${vnsX2}  tenant  ${tenantX}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -531,7 +531,7 @@ T104 policy add/remove redirect(next-hop) from src-vns to dest-vns
 
 ######  **  ANY need more investigation  **  ########   
 T105 policy add/remove redirect(next-hop) from src-vns to any
-    [Tags]  feature    T105    nhg
+    [Tags]  feature    T105    nhg  sanity
     #${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  segment  ${vnsX2}  tenant  ${tenantX}
     ${next_hop}=  Create Dictionary  next-hop-group  ${next-hop-grp}
@@ -649,7 +649,7 @@ T107 policy add/remove redirect(next-hop) from any to dest-tenant
     
 ######  **  ANY need more investigation  **  ########   
 T108 policy add/remove redirect(next-hop) from any to dest-vns
-    [Tags]  feature    T108    nhg
+    [Tags]  feature    T108    nhg  sanity
     ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     #${src_dict}=  Create Dictionary  segment  ${vnsX3}  tenant  ${tenantX}
     
@@ -780,7 +780,7 @@ T110 policy add/remove redirect(next-hop) from src-ip-port to dest-ip-port
     
 
 T111 policy add/remove redirect(next-hop) from src-ip-port to dest-vns
-    [Tags]  smoke  feature  T111  nhg
+    [Tags]  smoke  feature  T111  nhg  sanity
     ${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant  ${tenantX}
     ${src_dict}=  Create Dictionary  cidr  ${ixia3_ip}  port  ${tcp_port}
     
@@ -921,7 +921,7 @@ T113 policy add/remove redirect(next-hop) from src-ip-port to any
 ######  **  ANY need more investigation  **  ########   
 
 T114 policy add/remove redirect(next-hop) from src-tenant to dest-ip-port
-    [Tags]  smoke  feature  T114  nhg
+    [Tags]  smoke  feature  T114  nhg  sanity
     ${src_dict}=  Create Dictionary  tenant  ${tenantX}
     ${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  port  ${tcp_port}
     
@@ -1107,8 +1107,8 @@ test setup topology
 	REST add vns ip  								Y							Y1				10.252.1.1				24	
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
 	REST add interface to vns						X							X1				leaf0-a					${leaf0a_ixia_intf}	-1
-	REST add interface to vns						X							X2				leaf0-b					${leaf0b_ixia_intf}	-1
-	REST add interface to vns						X							X3				leaf1-a					${leaf1a_ixia_intf}	-1
+	REST add interface to vns						X							X3				leaf0-b					${leaf0b_ixia_intf}	-1
+	REST add interface to vns						X							X2				leaf1-a					${leaf1a_ixia_intf}	-1
 	REST add interface to vns						Y							Y1				leaf1-b					${leaf1b_ixia_intf}	-1
 	REST add interface to vns						Z							Z1				leaf2-a					${leaf2a_ixia_intf}	-1
 	
@@ -1180,15 +1180,13 @@ T5 base suite teardown
 	delete fabric switch
 	base suite teardown
 	
-verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
-    Sleep  5
-    ${report}=  fetch port stats  stream=${stream}  
-    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
-    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
-    Should be true  ${in_range}	
-
-
+verify results   [Arguments]  ${port_1}   ${port_2}  
+   ${report}=  fetch port stats
+   ${tx_value}=  verify dict key  ${report}  ${port_1}  transmitted_frames
+   ${rx_value}=  verify dict key  ${report}  ${port_2}  received_frames
+   ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
+   Should be true  ${in_range}
+   
 test teardown
   base test teardown
   delete traffic

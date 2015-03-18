@@ -1,0 +1,96 @@
+* Settings
+Documentation      BCF sflow test plan  
+#Suite Setup       sflow suite set up        
+#Suite Teardown    sflow suite teardown 
+#Force Tags        JackFrost  
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py   
+Library         keywords_dev/kranti/ironhorse/T5Switch.py 
+Library         keywords_dev/kranti/ironhorse/T6Sflow.py 
+#Library         keywords_dev/kranti/ironhorse/T5SwitchFromController.py
+Library         String
+#Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+
+
+*Variables
+
+${counterint}=              300
+${headersize}=              128
+${samplerate}=              5000
+
+
+${switch1_name}=  leaf0-a
+${switch3_name}=  leaf1-a
+${switch7_name}=  spine0
+
+${tenant1}=        testTenant1 
+${vns1}=           seg1
+${vns2}=           seg2
+${ip1}=            10.200.0.1
+${ip2}=            10.200.16.1
+${mask1}=          24
+${mask2}=          24
+${vlan}=          -1
+${intf_1}=        ethernet24
+${intf_2}=        ethernet24
+${src_mac}=       00:11:01:00:00:01
+${dst_mac}=       00:12:01:00:00:02
+
+
+ 
+
+*Test Case
+
+###
+### Section I : BCF sflow confguration from controller 
+###
+
+TC01 Configure sflow counter interval in seconds 
+    [Tags]   feature  sflow  test1 
+    Log  Step 1 - Configure the sflow counter interval 
+    rest add sflow counterint  ${counterint}  
+
+TC02 Configure sflow header size in Bytes 
+    [Tags]   feature  sflow  test1 
+    Log  Step 1 - Configure the sflow counter interval 
+    rest add sflow headersize  128
+
+    
+
+       
+* Keywords
+
+sflow test setup 
+ 	rest add tenant  ${tenant}
+   	rest add vns  ${tenant}  ${vns1}
+   	rest add vns  ${tenant}  ${vns2}  
+   	rest add router intf  ${tenant}  ${vns1}
+   	sleep  2
+   	rest add router intf  ${tenant}  ${vns2} 
+   	sleep  2
+   	rest add vns ip  ${tenant}  ${vns1}  ${ip1}  ${mask1}
+   	sleep  2
+   	rest add vns ip  ${tenant}  ${vns2}  ${ip2}  ${mask2} 
+   	sleep  2 
+   	rest add interface to vns  ${tenant}  ${vns1}  ${switch1_name}  ${intf_1}  ${vlan} 
+   	sleep  2   
+   	rest add interface to vns  ${tenant}  ${vns2}  ${switch3_name}  ${intf_2}  ${vlan}
+   	sleep  2
+
+
+sflow test teardown 
+	rest delete tenant  ${tenant}
+	sleep  5
+	
+
+     
+
+   
+    
+           

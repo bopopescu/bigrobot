@@ -317,8 +317,15 @@ class SSH2(Protocol):
         return True
 
     def _domatch(self, prompt, flush):
+        # VUI: Make prompt readable
         self._dbg(1, "Expecting a prompt")
-        self._dbg(2, "Expected pattern: " + repr(p.pattern for p in prompt))
+        # self._dbg(1, "prompt: %s" % prompt)
+        # self._dbg(2, "Expected pattern: " + repr(p.pattern for p in prompt)) # This statement does not give readable prompt(s)
+        i = 0
+        for p in prompt:
+            self._dbg(2, "prompt[%s]: %s" % (i, p.pattern))
+            i += 1
+
         search_window_size = 150
         while not self.cancel:
             # Check whether what's buffered matches the prompt.
@@ -332,11 +339,13 @@ class SSH2(Protocol):
 
                 match = regex.search(search_window)
                 if match is not None:
-                    # self._dbg(3, "\n**** VUI Found a match! (matched: ^^^^^^%s^^^^^^)" % search_window)
+                    # VUI: tweaks
+                    self._dbg(3, "_domatch (Found match!) prompt: %s, buffer: %s\n\n------" % (regex.pattern, search_window))
                     break
 
             if not match:
-                # self._dbg(3, "\n**** VUI No match! (buffer: ^^^^^^%s^^^^^^)" % self.buffer.__str__())
+                # VUI: tweaks (this is very verbose)
+                self._dbg(6, "_domatch (No match!) buffer: %s\n\n------" % self.buffer.__str__())
                 if not self._fill_buffer():
                     error = 'EOF while waiting for response from device'
                     raise ProtocolException(error)
@@ -345,10 +354,13 @@ class SSH2(Protocol):
             end = self.buffer.size() - len(search_window) + match.end()
             if flush:
                 self.response = self.buffer.pop(end)
-                # self._dbg(3, "\n**** VUI self.response (flush): %s" % self.response)
+                # VUI: tweaks
+                # self._dbg(3, "_domatch flush response")
+                self._dbg(4, "_domatch flush response (details): %s\n\n------" % self.response)
             else:
                 self.response = self.buffer.head(end)
-                self._dbg(3, "\n**** VUI self.response: %s" % self.response)
+                # VUI: tweaks
+                self._dbg(5, "_domatch response: %s\n\n------" % self.response)
             return n, match
 
         # Ending up here, self.cancel_expect() was called.

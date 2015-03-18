@@ -839,7 +839,7 @@ TC011: Configure a single chain with span-service on endpoint 2. Verify chain op
     ${span_int_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
     ${in_range5}=  ixia verify traffic rate  100000  ${span_int_tx}  rangev=50
     Should be true  ${in_range5}
-    [Tags]  full  feature  chain  chain-span  
+    [Tags]  full  feature  chain  chain-span  runthis
 
 TC012: Configure a single chain with span-service on both endpoints. Verify chain operation with bi-directional traffic
     ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
@@ -1275,7 +1275,7 @@ TC024:Configure a single chain that has three services and span-service on both 
     sleep  45
     ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name_1}  service2=${service_name_2}  service3=${service_name_3}
     Should be True  ${result3}
-    [Tags]  full  feature  chain  chain-span  chain-service  jira-BT-1902  runthis
+    [Tags]  full  feature  chain  chain-span  chain-service  jira-BT-1902  
 
 TC025: Verify STP traffic bypasses service interface.
     add a service via rest  ${service_name_1}  1  service1  s1  ${service_in_interface1}  ${service_out_interface1}  1  {"any-traffic": true, "sequence": 1}

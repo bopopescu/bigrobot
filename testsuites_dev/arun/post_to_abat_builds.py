@@ -59,7 +59,7 @@ if __name__ == '__main__':
 	build_server_ip = "10.2.3.11"
 	jenkins_server_ip = "10.2.3.100"
 
-	file_locations = "cd /home/bsn/abat/builds/T5/ironhorse/bcf_2_5_0/controller-builds"
+	file_locations = "cd /home/bsn/abat/builds/T5/ironhorse/bcf_2_5_3/controller-builds"
 	print "Build Server file chksums:"
 	build_server = print_chksums(build_server_ip, file_locations, cmd="ls -ltr | awk '{print $8}'")
 
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 # 	scp_to_server(build_server, location)
 
 	print "Jenkins Server file chksums:"
-	file_locations = "cd /var/lib/jenkins/jobs/bcf-2.5.0/lastSuccessful/archive"
+	file_locations = "cd /var/lib/jenkins/jobs/bcf-2.5.3/lastSuccessful/archive"
 
 	print_chksums(jenkins_server_ip, file_locations, cmd="ls -ltr | awk '{print $9}'")
 	print 'Success!!!'
