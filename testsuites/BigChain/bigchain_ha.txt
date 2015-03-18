@@ -480,6 +480,10 @@ TC014: Switch HA: Reboot switch and verify chain
     [Tags]  full  ha
 
 TC015: Controller HA: Change bigtap match mode to full-match and verify no effect on chain.
+    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result1}
+    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result2}
     ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=1234  dst_port=80
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
@@ -488,18 +492,19 @@ TC015: Controller HA: Change bigtap match mode to full-match and verify no effec
     cli clear interface statistics  s2
     start traffic  ${stream_new}
     sleep  5
+    pause
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
     verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
     ${config}=  rest enable feature  full-match
     Should be True  ${config}
-    ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
-    Should be true  ${result1}
-    ${result2}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
-    Should be true  ${result2}
+    ${result3}=  rest verify bigchain chain  s1  chain_name=${chain_name_1}  interface1=${chain_s1s3_intf_1}  interface2=${chain_s1s4_intf_1}  service1=${service_name_s1_1}  service2=${service_name_s1_2}  service3=${service_name_s1_3}
+    Should be true  ${result3}
+    ${result4}=  rest verify bigchain chain  s2  chain_name=${chain_name_2}  interface1=${chain_s2s3_intf_1}  interface2=${chain_s2s4_intf_1}  service1=${service_name_s2_1}  service2=${service_name_s2_2}  service3=${service_name_s2_3}
+    Should be true  ${result4}
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
     verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
     stop traffic  ${stream_new}
-    [Tags]  full  ha
+    [Tags]  full  ha  runthis
 
 TC016: Controller HA: Change bigtap match mode to l3-l4-match and verify no effect on chain.
     ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128
