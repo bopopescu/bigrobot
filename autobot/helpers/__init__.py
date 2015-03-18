@@ -66,7 +66,8 @@ def bigrobot_module_dependencies():
     import Crypto
     # import pexpect
     import httplib2
-
+    import celery
+    
     s = "BigRobot version        %s\n" % get_version()
 
     try:
@@ -80,6 +81,8 @@ def bigrobot_module_dependencies():
     s += "Crypto version          %s\n" % Crypto.__version__
     # s += "Pexpect version         %s\n" % pexpect.__version__
     s += "Httplib2 version        %s\n" % httplib2.__version__
+    s += "Celery version          %s\n" % celery.VERSION_BANNER
+    
     pversion = sys.version_info
     s += "Python version          %s.%s.%s" % (pversion.major,
                                                pversion.minor,
