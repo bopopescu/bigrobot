@@ -1851,6 +1851,33 @@ def uname():
     return output.strip()
 
 
+def version_macos():
+    """
+    Dump output from 'sw_vers'.
+    """
+    _, output, _, _ = run_cmd2('sw_vers', shell=False, quiet=True)
+    return output.strip()
+
+
+def version_ubuntu():
+    """
+    Dump output from 'lsb_release'.
+    """
+    _, output, _, _ = run_cmd2('lsb_release -a', shell=False, quiet=True)
+    return output.strip()
+
+
+def sysinfo():
+    """
+    Dump system info.
+    """
+    output = uname()
+    if re.match(r'.*darwin.*', output, re.I):
+        output += "\n" + version_macos()
+    elif re.match(r'.*ubuntu.*', output, re.I):
+        output += "\n" + version_ubuntu()
+    return output
+
 def ulimit():
     """
     Dump output from 'ulimit -a'.
