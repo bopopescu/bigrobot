@@ -1,0 +1,122 @@
+*Settings
+Documentation           Corsair: TCP Flag Test Suite
+Suite Setup             flag suite setup
+Suite Teardown          flag suite teardown
+Test Setup              flag test setup
+Test Teardown           flag test teardown 
+Force Tags              BigTap  corsair-400  Accton-AS5710  match-conditions  tcp-flags
+Library                 keywords/BsnCommon.py
+Library                 keywords/AppController.py
+Library                 keywords/BigTap.py
+Library                 keywords/SwitchLight.py
+Library                 keywords/Ixia.py
+Library                 Collections.py
+Library                 OperatingSystem.py
+Library                 String.py
+
+* Variable
+${switch1_alias}                          app-ras4000-2  #Alias for switch 1
+
+### Ixia Ports
+${switch1_filter_intf_1}                  ethernet1        #filter interface on switch 1
+${switch1_filter_alias_1}                 ixia-1-14        #Alias for filter interface on switch 1
+${switch1_delivery_intf_1}                ethernet2        #Delivery interface on switch 1
+${switch1_delivery_alias_1}               ixia-3-3       #Alias for delivery interface on switch 1
+
+### BigTap Policy Configuration
+${policy_name_1}                          policy_tcp_flags       #Policy Name that will use the tunnel interface
+
+*Test Case
+
+TC001: Verify all positive combinations of TCP flags
+    : FOR    ${INDEX}    IN RANGE    0    63
+    \    Log    ${INDEX}
+    \    ${match_result}=  rest add policy match  admin-view  ${policy_name_1}  1  {"tcp-flags": ${INDEX}, "ether-type": 2048, "tcp-flags-mask": ${INDEX}, "ip-proto": 6, "sequence": 1} 
+    \    Should be true  ${match_result}
+    \    sleep  5
+    \    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    \    Should be true  ${verify_policy1}
+    \    ${flags}=  convert integer to tcpflag  ${INDEX}
+    \    ${stream}=  L3 add  flow=a->b  frame_rate=50000  frame_size=1518  
+    \    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    \    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=8002  name=a_b_flow       
+    \    ...     urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}
+    \    clear stats    
+    \    start traffic  ${stream}
+    \    sleep  5
+    \    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+    \    stop traffic  ${stream}
+    \    delete traffic
+    \    sleep  2
+    [Tags]  feature  full
+
+        
+TC002: Verify all positive combinations of TCP6 flags
+    : FOR    ${INDEX}    IN RANGE    0    63
+    \    Log    ${INDEX}
+    \    ${match_result}=  rest add policy match  admin-view  ${policy_name_1}  1  {"tcp-flags": ${INDEX}, "ether-type": 34525, "tcp-flags-mask": ${INDEX}, "ip-proto": 6, "sequence": 1} 
+    \    Should be true  ${match_result}
+    \    sleep  5
+    \    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    \    Should be true  ${verify_policy1}  
+    \    ${flags}=  convert integer to tcpflag  ${INDEX}
+    \    ${stream}=  L3 add  flow=a->b  frame_rate=50000  frame_size=1518  ethertype=86dd  
+    \    ...     src_mac=00:03:03:04:05:06  dst_mac=00:03:03:04:05:07  no_arp=True
+    \    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=8002  name=a_b_flow       
+    \    ...     urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}
+    \    clear stats    
+    \    start traffic  ${stream}
+    \    sleep  5
+    \    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+    \    stop traffic  ${stream}
+    \    delete traffic
+    \    sleep  2
+    [Tags]  feature  full
+                                          
+* Keyword
+
+flag suite setup
+    base suite setup
+    ${config}=  rest enable feature  full-match
+	Should be True  ${config}
+    rest add switch alias  s1  ${switch1_alias}
+    #Configure filter interfaces on all switches
+    rest add interface role  s1  ${switch1_filter_intf_1}  filter    intf_nickname=${switch1_filter_alias_1}
+    #Configure delivery interfaces on all switches    
+    rest add interface role  s1  ${switch1_delivery_intf_1}  delivery    intf_nickname=${switch1_delivery_alias_1}
+    #First verify basic policy works
+    Sleep  10    
+
+
+flag test setup
+    ${result}=  write version to file
+    Should be true  ${result}
+    ${result1}=  start syslog monitor
+    Should be true  ${result1}
+    rest add policy  admin-view  ${policy_name_1}  forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${switch1_filter_alias_1}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${switch1_delivery_alias_1}  delivery
+    Sleep  30
+
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
+    Should be true  ${in_range}
+
+flag test teardown 
+    rest delete policy  admin-view  ${policy_name_1}
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+    
+flag suite teardown
+    rest delete interface role  s1  ${switch1_filter_intf_1}       filter 
+    rest delete interface role  s1  ${switch1_delivery_intf_1}       delivery 
+    rest delete interface  s1  ${switch1_filter_intf_1}        
+    rest delete interface  s1  ${switch1_delivery_intf_1}        
+    rest delete switch alias  s1
+    rest delete switch  s1
+    base suite teardown 
