@@ -2585,6 +2585,7 @@ class SwitchLight(object):
         output = helpers.strip_cli_output(content)
         lines = helpers.str_to_list(output)
         data = {"name": helpers.unicode_to_ascii(interface),
+                "link": {},
                 "received": {},
                 "sent": {},
                 }
@@ -2593,6 +2594,7 @@ class SwitchLight(object):
         re_hardware_address = r'.*Hardware Address:(.*)'
         re_speed = r'.*Speed:(.*)'
         re_link = r'.*Link:(.*)'
+        re_link_details = r'.*Link: ((up|down) .+), up count (\d+), down count (\d+)'
         re_received = r'.*Received (\d+) bytes, (\d+) packets'
         re_sent = r'.*Sent (\d+) bytes, (\d+) packets'
         re_traffic_broadcast = r'.*(\d+) broadcast, (\d+) multicast'
@@ -2622,7 +2624,16 @@ class SwitchLight(object):
             elif re.match(re_speed, line):
                 data["speed"] = re.match(re_speed, line).group(1).strip()
             elif re.match(re_link, line):
-                data["link"] = re.match(re_link, line).group(1).strip()
+                match = re.match(re_link_details, line)
+                if match:
+                    data["link"]["status"] = match.group(2).strip()
+                    data["link"]["status_descr"] = match.group(1).strip()
+                    data["link"]["up_count"] = match.group(3).strip()
+                    data["link"]["down_count"] = match.group(4).strip()
+                else:
+                    data["link"]["status"] = re.match(re_link, line).group(1).strip()
+                    data["link"]["status_descr"] = ""
+
             elif re.match(re_received, line):
                 data["received"]["bytes"] = re.match(re_received, line).group(1).strip()
                 data["received"]["packets"] = re.match(re_received, line).group(2).strip()
@@ -2634,5 +2645,5 @@ class SwitchLight(object):
             else:
                 helpers.test_failure(descr_tag + "Unmatched line: '%s'" % line)
 
-        # helpers.log("data:\n%s" % helpers.prettify(data))
+        helpers.log("data:\n%s" % helpers.prettify(data))
         return data
