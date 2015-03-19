@@ -1538,8 +1538,10 @@ class T5Platform(object):
         '''
         t = test.Test()
         c = t.controller(node)
+        t.node_reconnect(node, delete_session_cookie=True)
         try:
             content = c.bash('ip addr')['content']
+            helpers.test_log(content)
             output = helpers.strip_cli_output(content)
             if vip not in output:
                 helpers.test_log("VIP: %s not configured on %s" % (vip, node))

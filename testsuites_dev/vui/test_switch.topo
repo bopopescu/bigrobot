@@ -4,7 +4,8 @@
 #  ip: 10.192.104.1
 #  openflow_port: 6633
 s1:
-  ip: 10.8.33.7
+  #ip: 10.8.33.7
+  ip: 10.8.34.21  # Ivan's AS5710
   #ip: dummy
   #ip: 10.195.0.31  # Prashanth's UNIX system
   #ip: 10.192.107.11 # Kranti's weird switch with crazy bash prompt
