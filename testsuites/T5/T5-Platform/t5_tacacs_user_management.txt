@@ -171,57 +171,55 @@ TC017. Verify that admin configured locally and associated with admin group can 
 	Cli Run  master  password adminadmin
 	Cli Run  master  group admin
 	Cli Run  master  associate user admin
-	Cli Run  master  enable  user=admin
-	Cli Run  slave  enable  user=admin
-	Cli Run  master  show running-config  user=admin
-	Cli Run  master  enable; config; no user test1234  user=admin
-	Cli Run  master  show controller  user=admin
-	Cli Run  master  show file  user=admin
-	Cli Run  master  enable; config; copy running-config file://test-file  user=admin
-	Cli Run  master  enable; config; delete file test-file  user=admin
+	Cli Run  master  enable  user=admin  reauth=True
+	Cli Run  slave  enable  user=admin  reauth=True
+	Cli Run  master  show running-config  user=admin  reauth=True
+	Cli Run  master  enable; config; no user test1234  user=admin  reauth=True
+	Cli Run  master  show controller  user=admin  reauth=True
+	Cli Run  master  show file  user=admin  reauth=True
+	Cli Run  master  enable; config; copy running-config file://test-file  user=admin  reauth=True
+	Cli Run  master  enable; config; delete file test-file  user=admin  reauth=True
 
 TC018. Verify that remote admin, associated with admin group can do actions
 	Cli Run  master  group admin
 	Cli Run  master  associate user remote-admin
-	Cli Run  master  enable  user=remote-admin
-	Cli Run  slave  enable  user=remote-admin
-	Cli Run  master  show running-config  user=remote-admin
-	Cli Run  master  enable; config; no user test1234  user=remote-admin
-	Cli Run  master  enable; config; tenant test4321  user=remote-admin
+	Cli Run  master  enable  user=remote-admin  reauth=True
+	Cli Run  slave  enable  user=remote-admin  reauth=True
+	Cli Run  master  show running-config  user=remote-admin  reauth=True
+	Cli Run  master  enable; config; no user test1234  user=remote-admin  reauth=True
+	Cli Run  master  enable; config; tenant test4321  user=remote-admin  reauth=True
 	Cli Run and Verify Output
 	...  master
 	...  show running-config tenant
 	...  tenant test4321
-	Cli Run  master  show controller  user=remote-admin
+	Cli Run  master  show controller  user=remote-admin  reauth=True
 	Sleep  5
-	Cli Run  master  show file  user=remote-admin
+	Cli Run  master  show file  user=remote-admin  reauth=True
 	Sleep  5
-	Run Keyword and Expect Error  *
-	...  Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin
+	Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin  reauth=True
 	Sleep  5
-	Run Keyword and Expect Error  *
-	...  Cli Run  master  enable; config; delete file test-file  user=remote-admin
+	Cli Run  master  enable; config; delete file test-file  user=remote-admin  reauth=True
 
 TC019. Verify that remote admin provisioned locally, associated with admin group can do actions
 	Cli Run  master  user remote-admin
 	Cli Run  master  group admin
 	Cli Run  master  associate user remote-admin
-	Cli Run  master  enable  user=remote-admin
-	Cli Run  slave  enable  user=remote-admin
-	Cli Run  master  show running-config  user=remote-admin
-	Cli Run  master  enable; config; no user test1234  user=remote-admin
-	Cli Run  master  enable; config; tenant test4321  user=remote-admin
+	Cli Run  master  enable  user=remote-admin  reauth=True
+	Cli Run  slave  enable  user=remote-admin  reauth=True
+	Cli Run  master  show running-config  user=remote-admin  reauth=True
+	Cli Run  master  enable; config; no user test1234  user=remote-admin  reauth=True
+	Cli Run  master  enable; config; tenant test4321  user=remote-admin  reauth=True
 	Cli Run and Verify Output
 	...  master
 	...  show running-config tenant
 	...  tenant test4321
-	Cli Run  master  show controller  user=remote-admin
+	Cli Run  master  show controller  user=remote-admin  reauth=True
 	Sleep  5
-	Cli Run  master  show file  user=remote-admin
+	Cli Run  master  show file  user=remote-admin  reauth=True
 	Sleep  5
 	Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin
 	Sleep  5
-	Cli Run  master  enable; config; delete file test-file  user=remote-admin
+	Cli Run  master  enable; config; delete file test-file  user=remote-admin  reauth=True
     Cli Run and Verify Output
     ...  master
     ...  show file
@@ -233,22 +231,22 @@ TC020. Verify that user configured locally and associated with admin group can d
 	Cli Run  master  password adminadmin
 	Cli Run  master  group admin
 	Cli Run  master  associate user user
-	Cli Run  master  enable  user=user
-	Cli Run  slave  enable  user=user
-	Cli Run  master  show running-config  user=user
-	Cli Run  master  enable; config; no user test1234  user=user
-	Cli Run  master  enable; config; tenant test4321  user=user
+	Cli Run  master  enable  user=user  reauth=True
+	Cli Run  slave  enable  user=user  reauth=True
+	Cli Run  master  show running-config  user=user  reauth=True
+	Cli Run  master  enable; config; no user test1234  user=user  reauth=True
+	Cli Run  master  enable; config; tenant test4321  user=user  reauth=True
 	Cli Run and Verify Output
 	...  master
 	...  show running-config tenant
 	...  tenant test4321
-	Cli Run  master  show controller  user=user
+	Cli Run  master  show controller  user=user  reauth=True
 	Sleep  5
-	Cli Run  master  show file  user=user
+	Cli Run  master  show file  user=user  reauth=True
 	Sleep  5
-	Cli Run  master  enable; config; copy running-config file://test-file  user=user
+	Cli Run  master  enable; config; copy running-config file://test-file  user=user  reauth=True
 	Sleep  5
-	Cli Run  master  enable; config; delete file test-file  user=user
+	Cli Run  master  enable; config; delete file test-file  user=user  reauth=True
     Cli Run and Verify Output
     ...  master
     ...  show file
@@ -259,13 +257,13 @@ TC021. Verify that remote-admin not associated with admin group can not do actio
 	Cli Run  master  group admin
 	Sleep  5
 	Run Keyword and Expect Error  *
-	...  Cli Run  master  enable  user=remote  password=remote
+	...  Cli Run  master  enable  user=remote  password=remote  reauth=True
 	Sleep  5
 	Run Keyword and Expect Error  *
-	...  Cli Run  slave  enable  user=remote  password=remote
+	...  Cli Run  slave  enable  user=remote  password=remote  reauth=True
 	Sleep  5
 	Run Keyword and Expect Error  *
-	...  Cli Run  master  show run  user=remote  password=remote
+	...  Cli Run  master  show run  user=remote  password=remote  reauth=True
 	Sleep  5
 * Keywords
 
