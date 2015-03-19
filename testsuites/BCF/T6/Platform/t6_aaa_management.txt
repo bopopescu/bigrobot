@@ -1,5 +1,44 @@
-*Settings
-Documentation   T6 Tacacs Test Suite Release:Jack Frost
+*** Settings ***
+Documentation   T6 Remote AAA Test Suite Release:Jack Frost
+...  The purpose of this testsuite is to verify proper communication with remote
+...  AAA servers (RADIUS, TACACS) for the purposes of Authentication, Authorization
+...  and Accounting functions.
+...
+...  Test suite can be executed against RADIUS or TACACS servers.
+...  3 servers of each type are used.
+...  For TACACS these are: ACS+ and two tac_plus servers.
+...  For RADIUS these are: RADIUS server on ACS+ and two freeRadius servers.
+...
+...  Server timeout is generated randomly at each test suite run, in the range
+...  1 - 8 seconds (not to exceed 25 second aggregated timeout with 3 servers).
+...
+...  In the test cases there are 0, 1, 2 or 3 AAA servers configured (order of
+...  the configured servers is randomized at each test suite run).
+...
+...  Each of the configured servers can be reachable or not (dummy IP).
+...  Reachable servers can have correct or incorrect secret configured.
+...
+...  All AAA functions are set to one of the 4 cases: local, remote, remote then
+...  local, local then remote (other combinations will be covered in RBAC
+...  test plan).
+...
+...  The test cases below are intended to cover all of reasonable permutations
+...  of the factors listed above (number of servers, their reachability,
+...  secret correctness, AAA configuration).
+...
+...  Verification in each test case is done by checking if users can log into
+...  the controller - admin, local user (admin, read-only group) and remote user
+...  (admin, read-only group).
+...
+...  Depending on the AAA configuration users are expected to log in successfully
+...  or to not be able to log in.
+...  SSH and Console access are checked.
+...
+...  At the end of each test case (in test case teardown) recovery access is
+...  verified (through SSH and Console) to make sure that in each case
+...  recovery user is still able to log into the controller.
+
+
 Suite Setup     AAA Suite Setup
 Suite Teardown  AAA Suite Teardown
 Test Setup      AAA Test Setup
@@ -13,24 +52,31 @@ Library  keywords/AppController.py
 Library  keywords/BsnCommon.py
 Library  keywords/BigTap.py
 Library  Collections.py
+Library  String
 
-* Variable
+*** Variable ***
 ${projectname}  Big Cloud Fabric Appliance
 @{radius_servers}  10.2.3.201  10.8.67.2  10.8.67.3
 @{tacacs_servers}  10.2.3.201  10.9.18.2  10.8.67.3
 @{servers}
 ${type}
     
-* Test Case
-T0.0 Verify limit of configurable AAA servers
-    Configure Three AAA Servers
-    Cli Run  ${master_name}  enable; configure; ${type} server host 4.4.4.4  reauth=True
-    Cli Run  ${master_name}  enable; configure; ${type} server host 5.5.5.5  reauth=True
+*** Test Case ***
+T0.0 Verify limit of configurable AAA servers and their aggregate timeout
+    Cli Run  ${master_name}  enable; configure; ${type} server host 1.1.1.1 timeout 4  reauth=True
+    Cli Run  ${master_name}  enable; configure; ${type} server host 2.2.2.2 timeout 4  reauth=True
+    Cli Run  ${master_name}  enable; configure; ${type} server host 3.3.3.3 timeout 4  reauth=True
+    Cli Run  ${master_name}  enable; configure; ${type} server host 4.4.4.4 timeout 4  reauth=True
+    Cli Run  ${master_name}  enable; configure; ${type} server host 5.5.5.5 timeout 4  reauth=True
+
     Run Keyword and Expect Error  *Error: List size exceeds max-elements*
     ...  Cli Run  ${master_name}  enable; configure; ${type} server host 6.6.6.6  reauth=True
 
-T0.1. Zero Configured AAA Servers & Set Authentication to Local
-    Set Authentication to Local
+    Run Keyword and Expect Error  *Error: Validation failed: new server timeout aggregate*
+    ...  Cli Run  ${master_name}  enable; configure; ${type} server host 5.5.5.5 timeout 20  reauth=True
+
+T0.1. Zero Configured AAA Servers & Set AAA to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -38,8 +84,8 @@ T0.1. Zero Configured AAA Servers & Set Authentication to Local
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T0.2. Zero Configured AAA Servers & Set Authentication to Remote
-    Set Authentication to Remote
+T0.2. Zero Configured AAA Servers & Set AAA to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -47,8 +93,8 @@ T0.2. Zero Configured AAA Servers & Set Authentication to Remote
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T0.3. Zero Configured AAA Servers & Set Authentication to Local then Remote
-    Set Authentication to Local then Remote
+T0.3. Zero Configured AAA Servers & Set AAA to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -56,8 +102,8 @@ T0.3. Zero Configured AAA Servers & Set Authentication to Local then Remote
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T0.4. Zero Configured AAA Servers & Set Authentication to Remote then Local
-    Set Authentication to Remote then Local
+T0.4. Zero Configured AAA Servers & Set AAA to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -65,9 +111,9 @@ T0.4. Zero Configured AAA Servers & Set Authentication to Remote then Local
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T1.1.1. One Configured & Reachable AAA Server & Correct Secret & Set Authentication to Local
+T1.1.1. One Configured & Reachable AAA Server & Correct Secret & Set AAA to Local
     Configure One AAA Server
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -75,9 +121,9 @@ T1.1.1. One Configured & Reachable AAA Server & Correct Secret & Set Authenticat
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T1.1.2. One Configured & Reachable AAA Server & Incorrect Secret & Set Authentication to Local
+T1.1.2. One Configured & Reachable AAA Server & Incorrect Secret & Set AAA to Local
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -85,8 +131,8 @@ T1.1.2. One Configured & Reachable AAA Server & Incorrect Secret & Set Authentic
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T1.1.3. One Configured & Unreachable AAA Server & Set Authentication to Local
-    Set Authentication to Local
+T1.1.3. One Configured & Unreachable AAA Server & Set AAA to Local
+    Set AAA to Local
     Configure One Unreachable AAA Server
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
@@ -95,9 +141,9 @@ T1.1.3. One Configured & Unreachable AAA Server & Set Authentication to Local
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T1.2.1. One Configured & Reachable AAA Server & Correct Secret & Set Authentication to Remote
+T1.2.1. One Configured & Reachable AAA Server & Correct Secret & Set AAA to Remote
     Configure One AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -105,9 +151,9 @@ T1.2.1. One Configured & Reachable AAA Server & Correct Secret & Set Authenticat
     Verify Remote User Can Log In via SSH
     Verify Remote User Can Log In via Serial Console
 
-T1.2.2. One Configured & Reachable AAA Server & Incorrect Secret & Set Authentication to Remote
+T1.2.2. One Configured & Reachable AAA Server & Incorrect Secret & Set AAA to Remote
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -116,9 +162,9 @@ T1.2.2. One Configured & Reachable AAA Server & Incorrect Secret & Set Authentic
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 
-T1.2.3. One Configured & Unreachable AAA Server & Set Authentication to Remote
+T1.2.3. One Configured & Unreachable AAA Server & Set AAA to Remote
     Configure One Unreachable AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -128,42 +174,9 @@ T1.2.3. One Configured & Unreachable AAA Server & Set Authentication to Remote
 
 
 
-T1.3.1. One Configured & Reachable AAA Server & Correct Secret & Set Authentication to Local then Remote
+T1.3.1. One Configured & Reachable AAA Server & Correct Secret & Set AAA to Local then Remote
     Configure One AAA Server
-    Set Authentication to Local then Remote
-    Verify Admin Can Log In via SSH
-    Verify Admin Can Log In via Serial Console
-    Verify Local User Can Log In via SSH
-    Verify Local User Can Log In via Serial Console
-    Verify Remote User Can Log In via SSH
-    Verify Remote User Can Log In via Serial Console
-
-
-T1.3.2. One Configured & Reachable AAA Server & Incorrect Secret & Set Authentication to Local then Remote
-    Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local then Remote
-    Verify Admin Can Log In via SSH
-    Verify Admin Can Log In via Serial Console
-    Verify Local User Can Log In via SSH
-    Verify Local User Can Log In via Serial Console
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
-
-
-T1.3.3. One Configured & Unreachable AAA Server & Set Authentication to Local then Remote
-    Configure One Unreachable AAA Server
-    Set Authentication to Local then Remote
-    Verify Admin Can Log In via SSH
-    Verify Admin Can Log In via Serial Console
-    Verify Local User Can Log In via SSH
-    Verify Local User Can Log In via Serial Console
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
-
-
-T1.4.1. One Configured & Reachable AAA Server & Correct Secret & Set Authentication to Remote then Local
-    Configure One AAA Server
-    Set Authentication to Remote then Local
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -172,9 +185,9 @@ T1.4.1. One Configured & Reachable AAA Server & Correct Secret & Set Authenticat
     Verify Remote User Can Log In via Serial Console
 
 
-T1.4.2. One Configured & Reachable AAA Server & Incorrect Secret & Set Authentication to Remote then Local
+T1.3.2. One Configured & Reachable AAA Server & Incorrect Secret & Set AAA to Local then Remote
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote then Local
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -183,9 +196,42 @@ T1.4.2. One Configured & Reachable AAA Server & Incorrect Secret & Set Authentic
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 
-T1.4.3. One Configured & Unreachable AAA Server & Set Authentication to Remote then Local
+T1.3.3. One Configured & Unreachable AAA Server & Set AAA to Local then Remote
     Configure One Unreachable AAA Server
-    Set Authentication to Remote then Local
+    Set AAA to Local then Remote
+    Verify Admin Can Log In via SSH
+    Verify Admin Can Log In via Serial Console
+    Verify Local User Can Log In via SSH
+    Verify Local User Can Log In via Serial Console
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
+
+
+T1.4.1. One Configured & Reachable AAA Server & Correct Secret & Set AAA to Remote then Local
+    Configure One AAA Server
+    Set AAA to Remote then Local
+    Verify Admin Can Log In via SSH
+    Verify Admin Can Log In via Serial Console
+    Verify Local User Can Log In via SSH
+    Verify Local User Can Log In via Serial Console
+    Verify Remote User Can Log In via SSH
+    Verify Remote User Can Log In via Serial Console
+
+
+T1.4.2. One Configured & Reachable AAA Server & Incorrect Secret & Set AAA to Remote then Local
+    Configure One AAA Server With Incorrect Secret
+    Set AAA to Remote then Local
+    Verify Admin Can Log In via SSH
+    Verify Admin Can Log In via Serial Console
+    Verify Local User Can Log In via SSH
+    Verify Local User Can Log In via Serial Console
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
+
+
+T1.4.3. One Configured & Unreachable AAA Server & Set AAA to Remote then Local
+    Configure One Unreachable AAA Server
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -195,9 +241,9 @@ T1.4.3. One Configured & Unreachable AAA Server & Set Authentication to Remote t
 
 
 
-T2.1.1 Two Configured & Reachable AAA Servers & Correct Secret & Set Authentication to Local
+T2.1.1 Two Configured & Reachable AAA Servers & Correct Secret & Set AAA to Local
     Configure Two AAA Servers
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -206,10 +252,10 @@ T2.1.1 Two Configured & Reachable AAA Servers & Correct Secret & Set Authenticat
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 
-T2.1.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set Authentication to Local
+T2.1.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set AAA to Local
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -218,10 +264,10 @@ T2.1.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set Authe
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 
-T2.1.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set Authentication to Local
+T2.1.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set AAA to Local
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -230,10 +276,10 @@ T2.1.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set Auth
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 
-T2.1.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set Authentication to Local
+T2.1.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set AAA to Local
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -246,9 +292,9 @@ T2.1.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set Authentic
 
 
 
-T2.2.1 Two Configured & Reachable AAA Servers & Correct Secret & Set Authentication to Remote
+T2.2.1 Two Configured & Reachable AAA Servers & Correct Secret & Set AAA to Remote
     Configure Two AAA Servers
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -257,10 +303,10 @@ T2.2.1 Two Configured & Reachable AAA Servers & Correct Secret & Set Authenticat
     Verify Remote User Can Log In via Serial Console
 
 
-T2.2.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set Authentication to Remote
+T2.2.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set AAA to Remote
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -269,10 +315,10 @@ T2.2.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set Authe
     Verify Remote User Can Log In via Serial Console
 
 
-T2.2.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set Authentication to Remote
+T2.2.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set AAA to Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -281,10 +327,10 @@ T2.2.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set Auth
     Verify Remote User Can Log In via Serial Console
 
 
-T2.2.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote
+T2.2.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set AAA to Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -294,9 +340,9 @@ T2.2.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set Authentic
 
 
 
-T2.3.1 Two Configured & Reachable AAA Servers & Correct Secret & Set Authentication to Local then Remote
+T2.3.1 Two Configured & Reachable AAA Servers & Correct Secret & Set AAA to Local then Remote
     Configure Two AAA Servers
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -305,10 +351,10 @@ T2.3.1 Two Configured & Reachable AAA Servers & Correct Secret & Set Authenticat
     Verify Remote User Can Log In via Serial Console
 
 
-T2.3.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set Authentication to Local then Remote
+T2.3.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set AAA to Local then Remote
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -317,10 +363,10 @@ T2.3.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set Authe
     Verify Remote User Can Log In via Serial Console
 
 
-T2.3.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set Authentication to Local then Remote
+T2.3.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set AAA to Local then Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -329,10 +375,10 @@ T2.3.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set Auth
     Verify Remote User Can Log In via Serial Console
 
 
-T2.3.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set Authentication to Local then Remote
+T2.3.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set AAA to Local then Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -342,9 +388,9 @@ T2.3.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set Authentic
 
 
 
-T2.4.1 Two Configured & Reachable AAA Servers & Correct Secret & Set Authentication to Remote then Local
+T2.4.1 Two Configured & Reachable AAA Servers & Correct Secret & Set AAA to Remote then Local
     Configure Two AAA Servers
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -353,10 +399,10 @@ T2.4.1 Two Configured & Reachable AAA Servers & Correct Secret & Set Authenticat
     Verify Remote User Can Log In via Serial Console
 
 
-T2.4.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set Authentication to Remote then Local
+T2.4.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set AAA to Remote then Local
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -365,10 +411,10 @@ T2.4.2 Two Configured & Reachable AAA Servers & First Correct Secret & Set Authe
     Verify Remote User Can Log In via Serial Console
 
 
-T2.4.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set Authentication to Remote then Local
+T2.4.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set AAA to Remote then Local
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -377,10 +423,10 @@ T2.4.3 Two Configured & Reachable AAA Servers & Second Correct Secret & Set Auth
     Verify Remote User Can Log In via Serial Console
 
 
-T2.4.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote then Local
+T2.4.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set AAA to Remote then Local
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -395,10 +441,10 @@ T2.4.4 Two Configured & Reachable AAA Servers & Incorrect Secret & Set Authentic
 
 
 
-T2.5.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set Authentication to Local
+T2.5.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set AAA to Local
     Configure One AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -407,10 +453,10 @@ T2.5.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set Authe
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 
-T2.5.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Set Authentication to Local
+T2.5.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Set AAA to Local
     Configure One AAA Server With Incorrect Secret
     Configure One Unreachable AAA Server
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -422,10 +468,10 @@ T2.5.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Se
 
 
 
-T2.6.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set Authentication to Remote
+T2.6.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set AAA to Remote
     Configure One AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -434,10 +480,10 @@ T2.6.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set Authe
     Verify Remote User Can Log In via Serial Console
 
 
-T2.6.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Set Authentication to Remote
+T2.6.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Set AAA to Remote
     Configure One AAA Server With Incorrect Secret
     Configure One Unreachable AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -447,10 +493,10 @@ T2.6.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Se
 
 
 
-T2.7.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set Authentication to Local then Remote
+T2.7.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set AAA to Local then Remote
     Configure One AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -459,10 +505,10 @@ T2.7.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set Authe
     Verify Remote User Can Log In via Serial Console
 
 
-T2.7.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Set Authentication to Local then Remote
+T2.7.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Set AAA to Local then Remote
     Configure One AAA Server With Incorrect Secret
     Configure One Unreachable AAA Server
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -473,10 +519,10 @@ T2.7.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Se
 # PAM times out before TACACS servers for Accounting return their timeouts
 
 
-T2.8.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set Authentication to Remote then Local
+T2.8.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set AAA to Remote then Local
     Configure One AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -484,10 +530,10 @@ T2.8.1 Two Configured & First Reachable AAA Servers & Correct Secret & Set Authe
     Verify Remote User Can Log In via SSH
     Verify Remote User Can Log In via Serial Console
 
-T2.8.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Set Authentication to Remote then Local
+T2.8.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Set AAA to Remote then Local
     Configure One AAA Server With Incorrect Secret
     Configure One Unreachable AAA Server
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -498,10 +544,10 @@ T2.8.2 Two Configured & First Reachable AAA Servers & Second Correct Secret & Se
 # PAM times out before TACACS servers for Accounting return their timeouts
 
 
-T2.9.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set Authentication to Local
+T2.9.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set AAA to Local
     Configure One Unreachable AAA Server
     Configure One AAA Server
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -509,10 +555,10 @@ T2.9.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set Auth
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T2.9.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set Authentication to Local
+T2.9.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set AAA to Local
     Configure One Unreachable AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -522,10 +568,10 @@ T2.9.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set Au
 
 
 
-T2.10.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set Authentication to Remote
+T2.10.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set AAA to Remote
     Configure One Unreachable AAA Server
     Configure One AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -534,10 +580,10 @@ T2.10.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set Aut
     Verify Remote User Can Log In via Serial Console
 
 
-T2.10.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote
+T2.10.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set AAA to Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -547,10 +593,10 @@ T2.10.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set A
 
 
 
-T2.11.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set Authentication to Local then Remote
+T2.11.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set AAA to Local then Remote
     Configure One Unreachable AAA Server
     Configure One AAA Server
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -559,10 +605,10 @@ T2.11.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set Aut
     Verify Remote User Can Log In via Serial Console
 
 
-T2.11.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set Authentication to Local then Remote
+T2.11.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set AAA to Local then Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -572,10 +618,10 @@ T2.11.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set A
 
 
 
-T2.12.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set Authentication to Remote then Local
+T2.12.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set AAA to Remote then Local
     Configure One Unreachable AAA Server
     Configure One AAA Server
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -585,10 +631,10 @@ T2.12.1 Two Configured & Second Reachable AAA Servers & Correct Secret & Set Aut
 
 
 
-T2.12.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote then Local
+T2.12.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set AAA to Remote then Local
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -599,10 +645,10 @@ T2.12.2 Two Configured & Second Reachable AAA Servers & Incorrect Secret & Set A
 
 
 
-T2.13.1 Two Configured & Unreachable AAA Servers & Set Authentication to Local
+T2.13.1 Two Configured & Unreachable AAA Servers & Set AAA to Local
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -610,10 +656,10 @@ T2.13.1 Two Configured & Unreachable AAA Servers & Set Authentication to Local
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T2.13.2 Two Configured & Unreachable AAA Servers & Set Authentication to Remote
+T2.13.2 Two Configured & Unreachable AAA Servers & Set AAA to Remote
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -621,10 +667,10 @@ T2.13.2 Two Configured & Unreachable AAA Servers & Set Authentication to Remote
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T2.13.3 Two Configured & Unreachable AAA Servers & Set Authentication to Local then Remote
+T2.13.3 Two Configured & Unreachable AAA Servers & Set AAA to Local then Remote
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -634,10 +680,10 @@ T2.13.3 Two Configured & Unreachable AAA Servers & Set Authentication to Local t
 # failing in IH+ at "Verify Admin Can Log In via Serial Console" because
 # PAM times out before TACACS servers for Accounting return their timeouts
 
-T2.13.4 Two Configured & Unreachable AAA Servers & Set Authentication to Remote then Local
+T2.13.4 Two Configured & Unreachable AAA Servers & Set AAA to Remote then Local
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -648,9 +694,9 @@ T2.13.4 Two Configured & Unreachable AAA Servers & Set Authentication to Remote 
 # PAM times out before TACACS servers for Accounting return their timeouts
 
 
-T3.1.1 Three Configured & Reachable AAA Servers & Correct Secret & Set Authentication to Local
+T3.1.1 Three Configured & Reachable AAA Servers & Correct Secret & Set AAA to Local
     Configure Three AAA Servers
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -659,11 +705,11 @@ T3.1.1 Three Configured & Reachable AAA Servers & Correct Secret & Set Authentic
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 
-T3.1.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set Authentication to Local
+T3.1.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set AAA to Local
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -672,11 +718,11 @@ T3.1.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set Aut
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 
-T3.1.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set Authentication to Local
+T3.1.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set AAA to Local
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -685,11 +731,11 @@ T3.1.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set Au
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 
-T3.1.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set Authentication to Local
+T3.1.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set AAA to Local
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -698,11 +744,11 @@ T3.1.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set Aut
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 
-T3.1.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set Authentication to Local
+T3.1.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set AAA to Local
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -714,9 +760,9 @@ T3.1.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set Authent
 
 
 
-T3.2.1 Three Configured & Reachable AAA Servers & Correct Secret & Set Authentication to Remote
+T3.2.1 Three Configured & Reachable AAA Servers & Correct Secret & Set AAA to Remote
     Configure Three AAA Servers
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -725,11 +771,11 @@ T3.2.1 Three Configured & Reachable AAA Servers & Correct Secret & Set Authentic
     Verify Remote User Can Log In via Serial Console
 
 
-T3.2.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set Authentication to Remote
+T3.2.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set AAA to Remote
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -738,11 +784,11 @@ T3.2.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set Aut
     Verify Remote User Can Log In via Serial Console
 
 
-T3.2.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set Authentication to Remote
+T3.2.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set AAA to Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -751,11 +797,11 @@ T3.2.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set Au
     Verify Remote User Can Log In via Serial Console
 
 
-T3.2.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set Authentication to Remote
+T3.2.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set AAA to Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -764,11 +810,11 @@ T3.2.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set Aut
     Verify Remote User Can Log In via Serial Console
 
 
-T3.2.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote
+T3.2.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set AAA to Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -778,9 +824,9 @@ T3.2.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set Authent
 
 
 
-T3.3.1 Three Configured & Reachable AAA Servers & Correct Secret & Set Authentication to Local then Remote
+T3.3.1 Three Configured & Reachable AAA Servers & Correct Secret & Set AAA to Local then Remote
     Configure Three AAA Servers
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Local User Can Log In via SSH
     Verify Local User Can Log In via Serial Console
     Verify Admin Can Log In via SSH
@@ -790,11 +836,11 @@ T3.3.1 Three Configured & Reachable AAA Servers & Correct Secret & Set Authentic
     Verify Remote User Can Log In via Serial Console
 
 
-T3.3.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set Authentication to Local then Remote
+T3.3.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set AAA to Local then Remote
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -803,11 +849,11 @@ T3.3.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set Aut
     Verify Remote User Can Log In via Serial Console
 
 
-T3.3.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set Authentication to Local then Remote
+T3.3.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set AAA to Local then Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -816,11 +862,11 @@ T3.3.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set Au
     Verify Remote User Can Log In via Serial Console
 
 
-T3.3.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set Authentication to Local then Remote
+T3.3.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set AAA to Local then Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -829,11 +875,11 @@ T3.3.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set Aut
     Verify Remote User Can Log In via Serial Console
 
 
-T3.3.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set Authentication to Local then Remote
+T3.3.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set AAA to Local then Remote
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -843,9 +889,9 @@ T3.3.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set Authent
 
 
 
-T3.4.1 Three Configured & Reachable AAA Servers & Correct Secret & Set Authentication to Remote then Local
+T3.4.1 Three Configured & Reachable AAA Servers & Correct Secret & Set AAA to Remote then Local
     Configure Three AAA Servers
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -854,11 +900,11 @@ T3.4.1 Three Configured & Reachable AAA Servers & Correct Secret & Set Authentic
     Verify Remote User Can Log In via Serial Console
 
 
-T3.4.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set Authentication to Remote then Local
+T3.4.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set AAA to Remote then Local
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -867,11 +913,11 @@ T3.4.2 Three Configured & Reachable AAA Servers & First Correct Secret & Set Aut
     Verify Remote User Can Log In via Serial Console
 
 
-T3.4.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set Authentication to Remote then Local
+T3.4.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set AAA to Remote then Local
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -880,11 +926,11 @@ T3.4.3 Three Configured & Reachable AAA Servers & Second Correct Secret & Set Au
     Verify Remote User Can Log In via Serial Console
 
 
-T3.4.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set Authentication to Remote then Local
+T3.4.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set AAA to Remote then Local
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -893,11 +939,11 @@ T3.4.4 Three Configured & Reachable AAA Servers & Third Correct Secret & Set Aut
     Verify Remote User Can Log In via Serial Console
 
 
-T3.4.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote then Local
+T3.4.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set AAA to Remote then Local
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -912,11 +958,11 @@ T3.4.5 Three Configured & Reachable AAA Servers & Incorrect Secret & Set Authent
 
 
 
-T3.5.1 Three Configured & First Reachable AAA Servers & Correct Secret & Set Authentication to Local
+T3.5.1 Three Configured & First Reachable AAA Servers & Correct Secret & Set AAA to Local
     Configure One AAA Server
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -926,11 +972,11 @@ T3.5.1 Three Configured & First Reachable AAA Servers & Correct Secret & Set Aut
 
 
 
-T3.5.2 Three Configured & First Reachable AAA Servers & Incorrect Secret & Set Authentication to Local
+T3.5.2 Three Configured & First Reachable AAA Servers & Incorrect Secret & Set AAA to Local
     Configure One AAA Server With Incorrect Secret
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -942,11 +988,11 @@ T3.5.2 Three Configured & First Reachable AAA Servers & Incorrect Secret & Set A
 
 
 
-T3.6.1 Three Configured & First Reachable AAA Servers & Correct Secret & Set Authentication to Remote
+T3.6.1 Three Configured & First Reachable AAA Servers & Correct Secret & Set AAA to Remote
     Configure One AAA Server
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -955,123 +1001,11 @@ T3.6.1 Three Configured & First Reachable AAA Servers & Correct Secret & Set Aut
     Verify Remote User Can Log In via Serial Console
 
 
-T3.6.2 Three Configured & First Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote
+T3.6.2 Three Configured & First Reachable AAA Servers & Incorrect Secret & Set AAA to Remote
     Configure One AAA Server With Incorrect Secret
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Remote
-    Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
-    Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
-    Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
-    Run Keyword and Expect Error  *  Verify Local User Can Log In via Serial Console
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
-
-
-
-T3.7.1 Three Configured & First Reachable AAA Servers & Correct Secret & Set Authentication to Local then Remote
-    Configure One AAA Server
-    Configure One Unreachable AAA Server
-    Configure One Unreachable AAA Server
-    Set Authentication to Local then Remote
-    Verify Admin Can Log In via SSH
-    Verify Admin Can Log In via Serial Console
-    Verify Local User Can Log In via SSH
-    Verify Local User Can Log In via Serial Console
-    Verify Remote User Can Log In via SSH
-    Verify Remote User Can Log In via Serial Console
-
-
-
-T3.7.2 Three Configured & First Reachable AAA Servers & Incorrect Secret & Set Authentication to Local then Remote
-    Configure One AAA Server With Incorrect Secret
-    Configure One Unreachable AAA Server
-    Configure One Unreachable AAA Server
-    Set Authentication to Local then Remote
-    Verify Admin Can Log In via SSH
-    Verify Admin Can Log In via Serial Console
-    Verify Local User Can Log In via SSH
-    Verify Local User Can Log In via Serial Console
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
-
-
-
-T3.8.1 Three Configured & First Reachable AAA Servers & Correct Secret & Set Authentication to Remote then Local
-    Configure One AAA Server
-    Configure One Unreachable AAA Server
-    Configure One Unreachable AAA Server
-    Set Authentication to Remote then Local
-    Verify Admin Can Log In via SSH
-    Verify Admin Can Log In via Serial Console
-    Verify Local User Can Log In via SSH
-    Verify Local User Can Log In via Serial Console
-    Verify Remote User Can Log In via SSH
-    Verify Remote User Can Log In via Serial Console
-
-
-T3.8.2 Three Configured & First Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote then Local
-    Configure One AAA Server With Incorrect Secret
-    Configure One Unreachable AAA Server
-    Configure One Unreachable AAA Server
-    Set Authentication to Remote then Local
-    Verify Admin Can Log In via SSH
-    Verify Admin Can Log In via Serial Console
-    Verify Local User Can Log In via SSH
-    Verify Local User Can Log In via Serial Console
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
-
-
-
-
-
-T3.9.1 Three Configured & Second Reachable AAA Servers & Correct Secret & Set Authentication to Local
-    Configure One Unreachable AAA Server
-    Configure One AAA Server
-    Configure One Unreachable AAA Server
-    Set Authentication to Local
-    Verify Admin Can Log In via SSH
-    Verify Admin Can Log In via Serial Console
-    Verify Local User Can Log In via SSH
-    Verify Local User Can Log In via Serial Console
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
-
-
-T3.9.2 Three Configured & Second Reachable AAA Servers & Incorrect Secret & Set Authentication to Local
-    Configure One Unreachable AAA Server
-    Configure One AAA Server With Incorrect Secret
-    Configure One Unreachable AAA Server
-    Set Authentication to Local
-    Verify Admin Can Log In via SSH
-    Verify Admin Can Log In via Serial Console
-    Verify Local User Can Log In via SSH
-    Verify Local User Can Log In via Serial Console
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
-    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
-
-
-
-T3.10.1 Three Configured & Second Reachable AAA Servers & Correct Secret & Set Authentication to Remote
-    Configure One Unreachable AAA Server
-    Configure One AAA Server
-    Configure One Unreachable AAA Server
-    Set Authentication to Remote
-    Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
-    Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
-    Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
-    Run Keyword and Expect Error  *  Verify Local User Can Log In via Serial Console
-    Verify Remote User Can Log In via SSH
-    Verify Remote User Can Log In via Serial Console
-
-
-
-T3.10.2 Three Configured & Second Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote
-    Configure One Unreachable AAA Server
-    Configure One AAA Server With Incorrect Secret
-    Configure One Unreachable AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -1081,11 +1015,11 @@ T3.10.2 Three Configured & Second Reachable AAA Servers & Incorrect Secret & Set
 
 
 
-T3.11.1 Three Configured & Second Reachable AAA Servers & Correct Secret & Set Authentication to Local then Remote
-    Configure One Unreachable AAA Server
+T3.7.1 Three Configured & First Reachable AAA Servers & Correct Secret & Set AAA to Local then Remote
     Configure One AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Local then Remote
+    Configure One Unreachable AAA Server
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1095,11 +1029,11 @@ T3.11.1 Three Configured & Second Reachable AAA Servers & Correct Secret & Set A
 
 
 
-T3.11.2 Three Configured & Second Reachable AAA Servers & Incorrect Secret & Set Authentication to Local then Remote
-    Configure One Unreachable AAA Server
+T3.7.2 Three Configured & First Reachable AAA Servers & Incorrect Secret & Set AAA to Local then Remote
     Configure One AAA Server With Incorrect Secret
     Configure One Unreachable AAA Server
-    Set Authentication to Local then Remote
+    Configure One Unreachable AAA Server
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1109,11 +1043,11 @@ T3.11.2 Three Configured & Second Reachable AAA Servers & Incorrect Secret & Set
 
 
 
-T3.12.1 Three Configured & Second Reachable AAA Servers & Correct Secret & Set Authentication to Remote then Local
-    Configure One Unreachable AAA Server
+T3.8.1 Three Configured & First Reachable AAA Servers & Correct Secret & Set AAA to Remote then Local
     Configure One AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Remote then Local
+    Configure One Unreachable AAA Server
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1122,11 +1056,40 @@ T3.12.1 Three Configured & Second Reachable AAA Servers & Correct Secret & Set A
     Verify Remote User Can Log In via Serial Console
 
 
-T3.12.2 Three Configured & Second Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote then Local
+T3.8.2 Three Configured & First Reachable AAA Servers & Incorrect Secret & Set AAA to Remote then Local
+    Configure One AAA Server With Incorrect Secret
+    Configure One Unreachable AAA Server
+    Configure One Unreachable AAA Server
+    Set AAA to Remote then Local
+    Verify Admin Can Log In via SSH
+    Verify Admin Can Log In via Serial Console
+    Verify Local User Can Log In via SSH
+    Verify Local User Can Log In via Serial Console
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
+
+
+
+
+
+T3.9.1 Three Configured & Second Reachable AAA Servers & Correct Secret & Set AAA to Local
+    Configure One Unreachable AAA Server
+    Configure One AAA Server
+    Configure One Unreachable AAA Server
+    Set AAA to Local
+    Verify Admin Can Log In via SSH
+    Verify Admin Can Log In via Serial Console
+    Verify Local User Can Log In via SSH
+    Verify Local User Can Log In via Serial Console
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
+
+
+T3.9.2 Three Configured & Second Reachable AAA Servers & Incorrect Secret & Set AAA to Local
     Configure One Unreachable AAA Server
     Configure One AAA Server With Incorrect Secret
     Configure One Unreachable AAA Server
-    Set Authentication to Remote then Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1136,11 +1099,94 @@ T3.12.2 Three Configured & Second Reachable AAA Servers & Incorrect Secret & Set
 
 
 
-T3.13.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set Authentication to Local
+T3.10.1 Three Configured & Second Reachable AAA Servers & Correct Secret & Set AAA to Remote
+    Configure One Unreachable AAA Server
+    Configure One AAA Server
+    Configure One Unreachable AAA Server
+    Set AAA to Remote
+    Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
+    Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
+    Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
+    Run Keyword and Expect Error  *  Verify Local User Can Log In via Serial Console
+    Verify Remote User Can Log In via SSH
+    Verify Remote User Can Log In via Serial Console
+
+
+
+T3.10.2 Three Configured & Second Reachable AAA Servers & Incorrect Secret & Set AAA to Remote
+    Configure One Unreachable AAA Server
+    Configure One AAA Server With Incorrect Secret
+    Configure One Unreachable AAA Server
+    Set AAA to Remote
+    Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
+    Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
+    Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
+    Run Keyword and Expect Error  *  Verify Local User Can Log In via Serial Console
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
+
+
+
+T3.11.1 Three Configured & Second Reachable AAA Servers & Correct Secret & Set AAA to Local then Remote
+    Configure One Unreachable AAA Server
+    Configure One AAA Server
+    Configure One Unreachable AAA Server
+    Set AAA to Local then Remote
+    Verify Admin Can Log In via SSH
+    Verify Admin Can Log In via Serial Console
+    Verify Local User Can Log In via SSH
+    Verify Local User Can Log In via Serial Console
+    Verify Remote User Can Log In via SSH
+    Verify Remote User Can Log In via Serial Console
+
+
+
+T3.11.2 Three Configured & Second Reachable AAA Servers & Incorrect Secret & Set AAA to Local then Remote
+    Configure One Unreachable AAA Server
+    Configure One AAA Server With Incorrect Secret
+    Configure One Unreachable AAA Server
+    Set AAA to Local then Remote
+    Verify Admin Can Log In via SSH
+    Verify Admin Can Log In via Serial Console
+    Verify Local User Can Log In via SSH
+    Verify Local User Can Log In via Serial Console
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
+
+
+
+T3.12.1 Three Configured & Second Reachable AAA Servers & Correct Secret & Set AAA to Remote then Local
+    Configure One Unreachable AAA Server
+    Configure One AAA Server
+    Configure One Unreachable AAA Server
+    Set AAA to Remote then Local
+    Verify Admin Can Log In via SSH
+    Verify Admin Can Log In via Serial Console
+    Verify Local User Can Log In via SSH
+    Verify Local User Can Log In via Serial Console
+    Verify Remote User Can Log In via SSH
+    Verify Remote User Can Log In via Serial Console
+
+
+T3.12.2 Three Configured & Second Reachable AAA Servers & Incorrect Secret & Set AAA to Remote then Local
+    Configure One Unreachable AAA Server
+    Configure One AAA Server With Incorrect Secret
+    Configure One Unreachable AAA Server
+    Set AAA to Remote then Local
+    Verify Admin Can Log In via SSH
+    Verify Admin Can Log In via Serial Console
+    Verify Local User Can Log In via SSH
+    Verify Local User Can Log In via Serial Console
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
+    Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
+
+
+
+T3.13.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set AAA to Local
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One AAA Server
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1151,11 +1197,11 @@ T3.13.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set Au
 
 
 
-T3.13.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set Authentication to Local
+T3.13.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set AAA to Local
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1167,11 +1213,11 @@ T3.13.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set 
 
 
 
-T3.14.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set Authentication to Remote
+T3.14.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set AAA to Remote
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -1182,11 +1228,11 @@ T3.14.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set Au
 
 
 
-T3.14.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote
+T3.14.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set AAA to Remote
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -1196,11 +1242,11 @@ T3.14.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set 
 
 
 
-T3.15.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set Authentication to Local then Remote
+T3.15.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set AAA to Local then Remote
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One AAA Server
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1209,11 +1255,11 @@ T3.15.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set Au
     Verify Remote User Can Log In via Serial Console
 
 
-T3.15.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set Authentication to Local then Remote
+T3.15.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set AAA to Local then Remote
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1223,11 +1269,11 @@ T3.15.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set 
 
 
 
-T3.16.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set Authentication to Remote then Local
+T3.16.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set AAA to Remote then Local
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One AAA Server
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1237,11 +1283,11 @@ T3.16.1 Three Configured & Third Reachable AAA Servers & Correct Secret & Set Au
 
 
 
-T3.16.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set Authentication to Remote then Local
+T3.16.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set AAA to Remote then Local
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One AAA Server With Incorrect Secret
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1249,11 +1295,11 @@ T3.16.2 Three Configured & Third Reachable AAA Servers & Incorrect Secret & Set 
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T3.17.1 Three Configured & Unreachable AAA Servers & Set Authentication to Local
+T3.17.1 Three Configured & Unreachable AAA Servers & Set AAA to Local
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Local
+    Set AAA to Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1261,11 +1307,11 @@ T3.17.1 Three Configured & Unreachable AAA Servers & Set Authentication to Local
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T3.17.2 Three Configured & Unreachable AAA Servers & Set Authentication to Remote
+T3.17.2 Three Configured & Unreachable AAA Servers & Set AAA to Remote
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Remote
+    Set AAA to Remote
     Run Keyword and Expect Error  *  Verify Admin Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Admin Can Log In via Serial Console
     Run Keyword and Expect Error  *  Verify Local User Can Log In via SSH
@@ -1273,11 +1319,11 @@ T3.17.2 Three Configured & Unreachable AAA Servers & Set Authentication to Remot
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T3.17.3 Three Configured & Unreachable AAA Servers & Set Authentication to Local then Remote
+T3.17.3 Three Configured & Unreachable AAA Servers & Set AAA to Local then Remote
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Local then Remote
+    Set AAA to Local then Remote
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1285,11 +1331,11 @@ T3.17.3 Three Configured & Unreachable AAA Servers & Set Authentication to Local
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via SSH
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
-T3.17.4 Three Configured & Unreachable AAA Servers & Set Authentication to Remote then Local
+T3.17.4 Three Configured & Unreachable AAA Servers & Set AAA to Remote then Local
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
     Configure One Unreachable AAA Server
-    Set Authentication to Remote then Local
+    Set AAA to Remote then Local
     Verify Admin Can Log In via SSH
     Verify Admin Can Log In via Serial Console
     Verify Local User Can Log In via SSH
@@ -1298,26 +1344,24 @@ T3.17.4 Three Configured & Unreachable AAA Servers & Set Authentication to Remot
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 #T4. Misc
+T4.0 Verify behavior when floodlight is stopped
+    #placeholder
+    [Tags]  skipped
+
+#T5. Other checks
 T4.1 BSC-4387
     #placeholder
     [Tags]  skipped  BSC-4387
 T4.2 Verify that AAA servers use configured timeout
     #placeholder
     [Tags]  skipped
-T4.3.1 Verify that Accounting uses round-robin
-    #placeholder
-    [Tags]  skipped
-T4.3.2 Verify that Authorization uses round-robin (if revivew)
-    #placeholder
-    [Tags]  skipped
-T4.4 Verify help texts
-    #placeholder
-    [Tags]  skipped
-T4.5 Verify behavior when floodlight is stopped
+T4.3 Verify help texts
     #placeholder
     [Tags]  skipped
 
-* Keywords
+
+
+*** Keywords ***
 Verify Admin Can Log In via SSH
     Cli Run  ${master_name}  show run  reauth=True
     Cli Run  ${slave_name}  show run  reauth=True
@@ -1327,12 +1371,16 @@ Verify Admin Can Log In via Serial Console
     Cli Run  ${slave_name}  terminal length 0; show run  console=True
 
 Verify Local User Can Log In via SSH
-    Cli Run  ${master_name}  show run  user=local  password=local  reauth=True
-    Cli Run  ${slave_name}  show run  user=local  password=local  reauth=True
+    Cli Run  ${master_name}  show run  user=local-admin  password=local  reauth=True
+    Cli Run  ${slave_name}  show run  user=local-admin  password=local  reauth=True
+    #Cli Run  ${master_name}  show run  user=local-read-only  password=local  reauth=True
+    #Cli Run  ${slave_name}  show run  user=local-read-only  password=local  reauth=True
 
 Verify Local User Can Log In via Serial Console
-    Cli Run  ${master_name}  terminal length 0; show run  user=local  password=local  console=True
-    Cli Run  ${slave_name}  terminal length 0; show run  user=local  password=local  console=True
+    Cli Run  ${master_name}  terminal length 0; show run  user=local-admin  password=local  console=True
+    Cli Run  ${slave_name}  terminal length 0; show run  user=local-admin  password=local  console=True
+    #Cli Run  ${master_name}  terminal length 0; show run  user=local-read-only  password=local  console=True
+    #Cli Run  ${slave_name}  terminal length 0; show run  user=local-read-only  password=local  console=True
 
 Verify Remote User Can Log In via SSH
     Cli Run  ${master_name}  show run  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
@@ -1374,22 +1422,24 @@ Configure One Unreachable AAA Server
     Set Test Variable  ${server_counter}  ${server_counter + 1}
 
 Configure Local User
-    Cli Run  ${master_name}  enable; configure; user local; password local  reauth=True
-    Cli Run  ${master_name}  enable; configure; group admin; associate user local  reauth=True
+    Cli Run  ${master_name}  enable; configure; user local-admin; password local  reauth=True
+    Cli Run  ${master_name}  enable; configure; group admin; associate user local-admin  reauth=True
+    Cli Run  ${master_name}  enable; configure; user local-read-only; password local  reauth=True
+    Cli Run  ${master_name}  enable; configure; group read-only; associate user local-read-only  reauth=True
 
 Clear User Sessions
     Cli Run  ${master_name}  clear session user remote
     Cli Run  ${master_name}  clear session user local
     Cli Send  ${master_name}  clear session user admin  
 
-Set Authentication to Local
-    Cli Run  ${master_name}  enable; configure; aaa authentication login default local; aaa authorization exec default local; aaa accounting exec default start-stop local  reauth=True
-Set Authentication to Remote
-    Cli Run  ${master_name}  enable; configure; aaa authentication login default group ${type}; aaa authorization exec default group ${type}; aaa accounting exec default start-stop group ${type}  reauth=True
-Set Authentication to Local then Remote
-    Cli Run  ${master_name}  enable; configure; aaa authentication login default local group ${type}; aaa authorization exec default local group ${type}; aaa accounting exec default start-stop local group ${type}  reauth=True
-Set Authentication to Remote then Local
-    Cli Run  ${master_name}  enable; configure; aaa authentication login default group ${type} local; aaa authorization exec default group ${type} local; aaa accounting exec default start-stop local group ${type}  reauth=True
+Set AAA to Local
+    Cli Run  ${master_name}  aaa authentication login default local; aaa authorization exec default local; aaa accounting exec default start-stop local  reauth=True
+Set AAA to Remote
+    Cli Run  ${master_name}  aaa authentication login default group ${type}; aaa authorization exec default group ${type}; aaa accounting exec default start-stop group ${type}  reauth=True
+Set AAA to Local then Remote
+    Cli Run  ${master_name}  aaa authentication login default local group ${type}; aaa authorization exec default local group ${type}; aaa accounting exec default start-stop local group ${type}  reauth=True
+Set AAA to Remote then Local
+    Cli Run  ${master_name}  aaa authentication login default group ${type} local; aaa authorization exec default group ${type} local; aaa accounting exec default start-stop local group ${type}  reauth=True
 
 AAA Suite Setup
     Base Suite Setup
@@ -1401,8 +1451,8 @@ AAA Suite Setup
     Run Keyword If  '${status}'=='False'
     ...  Set Suite Variable  ${slave_name}  c1
     
-    Cli Run  ${master_name}  enable; configure; terminal length 0  reauth=True
-    Cli Run  ${master_name}  enable; configure; copy snapshot://firstboot-config running-config  reauth=True
+    Cli Run  ${master_name}  terminal length 0  reauth=True
+    Cli Run  ${master_name}  copy snapshot://firstboot-config running-config  reauth=True
     Configure Local User
     ${tmp}=  Get Environment Variable  AAA_TYPE
     Set Suite Variable  ${type}  ${tmp}
@@ -1414,28 +1464,27 @@ AAA Suite Setup
     ...  Set Suite Variable  ${servers}  ${tmp_tacacs}
     Set Suite Variable  ${server_counter}  ${0}
     Set Suite Variable  ${key}  secret
-    Set Suite Variable  ${timeout}  1
+    ${tmp}=  Generate Random String  1   [NUMBERS]
+    Run Keyword If  ${tmp} > 8
+    ...  Set Suite Variable  ${timeout}  5
+    ...  ELSE If  ${tmp} < 1
+    ...  Set Suite Variable  ${timeout}  5
+    ...  ELSE
+    ...  Set Suite Variable  ${timeout}  ${tmp}
 
 AAA Test Setup
     Base Test Setup
-    #Set Suite Variable  ${master_name}  c1
-    #Set Suite Variable  ${slave_name}  c2
-    #${tmp}=  BSN Common.Get Node Name  master
-    #Set Suite Variable  ${master_name}  ${tmp}
-    #${tmp}=  BSN Common.Get Node Name  slave
-    #Set Suite Variable  ${slave_name}  ${tmp}
-    Cli Run  ${master_name}  enable; configure; copy running-config snapshot://test-config  reauth=True
+    Cli Run  ${master_name}  copy running-config snapshot://test-config  reauth=True
 
 AAA Test Teardown
     Verify Recovery Can Log In via SSH
     Verify Recovery Can Log In via Serial Console
     Restore Firstboot Config  ${master_name}
-    #Run Keyword If  '${status}'=='False'  Clear User Sessions
-    Cli Run  ${master_name}  enable; configure; copy snapshot://test-config running-config  reauth=True
+    Cli Run  ${master_name}  copy snapshot://test-config running-config  reauth=True
     Base Test Teardown
 
 
 AAA Suite Teardown
-    Cli Run  ${master_name}  enable; configure; copy snapshot://firstboot-config running-config  reauth=True
+    Cli Run  ${master_name}  copy snapshot://firstboot-config running-config  reauth=True
     Base Suite Teardown
 
