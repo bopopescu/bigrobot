@@ -553,6 +553,10 @@ vui@Vuis-MacBook-Pro$
         con = t.dev_console(node)
         con.bash("w")
         con.sudo("cat /etc/shadow")
+        try:
+            con.cli("term len 0")
+        except:
+            helpers.log("term len setting not supported")
         con.enable("show running-config")
 
         # IMPORTANT: Be sure to get back to CLI mode so future console

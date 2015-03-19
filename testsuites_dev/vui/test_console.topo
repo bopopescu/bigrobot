@@ -3,6 +3,7 @@ s1:
     ip: cs-rack10
     #protocol: telnet
     port: 6010
+
   set_session_ssh: false
   set_init_ping: false
   #set_devconf_debug_level: 5

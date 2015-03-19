@@ -143,10 +143,12 @@ class Node(object):
         """
         Inheriting class needs to further extend this method.
         """
+        helpers.log("Establishing console connection for node '%s'" % self.name())
+
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
-            helpers.log("Reconnecting to console for node '%s'" % self.name())
+            helpers.log("Connecting to console for node '%s'" % self.name())
 
         if 'console' in self.node_params:
             self._console_info = self.node_params['console']
@@ -393,7 +395,8 @@ class ControllerNode(Node):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
-            helpers.log("Reconnecting to console for node '%s'" % self.name())
+            # helpers.log("Connecting to console for node '%s'" % self.name())
+            pass
 
         super(ControllerNode, self).console(driver)
 
@@ -708,7 +711,8 @@ class HostNode(Node):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
-            helpers.log("Reconnecting to console for node '%s'" % self.name())
+            # helpers.log("Connecting to console for node '%s'" % self.name())
+            pass
 
         super(HostNode, self).console(driver)
 
@@ -826,7 +830,8 @@ class SwitchNode(Node):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
-            helpers.log("Reconnecting to console for node '%s'" % self.name())
+            # helpers.log("Connecting to console for node '%s'" % self.name())
+            pass
 
         super(SwitchNode, self).console(driver)
 
