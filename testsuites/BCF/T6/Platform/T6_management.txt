@@ -1,0 +1,272 @@
+* Settings
+Documentation    T6 Test Suite
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T6
+Library          keywords/BsnCommon.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library	         keywords/T5Platform.py
+Library	         keywords/T6.py
+Library	         keywords_dev/mingtao/T6.py
+  
+ 
+* Variable
+# T6 networks:    4 bridges 
+#	br0   controller management network; (1G network, same as T5)
+#	br1   pswitch management network; 
+#	      pswitch control network;  
+#   br2   internal
+#	br3   vswitch control network   (10G network, vlsn 4092) 
+# hw requirement for contorller 
+#	br0   2 onboard 1G    
+#	br1   2/4 1G      (optional)
+#   br3   2 10G  
+# without the 2.4 1G port,  the br0 and br1 will use same network.
+
+
+
+
+* Test Case
+### function test
+
+T1.1 Verify controller hardware appliance hardware configuration
+ 	log  check system with recommended config - 2 onboard port, 2 1G port, 2 10G port
+		${result}=   rest_verify_controller_inband_portgroup
+		Should be True   ${result} 
+	log   verify controller vlan is 4092
+ 		${ctls}=  rest_get_controller_portgroup_id
+		: FOR    ${ctl}   IN   @{ctls}   
+		\	${result}=  rest_verify_ep_inband_vlan   ${ctl}
+		\   Should be True   ${result}
+ 	
+	[Tags] 	sanity   
+
+T1.2 Verify controller hardware appliance hardware configuration (no 1G for pswitch control and management) 
+	log  check system with 2 onboard, and 2 10G port present 
+		   	
+	[Tags] 	sanity   Manual-untested 
+
+
+T1.3 Verify ivs is put in vlan 4092	 
+	log   verify controller vlan is 4092
+ 		${vsws}=  rest_get_ivs_id
+		: FOR    ${vsw}   IN   @{vsws}   
+		\	${result}=  rest_verify_ep_inband_vlan   ${vsw}
+		\   Should be True   ${result}
+ 	
+	[Tags] 	sanity   
+
+	
+T1.4 Verify IVS Ubuntn 14.04	 
+ 	log  verify 10G inband vns vlan 
+		${os}=  bash_get_distributor    h1 
+		Should Contain   ${os}   Ubuntu
+		${id}=  bash_get_intf_mac   h1  em1  
+  		${result}=  rest_verify_ep_inband_vlan   ${id}
+		Should be True   ${result}
+ 	     
+	[Tags] 	sanity    
+	
+T1.5 Verify IVS Centos 7	 
+ 	log  verify 10G inband vns vlan 
+ 	     
+	[Tags] 	sanity    Manual-untested
+ 
+
+T1.6 Verify VM host hardware configuration
+	log  check system with 2 onboard, and 2 10G port present 
+ 	log  check system with recommended config - 2 onboard port, 2 1G port, 2 10G port
+ 	
+	[Tags] 	sanity    Manual-untested   
+
+
+T1.7 Verify ivs packet send to correct queue (OQS, will cover in seperate testplan)
+	[Tags] 	sanity    Manual-untested   
+
+
+
+# event
+
+T2.1 Verify controller link up/down  
+ 	log  shut/noshut port at host side 	
+ 	log  shut/noshut ports at controller side
+		${number}=     get_pattern_entries   show port-group   static-auto-controller-inband
+		Should Be True  	${number} == 4
+
+		rest_disable_fabric_interface   leaf2-a  ethernet48 
+		sleep  5
+			
+		${number}=     get_pattern_entries   show port-group   static-auto-controller-inband
+		Should Be True  	${number} == 3
+		
+		rest_enable_fabric_interface   leaf2-a  ethernet48 
+		sleep  10
+		${number}=     get_pattern_entries   show port-group   static-auto-controller-inband
+		Should Be True  	${number} == 4
+ 	
+ 	log  plug/unplug link
+   
+	[Tags] 	sanity    Manual-untested
+
+T2.2 Verify host link up/down  
+		${number}=     get_pattern_entries   show port-group   os-node68
+		Should Be True  	${number} == 2
+
+  	log  shut/noshut port at host side
+		bash  h1  ifconfig p1p2 down
+		sleep  5
+		${number}=     get_pattern_entries   show port-group   os-node68
+		Should Be True  	${number} == 1
+		
+		bash  h1  ifconfig p1p2 up
+		sleep  5
+		${number}=     get_pattern_entries   show port-group   os-node68
+		Should Be True  	${number} == 2
+				
+ 	log  shut/noshut ports at bcf side
+		rest_disable_fabric_interface   leaf1-a  ethernet17 
+		sleep  5
+			
+		${number}=     get_pattern_entries   show port-group   os-node68
+		Should Be True  	${number} == 1
+		
+		rest_enable_fabric_interface   leaf1-a  ethernet17 
+		sleep  5
+		${number}=     get_pattern_entries   show port-group   os-node68
+		Should Be True  	${number} == 2 	
+ 	
+ 	log  plug/unplug link
+   
+	[Tags] 	sanity    Manual-untested
+
+  
+T2.3 Verify ivs restart	 
+ 	log  check node connected to the fabric correctly after restart
+ 		${old}=  rest_get_switch_ip   os-node68
+
+    log  restsat the ivs
+    	${result}=  bash_restart_ivs  h1
+		Should be True   ${result}    
+      	sleep  30
+		
+	log  verify controller and ivs inband management
+		Check inband management controller and ivs		
+	 	${new}=  rest_get_switch_ip   os-node68
+		Should Not Be Equal	  ${old}   ${new}
+
+ 	[Tags] 	sanity    
+ 
+
+T2.4 Verify controller HA failover cli command
+	log  Check inband management controller and ivs
+		Check inband management controller and ivs
+	log  perform cli fail over
+		cli_cluster_take_leader
+	log  verify controller and ivs inband management
+		Check inband management controller and ivs
+	
+     	[Tags] 	sanity  	
+	
+T2.5 Verify controller HA failover reboot master
+	log  Check inband management controller and ivs
+		Check inband management controller and ivs
+	log  perform fail over
+		cli_verify_cluster_master_reboot
+	log  verify controller and ivs inband management
+		Check inband management controller and ivs
+		
+     	[Tags] 	sanity  			
+
+
+T2.6 Verify controller HA failover reload master
+	log  Check inband management controller and ivs
+		Check inband management controller and ivs
+	log  perform fail over
+		cli_verify_cluster_master_reload
+	log  verify controller and ivs inband management
+		Check inband management controller and ivs
+		
+     	[Tags] 	sanity 
+
+T2.7 Verify controller and ivs after switch reboot
+	log  Check inband management controller and ivs
+		Check inband management controller and ivs
+	log  perform switch reboot
+		cli_reboot_switch_all 
+		sleep  120
+		Wait Until Keyword Succeeds  	10 min	30 sec   Verify all switches connected back 
+	log  Check inband management controller and ivs
+		sleep  120		
+		Wait Until Keyword Succeeds  	10 min	30 sec   Check inband management controller and ivs		 
+	 	 	 		
+     	[Tags] 	sanity 
+
+T2.8 Verify controller and ivs after upgrade(controller and ivs)
+	log  Check inband management controller and ivs
+ 		Check inband management controller and ivs
+	log  upgrade
+		 
+	log  Check inband management controller and ivs
+		Check inband management controller and ivs
+		
+     	[Tags] 	sanity   Manual-untested
+
+T2.7 Verify ivs after compute node reboot
+	log  Check ivs
+		Check ivs portgroup and switch state 
+	log  reboot the host
+  	 	Host_reboot   h2
+  	log  verify ivs
+ 	 	Wait Until Keyword Succeeds  	10 min	30 sec  Check ivs portgroup and switch state
+  	
+     	[Tags] 	sanity   
+     	
+T2.7 Verify ivs after compute node power cycle
+	log  Check inband management controller and ivs
+  
+		
+     	[Tags] 	sanity   Manual-untested	     	
+     		
+# negative 
+T3.1 Verify hardware appliance hardware configuration
+	log  check system with no 10G port present  
+   	
+	[Tags] 	sanity    Manual-untested  negative
+
+T3.2 Verify VM host hardware configuration
+	log  check system with no 10G port present
+ 	
+	[Tags] 	sanity    Manual-untested  negative
+ 
+	
+
+* Keywords
+Check inband management controller and ivs    [Arguments]     ${pgs}=2
+	log  check controller inband
+		${result}=   rest_verify_controller_inband_portgroup
+		Should be True   ${result}
+	log  check ivs inband fabric
+		${result}=  rest_verify_fabric_vswitch_all   
+		Should be True   ${result}
+	log  check ivs inband fabric portgroup
+		${result}=  rest_verify_vswitch_portgroup   ${pgs}
+		Should be True   ${result}
+
+Check ivs portgroup and switch state     [Arguments]     ${pgs}=2
+ 	log  check ivs inband fabric
+		${result}=  rest_verify_fabric_vswitch_all   
+		Should be True   ${result}
+	log  check ivs inband fabric portgroup
+		${result}=  rest_verify_vswitch_portgroup   ${pgs}
+		Should be True   ${result}
+	
+Verify all switches connected back     
+ 		${switches}=  rest_get_disconnect_switch
+		log   the disconnected switches are ${switches}  	
+		Should Be Empty   ${switches}	
+
+	
