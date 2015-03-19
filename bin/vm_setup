@@ -100,7 +100,7 @@ def main(*args):
     if args.network_interface is None:
         args.network_interface = "br0"
     if args.vm_ram is None:
-        args.vm_ram = "8192"
+        args.vm_ram = "2048"
     # Setting below enviornment Variables for Jenkins CI
     term = helpers.get_env("TERM")
     helpers.log("TERM Value: %s" % term)
