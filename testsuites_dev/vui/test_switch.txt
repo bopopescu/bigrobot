@@ -71,5 +71,5 @@ Test debug bash
 
 Test show interface
    #[Tags]  skipped
-   ${result} =    switchlight cli show interface    s1    ethernet48
+   ${result} =    switchlight cli show interface    s1    ethernet49
    log            Interface ethernet48: ${result}
