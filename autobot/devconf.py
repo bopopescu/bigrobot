@@ -70,9 +70,16 @@ class DevConf(object):
         if self._logfile == None:
             self._logfile = ('%s/devconf_conversation.%s.log'
                              % (self._logpath, self._name))
+            transport_proto = self._protocol
+            if self._port != None:
+                transport_proto += ":%s" % self._port
+            if self._console_info == None:
+                is_console = 'no'
+            else:
+                is_console = 'yes'
             helpers.file_write_append_once(self._logfile,
-                    "\n\n--------- %s New devconf conversation for '%s'\n\n"
-                    % (helpers.ts_long_local(), self._name))
+                    "\n\n--------- %s New devconf conversation for '%s' (user=%s password=%s protocol=%s console=%s)\n\n"
+                    % (helpers.ts_long_local(), self._name, self._user, self._password, transport_proto, is_console))
         return self._logfile
 
     def debug_file(self):
@@ -86,9 +93,16 @@ class DevConf(object):
         if self._debug > 0 and self._debugfile == None:
             self._debugfile = ('%s/devconf_conversation.%s.log_debug'
                              % (self._logpath, self._name))
+            transport_proto = self._protocol
+            if self._port != None:
+                transport_proto += ":%s" % self._port
+            if self._console_info == None:
+                is_console = 'no'
+            else:
+                is_console = 'yes'
             helpers.file_write_append_once(self._debugfile,
-                    "\n\n--------- %s New devconf debug for '%s'\n\n"
-                    % (helpers.ts_long_local(), self._name))
+                    "\n\n--------- %s New devconf debug for '%s' (user=%s password=%s protocol=%s console=%s)\n\n"
+                    % (helpers.ts_long_local(), self._name, self._user, self._password, transport_proto, is_console))
         return self._debugfile
 
     def _patch_driver(self, d):
