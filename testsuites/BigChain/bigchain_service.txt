@@ -544,24 +544,24 @@ TC030: Service Policy: Verify with traffic, action do-service
     ${content9}=  cli_content  node=master
     Should Not Contain  ${content9}  Error
     sleep  30
-    
     ${result1}=  rest verify bigchain service policy  chain_service_name=${service_name}  sequence=1  data=ether-type 2048 sequence 1 src-ip 100.1.1.1 src-ip-mask 255.255.255.255
     Should be True  ${result1}
     ${stream_l3_as5710}=  L3 add  flow=a->b  frame_cnt=100000  frame_rate=10000  frame_size=64
-    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    ...     src_mac=00:01:01:01:01:01  dst_mac=00:02:02:02:02:02  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
     clear stats
     cli clear interface statistics  s1
     start traffic  ${stream_l3_as5710}
     sleep  10
     stop traffic  ${stream_l3_as5710}
+    pause
     ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
     Should Be True  ${intf_1} > 99990
     Should Be True  ${intf_1} < 100100
     ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
     Should Be True  ${intf_2} > 99990
     Should Be True  ${intf_2} < 100100
-    [Tags]  feature
+    [Tags]  feature  runthis
 
 TC031: Service Policy: Verify with traffic, action drop
     config  node=master  cmd=bigchain service ${service_name}
@@ -743,7 +743,7 @@ TC035: Service Policy: Verify match on dst-mac should not be configurable as def
     config  node=master  cmd=1 match full dst-mac 00:11:01:01:01:01
     ${content6}=  cli_content  node=master
     Should Contain  ${content6}  Error
-    [Tags]  negative  runthis
+    [Tags]  negative  
     
 TC036: Service Instance: Verify a bigchain service can be added to a bigchain chain via cli
     add a service and attach it to a chain via cli
@@ -757,7 +757,7 @@ TC036: Service Instance: Verify a bigchain service can be added to a bigchain ch
     sleep  10
     stop traffic  ${stream_l3_as5710}
     verify results  a  b  transmitted_frames  received_valid_frames
-    [Tags]  feature  jira-pan-1601  runthis
+    [Tags]  feature  jira-pan-1601  
     
 TC037: Service Instance: Verify a bigchain service can be added to a bigchain chain via rest
     add a service and attach it to a chain via rest  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
@@ -771,7 +771,7 @@ TC037: Service Instance: Verify a bigchain service can be added to a bigchain ch
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate        
     stop traffic  ${stream_l3_as5710}
-    [Tags]  feature  jira-pan-1601  runthis
+    [Tags]  feature  jira-pan-1601  
 
 TC038: Verify multiple services can be created
     ## Service #1
@@ -814,7 +814,7 @@ TC038: Verify multiple services can be created
     Should be True  ${output2}    
     ${output3}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name3}  chain_service_type=custom  instance_id=1  inport=${service_in_interface3}  outport=${service_out_interface3}  chain_service_description=TestBigChainService3
     Should be True  ${output3}
-    [Tags]  feature  runthis
+    [Tags]  feature  
     
 TC039: Verify multiple instances can be created in a given service
     ${result1}=  rest add a bigchain service  chain_service_name=${service_name}  service_type=custom  instance_id=1
@@ -852,7 +852,7 @@ TC039: Verify multiple instances can be created in a given service
     Should be True  ${output4}
     ${output5}=  rest verify bigchain service instance  node=s1  chain_service_name=${service_name}  chain_service_type=custom  instance_id=5  inport=${service_in_interface5}  outport=${service_out_interface5}  chain_service_description=TestBigChainService1
     Should be True  ${output5}
-    [Tags]  feature  runthis
+    [Tags]  feature  
  
 TC040: Verify multiple chains cannot use same instance of a service
      ## Create a Service
@@ -884,7 +884,7 @@ TC040: Verify multiple chains cannot use same instance of a service
     Should be True  ${result10}
     ${result11}=  rest add service to chain  chain_name=${chain_name2}  service_name=${service_name}  instance=1  sequence=1
     Should not be True  ${result11}
-    [Tags]  feature  runthis
+    [Tags]  feature  
     
 TC041: For a mandatory service, verify chain is disabled when a service instance in-interface goes down
     add a service and attach it to a chain via rest  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
@@ -950,7 +950,7 @@ TC041: For a mandatory service, verify chain is disabled when a service instance
     ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
     Should Be True  ${intf_4} > 99990
     Should Be True  ${intf_4} < 100100
-    [Tags]  feature  runthis
+    [Tags]  feature  
 
 TC042: For a mandatory service, verify chain is disabled when a service instance out-interface goes down
     add a service and attach it to a chain via rest  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
@@ -1016,7 +1016,7 @@ TC042: For a mandatory service, verify chain is disabled when a service instance
     ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
     Should Be True  ${intf_4} > 99990
     Should Be True  ${intf_4} < 100100
-    [Tags]  feature  runthis
+    [Tags]  feature  
 
 TC043: For an optional service,verify service instance is bypassed when a service instance in-interface goes down
     add a service and attach it to a chain via rest  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
@@ -1089,7 +1089,7 @@ TC043: For an optional service,verify service instance is bypassed when a servic
     ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
     Should Be True  ${intf_4} > 99990
     Should Be True  ${intf_4} < 100100
-    [Tags]  feature  runthis
+    [Tags]  feature  
 
 TC044: For an optional service,verify service instance is bypassed when a service instance out-interface goes down
     add a service and attach it to a chain via rest  {"src-ip-mask": "255.255.255.255", "sequence": 1, "src-ip": "100.1.1.1", "ether-type": 2048}
@@ -1162,7 +1162,7 @@ TC044: For an optional service,verify service instance is bypassed when a servic
     ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
     Should Be True  ${intf_4} > 99990
     Should Be True  ${intf_4} < 100100
-    [Tags]  feature  runthis
+    [Tags]  feature  
 
 TC045: Verify with traffic that service interfaces are taken in both directions when in-skip or out-skip is not configured.
     add a service and attach it to a chain via rest  {"any-traffic": true, "sequence": 1}
@@ -1204,7 +1204,7 @@ TC045: Verify with traffic that service interfaces are taken in both directions 
     ${intf_4_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
     Should Be True  ${intf_4_tx} > 99990
     Should Be True  ${intf_4_tx} < 100100
-    [Tags]  feature  runthis
+    [Tags]  feature  
 
 TC046: Configure in-skip and verify service instance is skipped when traffic is coming into the network
     add a service and attach it to a chain via rest  {"any-traffic": true, "sequence": 1}
@@ -1246,7 +1246,7 @@ TC046: Configure in-skip and verify service instance is skipped when traffic is 
     ${intf_4_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
     Should Be True  ${intf_4_tx} > 99990
     Should Be True  ${intf_4_tx} < 100100
-    [Tags]  feature  runthis
+    [Tags]  feature  
 
 TC047: Configure out-skip and verify service instance is skipped when traffic is coming into the network
     add a service and attach it to a chain via rest  {"any-traffic": true, "sequence": 1}
@@ -1288,7 +1288,7 @@ TC047: Configure out-skip and verify service instance is skipped when traffic is
     ${intf_4_tx}=  cli return interface counter brief  s1  ${chain_interface_1}  tx
     Should Be True  ${intf_4_tx} > 99990
     Should Be True  ${intf_4_tx} < 100100
-    [Tags]  feature  runthis
+    [Tags]  feature  
 
 * Keywords
 

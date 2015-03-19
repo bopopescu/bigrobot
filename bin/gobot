@@ -270,6 +270,7 @@ def test_command(*args):
 
     args = parser.parse_args(*args)
 
+    time_start = helpers.time_now()
     include_tags = args.include
     exclude_tags = args.exclude
     params = args.params
@@ -348,7 +349,10 @@ def test_command(*args):
                                   helpers.bigrobot_additional_params())
 
     rc = robot.run(test_suite, **options)
-    helpers.log("Robot Framework return code is %s" % rc)
+    time_end = helpers.time_now()
+    
+    print("Execution time is %s"
+          % helpers.datetime_format(time_end - time_start))
     print("Robot Framework return code is %s" % rc)
 
     # if helpers.bigrobot_continuous_integration().lower() == 'True':
