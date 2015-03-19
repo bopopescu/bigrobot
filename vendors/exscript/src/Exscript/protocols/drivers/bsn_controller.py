@@ -101,7 +101,8 @@ class BsnControllerDriver(Driver):
         return 0
 
     def init_terminal(self, conn):
-        conn.execute('term len 0')
+        # 2015-03-19 I noticed 'term len' is available on BCF. Not sure about BigTap.
+        # conn.execute('term len 0')
         pass
 
     # def auto_authorize(self, conn, account, flush, bailout):
