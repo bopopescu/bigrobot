@@ -59,6 +59,7 @@ Test switch bash execute command
     bash execute command   s1   uname -a
 
 Test debug bash
+   [Tags]  skipped
    bash   s1   cat /etc/passwd
 #   cli    s1   exit
    cli exit    s1
@@ -68,3 +69,7 @@ Test debug bash
 #   log    "We reloaded the switch"
    bash   s1   uptime
 
+Test show interface
+   #[Tags]  skipped
+   ${result} =    switchlight cli show interface    s1    ethernet48
+   log            Interface ethernet48: ${result}

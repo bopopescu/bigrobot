@@ -2511,3 +2511,128 @@ class SwitchLight(object):
                 return False
         helpers.log("All the expected interfaces are up for switch {}".format(node))
         return True
+
+    # Author:: Vui
+    def switchlight_cli_show_interface(self, node, interface):
+        """
+        Objective:
+        - Get interface details for the specified interface.
+
+        Input:
+        | node | Reference to switch (as defined in .topo file) |
+        | intf_name | Interface Name eg. ethernet1 or portchannel1 |
+
+        Return Value:
+        - Dictionary containing the interface states.
+
+        Note:
+        - Ideally, we should call this keyword 'cli show interface' and it can
+          be used for controllers, switches, and so forth. But 'cli show interface'
+          is already defined in the T5 keyword library and isn't compatible,
+          hence we have to use a different keyword name to avoid conflict.
+        """
+
+        # Example:
+        #     ilum-as5710> show interface ethernet48 detail
+        #     ethernet48 is down
+        #       Hardware Address: 5c:16:c7:12:92:93
+        #       Speed:
+        #       Link: never up
+        #       Received 0 bytes, 0 packets
+        #         0 broadcast, 0 multicast
+        #         0 runt, 0 giant
+        #         0 error, 0 CRC, 0 alignment
+        #         0 symbol, 0 discard, 0 pause
+        #       Sent 0 bytes, 0 packets
+        #         0 broadcast, 0 multicast
+        #         0 error, 0 collision
+        #         0 late collision, 0 deferred
+        #         0 discard, 0 pause
+
+        def _get_traffic_stats(record):
+            while len(lines) > 0:
+                line = lines.pop(0)
+                if re.match(re_traffic_broadcast, line):
+                    record["broadcast"] = re.match(re_traffic_broadcast, line).group(1).strip()
+                    record["multicast"] = re.match(re_traffic_broadcast, line).group(2).strip()
+                elif re.match(re_traffic_runt, line):
+                    record["runt"] = re.match(re_traffic_runt, line).group(1).strip()
+                    record["giant"] = re.match(re_traffic_runt, line).group(2).strip()
+                elif re.match(re_traffic_error_received, line):
+                    record["error"] = re.match(re_traffic_error_received, line).group(1).strip()
+                    record["crc"] = re.match(re_traffic_error_received, line).group(2).strip()
+                    record["alighment"] = re.match(re_traffic_error_received, line).group(3).strip()
+                elif re.match(re_traffic_error_sent, line):
+                    record["error"] = re.match(re_traffic_error_sent, line).group(1).strip()
+                    record["collision"] = re.match(re_traffic_error_sent, line).group(2).strip()
+                elif re.match(re_traffic_symbol, line):
+                    record["symbol"] = re.match(re_traffic_symbol, line).group(1).strip()
+                    record["discard"] = re.match(re_traffic_symbol, line).group(2).strip()
+                    record["pause"] = re.match(re_traffic_symbol, line).group(3).strip()
+                elif re.match(re_traffic_late_collision, line):
+                    record["late_collision"] = re.match(re_traffic_late_collision, line).group(1).strip()
+                    record["deferred"] = re.match(re_traffic_late_collision, line).group(2).strip()
+                elif re.match(re_traffic_discard, line):
+                    record["discard"] = re.match(re_traffic_discard, line).group(1).strip()
+                    record["pause"] = re.match(re_traffic_discard, line).group(2).strip()
+                else:
+                    lines.insert(0, line)
+                    break
+
+        t = test.Test()
+        switch = t.switch(node)
+        content = switch.cli("show interface %s detail" % interface)['content']
+        output = helpers.strip_cli_output(content)
+        lines = helpers.str_to_list(output)
+        data = {"name": helpers.unicode_to_ascii(interface),
+                "received": {},
+                "sent": {},
+                }
+
+        re_breakout_capable = r'.*Breakout capable.*'
+        re_hardware_address = r'.*Hardware Address:(.*)'
+        re_speed = r'.*Speed:(.*)'
+        re_link = r'.*Link:(.*)'
+        re_received = r'.*Received (\d+) bytes, (\d+) packets'
+        re_sent = r'.*Sent (\d+) bytes, (\d+) packets'
+        re_traffic_broadcast = r'.*(\d+) broadcast, (\d+) multicast'
+        re_traffic_runt = r'.*(\d+) runt, (\d+) giant'
+        re_traffic_error_received = r'.*(\d+) error, (\d+) CRC, (\d+) alignment'  # Received
+        re_traffic_error_sent = r'.*(\d+) error, (\d+) collision'  # Sent
+        re_traffic_symbol = r'.*(\d+) symbol, (\d+) discard, (\d+) pause'
+        re_traffic_late_collision = r'.*(\d+) late collision, (\d+) deferred'
+        re_traffic_discard = r'.*(\d+) discard, (\d+) pause'
+
+        descr_tag = "Node '%s' interface '%s': " % (node, interface)
+
+        line = lines.pop(0)
+        match = re.match(r'%s is (\w+)' % interface, line)
+        if match:
+            data["status"] = match.group(1)
+        else:
+            helpers.test_failure(descr_tag + "Interface status not found.")
+
+        while len(lines) > 0:
+            line = lines.pop(0)
+            # helpers.log("line: '%s'" % line)
+            if re.match(re_breakout_capable, line):
+                data["breakout_capable"] = True
+            elif re.match(re_hardware_address, line):
+                data["hardware_address"] = re.match(re_hardware_address, line).group(1).strip()
+            elif re.match(re_speed, line):
+                data["speed"] = re.match(re_speed, line).group(1).strip()
+            elif re.match(re_link, line):
+                data["link"] = re.match(re_link, line).group(1).strip()
+            elif re.match(re_received, line):
+                data["received"]["bytes"] = re.match(re_received, line).group(1).strip()
+                data["received"]["packets"] = re.match(re_received, line).group(2).strip()
+                _get_traffic_stats(data["received"])
+            elif re.match(re_sent, line):
+                data["sent"]["bytes"] = re.match(re_sent, line).group(1).strip()
+                data["sent"]["packets"] = re.match(re_sent, line).group(2).strip()
+                _get_traffic_stats(data["sent"])
+            else:
+                helpers.test_failure(descr_tag + "Unmatched line: '%s'" % line)
+
+        # helpers.log("data:\n%s" % helpers.prettify(data))
+        return data
