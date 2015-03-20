@@ -120,9 +120,6 @@ TC005: Verify existing service in-interface cannot be used as span interfaces
     ${content4}=  cli_content  node=master
     Should Not Contain  ${content4}  Error
     config  node=master  cmd=exit
-    config  node=master  cmd=policy
-    ${content5}=  cli_content  node=master
-    Should Not Contain  ${content5}  Error
     config  node=master  cmd=1 match tcp dst-port 80
     ${content6}=  cli_content  node=master
     Should Not Contain  ${content6}  Error
@@ -150,9 +147,6 @@ TC006: Verify existing service out-interface cannot be used as span interfaces
     ${content4}=  cli_content  node=master
     Should Not Contain  ${content4}  Error
     config  node=master  cmd=exit
-    config  node=master  cmd=policy
-    ${content5}=  cli_content  node=master
-    Should Not Contain  ${content5}  Error
     config  node=master  cmd=1 match tcp dst-port 80
     ${content6}=  cli_content  node=master
     Should Not Contain  ${content6}  Error
@@ -471,7 +465,6 @@ TC016: Verify chain is not affected when span interface goes down.
     ### Shutdown span interface from remote side
     ${arista1}=  cli arista enable disable interface  s3  ${arista_span_interface}  disable=${True}
     Should be True  ${arista1}
-    pause
     clear stats    
     start traffic  ${stream_new}
     sleep  10        
@@ -1037,6 +1030,9 @@ span suite setup
     config  node=s3  cmd=interface ${arista_ixia_interface}
     ${content1}=  cli_content  node=s3
     Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
     config  node=s3  cmd=switchport mode trunk
     ${content1}=  cli_content  node=s3
     Should Not Contain  ${content1}  Error
@@ -1045,6 +1041,9 @@ span suite setup
     Should Not Contain  ${content1}  Error
     config  node=s3  cmd=exit
     config  node=s3  cmd=interface ${arista_span_interface}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=switchport
     ${content1}=  cli_content  node=s3
     Should Not Contain  ${content1}  Error
     config  node=s3  cmd=switchport mode trunk
