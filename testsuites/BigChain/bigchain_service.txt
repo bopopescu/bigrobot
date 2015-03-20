@@ -755,7 +755,7 @@ TC036: Service Instance: Verify a bigchain service can be added to a bigchain ch
     start traffic  ${stream_l3_as5710}
     sleep  10
     stop traffic  ${stream_l3_as5710}
-    verify results  a  b  transmitted_frames  received_valid_frames
+    verify results  a  b  transmitted_frames  received_frames
     [Tags]  feature  jira-pan-1601  
     
 TC037: Service Instance: Verify a bigchain service can be added to a bigchain chain via rest
@@ -925,13 +925,13 @@ TC041: For a mandatory service, verify chain is disabled when a service instance
     ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
     Should Be True  ${intf_2} < 100
     ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
-    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100
     ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
     Should Be True  ${intf_4} < 100
     ### Re-enable the in-interface of the service
     ${ret_value_1}=  cli enable interface  s1  ${service_in_interface1}
     Should Be True  ${ret_value_1}
-    sleep  5
+    sleep  10
     clear stats
     cli clear interface statistics  s1
     start traffic  ${stream_l3_as5710}
@@ -991,7 +991,7 @@ TC042: For a mandatory service, verify chain is disabled when a service instance
     ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
     Should Be True  ${intf_2} < 100
     ${intf_3}=  cli return interface counter brief  s1  ${chain_interface_1}  rx
-    Should Be True  ${intf_3} > 99990
+    Should Be True  ${intf_3} < 100
     ${intf_4}=  cli return interface counter brief  s1  ${chain_interface_2}  tx
     Should Be True  ${intf_4} < 100
     ### Re-enable the in-interface of the service
