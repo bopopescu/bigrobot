@@ -594,6 +594,7 @@ class Protocol(object):
         """
         if hostname is not None:
             self.host = hostname
+        self._dbg(3, "MM: Protocol connect(%s:%s)" % (self.host, port))
         return self._connect_hook(self.host, port)
 
     def _get_account(self, account):
