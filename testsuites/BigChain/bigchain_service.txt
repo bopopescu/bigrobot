@@ -1302,6 +1302,10 @@ service suite setup
     Sleep   5
 
 service test setup
+    ${ret_value_1}=  cli enable interface  s1  ${service_out_interface1}
+    Should Be True  ${ret_value_1}
+    ${ret_value_1}=  cli enable interface  s1  ${service_in_interface1}
+    Should Be True  ${ret_value_1}
     ${result1}=  write version to file
     Should be true  ${result1}
     ${result}=  start syslog monitor
