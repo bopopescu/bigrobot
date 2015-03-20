@@ -927,13 +927,16 @@ TC033: Verify span-policy match condition Match on Vlan-ID (IPv4 Traffic)
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800  
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=194  vlan_id=1020
-    clear stats    
+    clear stats
+    cli clear interface statistics  s1
     start traffic  ${stream}
     sleep  10        
     stop traffic  ${stream}
     sleep  5
     verify results  a  b  transmitted_frames  received_valid_frames
-    verify results  a  c  transmitted_frames  received_valid_frames
+    ${intf_1_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
+    Should Be True  ${intf_1_tx} > 99990
+    Should Be True  ${intf_1_tx} < 100100
     [Tags]  feature  full  match-conditions
 
 TC034: Verify span-policy match condition Match on Vlan-ID (IPv6 Traffic)
@@ -954,13 +957,16 @@ TC034: Verify span-policy match condition Match on Vlan-ID (IPv6 Traffic)
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow  vlan_id=1020
     ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=194
-    clear stats    
+    clear stats
+    cli clear interface statistics  s1
     start traffic  ${stream}
     sleep  10        
     stop traffic  ${stream}
     sleep  5
     verify results  a  b  transmitted_frames  received_valid_frames
-    verify results  a  c  transmitted_frames  received_valid_frames
+    ${intf_1_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
+    Should Be True  ${intf_1_tx} > 99990
+    Should Be True  ${intf_1_tx} < 100100
     [Tags]  feature  full  match-conditions
 
 TC035: Verify span-policy match condition Match on Vlan-ID Range (IPv4 Traffic)
@@ -981,13 +987,16 @@ TC035: Verify span-policy match condition Match on Vlan-ID Range (IPv4 Traffic)
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800  
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=194  vlan_id=1020
-    clear stats    
+    clear stats
+    cli clear interface statistics  s1
     start traffic  ${stream}
     sleep  10        
     stop traffic  ${stream}
     sleep  5
     verify results  a  b  transmitted_frames  received_valid_frames
-    verify results  a  c  transmitted_frames  received_valid_frames
+    ${intf_1_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
+    Should Be True  ${intf_1_tx} > 99990
+    Should Be True  ${intf_1_tx} < 100100
     [Tags]  feature  full  match-conditions
 
 TC036: Verify span-policy match condition Match on Vlan-ID Range (IPv6 Traffic)
@@ -1008,16 +1017,18 @@ TC036: Verify span-policy match condition Match on Vlan-ID Range (IPv6 Traffic)
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  ethertype=86dd  
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True  name=a_b_flow  vlan_id=1020
     ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=UDP  src_port=1234  dst_port=194
-    clear stats    
+    clear stats
+    cli clear interface statistics  s1
     start traffic  ${stream}
     sleep  10        
     stop traffic  ${stream}
     sleep  5
     verify results  a  b  transmitted_frames  received_valid_frames
-    verify results  a  c  transmitted_frames  received_valid_frames
+    ${intf_1_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
+    Should Be True  ${intf_1_tx} > 99990
+    Should Be True  ${intf_1_tx} < 100100
     [Tags]  feature  full  match-conditions
-
-
+    
 * Keywords
 span suite setup
     base suite setup

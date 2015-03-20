@@ -978,7 +978,7 @@ TC042: For a mandatory service, verify chain is disabled when a service instance
     ### Now disable the in-interface of the service
     ${ret_value_1}=  cli disable interface  s1  ${service_out_interface1}
     Should Be True  ${ret_value_1}
-    sleep  5
+    sleep  10
     ${result1}=  rest verify bigchain chain  s1  chain_name=${chain_name}  interface1=${chain_interface_1}  interface2=${chain_interface_2}  service1=${service_name}
     Should not be true  ${result1}
     clear stats
@@ -997,7 +997,7 @@ TC042: For a mandatory service, verify chain is disabled when a service instance
     ### Re-enable the in-interface of the service
     ${ret_value_1}=  cli enable interface  s1  ${service_out_interface1}
     Should Be True  ${ret_value_1}
-    sleep  5
+    sleep  10
     clear stats
     cli clear interface statistics  s1
     start traffic  ${stream_l3_as5710}
