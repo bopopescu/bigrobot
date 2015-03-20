@@ -124,7 +124,6 @@ TC005: Verify existing service in-interface cannot be used as span interfaces
     ${content6}=  cli_content  node=master
     Should Not Contain  ${content6}  Error
     config  node=master  cmd=exit
-    config  node=master  cmd=exit
     sleep  10
     ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${service_in_interface1}
     Should not be True  ${config1}
@@ -708,7 +707,6 @@ TC025: Verify span-policy match condition Match on IPV4 UDP Src-Port
     ${result3}=  rest add span service to chain  chain_name=${chain_name_1}   endpoint1=${true}   span_service_name=${span_service_name_1}   span_instance_id=1
     Should be True  ${result3}
     sleep  5
-    pause
     ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=100000  name=a_b_flow  ethertype=0800  
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=UDP  src_port=1234  dst_port=194
@@ -1054,6 +1052,12 @@ span suite setup
     Should Not Contain  ${content1}  Error
     
 span test setup
+    config  node=s3  cmd=interface ${arista_span_interface}
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no shutdown
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
     ${result1}=  write version to file
     Should be true  ${result1}
     ${result}=  start syslog monitor
