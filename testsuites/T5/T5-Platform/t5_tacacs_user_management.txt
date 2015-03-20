@@ -22,9 +22,9 @@ TC000: Warmup
     Verify Tacacs Configuration  0  10.2.3.201  5
     Verify AAA Authentication Configuration
     Run Keyword and Ignore Error
-    ...  Cli Run  master  show tacacs  user=remote  password=remote
+    ...  Cli Run  master  show tacacs  user=remote  password=remote  reauth=True
     Run Keyword and Ignore Error
-    ...  Cli Run  slave  show tacacs  user=remote  password=remote
+    ...  Cli Run  slave  show tacacs  user=remote  password=remote  reauth=True
     Sleep  60
     # workaround for BSC-6771
     [Tags]  feature  BSC-6771
@@ -165,6 +165,7 @@ TC016. Verify that local-user account can be associated and disassociated from a
 	...  show group admin
 	...  admin \ \ \ \ \ admin, local-user
 	...  flag=False
+    Cli Run  master  no user local-user
 
 TC017. Verify that admin configured locally and associated with admin group can do actions
 	Cli Run  master  user admin
@@ -196,9 +197,11 @@ TC018. Verify that remote admin, associated with admin group can do actions
 	Sleep  5
 	Cli Run  master  show file  user=remote-admin  reauth=True
 	Sleep  5
-	Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin  reauth=True
+	Run Keyword and Expect Error  *
+    ...  Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin  reauth=True
 	Sleep  5
-	Cli Run  master  enable; config; delete file test-file  user=remote-admin  reauth=True
+	Run Keyword and Expect Error  *
+    ...  Cli Run  master  enable; config; delete file test-file  user=remote-admin  reauth=True
 
 TC019. Verify that remote admin provisioned locally, associated with admin group can do actions
 	Cli Run  master  user remote-admin
@@ -217,7 +220,7 @@ TC019. Verify that remote admin provisioned locally, associated with admin group
 	Sleep  5
 	Cli Run  master  show file  user=remote-admin  reauth=True
 	Sleep  5
-	Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin
+	Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin  reauth=True
 	Sleep  5
 	Cli Run  master  enable; config; delete file test-file  user=remote-admin  reauth=True
     Cli Run and Verify Output
@@ -225,6 +228,7 @@ TC019. Verify that remote admin provisioned locally, associated with admin group
     ...  show file
     ...  None.
     ...  user=remote-admin
+    Cli Run  master  no user remote-admin
 
 TC020. Verify that user configured locally and associated with admin group can do actions
 	Cli Run  master  user user
@@ -252,6 +256,7 @@ TC020. Verify that user configured locally and associated with admin group can d
     ...  show file
     ...  None.
     ...  user=user
+    Cli Run  master  no user user
 
 TC021. Verify that remote-admin not associated with admin group can not do actions
 	Cli Run  master  group admin
@@ -306,6 +311,8 @@ verify version  [Arguments]  ${username}  ${new_password}  ${local}
     Should Contain  ${content}  ${projectname}
 
 tacacs test teardown
+    Run Keyword If Test Failed
+    ...  Restore Firstboot Config  ${master_name}
 	Cli Copy  snapshot://test-config  running-config
     ${result}=  cli delete user from group  tacacsadmin  admin
     Should be true  ${result}
@@ -316,6 +323,13 @@ tacacs test teardown
 
 Tacacs Suite Setup
 	Base Suite Setup
+	Set Suite Variable  ${master_name}  c1
+    Set Suite Variable  ${slave_name}  c2
+    ${status}=  Run Keyword and Return Status  Cli Run  ${master_name}  ena;conf; no user aaa_test  reauth=True
+    Run Keyword If  '${status}'=='False'
+    ...  Set Suite Variable  ${master_name}  c2
+    Run Keyword If  '${status}'=='False'
+    ...  Set Suite Variable  ${slave_name}  c1
 	Cli Copy  running-config  snapshot://startup-config  node=master
 	Cli Copy  running-config  snapshot://startup-config  node=slave
 
