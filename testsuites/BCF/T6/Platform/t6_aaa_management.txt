@@ -59,6 +59,7 @@ ${projectname}  Big Cloud Fabric Appliance
 @{radius_servers}  10.2.3.201  10.8.67.2  10.8.67.3
 @{tacacs_servers}  10.2.3.201  10.9.18.2  10.8.67.3
 @{servers}
+${timeout}
 ${type}
     
 *** Test Case ***
