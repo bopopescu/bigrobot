@@ -850,6 +850,7 @@ class T5Utilities(object):
                 t.node_disconnect();
                 n = t.node(node)
                 c = n.console()
+                helpers.sleep(3)
                 c.send(helpers.ctrl('c'))
                 helpers.sleep(3)
                 options = c.expect([r'login:', c.get_prompt()])

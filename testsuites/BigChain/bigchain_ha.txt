@@ -492,7 +492,6 @@ TC015: Controller HA: Change bigtap match mode to full-match and verify no effec
     cli clear interface statistics  s2
     start traffic  ${stream_new}
     sleep  5
-    pause
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
     verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
     ${config}=  rest enable feature  full-match
@@ -504,7 +503,7 @@ TC015: Controller HA: Change bigtap match mode to full-match and verify no effec
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate  100
     verify results  a  b  received_valid_frame_rate  transmitted_frame_rate  100
     stop traffic  ${stream_new}
-    [Tags]  full  ha  runthis
+    [Tags]  full  ha
 
 TC016: Controller HA: Change bigtap match mode to l3-l4-match and verify no effect on chain.
     ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=100000   frame_size=128

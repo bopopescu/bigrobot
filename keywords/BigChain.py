@@ -89,14 +89,16 @@ class BigChain(object):
             helpers.test_log("Could not execute command")
             return False
         else:
-            url = '/api/v1/data/controller/applications/bigtap/switch-config?config=true'
+            # url = '/api/v1/data/controller/applications/bigtap/switch-config?config=true'
+            url = '/api/v1/data/controller/core/switch?config=true'
             c.rest.get(url)
             if not c.rest.status_code_ok():
                 helpers.test_log(c.rest.error())
                 return False
             content = c.rest.content()
             for switch in content:
-                if switch['switch'] == str(switch_dpid) and switch['role'] == str(mode):
+                # if switch['switch'] == str(switch_dpid) and switch['role'] == str(mode):
+                if switch['dpid'] == str(switch_dpid) and switch['role'] == str(mode):
                     return True
             return False
 
