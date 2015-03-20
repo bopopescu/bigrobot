@@ -347,6 +347,7 @@ class Protocol(object):
             #    self.log.write(text)
 
             self.log.write(text.replace("\n", "\n" + ts() + " - "))
+            self.log.flush()
 
         # Check whether a better driver is found based on the incoming data.
         old_driver = self.get_driver()
@@ -377,6 +378,7 @@ class Protocol(object):
         s = self.get_driver().name + ': ' + msg + '\n'
         # self.stderr.write(s.replace("\n", "\n" + ts() + " - "))
         self.stderr.write(ts() + " - L%s %s" % (level, s))
+        self.stderr.flush()
 
     def set_driver(self, driver=None):
         """

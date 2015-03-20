@@ -66,6 +66,12 @@ class DevConf(object):
 
         self.connect()
 
+    def write_log_file(self, s):
+        helpers.file_write_append_once(self._logfile, s)
+
+    def write_debug_file(self, s):
+        helpers.file_write_append_once(self._debugfile, s)
+
     def log_file(self):
         if self._logfile == None:
             self._logfile = ('%s/devconf_conversation.%s.log'
@@ -77,7 +83,7 @@ class DevConf(object):
                 is_console = 'no'
             else:
                 is_console = 'yes'
-            helpers.file_write_append_once(self._logfile,
+            self.write_log_file(
                     "\n\n--------- %s New devconf conversation for '%s' (user=%s password=%s protocol=%s console=%s)\n\n"
                     % (helpers.ts_long_local(), self._name, self._user, self._password, transport_proto, is_console))
         return self._logfile
@@ -100,7 +106,7 @@ class DevConf(object):
                 is_console = 'no'
             else:
                 is_console = 'yes'
-            helpers.file_write_append_once(self._debugfile,
+            self.write_debug_file(
                     "\n\n--------- %s New devconf debug for '%s' (user=%s password=%s protocol=%s console=%s)\n\n"
                     % (helpers.ts_long_local(), self._name, self._user, self._password, transport_proto, is_console))
         return self._debugfile
@@ -196,7 +202,7 @@ class DevConf(object):
                     if self._console_info['type'] == 'telnet':
                         helpers.log("Connecting to console via telnet")
                     elif self._console_info['type'] == 'libvirt':
-                        helpers.log("Connecting to console via ssh (libvirt console)")
+                        helpers.log("Connecting to console server via ssh (libvirt console server)")
                         conn.login(account)
                     else:
                         helpers.environment_failure("Unsupported console type")
@@ -545,8 +551,14 @@ class DevConf(object):
         return self.result()['content']
 
     def close(self):
-        # helpers.log("Closing DevConf '%s' (%s)" % (self.name(), self._host))
         self.conn.close(force=True)
+        helpers.log("Closed DevConf '%s' (%s)" % (self.name(), self._host))
+        self.write_log_file(
+                "\n\n--------- %s Closed devconf conversation for '%s'\n\n"
+                % (helpers.ts_long_local(), self._name))
+        self.write_debug_file(
+                "\n\n--------- %s Closed devconf debug for '%s'\n\n"
+                % (helpers.ts_long_local(), self._name))
 
 
 class BsnDevConf(DevConf):

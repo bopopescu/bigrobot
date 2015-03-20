@@ -24,7 +24,7 @@ c2:
  user: recovery
  password: bsn
  console: 
-   ip: 10.8.4.150
+   ip: 10.8.0.56
    libvirt_vm_name: vui_c2_20150319_03191438
    user: root
    password: bsn
