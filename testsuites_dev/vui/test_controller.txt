@@ -337,4 +337,5 @@ Test get_node_hostname
 Test sudo
     #[Tags]  skipped
     test sudo        c1
+    get active node names
 

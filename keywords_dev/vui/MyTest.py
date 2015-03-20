@@ -1421,6 +1421,7 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         h.sudo("cat /etc/passwd")
         h.sudo("uptime")
 
-
+        c = t.node_spawn(h.ip())
+        c.bash("uname -n")
 
 

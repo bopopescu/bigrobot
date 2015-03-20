@@ -1826,7 +1826,7 @@ class Test(object):
 
     def t5_clean_configuration(self, name):
         '''
-            Objective: Delete all user configuration
+        Objective: Delete all user configuration
         '''
         t = self
         c = t.controller(name)
@@ -1842,3 +1842,11 @@ class Test(object):
         c.config("show running-config")
 
         return True
+
+    def active_node_names(self):
+        """
+        Return a list of node names which are still active (i.e., open sessions)
+        """
+        nodes = a_node.active_nodes()
+        helpers.log("Active nodes:\n%s" % helpers.prettify(nodes))
+        return nodes

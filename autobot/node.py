@@ -2,6 +2,13 @@ import autobot.devconf as devconf
 import autobot.helpers as helpers
 from autobot.bsn_restclient import BsnRestClient
 
+# Global variables
+_active_nodes = []
+
+
+def active_nodes():
+    return _active_nodes
+
 
 class Node(object):
     def __init__(self, name, ip, user=None, password=None, t=None,
@@ -75,6 +82,8 @@ class Node(object):
                         % name)
         else:
             self.pingable_or_die()
+        if name not in _active_nodes:
+            _active_nodes.append(name)
 
     def name(self):
         return self._name
@@ -239,6 +248,8 @@ class Node(object):
                         % self.name())
         else:
             self.devconf().close()
+        if self._name in _active_nodes:
+            _active_nodes.remove(self._name)
 
 
 class ControllerNode(Node):
