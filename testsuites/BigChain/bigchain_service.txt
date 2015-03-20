@@ -402,7 +402,7 @@ TC025: Service Policy: Verify IPv4 based Big Chain address-groups can be configu
     Should be True  ${result2}
     ${result3}=  rest delete bigchain address group  chain_addressgrp_name=${addressgrp_name}
     Should be True  ${result2}
-    [Tags]  feature
+    [Tags]  feature  skipped
 
 
 TC026: Service Policy: Verify IPv6 based Big Chain address-groups can be configured
@@ -413,7 +413,7 @@ TC026: Service Policy: Verify IPv6 based Big Chain address-groups can be configu
     Should be True  ${result2}
     ${result3}=  rest delete bigchain address group  chain_addressgrp_name=${addressgrp_name}
     Should be True  ${result2}
-    [Tags]  feature
+    [Tags]  feature  skipped
 
 TC027: Service Policy: Verify match condition can use IPv4 address-groups
     ${result1}=  rest add bigchain address group  chain_addressgrp_name=${addressgrp_name}  chain_addressgrp_data=100.1.1.1 255.255.255.255 101.1.1.1 255.255.255.252 102.1.1.1 255.255.255.248 103.1.1.1 255.255.255.240 104.1.1.1 255.255.255.224 105.1.1.1 255.255.255.192 106.1.1.1 255.255.255.128 107.1.1.1 255.255.255.0 108.1.1.1 255.255.254.0 109.1.1.1 255.255.252.0 110.1.1.1 255.255.248.0 111.1.1.1 255.255.240.0 112.1.1.1 255.255.224.0 113.1.1.1 255.255.192.0 114.1.1.1 255.255.128.0 115.1.1.1 255.255.0.0
@@ -439,7 +439,7 @@ TC027: Service Policy: Verify match condition can use IPv4 address-groups
     sleep  5
     ${result1}=  rest verify bigchain service policy  chain_service_name=${service_name}  sequence=1  data=ether-type 2048 sequence 1 src-ip-list ${addressgrp_name}
     Should be True  ${result1}
-    [Tags]  feature
+    [Tags]  feature  skipped
 
 TC028: Service Policy: Verify match condition can use IPv6 address-groups
     ${result1}=  rest add bigchain address group  chain_addressgrp_name=${addressgrp_name}  chain_addressgrp_type=ipv6  chain_addressgrp_data=2001::1 ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff 2002::1 ffff:ffff:ffff:ffff:ffff:ffff:ffff:0 2003::1 ffff:ffff:ffff:ffff:ffff:ffff:0:0 2004::1 ffff:ffff:ffff:ffff:ffff:0:0:0 2005::1 ffff:ffff:ffff:ffff:0:0:0:0 2006::1 ffff:ffff:ffff:0:0:0:0:0 2007::1 ffff:ffff:0:0:0:0:0:0 2008::1 ffff:0:0:0:0:0:0:0
@@ -465,7 +465,7 @@ TC028: Service Policy: Verify match condition can use IPv6 address-groups
     sleep  5
     ${result1}=  rest verify bigchain service policy  chain_service_name=${service_name}  sequence=1  data=ether-type 34525 sequence 1 src-ip-list ${addressgrp_name}
     Should be True  ${result1}
-    [Tags]  feature
+    [Tags]  feature  skipped
 
 TC029: Service Policy: Verify traffic that does not match the policy bypasses the service.
     config  node=master  cmd=bigchain service ${service_name}
@@ -554,14 +554,13 @@ TC030: Service Policy: Verify with traffic, action do-service
     start traffic  ${stream_l3_as5710}
     sleep  10
     stop traffic  ${stream_l3_as5710}
-    pause
     ${intf_1}=  cli return interface counter brief  s1  ${service_in_interface1}  tx
     Should Be True  ${intf_1} > 99990
     Should Be True  ${intf_1} < 100100
     ${intf_2}=  cli return interface counter brief  s1  ${service_out_interface1}  rx
     Should Be True  ${intf_2} > 99990
     Should Be True  ${intf_2} < 100100
-    [Tags]  feature  runthis
+    [Tags]  feature
 
 TC031: Service Policy: Verify with traffic, action drop
     config  node=master  cmd=bigchain service ${service_name}
@@ -1328,9 +1327,9 @@ service test teardown
     config  node=master  cmd=no bigchain span-service ${span_service_name}
     ${content2}=  cli_content  node=master
     Should Not Contain  ${content2}  Error
-    config  node=master  cmd=no bigchain address-group ${addressgrp_name}
-    ${content2}=  cli_content  node=master
-    Should Not Contain  ${content2}  Error
+    #config  node=master  cmd=no bigchain address-group ${addressgrp_name}
+    #${content2}=  cli_content  node=master
+    #Should Not Contain  ${content2}  Error
     delete traffic
     sleep  2
     ${result1}=  stop syslog monitor
