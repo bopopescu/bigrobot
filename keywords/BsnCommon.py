@@ -67,7 +67,11 @@ class BsnCommon(object):
             # to ever fail...
             pass
 
-        self.get_active_node_names()
+        if self.get_active_node_names():
+            # This is mostly like caused when users call t.node_spawn(<ip>) but
+            # then forget to close the session. Nodes which are spawned in this
+            # manner are not automatically garbage collected.
+            helpers.warn("Active nodes found during teardown. Possible memory leaks.")
         return True
 
     def base_test_setup(self):
