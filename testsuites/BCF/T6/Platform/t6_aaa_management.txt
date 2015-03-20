@@ -1468,7 +1468,7 @@ AAA Suite Setup
     ${tmp}=  Generate Random String  1   [NUMBERS]
     Run Keyword If  ${tmp} > 8
     ...  Set Suite Variable  ${timeout}  5
-    ...  ELSE If  ${tmp} < 1
+    ...  ELSE IF  ${tmp} < 1
     ...  Set Suite Variable  ${timeout}  5
     ...  ELSE
     ...  Set Suite Variable  ${timeout}  ${tmp}
