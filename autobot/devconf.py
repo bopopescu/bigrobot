@@ -196,7 +196,7 @@ class DevConf(object):
                     if self._console_info['type'] == 'telnet':
                         helpers.log("Connecting to console via telnet")
                     elif self._console_info['type'] == 'libvirt':
-                        helpers.log("Connecting to console via ssh (libvirt console)")
+                        helpers.log("Connecting to console server via ssh (libvirt console server)")
                         conn.login(account)
                     else:
                         helpers.environment_failure("Unsupported console type")
