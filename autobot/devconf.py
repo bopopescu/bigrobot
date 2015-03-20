@@ -169,6 +169,23 @@ class DevConf(object):
         return self._mode
 
     def connect(self):
+        def _do_connect():
+            conn.connect(self._host, self._port)
+
+            if self._console_info:
+                if self._console_info['type'] == 'telnet':
+                    helpers.log("Connecting to console via telnet")
+                elif self._console_info['type'] == 'libvirt':
+                    helpers.log("Connecting to console server via ssh (libvirt console server)")
+                    conn.login(account)
+                else:
+                    helpers.environment_failure("Unsupported console type")
+
+                # Note: User needs to figure out what state the console is in
+                #       and manage it themself.
+            else:
+                conn.login(account)
+
         try:
             if self._protocol == 'telnet' or self._protocol == 'ssh':
                 auth_info = "(login:%s, password:%s)" % (self._user,
@@ -196,21 +213,8 @@ class DevConf(object):
                                     % (self._host, self._port, auth_info))
                     conn = SSH2(debug=self._debug, logfile=self.log_file(), debugfile=self.debug_file())
 
-                conn.connect(self._host, self._port)
+                _do_connect()
 
-                if self._console_info:
-                    if self._console_info['type'] == 'telnet':
-                        helpers.log("Connecting to console via telnet")
-                    elif self._console_info['type'] == 'libvirt':
-                        helpers.log("Connecting to console server via ssh (libvirt console server)")
-                        conn.login(account)
-                    else:
-                        helpers.environment_failure("Unsupported console type")
-
-                    # Note: User needs to figure out what state the console is in
-                    #       and manage it themself.
-                else:
-                    conn.login(account)
                 helpers.log("Devconf conversation for '%s' logged to %s"
                             % (self._name, self.log_file()))
 
