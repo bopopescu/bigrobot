@@ -18,7 +18,7 @@ c1:
    user: root
    password: bsn
 c2:
- ip: 10.8.4.128
+ ip: 10.8.4.150
  set_session_ssh: false
  set_init_ping: false
  user: recovery
