@@ -937,7 +937,7 @@ TC033: Verify span-policy match condition Match on Vlan-ID (IPv4 Traffic)
     ${intf_1_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
     Should Be True  ${intf_1_tx} > 99990
     Should Be True  ${intf_1_tx} < 100100
-    [Tags]  feature  full  match-conditions  runthis
+    [Tags]  feature  full  match-conditions
 
 TC034: Verify span-policy match condition Match on Vlan-ID (IPv6 Traffic)
     ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
@@ -967,7 +967,7 @@ TC034: Verify span-policy match condition Match on Vlan-ID (IPv6 Traffic)
     ${intf_1_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
     Should Be True  ${intf_1_tx} > 99990
     Should Be True  ${intf_1_tx} < 100100
-    [Tags]  feature  full  match-conditions  runthis
+    [Tags]  feature  full  match-conditions
 
 TC035: Verify span-policy match condition Match on Vlan-ID Range (IPv4 Traffic)
     ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
@@ -997,7 +997,7 @@ TC035: Verify span-policy match condition Match on Vlan-ID Range (IPv4 Traffic)
     ${intf_1_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
     Should Be True  ${intf_1_tx} > 99990
     Should Be True  ${intf_1_tx} < 100100
-    [Tags]  feature  full  match-conditions  runthis
+    [Tags]  feature  full  match-conditions
 
 TC036: Verify span-policy match condition Match on Vlan-ID Range (IPv6 Traffic)
     ${config1}=  rest add bigchain span service  s1  span_service_name=${span_service_name_1}  span_instance_id=1  span_interface=${span_service_interface_1}
@@ -1027,7 +1027,7 @@ TC036: Verify span-policy match condition Match on Vlan-ID Range (IPv6 Traffic)
     ${intf_1_tx}=  cli return interface counter brief  s1  ${span_service_interface_1}  tx
     Should Be True  ${intf_1_tx} > 99990
     Should Be True  ${intf_1_tx} < 100100
-    [Tags]  feature  full  match-conditions  runthis
+    [Tags]  feature  full  match-conditions
     
 * Keywords
 span suite setup
