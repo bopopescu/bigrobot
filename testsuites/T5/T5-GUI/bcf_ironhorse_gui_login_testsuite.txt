@@ -89,6 +89,7 @@ config suite setup
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
+    Set Selenium Timeout  20
     Rest Add Tacacs Server  10.2.3.201  secret  10
     Rest Add Tacacs Authentication
     CLI Configure User    test    adminadmin
