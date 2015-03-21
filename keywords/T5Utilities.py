@@ -920,7 +920,7 @@ class T5Utilities(object):
                 log_msg = ("Error running '%s' as user %s, %s; console - %s"
                            % (command, user, password, console))
                 helpers.log(log_msg)
-                if console: c.close()
+                if console or reauth: c.close()
                 helpers.test_failure(output, soft_error)
                 return False
         except:
@@ -933,11 +933,11 @@ class T5Utilities(object):
                     output = c.cli_content()
                 else:
                     output = "Login failure"
-            if console: c.close()
+            if console or reauth: c.close()
             helpers.test_failure(output, soft_error)
             return False
         else:
-            if console: c.close()
+            if console or reauth: c.close()
             return True
 
 
