@@ -1256,6 +1256,8 @@ Create Port Group
 
     Verify Page Contains Element  ${SAVE SWITCH CONFIG BUTTON}
 	Click Element  ${SAVE SWITCH CONFIG BUTTON}  and don't wait
+	
+	Sleep  5
 
 	Verify Element Invisible  ${CREATE PORT GROUP POPUP}
 	Verify Page Contains Text  ${name}
