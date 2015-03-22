@@ -139,7 +139,7 @@ s6:
 s7:
   alias: spine0
   fabric-role: spine
-  mac: ec:f4:bb:fb:d7:81
+  mac: 70:72:CF:A3:C4:E0
   user: admin
   password: adminadmin
   console:
