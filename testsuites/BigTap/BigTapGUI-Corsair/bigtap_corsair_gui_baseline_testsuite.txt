@@ -38,14 +38,14 @@ T1.7 Check Big Tap Interfaces Page
 T1.8 Check Big Tap Host Tracker Page
     Go To Big Tap Host Tracker Page
     [Tags]  corsair  sanity  feature
-T1.9 Check Big Tap DHCP Servers Page
-    Go To Big Tap DHCP Servers Page
+T1.9 Check Big Tap DHCP Tracker Page
+    Go To Big Tap DHCP Tracker Page
     [Tags]  corsair  sanity  feature
-T1.10 Check Big Tap DNS Servers Page
-    Go To Big Tap DNS Servers Page
+T1.10 Check Big Tap DNS Tracker Page
+    Go To Big Tap DNS Tracker Page
     [Tags]  corsair  sanity  feature   
-T1.11 Check Big Tap Observed IP Addresses Page
-    Go To Big Tap Observed IP Addresses Page
+T1.11 Check Big Tap Observed IP Tracker Page
+    Go To Big Tap Observed IP Tracker Page
     [Tags]  corsair  sanity  feature
 T1.12 Check Big Tap IP Lists Page
     Go To Big Tap IP Lists Page
