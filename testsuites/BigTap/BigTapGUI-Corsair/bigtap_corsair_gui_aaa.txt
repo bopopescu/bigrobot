@@ -3,7 +3,7 @@ Documentation  		GUI AAA testsuite
 Suite Setup  		AAA Suite Setup
 Suite Teardown		AAA Suite Teardown
 Test Setup   		Base Test Setup
-Test Teardown  		Base Test Teardown
+Test Teardown  		AAA Test Teardown
 Force Tags   		Big Tap  AAA  GUI
 Library             keywords/BsnCommon.py
 Library             keywords/BsnSelenium.py
@@ -19,26 +19,26 @@ Library             String
 *** Test Cases ***
 T1.0 Authorization - remote > local, authentication remote > local
 	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default group tacacs+ local
-	#Verify admin access
-	#Verify read-only access
+	Verify admin access
+	Verify read-only access
 	Verify rbac access
 
 T2.0 Authorization - remote > local, authentication local > remote
 	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default local group tacacs+
-	#Verify admin access
-	#Verify read-only access
+	Verify admin access
+	Verify read-only access
 	Verify rbac access
 
 T3.0 Authorization - local > remote, authentication local > remote
 	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default local group tacacs+
-	#Verify admin access
-	#Verify read-only access
+	Verify admin access
+	Verify read-only access
 	Verify rbac access
 
 T4.0 Authorization - local > remote, authentication remote > local
 	BT Cli Run  master  enable; config; aaa authorization exec default local group tacacs+; aaa authentication login default group tacacs+ local
-	#Verify admin access
-	#Verify read-only access
+	Verify admin access
+	Verify read-only access
 	Verify rbac access
 	
 	#Intermission
@@ -65,7 +65,7 @@ T8.0 Authorization - local, authentication remote
 	Valid Login   taco-user  taco
 	Configure Big Tap Policy	policy-remote-3	 local-rbac		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
 	Delete Big Tap Policy  policy-remote-3
-	#Run Keyword and Ignore Error  BT Cli Run  master  logout  user=taco-user  password=taco
+	Run Keyword and Ignore Error  BT Cli Run  master  logout  user=taco-user  password=taco
 	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
 
 	#Intermission
@@ -134,6 +134,7 @@ T16.0 Authorization - remote > local, authentication remote
 *** Keywords ***
 AAA Suite Setup
 	Base Suite Setup
+	Bash  master  cp /opt/bigswitch/bigdb/db/config-bigtap.json /opt/bigswitch/bigdb/db/startup-config.json
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
@@ -143,24 +144,26 @@ AAA Suite Setup
     Open Browser To Login Page
     Valid Login  admin  adminadmin
     Delete All Big Tap Resources
-    ${switch_dpid_s1}=  rest return switch dpid from ip  s1
+    #${switch_dpid_s1}=  rest return switch dpid from ip  s1
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
     ${switch_dpid_s3}=  rest return switch dpid from ip  s3
     ${switch_dpid_s4}=  rest return switch dpid from ip  s4
     ${switch_dpid_s5}=  rest return switch dpid from ip  s5
-    Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
+    #Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
     Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
     Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
     Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
     Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1  
     Set Switching Mode  L3-L4 Offset Match 
-	#BT Cli Run  master  enable; config; ssh connection timeout 300
+	BT Cli Run  master  enable; config; ssh connection timeout 300
 	BT Cli Run  master  enable; config; tacacs server host 10.2.3.201 timeout 5 key secret
 	Configure User  local  local   local   ${EMPTY}  ${EMPTY}
 	Configure User  taco-user  local   local   ${EMPTY}  ${EMPTY}
 	Configure User  longevity  local   local   ${EMPTY}  ${EMPTY}
 	BT Cli Run  master  enable; config; group read-only; associate user local
+	
 	#Configure Group	 read-only  local  ${EMPTY}
+	
 	Configure User  rbac-user  local   local   ${EMPTY}  ${EMPTY}
 	Configure User  local-rbac-user  local   local   ${EMPTY}  ${EMPTY}
 	Configure RBAC	 local-rbac	 ${EMPTY}  ${EMPTY}	  ${EMPTY}	${EMPTY}	${EMPTY}   ${EMPTY}   ${EMPTY}
@@ -173,17 +176,21 @@ AAA Suite Setup
     Configure Big Tap Interface from Big Tap Menu            ethernet4              app-rlb9-intern1       delivery         ixia-2-15
 	Configure Big Tap Interface Group from Big Tap Menu      filter                 filter-group          ixia-2-9
 	Configure Big Tap Policy	test-pol-read-only	 admin-view		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
-	
+	Bash  master  cp /opt/bigswitch/bigdb/db/config-bigtap.json /opt/bigswitch/bigdb/db/test-config.json
 
 AAA Suite Teardown
-	${status}=  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
-    Run Keyword If  '${status}'=='None'  BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
-	Valid Login  admin  adminadmin
-	Delete All Big Tap Resources
-	#BT Cli Run  master  enable; config; no tacacs server host 10.2.3.201
-	#BT Cli Run  master  enable; config; ssh connection timeout 0
+    BT Cli Run  master  sudo cp /opt/bigswitch/bigdb/db/startup-config.json /opt/bigswitch/bigdb/db/config-bigtap.json  user=recovery  password=bsn
+    BT Cli Run  master  sudo service floodlight restart  user=recovery  password=bsn
+    Sleep  10
 	Base Suite Teardown
 
+AAA Test Teardown
+    Run Keyword If Test Failed
+    ...  BT Cli Run  master  sudo cp /opt/bigswitch/bigdb/db/test-config.json /opt/bigswitch/bigdb/db/config-bigtap.json; sudo service floodlight restart  user=recovery  password=bsn
+    Run Keyword If Test Failed
+    ...  Sleep  10
+    Base Test Teardown
+    
 Verify admin access
 	Verify local admin
 	Verify remote admin using shell:roles=bigtap-admin
@@ -327,9 +334,9 @@ Verify local read-only user
 	Check Big Tap Services Page for read-only user
 	Check Big Tap Interfaces Page for read-only user
 	Check Big Tap Host Tracker Page for read-only user
-	Check Big Tap DHCP Servers Page for read-only user
-	Check Big Tap DNS Servers Page for read-only user
-	Check Big Tap Observed IP Addresses Page for read-only user
+	Check Big Tap DHCP Tracker Page for read-only user
+	Check Big Tap DNS Tracker Page for read-only user
+	Check Big Tap Observed IP Tracker Page for read-only user
 	Check Big Tap IP Lists Page for read-only user
 	Check Big Tap Interface Groups Page for read-only user
 	Check Big Tap User Defined Offsets Page for read-only user
@@ -350,9 +357,9 @@ Verify remote read-only user using shell:roles=bigtap-read-only
 	Check Big Tap Services Page for read-only user
 	Check Big Tap Interfaces Page for read-only user
 	Check Big Tap Host Tracker Page for read-only user
-	Check Big Tap DHCP Servers Page for read-only user
-	Check Big Tap DNS Servers Page for read-only user
-	Check Big Tap Observed IP Addresses Page for read-only user
+	Check Big Tap DHCP Tracker Page for read-only user
+	Check Big Tap DNS Tracker Page for read-only user
+	Check Big Tap Observed IP Tracker Page for read-only user
 	Check Big Tap IP Lists Page for read-only user
 	Check Big Tap Interface Groups Page for read-only user
 	Check Big Tap User Defined Offsets Page for read-only user
@@ -372,9 +379,9 @@ Verify remote read-only user using shell:roles=read-only
 	Check Big Tap Services Page for read-only user
 	Check Big Tap Interfaces Page for read-only user
 	Check Big Tap Host Tracker Page for read-only user
-	Check Big Tap DHCP Servers Page for read-only user
-	Check Big Tap DNS Servers Page for read-only user
-	Check Big Tap Observed IP Addresses Page for read-only user
+	Check Big Tap DHCP Tracker Page for read-only user
+	Check Big Tap DNS Tracker Page for read-only user
+	Check Big Tap Observed IP Tracker Page for read-only user
 	Check Big Tap IP Lists Page for read-only user
 	Check Big Tap Interface Groups Page for read-only user
 	Check Big Tap User Defined Offsets Page for read-only user
@@ -394,9 +401,9 @@ Verify remote read-only user using BSN-User-Role=bigtap-read-only
 	Check Big Tap Services Page for read-only user
 	Check Big Tap Interfaces Page for read-only user
 	Check Big Tap Host Tracker Page for read-only user
-	Check Big Tap DHCP Servers Page for read-only user
-	Check Big Tap DNS Servers Page for read-only user
-	Check Big Tap Observed IP Addresses Page for read-only user
+	Check Big Tap DHCP Tracker Page for read-only user
+	Check Big Tap DNS Tracker Page for read-only user
+	Check Big Tap Observed IP Tracker Page for read-only user
 	Check Big Tap IP Lists Page for read-only user
 	Check Big Tap Interface Groups Page for read-only user
 	Check Big Tap User Defined Offsets Page for read-only user
@@ -416,9 +423,9 @@ Verify remote read-only user using BSN-User-Role=read-only
 	Check Big Tap Services Page for read-only user
 	Check Big Tap Interfaces Page for read-only user
 	Check Big Tap Host Tracker Page for read-only user
-	Check Big Tap DHCP Servers Page for read-only user
-	Check Big Tap DNS Servers Page for read-only user
-	Check Big Tap Observed IP Addresses Page for read-only user
+	Check Big Tap DHCP Tracker Page for read-only user
+	Check Big Tap DNS Tracker Page for read-only user
+	Check Big Tap Observed IP Tracker Page for read-only user
 	Check Big Tap IP Lists Page for read-only user
 	Check Big Tap Interface Groups Page for read-only user
 	Check Big Tap User Defined Offsets Page for read-only user
