@@ -23,48 +23,80 @@ ${chain_interface_2}  ethernet6
 TC01: Verify chain name can have all lower-case alphabet in its name
 	Create a BigChain Chain		mybigchain		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
 	Delete All BigChain Chains
+	[Tags]  feature  full  chain
+	
 TC02: Verify chain name can have all upper-case alphabet in its name
 	Create a BigChain Chain		MYBIGCHAIN		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
 	Delete All BigChain Chains
+	[Tags]  feature  full  chain
+	
 TC03: Verify chain name can have a mix of lower-case and upper-case alphabet in its name
 	Create a BigChain Chain		MyBiGcHaIn		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
 	Delete All BigChain Chains
+	[Tags]  feature  full  chain
+	
 TC04: Verify chain name can have alphanumeric (alphabet all lower-case) characters in its name
 	Create a BigChain Chain		mybigchain1234		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
 	Delete All BigChain Chains
+	[Tags]  feature  full  chain
+	
 TC05: Verify chain name can have alphanumeric (alphabet all upper-case) characters in its name
 	Create a BigChain Chain		MYBIGCHAIN1234		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
 	Delete All BigChain Chains
+	[Tags]  feature  full  chain
+	
 TC06: Verify chain name can have an alphanumeric name with a dot
 	Create a BigChain Chain		MyBiG.cHa1n		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
 	Delete All BigChain Chains
+	[Tags]  feature  full  chain
+	
 TC07: Verify chain name can have an alphanumeric name with a -
 	Create a BigChain Chain		MyBiG-cHa1n		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
 	Delete All BigChain Chains
+	[Tags]  feature  full  chain
+	
 TC08: Verify chain name can have an alphanumeric name with a _
 	Create a BigChain Chain		MyBiG_cHa1n		app-rlb9-intern1	${chain_interface_1}		${chain_interface_2}		${EMPTY}		${EMPTY}		${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
 	Delete All Big Chain Chains
+	[Tags]  feature  full  chain
+	
 ### Check Service Name configuration
 ###								name				type		description		action		health check		rule
-TC09: Verify chain service name can have all lower-case alphabet in its name
+TC09: Verify service name can have all lower-case alphabet in its name
 	Create a BigChain Service	mybigchain			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
-TC010: Verify chain service name can have all upper-case alphabet in its name
+	[Tags]  feature  full  chain-service
+	
+TC010: Verify service name can have all upper-case alphabet in its name
 	Create a BigChain Service	MYBIGCHAIN			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
-TC11: Verify chain name can have a mix of lower-case and upper-case alphabet in its name
+	[Tags]  feature  full  chain-service
+	
+TC11: Verify service name can have a mix of lower-case and upper-case alphabet in its name
 	Create a BigChain Service		MyBiGcHaIn			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
-TC12: Verify chain name can have alphanumeric (alphabet all lower-case) characters in its name
+	[Tags]  feature  full  chain-service
+	
+TC12: Verify service name can have alphanumeric (alphabet all lower-case) characters in its name
 	Create a BigChain Service		mybigchain1234		All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
-TC13: Verify chain name can have alphanumeric (alphabet all upper-case) characters in its name
+	[Tags]  feature  full  chain-service
+	
+TC13: Verify service name can have alphanumeric (alphabet all upper-case) characters in its name
 	Create a BigChain Service		MYBIGCHAIN1234		All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
-TC14: Verify chain name can have an alphanumeric name with a dot
+	[Tags]  feature  full  chain-service
+	
+TC14: Verify service name can have an alphanumeric name with a dot
 	Create a BigChain Service		MyBiG.cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
-TC15: Verify chain name can have an alphanumeric name with a -
+	[Tags]  feature  full  chain-service
+	
+TC15: Verify service name can have an alphanumeric name with a -
 	Create a BigChain Service		MyBiG-cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
-TC16: Verify chain name can have an alphanumeric name with a _
+	[Tags]  feature  full  chain-service
+	
+TC16: Verify service name can have an alphanumeric name with a _
 	Create a BigChain Service		MyBiG_cHa1n			All			${EMPTY}		${EMPTY}	${EMPTY}		${EMPTY}
+	[Tags]  feature  full  chain-service
 	
 TC017 Delete All Big Chain Services
 	Configure Switch Deployment Role   ${switch_dpid_s3}   app-rlb9-intern1  Big Tap
+	[Tags]  feature  full  chain
 
 
 * Keyword
