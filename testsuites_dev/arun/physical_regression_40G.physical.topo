@@ -148,15 +148,15 @@ s7:
   set_session_ssh: false
   set_init_ping: false
   pdu:
-    ip: pdu-111-a.bigswitch.com
-    port: 2
+    ip: pdu-111-b.bigswitch.com
+    port: 3
   interfaces:
-    leaf0a_int0: ethernet9
-    leaf1a_int0: ethernet5
-    leaf0b_int0: ethernet21
-    leaf1b_int0: ethernet29
-    leaf2a_int0: ethernet17
-    leaf2b_int0: ethernet25
+    leaf0a_int0: ethernet21
+    leaf1a_int0: ethernet2
+    leaf0b_int0: ethernet7
+    leaf1b_int0: ethernet13
+    leaf2a_int0: ethernet29
+    leaf2b_int0: ethernet26
 
 s8:
   alias: spine1
