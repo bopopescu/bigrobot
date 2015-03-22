@@ -30,7 +30,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c= t.controller()
+            c= t.controller('master')
             
             try:
                 string = "user %s" % str(username)
@@ -65,7 +65,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c= t.controller()
+            c= t.controller('master')
 
             try:
                 url = '/rest/v1/model/controller-alias/'

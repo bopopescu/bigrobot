@@ -18,10 +18,10 @@ Library         	keywords/Ixia.py
 
 
 TC Set up
-		#Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-1				filter			ixia-2-9
-		#Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-intern1		delivery		ixia-2-15	
-		#Configure Big Tap Interface from Big Tap Menu					ethernet2			app-rly2-1 				delivery		ixia-4-8
-		#Configure Big Tap Policy					 					policy-stats		admin-view				Forward			IPv4 - 0x800 (2048)		ixia-2-9	ixia-2-15	${EMPTY}	${EMPTY}	${EMPTY}	
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-1				filter			ixia-2-9
+		Configure Big Tap Interface from Big Tap Menu					ethernet1			app-rlb9-intern1		delivery		ixia-2-15	
+		Configure Big Tap Interface from Big Tap Menu					ethernet2			app-rly2-1 				delivery		ixia-4-8
+		Configure Big Tap Policy					 					policy-stats		admin-view				Forward			IPv4 - 0x800 (2048)		ixia-2-9	ixia-2-15	${EMPTY}	${EMPTY}	${EMPTY}	
 		${stream}=  L3 add  name=policy-stats  flow=a->b  frame_cnt=1000
     	...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
     	...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  no_arp=True
@@ -137,23 +137,23 @@ TC2.23 Verify packet count for delivery interface on Big Tap Interface page.
 TC2.24 Verify packet count for service interface on Big Tap Interface page.				
 	Verify Stats on Big Tap Interfaces Page									 			${EMPTY}		Service				packet-count	0	
 TC2.25 Verify dropped packet count tx for filter interface on Big Tap Interface page.				
-	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-9		Filter				packets-dropped-tx		0
+	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-9		Filter				packets-dropped-tx
 TC2.26 Verify dropped packet count rx for filter interface on Big Tap Interface page.				
-	Verify No Drop Stats on Big Tap Interfaces Page							 			ixia-2-9		Filter				packets-dropped-rx		0
+	Verify No Drop Stats on Big Tap Interfaces Page							 			ixia-2-9		Filter				packets-dropped-rx
 TC2.27 Verify dropped packet count tx for delivery interface on Big Tap Interface page.				
-	Verify No Drop Stats on Big Tap Interfaces Page							 			ixia-2-15		Delivery			packets-dropped-tx		0			
+	Verify No Drop Stats on Big Tap Interfaces Page							 			ixia-2-15		Delivery			packets-dropped-tx			
 TC2.28 Verify dropped packet count rx for delivery interface on Big Tap Interface page.				
-	Verify No Drop Stats on Big Tap Interfaces Page							 			ixia-2-15		Delivery			packets-dropped-rx		0	
+	Verify No Drop Stats on Big Tap Interfaces Page							 			ixia-2-15		Delivery			packets-dropped-rx	
 TC2.29 Verify packet count for filter interface on Big Tap page.				
 	Verify Policy Packet Count												 			policy-stats	ixia-2-9			Interfaces		Filter		1000
 TC2.30 Verify packet count for delivery interface on Big Tap page.				
 	Verify Policy Packet Count												 			policy-stats	ixia-2-15			Interfaces		Delivery	1000		
 TC2.31 Verify packet count for service interface on Big Tap page.				
-	Verify Policy Packet Count												 			policy-stats	${EMPTY}			Interfaces		Service		0
+	Verify Policy Packet Count												 			policy-stats	${EMPTY}			Interfaces		Service	
 TC2.32 Verify dropped packet count for filter interface on Big Tap page.				
-	Verify Policy Packet Count												 			policy-stats	ixia-2-9			Interfaces		Filter		0
+	Verify Policy Packet Count												 			policy-stats	ixia-2-9			Interfaces		Filter
 TC2.33 Verify dropped packet count for delivery interface on Big Tap page.				
-	Verify Policy Packet Count												 			policy-stats	ixia-2-15			Interfaces		Delivery	0		
+	Verify Policy Packet Count												 			policy-stats	ixia-2-15			Interfaces		Delivery		
 TC2.34 Verify Clear stats button work on Big Tap Interfaces page
 	Verify Clear Stats Button															Interfaces
 TC2.35 Verify Clear stats button work on Big Tap Policies page
@@ -217,13 +217,13 @@ TC3.19 Verify bit rate for delivery interface on Big Tap Interface page.
 TC3.20 Verify bit rate for service interface on Big Tap Interface page.				
 	Verify Stats on Big Tap Interfaces Page												${EMPTY}		Service				bit-rate		100000	
 TC2.21 Verify dropped packet rate tx for filter interface on Big Tap Interface page.				
-	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-9		Filter				packet-dropp-rate-tx		0
+	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-9		Filter				packet-dropp-rate-tx
 TC2.22 Verify dropped packet rate rx for filter interface on Big Tap Interface page.				
-	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-9		Filter				packet-dropp-rate-rx		0		
+	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-9		Filter				packet-dropp-rate-rx		
 TC2.23 Verify dropped packet rate tx for delivery interface on Big Tap Interface page.				
-	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-15		Delivery			packet-dropp-rate-tx		0	
+	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-15		Delivery			packet-dropp-rate-tx	
 TC2.24 Verify dropped packet rate rx for delivery interface on Big Tap Interface page.				
-	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-15		Delivery			packet-dropp-rate-tx		0	
+	Verify No Drop Stats on Big Tap Interfaces Page										ixia-2-15		Delivery			packet-dropp-rate-tx	
 TC3.25 Verify packet rate for filter interface on Big Tap page.				
 	Verify Policy Packet Count												 			ixia-2-9		Filter				packet-rate		100000		
 TC3.26 Verify packet rate for delivery interface on Big Tap page.				
@@ -254,9 +254,11 @@ config suite setup
     Start Selenium Server  -trustAllSSLCertificates
     #CLI Start Mininet Server  tree,3
     #Rest Open GUI Port
+    #Sleep  50
     Open Browser To Login Page
+    #Sleep  50
     Valid Login  admin  adminadmin
-    #Delete All Big Tap Resources
+    Delete All Big Tap Resources
 	#Set Switching Mode		L3-L4 Offset Match
 	#Configure Switch Alias	00:00:08:9e:01:ce:b8:6a			app-rlb9-1		 							
  	#Configure Switch Alias	00:00:08:9e:01:e1:86:0e			app-rly2-1

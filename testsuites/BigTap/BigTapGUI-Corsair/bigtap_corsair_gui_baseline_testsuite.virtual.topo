@@ -5,12 +5,13 @@
 # h<n>: Hosts (including bare metal)
 # mn  : Mininet server
 
-#c1:
-   #ip: 10.8.31.2
 c1:
-   #ip: 10.8.31.2
-   ip: 10.9.18.7
+   ip: 10.8.31.5
+#c2:
+	#ip: 10.8.31.6
+#c1:
+   #ip: 10.9.18.7
    
-c2:
-   ip: 10.9.18.8
+#c2:
+   #ip: 10.9.18.8
   
