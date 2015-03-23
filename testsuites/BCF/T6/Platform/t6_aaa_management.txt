@@ -1396,8 +1396,8 @@ Verify Remote User Can Log In via Serial Console
     #Cli Run  ${slave_name}  terminal length 0; show run  user=bsn-vsa-read-only-user  password=bsnbsn  console=True
 
 Verify Recovery Can Log In via SSH
-    Cli Run  ${master_name}  free  user=recovery  password=bsn
-    Cli Run  ${slave_name}  free  user=recovery  password=bsn
+    Cli Run  ${master_name}  free  user=recovery  password=bsn  reauth=True
+    Cli Run  ${slave_name}  free  user=recovery  password=bsn  reauth=True
 
 Verify Recovery Can Log In via Serial Console
     Cli Run  ${master_name}  free  user=recovery  password=bsn  console=True
