@@ -1,0 +1,181 @@
+* Settings
+Documentation      BCF sflow test plan  
+#Suite Setup        
+#Suite Teardown     
+#Force Tags        T5  IronHorse
+#Force Tags         JackFrost  
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py   
+Library         keywords_dev/kranti/ironhorse/T5Switch.py  
+#Library         keywords_dev/kranti/ironhorse/T5SwitchFromController.py
+Library         String
+#Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+
+
+*Variables
+
+${switch1_name}=            leaf0-a
+
+*Test Case
+
+###
+### Section I : BCF sflow confguration from controller 
+###
+###
+
+TC01 Configure sflow collector with tenant and segment
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector consfiguration with tenant and segment for the sflow source ip  
+
+TC02 Configure sflow header size for the sample 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow sample header size  
+
+TC03 Verify sflow header size can be changed and updated within the specified range   
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow sample header size can be updated and configured within the specified range     
+
+TC04 Configure sflow sample rate for the sample 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow sample rate for the sample
+    
+TC05 Configure sflow sample rate for the sample within the specified range 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow sample rate for the sample within the specifed range 
+    
+TC06 Configure sflow counter-interval for the sample 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow counter-interval for the sample   
+
+TC07 Configure max number of sflow collectors(4) with tenant and segment 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector configuration with tenant and segment for the sflow source ip  
+    
+TC08 Configure 5th sflow collector with tenant and segment one more than supported 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Add the 5th sflow collector and it should give proper error message 
+    
+TC09 Delete sflow collector ip with tenant and segment  
+    [Tags]   feature  sflow 
+    Log  Step 1 - Delete the previous sflow collector configuration 
+    Log  Step 2 - Verify that the sflow collector info is deleted from the 
+
+
+## same tenant different segment scenario   
+TC10 sflow collector in the same tenant but different segment 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint same tenant but different segment 
+    Log  Step 2 - Verify that the sflow collector info is pushed down to switch 
+
+TC11 verify the sflow sampling counters in ingress traffic 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint same tenant but different segment 
+    Log  Step 2 - Verify that the sflow sampling is happening at the sample rate at ingress traffic  
+
+TC12 verfiy the sflow collector counters for the sflow sample     
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint same tenant but different segment 
+    Log  Step 2 - Verify that the sflow sampling is happening at the sample rate
+    Log  Step 3 - Verify that the sflow collector counters are showing the sample output to the interface 
+    
+TC13 verify the sflow sampling counters in ingress traffic after changing the sample rate 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint same tenant but different segment
+    Log  Step 2 - Change the sample rate  
+    Log  Step 3 - Verify that the sflow sampling is happening at the sample rate at ingress traffic      
+        
+## Different tenant scenario - collector in one tenant and agent is in another tenant 
+TC14 sflow collector in the different tenant 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint on different tenant 
+    Log  Step 2 - Verify that the sflow collector info is pushed down to switch 
+
+TC15 verify the sflow sampling counters in ingress traffic 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint on different tenant 
+    Log  Step 2 - Verify that the sflow sampling is happening at the sample rate at ingress traffic  
+
+TC16 verfiy the sflow collector counters for the sflow sample     
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint on different tenant 
+    Log  Step 2 - Verify that the sflow sampling is happening at the sample rate
+    Log  Step 3 - Verify that the sflow collector counters are showing the sample output to the interface 
+    
+TC17 verify the sflow sampling counters in ingress traffic after changing the sample rate 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint on different tenant
+    Log  Step 2 - Change the sample rate  
+    Log  Step 3 - Verify that the sflow sampling is happening at the sample rate at ingress traffic
+
+### Switch Reboot , controller failover 
+TC18 verify the sflow sampling after the leaf switch reboot  
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint on different tenant 
+    Log  Step 2 - Verify that the sflow sampling is happening at the sample rate at ingress traffic
+    Log  Step 3 - Reboot the switch and verify after switch comes back up the sampling is happenning again 
+    
+TC19 verify the sflow sampling after the spine switch reboot  
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint on different tenant 
+    Log  Step 2 - Verify that the sflow sampling is happening at the sample rate at ingress traffic
+    Log  Step 3 - Reboot the spine switch and verify after switch comes back up the sampling is happenning again     
+
+TC20 verify the sflow sampling after the controller failover         
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint on different tenant 
+    Log  Step 2 - Verify that the sflow sampling is happening at the sample rate at ingress traffic
+    Log  Step 3 - Do the cntrlr failover and verify the sflow sampling again 
+
+TC21 verfiy the sflow configuration and behavior after upgrade 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector ip as the learned endpoint on different tenant 
+    Log  Step 2 - Verify that the sflow sampling is happening at the sample rate at ingress traffic
+    Log  Step 3 - Upgrade the controller and  verify the sflow sampling again
+
+## T6  sflow  using IVS
+TC22 Verify the sflow configuration in T6 topology   
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector in the T6 topology 
+    Log  Step 2 - Send the ping traffic 
+    Log  Step 3 - Verify the sflow sampling at the configured rate 
+    
+TC23 Verify the sflow collector config change in T6 topology    
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector in the T6 mininet topology 
+    Log  Step 2 - start ping traffic 
+    Log  Step 3 - Add anotehr collector ip and verify the sflow sampling rate 
+    
+TC24 Verify the sflow collector ip in the IVS and source sflow ip on physical switch 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector in the T6 mininet topology with sflow agent-ip on physical switch 
+    Log  Step 3 - Verify the sflow sampling rate and counters on the collector 
+
+TC25 Verify the sflow collector ip on physical switch and source sflow ip on IVS 
+    [Tags]   feature  sflow 
+    Log  Step 1 - Configure the sflow collector on physical switch with sflow agent-ip in the T6 mininet topology 
+    Log  Step 3 - Verify the sflow sampling rate and counters on the collector 
+
+
+    
+        
+* Keywords
+      
+T5 switch platform test setup
+   base suite setup
+   sleep  10
+                   
+T5 switch platform test teardown
+   base suite teardown
+   sleep  10   
+
+     
+
+   
+    
+           
