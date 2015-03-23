@@ -1969,7 +1969,7 @@ class T5Platform(object):
             return differences
 
         for line in output:
-            if re.match(r'[0-9].*|< \!|---|> \!|< \Z|> \Z|\Z', line):
+            if re.match(r'[0-9].*|< *\!|---|> *\!|< \Z|> \Z|\Z', line):
                 helpers.log("OK: %s" % line)
             elif (re.match(r'[<>]   hostname|[<>]     ip', line)
                   and node == 'slave'):
