@@ -133,7 +133,7 @@ class TestCatalog(object):
 
         # !!! FIXME: The regex match is not very stringent at this point.
         #            Will need to tighten down on requirements in the future.
-        match = re.match(r'^([A-Za-z0-9-]+)_([A-Za-z0-9-]+)_([A-Za-z0-9-]+)-(\d+)(.+)', build_name)
+        match = re.match(r'^([A-Za-z0-9-]+)_([A-Za-z0-9-]+)_([A-Za-z0-9-]+)-(\d+)(.*)', build_name)
         result = None
         if match:
             if field == 'release':
