@@ -133,8 +133,8 @@ TC21 check ofad crash in Support log on switch and run SNMP walk
     rest add snmp host  10.9.18.2  162    
     rest add firewall rule  service=snmp
     Sleep  10 
-    ${result}=  snmp cmd  master  snmpbulkwalk  public
-    : FOR    ${i}    IN RANGE    0    5
+    snmp cmd  master  snmpbulkwalk  public
+    : FOR    ${i}    IN RANGE    0    10
     \  delete support bundles
 	\  ${result}=  Generate support  master
 	\  Log  ${result}
@@ -148,6 +148,7 @@ TC21 check ofad crash in Support log on switch and run SNMP walk
 	\  ${result}=  check switch cmd  backtrace  /tmp/${support_bundle_name}  master
 	\  Log  ${result}
 	\  Should Be Empty   ${switches}
+	\  run_cmd  cmd=rm -rf /tmp/floodlight*
 	Should not be True  ${result}
 	[Tags]  support  run
 	
