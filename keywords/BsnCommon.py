@@ -29,6 +29,7 @@ from paramiko.ssh_exception import BadHostKeyException, \
 from Exscript.protocols import SSH2
 from Exscript import Account
 import autobot.utils as br_utils
+import autobot.node as a_node
 from keywords.Host import Host
 
 
@@ -66,6 +67,11 @@ class BsnCommon(object):
             # to ever fail...
             pass
 
+        if self.get_active_node_names():
+            # This is mostly like caused when users call t.node_spawn(<ip>) but
+            # then forget to close the session. Nodes which are spawned in this
+            # manner are not automatically garbage collected.
+            helpers.warn("Active nodes found during teardown. Possible memory leaks.")
         return True
 
     def base_test_setup(self):
@@ -2102,6 +2108,13 @@ class BsnCommon(object):
         nodes = t.topology().keys()
         helpers.debug("Nodes used in test suite: %s" % nodes)
         return nodes
+
+    def get_active_node_names(self):
+        """
+        Return a list of node names which are still active, i.e., open sessions.
+        """
+        t = test.Test()
+        return t.active_node_names()
 
     def get_all_controller_nodes(self):
         """

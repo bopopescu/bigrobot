@@ -358,7 +358,6 @@ config suite setup
     Start Selenium Server  -trustAllSSLCertificates
     Sleep  30
     Open Browser To Login Page
-    Sleep  30
     Valid Login  admin  adminadmin
     #Physical GUI Suite Setup
 	

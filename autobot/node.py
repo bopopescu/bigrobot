@@ -2,6 +2,13 @@ import autobot.devconf as devconf
 import autobot.helpers as helpers
 from autobot.bsn_restclient import BsnRestClient
 
+# Global variables
+_active_nodes = []
+
+
+def active_nodes():
+    return _active_nodes
+
 
 class Node(object):
     def __init__(self, name, ip, user=None, password=None, t=None,
@@ -75,6 +82,8 @@ class Node(object):
                         % name)
         else:
             self.pingable_or_die()
+        if name not in _active_nodes:
+            _active_nodes.append(name)
 
     def name(self):
         return self._name
@@ -143,10 +152,12 @@ class Node(object):
         """
         Inheriting class needs to further extend this method.
         """
+        helpers.log("Establishing console connection for node '%s'" % self.name())
+
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
-            helpers.log("Reconnecting to console for node '%s'" % self.name())
+            helpers.log("Connecting to console for node '%s'" % self.name())
 
         if 'console' in self.node_params:
             self._console_info = self.node_params['console']
@@ -237,6 +248,8 @@ class Node(object):
                         % self.name())
         else:
             self.devconf().close()
+        if self._name in _active_nodes:
+            _active_nodes.remove(self._name)
 
 
 class ControllerNode(Node):
@@ -393,7 +406,8 @@ class ControllerNode(Node):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
-            helpers.log("Reconnecting to console for node '%s'" % self.name())
+            # helpers.log("Connecting to console for node '%s'" % self.name())
+            pass
 
         super(ControllerNode, self).console(driver)
 
@@ -708,7 +722,8 @@ class HostNode(Node):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
-            helpers.log("Reconnecting to console for node '%s'" % self.name())
+            # helpers.log("Connecting to console for node '%s'" % self.name())
+            pass
 
         super(HostNode, self).console(driver)
 
@@ -826,7 +841,8 @@ class SwitchNode(Node):
         if self.dev_console and not force_reconnect:
             return self.dev_console
         else:
-            helpers.log("Reconnecting to console for node '%s'" % self.name())
+            # helpers.log("Connecting to console for node '%s'" % self.name())
+            pass
 
         super(SwitchNode, self).console(driver)
 

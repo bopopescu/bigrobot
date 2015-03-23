@@ -27,7 +27,7 @@ ${BT FILTER INTERFACES TITLE}	 Big Tap Interfaces
 ${BT DELIVERY INTERFACES TITLE}  Big Tap Interfaces
 ${BT SERVICE INTERFACES TITLE}	 Big Tap Interfaces
 ${BT HOST TRACKER TITLE}    Big Tap Host Tracker
-${BT OBSERVED IP TITLE}     Big Tap Observed IP Addresses
+${BT OBSERVED IP TRACKER TITLE}     Big Tap Observed IP Tracker
 ${IP ADDRESS GROUPS TITLE}  Big Tap IP Address Groups
 ${BT INTERFACE GROUPS TITLE}	Big Tap Interface Groups
 ${BT USER DEFINED OFFSETS TITLE}  Big Tap User Defined Offsets
@@ -37,8 +37,8 @@ ${BT SIGNOUT TITLE}  		Big Tap Login
 ${USERS TITLE}				Big Tap Security - Users
 ${GROUPS TITLE}				Big Tap Security - Groups
 ${RBAC TITLE}				Big Tap Security - RBAC Permissions
-${BT DHCP SERVERS TITLE}		Big Tap DHCP Servers
-${BT DNS SERVERS TITLE}		Big Tap DNS Servers
+${BT DHCP TRACKER TITLE}		Big Tap DHCP Tracker
+${BT DNS TRACKER TITLE}		Big Tap DNS Tracker
 ${SFLOW TITLE}				Big Tap sFlow
 ${BC CHAINS TITLE}			Big Chain Chains
 ${BC SERVICES TITLE}		Big Chain Services
@@ -664,10 +664,10 @@ Set URLs
 	Set Suite Variable     	${GROUPS URL}   				https://${SERVER}/controller/security/groups
 	Set Suite Variable     	${RBAC URL}    					https://${SERVER}/controller/security/rbac_permissions
 	Set Suite Variable     	${HOST TRACKER URL}   			https://${SERVER}/bigtap/host_tracker
-	Set Suite Variable     	${OBSERVED IP URL}    			https://${SERVER}/bigtap/observed_ip
+	Set Suite Variable     	${OBSERVED IP TRACKER URL}    			https://${SERVER}/bigtap/observed_ip_tracker
 	Set Suite Variable 		${USER DEFINED OFFSETS URL}  	https://${SERVER}/bigtap/user_defined_offsets
-	Set Suite Variable 		${DHCP SERVERS URL}				https://${SERVER}/bigtap/dhcp_servers
-	Set Suite Variable 		${DNS SERVERS URL}				https://${SERVER}/bigtap/dns_servers
+	Set Suite Variable 		${DHCP TRACKER URL}				https://${SERVER}/bigtap/dhcp_tracker
+	Set Suite Variable 		${DNS TRACKER URL}				https://${SERVER}/bigtap/dns_tracker
 	Set Suite Variable 		${SFLOW URL}					https://${SERVER}/bigtap/sflow
 	Set Suite Variable 		${BC CHAINS URL}				https://${SERVER}/bigtap/bigchain/chains
 	Set Suite Variable 		${BC SERVICES URL}				https://${SERVER}/bigtap/bigchain/services
@@ -749,22 +749,22 @@ Go To Big Tap Host Tracker Page
     Title Should Contain  ${BT HOST TRACKER TITLE}
     Sleep  1
 
-Go To Big Tap DHCP Servers Page
-    Go To  ${DHCP SERVERS URL}
+Go To Big Tap DHCP Tracker Page
+    Go To  ${DHCP TRACKER URL}
     Wait Until Page Loaded 
-    Title Should Contain  ${BT DHCP SERVERS TITLE}
+    Title Should Contain  ${BT DHCP TRACKER TITLE}
     Sleep  1
 
-Go To Big Tap DNS Servers Page
-    Go To  ${DNS SERVERS URL}
+Go To Big Tap DNS Tracker Page
+    Go To  ${DNS TRACKER URL}
     Wait Until Page Loaded 
-    Title Should Contain  ${BT DNS SERVERS TITLE}
+    Title Should Contain  ${BT DNS TRACKER TITLE}
     Sleep  1
     
-Go To Big Tap Observed IP Addresses Page
-	Go To  ${OBSERVED IP URL}
+Go To Big Tap Observed IP Tracker Page
+	Go To  ${OBSERVED IP TRACKER URL}
     Wait Until Page Loaded 
-    Title Should Contain  ${BT OBSERVED IP TITLE}
+    Title Should Contain  ${BT OBSERVED IP TRACKER TITLE}
     Sleep  1
 
 Go To Big Tap IP Lists Page
@@ -3715,8 +3715,8 @@ Check Controller Switches Page for read-only user
     Click Element  ${action_menu}  and don't wait
     Verify Element Visible  ${SHOW HIDE COLUMNS MENU ITEM}
     Verify Page Does Not Contain Element   ${SWITCH CREATE TUNNEL MENU ITEM}
-    Verify Page Contains Text  00:00:70:72:cf:ab:36:d8
-    ${action_menu}  Generate Action Menu Xpath  div[@id='switches_table']  00:00:70:72:cf:ab:36:d8
+    Verify Page Contains Text  00:00:08:9e:01:f8:6b:8b
+    ${action_menu}  Generate Action Menu Xpath  div[@id='switches_table']  00:00:08:9e:01:f8:6b:8b
     Verify Page Does Not Contain Element   ${action_menu}
     
     
@@ -3730,10 +3730,14 @@ Check Controller Interfaces Page for read-only user
     Verify Element Visible  ${SHOW HIDE COLUMNS MENU ITEM}
     Verify Page Does Not Contain Element   ${CREATE TUNNEL MENU ITEM}
     Verify Page Does Not Contain Element   ${CONTROLLER CONFIGURE SELECTED INTERFACE MENU ITEM}
-    Add Simple Filtering Query  app-as5710-1
+    #Add Simple Filtering Query  app-as5710-1
+    #Click Element  ${SHOW 100 INTERFACES BUTTON}  and don't wait
+    #Verify Page Contains Text  app-as5710-1
+    #${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  00:00:70:72:cf:ab:36:d8  app-as5710-1
+    Add Simple Filtering Query  app-rly2-1
     Click Element  ${SHOW 100 INTERFACES BUTTON}  and don't wait
-    Verify Page Contains Text  app-as5710-1
-    ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  00:00:70:72:cf:ab:36:d8  app-as5710-1
+    Verify Page Contains Text  app-rly2-1
+    ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  00:00:08:9e:01:f8:6b:8b  app-rly2-1
     Verify Page Does Not Contain Element  ${action_menu}
     Clear Filtering Query
 	
@@ -3851,18 +3855,18 @@ Check Big Tap Host Tracker Page for read-only user
     Verify Element Visible  ${SHOW HIDE COLUMNS MENU ITEM}
 	
 	
-Check Big Tap DHCP Servers Page for read-only user
-	Go To Big Tap DHCP Servers Page
+Check Big Tap DHCP Tracker Page for read-only user
+	Go To Big Tap DHCP Tracker Page
 	Add Simple Filtering Query  sakshi
     Clear Filtering Query
     
-Check Big Tap DNS Servers Page for read-only user
-	Go To Big Tap DNS Servers Page
+Check Big Tap DNS Tracker Page for read-only user
+	Go To Big Tap DNS Tracker Page
 	Add Simple Filtering Query  sakshi
     Clear Filtering Query
     
-Check Big Tap Observed IP Addresses Page for read-only user
-	Go To Big Tap Observed IP Addresses Page
+Check Big Tap Observed IP Tracker Page for read-only user
+	Go To Big Tap Observed IP Tracker Page
 	Add Simple Filtering Query  sakshi
     Clear Filtering Query
     

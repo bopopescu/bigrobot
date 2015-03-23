@@ -702,6 +702,14 @@ class Test(object):
         else:
             return self.topology(*args, **kwargs)
 
+    def display_platform(self, node, handle):
+        if handle.devconf():
+            helpers.log("Exscript driver for '%s': %s"
+                        % (node, handle.devconf().conn.get_driver()))
+            helpers.log("Node '%s' is platform '%s'%s"
+                        % (node, handle.platform(),
+                           br_utils.end_of_output_marker()))
+
     def node_spawn(self, ip, node=None, user=None, password=None,
                    device_type='controller', protocol=None, no_ping=False,
                    devconf_debug_level=0, quiet=0):
@@ -761,6 +769,9 @@ class Test(object):
             helpers.environment_failure("You can only spawn nodes for device"
                                         " types: 'controller', 'switch',"
                                         " 'host', 'openstack', 'pdu'")
+
+        self.display_platform(node, n)
+
         return n
 
     def node_connect(self, node, user=None, password=None,
@@ -849,6 +860,8 @@ class Test(object):
                                    t=t,
                                    openflow_port=openflow_port,
                                    protocol=protocol, no_ping=no_ping, devconf_debug_level=devconf_debug_level)
+            # !!! FIX ME: Mininet creation need to go into node_spawn().
+            self.display_platform(node, n)
         elif helpers.is_host(node):
             n = self.node_spawn(ip=host, node=node,
                                 user=user, password=password,
@@ -883,18 +896,15 @@ class Test(object):
             else:
                 helpers.environment_failure("Unsupported traffic generator '%s'"
                                             % platform)
+
+            # !!! FIX ME: Traffic generator creation need to go into node_spawn().
+            self.display_platform(node, n)
         else:
             helpers.environment_failure("Not able to initialize device '%s'"
                                         % node)
 
         self.topology(node, n)
 
-        if n.devconf():
-            helpers.log("Exscript driver for '%s': %s"
-                        % (node, n.devconf().conn.get_driver()))
-            helpers.log("Node '%s' is platform '%s'%s"
-                        % (node, n.platform(),
-                           br_utils.end_of_output_marker()))
         return n
 
     def node_disconnect(self, node=None, delete_session_cookie=True):
@@ -1018,6 +1028,11 @@ class Test(object):
         prompt_device_cli = r'[\r\n\x07]+\s?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
 
         helpers.log("Sending carriage return and checking for matching prompt/output")
+
+        # pause for a second before sending carriage return, else login prompt
+        # may not show up.
+        helpers.sleep(1)
+
         n_console.send('')
 
         def login():
@@ -1333,11 +1348,11 @@ class Test(object):
                             name,
                             'grep -E "^JVM_OPTS.*org.projectfloodlight.db.auth.sessionCacheSpec=" %s'
                             % source_file)
-        
+
         if error_code == 0:
             # sessionCacheSpec is the property used to configure reauth timetout.
             # Found sessionCacheSpec but BigRobot didn't put it there, so
-            # likely Floodlight settings have changed. 
+            # likely Floodlight settings have changed.
             helpers.environment_failure("Found sessionCacheSpec in %s on '%s'. Possibly a change was recently made to Floodlight source which conflicts with QA mod."
                                         % (source_file, name))
 
@@ -1811,7 +1826,7 @@ class Test(object):
 
     def t5_clean_configuration(self, name):
         '''
-            Objective: Delete all user configuration
+        Objective: Delete all user configuration
         '''
         t = self
         c = t.controller(name)
@@ -1827,3 +1842,11 @@ class Test(object):
         c.config("show running-config")
 
         return True
+
+    def active_node_names(self):
+        """
+        Return a list of node names which are still active (i.e., open sessions)
+        """
+        nodes = a_node.active_nodes()
+        helpers.log("Active nodes:\n%s" % helpers.prettify(nodes))
+        return nodes

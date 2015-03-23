@@ -420,7 +420,7 @@ TC004: Verify policy interface statistics across fabric, when multiple policies 
     Should be True      ${return_value}
     change interface role to  delivery      ${sw1_tgdelivery_intf_1}        ${sw1_tgdelivery_alias_1}           s1
     change interface role to  filter        ${sw5_tgfilter_intf_1}          ${sw5_tgfilter_alias_1}             s5        
-    [Tags]  full  feature  traffic
+    [Tags]  full  feature  traffic 
 
 TC005: Verify policy statistics across monitoring fabric when policy has one service on core switch S3 
     ${return_value}=    rest add policy             admin-view  ${statistics_policy_1}  forward
@@ -885,10 +885,9 @@ TC009: Verify drop counters work when core interface is over-subscribed
     ${s5_dpid}=  rest return switch dpid from ip  s5    
     ${s5_delivery_value}=    rest return policy stats  ${statistics_policy_1}   interface_type=core       stat_info=packet-count-rx-drop    switch_dpid=${s5_dpid}  interface_direction=rx  
     ${output_value}=  Convert To Integer  ${s5_delivery_value}
-    pause
     ${return_value}=  verify value is in range  ${output_value}  100000  100000000      
     Should be True  ${return_value}                                                                        
-    [Tags]  full  feature  traffic   run
+    [Tags]  full  feature  traffic  
                 
 TC010: Verify drop counters work when delivery interface is over-subscribed
     ## Drop is seen on filter interface

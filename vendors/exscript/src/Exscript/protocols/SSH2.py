@@ -141,19 +141,26 @@ class SSH2(Protocol):
                 break
 
         # Open a socket.
+        self._dbg(4, "MM: SSH2 _paramiko_connect: open socket")
         sock = socket.socket(af, socket.SOCK_STREAM)
         try:
             sock.settimeout(self.timeout or None)
         except:
             pass
+
+        self._dbg(4, "MM: SSH2 _paramiko_connect: socket connect")
         sock.connect(addr)
 
         # Init the paramiko protocol.
+        self._dbg(4, "MM: SSH2 _paramiko_connect: transport protocol")
         t = paramiko.Transport(sock)
+        self._dbg(4, "MM: SSH2 _paramiko_connect: start client")
         t.start_client()
+        self._dbg(4, "MM: SSH2 _paramiko_connect: register resource manager")
         ResourceManager.register(self, t)
 
         # Check system host keys.
+        self._dbg(4, "MM: SSH2 _paramiko_connect: check remote host keys")
         server_key = t.get_remote_server_key()
         keytype = server_key.get_name()
         our_server_key = self._system_host_keys.get(self.host, {}).get(keytype, None)
@@ -166,6 +173,7 @@ class SSH2(Protocol):
         if server_key != our_server_key:
             raise BadHostKeyException(self.host, server_key, our_server_key)
 
+        self._dbg(4, "MM: SSH2 _paramiko_connect: set keepalive")
         t.set_keepalive(self.KEEPALIVE_INTERVAL)
         return t
 
@@ -258,7 +266,9 @@ class SSH2(Protocol):
     def _connect_hook(self, hostname, port):
         self.host = hostname
         self.port = port or 22
+        self._dbg(3, "MM: SSH2 _connect_hook(%s:%s) paramiki_connect" % (self.host, self.port))
         self.client = self._paramiko_connect()
+        self._dbg(3, "MM: SSH2 _connect_hook(%s:%s) load_system_host_keys" % (self.host, self.port))
         self._load_system_host_keys()
         return True
 

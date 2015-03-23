@@ -89,15 +89,16 @@ config suite setup
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
+    Set Selenium Timeout  20
     Rest Add Tacacs Server  10.2.3.201  secret  10
     Rest Add Tacacs Authentication
     CLI Configure User    test    adminadmin
     CLI Configure User    test-user-local    ,./[]<:{}`~!@#$^&*()_-1234567890
     CLI Run  master  group admin; associate user tomasz; associate user test-user-local
     Run Keyword and Ignore Error
-    ...  Cli Run  master  show tacacs  user=remote  password=remote
+    ...  Cli Run  master  show tacacs  user=remote  password=remote  reauth=True
     Run Keyword and Ignore Error
-    ...  Cli Run  slave  show tacacs  user=remote  password=remote
+    ...  Cli Run  slave  show tacacs  user=remote  password=remote  reauth=True
     Sleep  60
     Start Selenium Server  -trustAllSSLCertificates
     Open Browser To Login Page

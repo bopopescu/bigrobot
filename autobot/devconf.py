@@ -66,13 +66,26 @@ class DevConf(object):
 
         self.connect()
 
+    def write_log_file(self, s):
+        helpers.file_write_append_once(self._logfile, s)
+
+    def write_debug_file(self, s):
+        helpers.file_write_append_once(self._debugfile, s)
+
     def log_file(self):
         if self._logfile == None:
             self._logfile = ('%s/devconf_conversation.%s.log'
                              % (self._logpath, self._name))
-            helpers.file_write_append_once(self._logfile,
-                    "\n\n--------- %s New devconf conversation for '%s'\n\n"
-                    % (helpers.ts_long_local(), self._name))
+            transport_proto = self._protocol
+            if self._port != None:
+                transport_proto += ":%s" % self._port
+            if self._console_info == None:
+                is_console = 'no'
+            else:
+                is_console = 'yes'
+            self.write_log_file(
+                    "\n\n--------- %s New devconf conversation for '%s' (user=%s password=%s protocol=%s console=%s)\n\n"
+                    % (helpers.ts_long_local(), self._name, self._user, self._password, transport_proto, is_console))
         return self._logfile
 
     def debug_file(self):
@@ -86,9 +99,16 @@ class DevConf(object):
         if self._debug > 0 and self._debugfile == None:
             self._debugfile = ('%s/devconf_conversation.%s.log_debug'
                              % (self._logpath, self._name))
-            helpers.file_write_append_once(self._debugfile,
-                    "\n\n--------- %s New devconf debug for '%s'\n\n"
-                    % (helpers.ts_long_local(), self._name))
+            transport_proto = self._protocol
+            if self._port != None:
+                transport_proto += ":%s" % self._port
+            if self._console_info == None:
+                is_console = 'no'
+            else:
+                is_console = 'yes'
+            self.write_debug_file(
+                    "\n\n--------- %s New devconf debug for '%s' (user=%s password=%s protocol=%s console=%s)\n\n"
+                    % (helpers.ts_long_local(), self._name, self._user, self._password, transport_proto, is_console))
         return self._debugfile
 
     def _patch_driver(self, d):
@@ -149,6 +169,23 @@ class DevConf(object):
         return self._mode
 
     def connect(self):
+        def _do_connect():
+            conn.connect(self._host, self._port)
+
+            if self._console_info:
+                if self._console_info['type'] == 'telnet':
+                    helpers.log("Connecting to console via telnet")
+                elif self._console_info['type'] == 'libvirt':
+                    helpers.log("Connecting to console server via ssh (libvirt console server)")
+                    conn.login(account)
+                else:
+                    helpers.environment_failure("Unsupported console type")
+
+                # Note: User needs to figure out what state the console is in
+                #       and manage it themself.
+            else:
+                conn.login(account)
+
         try:
             if self._protocol == 'telnet' or self._protocol == 'ssh':
                 auth_info = "(login:%s, password:%s)" % (self._user,
@@ -176,21 +213,8 @@ class DevConf(object):
                                     % (self._host, self._port, auth_info))
                     conn = SSH2(debug=self._debug, logfile=self.log_file(), debugfile=self.debug_file())
 
-                conn.connect(self._host, self._port)
+                _do_connect()
 
-                if self._console_info:
-                    if self._console_info['type'] == 'telnet':
-                        helpers.log("Connecting to console via telnet")
-                    elif self._console_info['type'] == 'libvirt':
-                        helpers.log("Connecting to console via ssh (libvirt console)")
-                        conn.login(account)
-                    else:
-                        helpers.environment_failure("Unsupported console type")
-
-                    # Note: User needs to figure out what state the console is in
-                    #       and manage it themself.
-                else:
-                    conn.login(account)
                 helpers.log("Devconf conversation for '%s' logged to %s"
                             % (self._name, self.log_file()))
 
@@ -531,8 +555,14 @@ class DevConf(object):
         return self.result()['content']
 
     def close(self):
-        # helpers.log("Closing DevConf '%s' (%s)" % (self.name(), self._host))
         self.conn.close(force=True)
+        helpers.log("Closed DevConf '%s' (%s)" % (self.name(), self._host))
+        self.write_log_file(
+                "\n\n--------- %s Closed devconf conversation for '%s'\n\n"
+                % (helpers.ts_long_local(), self._name))
+        self.write_debug_file(
+                "\n\n--------- %s Closed devconf debug for '%s'\n\n"
+                % (helpers.ts_long_local(), self._name))
 
 
 class BsnDevConf(DevConf):

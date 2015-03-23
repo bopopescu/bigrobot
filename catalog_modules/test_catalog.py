@@ -305,7 +305,7 @@ class TestCatalog(object):
             _ = self.insert_doc('aggregated_builds', doc)
             return doc
 
-    def find_and_add_build_name(self, build_name, regression_tags="daily",
+    def find_and_add_build_name(self, build_name, regression_tags=None,
                                 quiet=True):
         """
         Check whether 'build_name' is found in builds collection.
@@ -316,6 +316,14 @@ class TestCatalog(object):
             testbed = self.match_build_name(build_name, "testbed")
         else:
             testbed = None
+
+        # Default regression_tags is "virtual" for virtual testbeds, and
+        # "daily" for all other testbeds.
+        if regression_tags == None:
+            if testbed == "virtual":
+                regression_tags = "virtual"
+            else:
+                regression_tags = "daily"
 
         query = {"build_name": build_name}
         cursor = self.builds_collection().find(query)

@@ -1,0 +1,11 @@
+c1:
+  ip: 10.8.4.149
+  console:
+    ip: 10.8.0.56
+    libvirt_vm_name: vui_c1_20150319_03191433
+    user: root
+    password: bsn
+
+  set_session_ssh: false
+  set_init_ping: false
+  #set_devconf_debug_level: 5

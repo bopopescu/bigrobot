@@ -59,7 +59,6 @@ ${projectname}  Big Cloud Fabric Appliance
 @{radius_servers}  10.2.3.201  10.8.67.2  10.8.67.3
 @{tacacs_servers}  10.2.3.201  10.9.18.2  10.8.67.3
 @{servers}
-${timeout}
 ${type}
     
 *** Test Case ***
@@ -1468,7 +1467,7 @@ AAA Suite Setup
     ${tmp}=  Generate Random String  1   [NUMBERS]
     Run Keyword If  ${tmp} > 8
     ...  Set Suite Variable  ${timeout}  5
-    ...  ELSE IF  ${tmp} < 1
+    ...  ELSE If  ${tmp} < 1
     ...  Set Suite Variable  ${timeout}  5
     ...  ELSE
     ...  Set Suite Variable  ${timeout}  ${tmp}

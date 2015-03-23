@@ -312,7 +312,6 @@ class KVMOperations(object):
             gateway = kwargs.get("gateway", "10.8.0.1")
             network_interface = kwargs.get("network_interface", "br0")
             self.log_path = LOG_BASE_PATH + '/' + vm_name
-            helpers.summary_log("Creating log_path %s" % self.log_path)
             try:
                 if os.path.exists(self.log_path) or os.path.islink(self.log_path):
                     pass
@@ -325,7 +324,19 @@ class KVMOperations(object):
                     # Last resort - put logs in /tmp
                     self.log_path = '/tmp' + '/' + vm_name
                     os.makedirs(self.log_path)
-            helpers.summary_log("Createdlog_path %s" % self.log_path)
+
+            # export IS_GOBOT="False"
+            helpers.set_env("AUTOBOT_LOG", "%s/%s.log"
+                            % (self.log_path, vm_name))
+            helpers.bigrobot_log_path_exec_instance(self.log_path)
+
+            # Note: helpers.summary_log() and helpers.log() are not called
+            #       until after we've initialized the BigRobot log path
+            #       (above). Don't attempt to write to logs before that
+            #       or it will write logs to /tmp directory instead of the
+            #       /tmp/<vm_name>/.
+            helpers.summary_log("Creating VM with Name: %s " % vm_name)
+            helpers.summary_log("Created log_path %s" % self.log_path)
             # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bcf/controller-bcf-2.0.8-SNAPSHOT.qcow2")
             remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*.qcow2")
             remote_qcow_mininet_path = kwargs.get("remote_qcow_mininet_path", "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2")
@@ -334,9 +345,6 @@ class KVMOperations(object):
             # set the BIG ROBOT Topo file for console connections
             helpers.bigrobot_topology(topo_file)
             helpers.bigrobot_params("none")
-            # export IS_GOBOT="False"
-            helpers.set_env("AUTOBOT_LOG", "%s/%s.log"
-                            % (self.log_path, vm_name))
 
             kvm_handle = self._connect_to_kvm_host(hostname=kvm_host, user=kvm_user, password=kvm_password)
 

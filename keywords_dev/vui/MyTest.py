@@ -553,6 +553,10 @@ vui@Vuis-MacBook-Pro$
         con = t.dev_console(node)
         con.bash("w")
         con.sudo("cat /etc/shadow")
+        try:
+            con.cli("term len 0")
+        except:
+            helpers.log("term len setting not supported")
         con.enable("show running-config")
 
         # IMPORTANT: Be sure to get back to CLI mode so future console
@@ -1383,7 +1387,7 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         for i in range(1, int(iteration)):
             helpers.log("Iteration #%s" % i)
             t.node_disconnect(node)
-            t.node_connect(node, no_ping=True, devconf_debug=5)
+            t.node_connect(node, no_ping=True, devconf_debug_level=5)
             c = t.controller(node)
             c.cli("show user")
             # BsnCommon().rest_show_version(node)
@@ -1416,3 +1420,8 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         h = t.host(node)
         h.sudo("cat /etc/passwd")
         h.sudo("uptime")
+
+        c = t.node_spawn(h.ip())
+        c.bash("uname -n")
+
+

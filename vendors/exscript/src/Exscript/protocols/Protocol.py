@@ -347,6 +347,7 @@ class Protocol(object):
             #    self.log.write(text)
 
             self.log.write(text.replace("\n", "\n" + ts() + " - "))
+            self.log.flush()
 
         # Check whether a better driver is found based on the incoming data.
         old_driver = self.get_driver()
@@ -377,6 +378,7 @@ class Protocol(object):
         s = self.get_driver().name + ': ' + msg + '\n'
         # self.stderr.write(s.replace("\n", "\n" + ts() + " - "))
         self.stderr.write(ts() + " - L%s %s" % (level, s))
+        self.stderr.flush()
 
     def set_driver(self, driver=None):
         """
@@ -592,6 +594,7 @@ class Protocol(object):
         """
         if hostname is not None:
             self.host = hostname
+        self._dbg(3, "MM: Protocol connect(%s:%s)" % (self.host, port))
         return self._connect_hook(self.host, port)
 
     def _get_account(self, account):
@@ -628,13 +631,19 @@ class Protocol(object):
         @type  flush: bool
         @param flush: Whether to flush the last prompt from the buffer.
         """
+        self._dbg(4, "MM: login: Begin")
         with self._get_account(account) as account:
             if app_account is None:
                 app_account = account
+            self._dbg(4, "MM: login: authenticate")
             self.authenticate(account, flush=False)
+            self._dbg(4, "MM: login: get_driver")
             if self.get_driver().supports_auto_authorize():
+                self._dbg(4, "MM: login: expect_prompt")
                 self.expect_prompt()
+            self._dbg(4, "MM: login: auto_app_authorize")
             self.auto_app_authorize(app_account, flush=flush)
+        self._dbg(4, "MM: login: End")
 
     def authenticate(self, account=None, app_account=None, flush=True):
         """
@@ -654,7 +663,9 @@ class Protocol(object):
             if app_account is None:
                 app_account = account
 
+            self._dbg(4, "MM: authenticate: protocol_authenticate")
             self.protocol_authenticate(account)
+            self._dbg(4, "MM: authenticate: app_authenticate")
             self.app_authenticate(app_account, flush=flush)
 
     def _protocol_authenticate(self, user, password):
@@ -674,17 +685,19 @@ class Protocol(object):
         @type  account: Account
         @param account: An account object, like login().
         """
+        self._dbg(4, "MM: protocol_authenticate: Begin")
         with self._get_account(account) as account:
             user = account.get_name()
             password = account.get_password()
             key = account.get_key()
             if key is None:
-                self._dbg(1, "Attempting to authenticate %s." % user)
+                self._dbg(1, "Attempting to authenticate user '%s'." % user)
                 self._protocol_authenticate(user, password)
             else:
-                self._dbg(1, "Authenticate %s with key." % user)
+                self._dbg(1, "Authenticate user '%s' with key." % user)
                 self._protocol_authenticate_by_key(user, key)
         self.proto_authenticated = True
+        self._dbg(4, "MM: protocol_authenticate: End")
 
     def is_protocol_authenticated(self):
         """
@@ -819,12 +832,14 @@ class Protocol(object):
         @type  bailout: bool
         @param bailout: Whether to wait for a prompt after sending the password.
         """
+        self._dbg(4, "MM: app_authenticate: Begin")
         with self._get_account(account) as account:
             user = account.get_name()
             password = account.get_password()
             self._dbg(1, "Attempting to app-authenticate %s." % user)
             self._app_authenticate(account, password, flush, bailout)
         self.app_authenticated = True
+        self._dbg(4, "MM: app_authenticate: End")
 
     def is_app_authenticated(self):
         """
