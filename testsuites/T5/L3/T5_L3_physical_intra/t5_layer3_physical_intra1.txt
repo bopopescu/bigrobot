@@ -1632,23 +1632,16 @@ initialize host
     BASH delete tag                             h6                              bond0.1006              soft_error=${true}
     BASH init intf                              h1                              ${h1_leaf0a_int0}
     BASH init intf                              h1                              ${h1_leaf0b_int0}
-    #BASH init intf                              h1                              eth3
     BASH init intf                              h2                              ${h2_leaf0a_int0}
     BASH init intf                              h2                              ${h2_leaf0b_int0}
-    #BASH init intf                              h2                              eth3
     BASH init intf                              h3                              ${h3_leaf1a_int0}
     BASH init intf                              h3                              ${h3_leaf1b_int0}
-    #BASH init intf                              h3                              eth3
     BASH init intf                              h4                              ${h4_leaf1a_int0}
     BASH init intf                              h4                              ${h4_leaf1b_int0}
-    #BASH init intf                              h4                              eth3
     BASH init intf                              h5                              ${h5_leaf2a_int0}
     BASH init intf                              h5                              ${h5_leaf2b_int0}
-    #BASH init intf                              h5                              eth3
     BASH init intf                              h6                              ${h6_leaf2a_int0}
     BASH init intf                              h6                              ${h6_leaf2b_int0}
-    #BASH init intf                              h6                              eth2
-    #BASH init intf                              h6                              eth3
     BASH init intf                              h1                              bond0
     BASH init intf                              h2                              bond0
     BASH init intf                              h3                              bond0
@@ -1663,28 +1656,16 @@ initialize host
     BASH run command                            h6                              ifdown bond0
     BASH run command                            h1                              ifup ${h1_leaf0a_int0}
     BASH run command                            h1                              ifup ${h1_leaf0b_int0}
-    #BASH run command                            h1                              ifup eth3
-    #BASH run command                            h1                              ifup eth3
     BASH run command                            h2                              ifup ${h2_leaf0a_int0}
     BASH run command                            h2                              ifup ${h2_leaf0b_int0}
-    #BASH run command                            h2                              ifup eth3
-    #BASH run command                            h2                              ifup eth3
     BASH run command                            h3                              ifup ${h3_leaf1a_int0}
     BASH run command                            h3                              ifup ${h3_leaf1b_int0}
-    #BASH run command                            h3                              ifup eth3
-    #BASH run command                            h3                              ifup eth3
     BASH run command                            h4                              ifup ${h4_leaf1a_int0}
     BASH run command                            h4                              ifup ${h4_leaf1b_int0}
-    #BASH run command                            h4                              ifup eth3
-    #BASH run command                            h4                              ifup eth3
     BASH run command                            h5                              ifup ${h5_leaf2a_int0}
     BASH run command                            h5                              ifup ${h5_leaf2b_int0}
-    #BASH run command                            h5                              ifup eth3
-    #BASH run command                            h5                              ifup eth3
     BASH run command                            h6                              ifup ${h6_leaf2a_int0}
     BASH run command                            h6                              ifup ${h6_leaf2b_int0}
-    #BASH run command                            h6                              ifup eth3
-    #BASH run command                            h6                              ifup eth3
     BASH release dhcpv4 address                 h1                              bond0
     BASH release dhcpv4 address                 h2                              bond0
     BASH release dhcpv4 address                 h3                              bond0
