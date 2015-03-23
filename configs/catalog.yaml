@@ -16,10 +16,15 @@ test_types:
 
 testbeds:
   bcf:
+    - virtual
+    - common
     - 10g
     - 40g
+  bigtap:
     - common
-    - virtual
+    - dell
+    - accton
+    - quantas
 
 # Note: Releases field is an ordered list to reflect precedence, e.g.,
 #       ironhorse comes before ironhorse-plus which comes before jackfrost.
