@@ -549,17 +549,32 @@ ${ACCOUNTING LOCAL ROW}					${ACCOUNTING BLOCK}/child::div[1]
 ${ACCOUNTING REMOTE ROW}				${ACCOUNTING BLOCK}/child::div[3]
 ${ACCOUNTING LOCAL KNOB}				${ACCOUNTING LOCAL ROW}/descendant::div[@class='knob_icon']
 ${ACCOUNTING REMOTE KNOB}				${ACCOUNTING REMOTE ROW}/descendant::div[@class='knob_icon']
+${ACCOUNTING SETTINGS POPUP}			xpath=//div[@title='Accounting Settings']
+
 ${AUTHENTICATION BLOCK}					xpath=//h2[@class='sidebar_title lead' and contains(text(), 'Authentication Sources')]/parent::div
 ${AUTHENTICATION FIRST SOURCE ROW}		${AUTHENTICATION BLOCK}/descendant::div[@class='row'][1]
 ${AUTHENTICATION SECOND SOURCE ROW}		${AUTHENTICATION BLOCK}/descendant::div[@class='row'][2]
+${AUTHENTICATION REMOTE SOURCE ROW}		${AUTHENTICATION BLOCK}/descendant::div[@id='widget_dijit_form_FilteringSelect_2']
 ${AUTHENTICATION FIRST SOURCE LIST}		xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][1]
 ${AUTHENTICATION SECOND SOURCE LIST}	xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][2]
+${AUTHENTICATION REMOTE SOURCE LIST}    xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][3]
 ${AUTHENTICATION SOURCE DROPDOWN BUTTON SUFFIX}   /descendant::div[contains(@class,'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
 ${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}   /descendant::input[@class='dijitReset dijitInputInner']
-${ACCOUNTING SETTINGS POPUP}			xpath=//div[@title='Accounting Settings']
 ${AUTHENTICATION SETTINGS POPUP}		xpath=//div[@title='Authentication Settings']
 ${AUTHENTICATION SAVE BUTTON}			xpath=//span[@data-dojo-attach-point='containerNode' and contains(text(), 'Save')]
 
+${AUTHORIZATION LINK}					xpath=//div[@id='link_authorization']
+${AUTHORIZATION BLOCK}					xpath=//h2[@class='sidebar_title lead' and contains(text(), 'Authorization Sources')]/parent::div
+${AUTHORIZATION FIRST SOURCE ROW}		${AUTHORIZATION BLOCK}/descendant::div[@class='row'][1]
+${AUTHORIZATION SECOND SOURCE ROW}		${AUTHORIZATION BLOCK}/descendant::div[@class='row'][2]
+${AUTHORIZATION REMOTE SOURCE ROW}		${AUTHORIZATION BLOCK}/descendant::div[@id='widget_dijit_form_FilteringSelect_2']
+${AUTHORIZATION FIRST SOURCE LIST}		xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][1]
+${AUTHORIZATION SECOND SOURCE LIST}		xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][2]
+${AUTHORIZATION REMOTE SOURCE LIST}    xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][3]
+${AUTHORIZATION SOURCE DROPDOWN BUTTON SUFFIX}   /descendant::div[contains(@class,'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
+${AUTHORIZATION SOURCE DROPDOWN FIELD SUFFIX}   /descendant::input[@class='dijitReset dijitInputInner']
+${AUTHORIZATION SETTINGS POPUP}			xpath=//div[@title='Authorization Settings']
+${AUTHORIZATION SAVE BUTTON}			${AUTHORIZATION BLOCK}/descendant::span[@data-dojo-attach-point='containerNode' and contains(text(), 'Save')]
 
 ### Test Path Page
 ${TEST PATH SOURCE SECTION PREFIX}  									xpath=//div[@class='test_path_section'][1]
@@ -1256,6 +1271,8 @@ Create Port Group
 
     Verify Page Contains Element  ${SAVE SWITCH CONFIG BUTTON}
 	Click Element  ${SAVE SWITCH CONFIG BUTTON}  and don't wait
+	
+	Sleep  5
 
 	Verify Element Invisible  ${CREATE PORT GROUP POPUP}
 	Verify Page Contains Text  ${name}
@@ -2864,10 +2881,12 @@ Delete NTP Server Using Minus Button
 
 
 Configure Authentication
-	[Arguments]  ${first}  ${second}
+	[Arguments]  ${first}  ${second}  ${remote}=${EMPTY}
 	Go To AAA Page
 	Verify Element Visible  ${AUTHENTICATION LINK}
 	Click Element  ${AUTHENTICATION LINK}  and don't wait
+	Go To AAA Page
+
 	Verify Element Visible  ${AUTHENTICATION BLOCK}
 
 	Select From List And Verify
@@ -2883,11 +2902,55 @@ Configure Authentication
     ...  ${AUTHENTICATION SECOND SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}
     ...  ${second}
 
+	Run Keyword Unless  '${remote}' == '${EMPTY}'
+	...  Select From List And Verify
+    ...  ${AUTHENTICATION REMOTE SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN BUTTON SUFFIX}
+    ...	 ${AUTHENTICATION REMOTE SOURCE LIST}
+    ...  ${AUTHENTICATION REMOTE SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}
+    ...  ${remote}
+
+    Click Element  ${AUTHENTICATION LINK}  and don't wait
+
     Verify Element Visible  ${AUTHENTICATION SAVE BUTTON}
     Click Element  ${AUTHENTICATION SAVE BUTTON}  and don't wait
     Verify Element Visible  ${AUTHENTICATION SETTINGS POPUP}
 	Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
 	Page Should Not Contain  ${AUTHENTICATION SETTINGS POPUP}
+
+Configure Authorization
+	[Arguments]  ${first}  ${second}  ${remote}=${EMPTY}
+	Go To AAA Page
+	Verify Element Visible  ${AUTHORIZATION LINK}
+	Click Element  ${AUTHORIZATION LINK}  and don't wait
+	Go To AAA Page
+
+	Verify Element Visible  ${AUTHORIZATION BLOCK}
+
+	Select From List And Verify
+    ...  ${AUTHORIZATION FIRST SOURCE ROW}${AUTHORIZATION SOURCE DROPDOWN BUTTON SUFFIX}
+    ...	 ${AUTHORIZATION FIRST SOURCE LIST}
+    ...  ${AUTHORIZATION FIRST SOURCE ROW}${AUTHORIZATION SOURCE DROPDOWN FIELD SUFFIX}
+    ...  ${first}
+
+	Run Keyword Unless  '${second}' == '${EMPTY}'
+	...  Select From List And Verify
+    ...  ${AUTHORIZATION SECOND SOURCE ROW}${AUTHORIZATION SOURCE DROPDOWN BUTTON SUFFIX}
+    ...	 ${AUTHORIZATION SECOND SOURCE LIST}
+    ...  ${AUTHORIZATION SECOND SOURCE ROW}${AUTHORIZATION SOURCE DROPDOWN FIELD SUFFIX}
+    ...  ${second}
+
+	Run Keyword Unless  '${remote}' == '${EMPTY}'
+	...  Select From List And Verify
+    ...  ${AUTHORIZATION REMOTE SOURCE ROW}${AUTHORIZATION SOURCE DROPDOWN BUTTON SUFFIX}
+    ...	 ${AUTHORIZATION REMOTE SOURCE LIST}
+    ...  ${AUTHORIZATION REMOTE SOURCE ROW}${AUTHORIZATION SOURCE DROPDOWN FIELD SUFFIX}
+    ...  ${remote}
+
+    Verify Element Visible  ${AUTHORIZATION SAVE BUTTON}
+    Click Element  ${AUTHORIZATION SAVE BUTTON}  and don't wait
+    Verify Element Visible  ${AUTHORIZATION SETTINGS POPUP}
+	Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
+	Page Should Not Contain  ${AUTHORIZATION SETTINGS POPUP}
 
 Configure Accounting
 	[Arguments]  ${local}  ${remote}

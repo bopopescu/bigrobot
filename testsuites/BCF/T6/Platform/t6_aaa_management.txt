@@ -59,6 +59,7 @@ ${projectname}  Big Cloud Fabric Appliance
 @{radius_servers}  10.2.3.201  10.8.67.2  10.8.67.3
 @{tacacs_servers}  10.2.3.201  10.9.18.2  10.8.67.3
 @{servers}
+${timeout}
 ${type}
     
 *** Test Case ***
@@ -1395,8 +1396,8 @@ Verify Remote User Can Log In via Serial Console
     #Cli Run  ${slave_name}  terminal length 0; show run  user=bsn-vsa-read-only-user  password=bsnbsn  console=True
 
 Verify Recovery Can Log In via SSH
-    Cli Run  ${master_name}  free  user=recovery  password=bsn
-    Cli Run  ${slave_name}  free  user=recovery  password=bsn
+    Cli Run  ${master_name}  free  user=recovery  password=bsn  reauth=True
+    Cli Run  ${slave_name}  free  user=recovery  password=bsn  reauth=True
 
 Verify Recovery Can Log In via Serial Console
     Cli Run  ${master_name}  free  user=recovery  password=bsn  console=True
@@ -1467,7 +1468,7 @@ AAA Suite Setup
     ${tmp}=  Generate Random String  1   [NUMBERS]
     Run Keyword If  ${tmp} > 8
     ...  Set Suite Variable  ${timeout}  5
-    ...  ELSE If  ${tmp} < 1
+    ...  ELSE IF  ${tmp} < 1
     ...  Set Suite Variable  ${timeout}  5
     ...  ELSE
     ...  Set Suite Variable  ${timeout}  ${tmp}

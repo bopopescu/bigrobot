@@ -88,7 +88,6 @@ def main(*args):
         vm_host_name = current_user + "-bcf-2"
     else:
         vm_host_name = current_user + "-bcf-1"
-    helpers.summary_log("Creating VM with Name: %s " % vm_name)
 
     if args.kvm_host is not None:
         kvm_host = args.kvm_host
@@ -100,12 +99,12 @@ def main(*args):
     if args.network_interface is None:
         args.network_interface = "br0"
     if args.vm_ram is None:
-        args.vm_ram = "8192"
+        args.vm_ram = "2048"
     # Setting below enviornment Variables for Jenkins CI
     term = helpers.get_env("TERM")
-    helpers.log("TERM Value: %s" % term)
+    print("TERM Value: %s" % term)
     helpers.set_env("TERM", "xterm")
-    helpers.log("New TERM Value: %s" % term)
+    print("New TERM Value: %s" % term)
     helpers.bigrobot_test_ztn(False)
     helpers.bigrobot_test_setup(True)
     no_scp = True

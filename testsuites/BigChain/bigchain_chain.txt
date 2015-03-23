@@ -1508,6 +1508,12 @@ chain test setup
     Should be True  ${switch1_action_1}
     ${switch1_action_2}=  cli enable interface  s1  ${chain_interface_2}
     Should be True  ${switch1_action_2}
+    config  node=s3  cmd=interface ${arista_span_interface_s1s3}
+    ${content5}=  cli_content  node=s3
+    Should Not Contain  ${content5}  Error
+    config  node=s3  cmd=no shutdown
+    ${content5}=  cli_content  node=s3
+    Should Not Contain  ${content5}  Error
     ${result1}=  write version to file
     Should be true  ${result1}
     ${result}=  start syslog monitor

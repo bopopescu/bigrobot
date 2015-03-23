@@ -228,12 +228,8 @@ TC016: Verify switch mode cannot be changed to bigchain mode if filter interface
     config  node=master  cmd=bigtap role filter interface-name F1
     config  node=master  cmd=exit
     config  node=master  cmd=deployment role bigchain
-    config  node=master  cmd=interface ethernet16
-    config  node=master  cmd=bigtap role filter interface-name F2
     ${content}=   cli_content   node=master
     Should contain  ${content}  Error
-    config  node=master  cmd=no bigtap role filter interface-name F2
-    config  node=master  cmd=no interface ethernet16
     config  node=master  cmd=interface ethernet15
     config  node=master  cmd=no bigtap role filter interface-name F1
     config  node=master  cmd=no interface ethernet15
@@ -249,12 +245,8 @@ TC017: Verify switch mode cannot be changed to bigchain mode if delivery interfa
     config  node=master  cmd=bigtap role delivery interface-name D1
     config  node=master  cmd=exit
     config  node=master  cmd=deployment role bigchain
-    config  node=master  cmd=interface ethernet16
-    config  node=master  cmd=bigtap role delivery interface-name D2
     ${content}=   cli_content   node=master
     Should contain  ${content}  Error
-    config  node=master  cmd=no bigtap role delivery interface-name D2
-    config  node=master  cmd=no interface ethernet16
     config  node=master  cmd=interface ethernet15
     config  node=master  cmd=no bigtap role delivery interface-name D1
     config  node=master  cmd=no interface ethernet15
@@ -270,12 +262,8 @@ TC018: Verify switch mode cannot be changed to bigchain mode if service interfac
     config  node=master  cmd=bigtap role service interface-name S1
     config  node=master  cmd=exit
     config  node=master  cmd=deployment role bigchain
-    config  node=master  cmd=interface ethernet16
-    config  node=master  cmd=bigtap role service interface-name S2
     ${content}=   cli_content   node=master
     Should contain  ${content}  Error
-    config  node=master  cmd=no bigtap role service interface-name S2
-    config  node=master  cmd=no interface ethernet16
     config  node=master  cmd=interface ethernet15
     config  node=master  cmd=no bigtap role service interface-name S1
     config  node=master  cmd=no interface ethernet15

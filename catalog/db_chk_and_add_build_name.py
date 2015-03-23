@@ -34,9 +34,7 @@ BUILD_NAME.
                         help=("Jenkins build string,"
                               " e.g., 'bvs master #2007'"))
     parser.add_argument('--regression-tags',
-                        default='daily',
-                        help=("Supported regression tags are 'daily' or 'full'."
-                              " Default is 'daily'."))
+                        help=("Supported regression tags are 'daily' or 'full'."))
     _args = parser.parse_args()
 
     # _args.build <=> env BUILD_NAME
@@ -48,8 +46,6 @@ BUILD_NAME.
     else:
         os.environ['BUILD_NAME'] = _args.build
 
-    if not _args.regression_tags in ['daily', 'full']:
-        helpers.error_exit("Regression tags must be 'daily' or 'full'")
     return _args
 
 

@@ -16,12 +16,12 @@ Library  keywords/Ixia.py
 * Variable
 ${switch1_alias}                        qa-corsair-1  #Alias for switch 1
 ${switch2_alias}                        qa-corsair-2  #Alias for switch 2
-${switch1_filter_intf_name}				ethernet26
-${switch1_filter_alias} 				ixia-2-4
-${switch2_delivery_intf_name} 			ethernet26
-${switch2_delivery_alias}				ixia-2-3
-${switch1}								00:00:5c:16:c7:10:34:a7
-${switch2}								00:00:5c:16:c7:17:86:67
+${switch1_filter_intf_name}				ethernet1
+${switch1_filter_alias} 				ixia-2-9
+${switch2_delivery_intf_name} 			ethernet1
+${switch2_delivery_alias}				ixia-2-15
+${switch1}								00:00:5c:16:c7:1e:f3:95
+${switch2}								00:00:5c:16:c7:1c:16:f2
 
 
 ${bigtap_policy_name}					offset-policy
@@ -307,7 +307,7 @@ ${bigtap_policy_name}					offset-policy
 	
 ####### GTPv2 
 
-1_Verify offset match with GTP Version
+01_Verify offset match with GTP Version
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-version": 2, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -588,7 +588,8 @@ ${bigtap_policy_name}					offset-policy
 
 04_With offset matching enabled, verify basic BigTap policy with "match any" condition is active and installed. Verify flow table in switch. 
 
-	rest delete policy  admin-view  ${bigtap_policy_name}
+	${verify_policy1}=  rest delete policy  admin-view  ${bigtap_policy_name}
+	Should be true  ${verify_policy1}
 	sleep  10
     rest add policy  admin-view  ${bigtap_policy_name}  forward
     rest add policy match  admin-view  ${bigtap_policy_name}  1  {"any-traffic": true, "sequence": 1}
@@ -821,7 +822,7 @@ ${bigtap_policy_name}					offset-policy
     ...			no_arp=True  payload=2000000000000064
     clear stats
     start traffic  ${stream} 
-    sleep          25
+    sleep          35
     ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/delivery-interface
  	${value}=  Convert To Integer  ${delivery_dictionary[0]['packet-rate-60']}  
  	${report}=  fetch port stats
@@ -873,8 +874,8 @@ ${bigtap_policy_name}					offset-policy
 
 17_With policy installed. Verify CLI O/P for "show bigtap policy <policy name> optimized match"
 
-	#rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    #sleep  5
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    sleep  5
 	${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${count}=  rest_show_policy_optimize  ${bigtap_policy_name}  
@@ -894,8 +895,8 @@ ${bigtap_policy_name}					offset-policy
     Should be equal as strings   ${command_dictionary[1]['role']}  filter
     
     ${command_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view?config=true
-    Should be equal as strings   ${command_dictionary[0]['delivery-interface-group'][0]['delivery-group'][0]['name']}  ${switch2_delivery_alias}
-    Should be equal as strings   ${command_dictionary[0]['filter-interface-group'][0]['filter-group'][0]['name']}  ${switch1_filter_alias}
+    #Should be equal as strings   ${command_dictionary[0]['delivery-interface-group'][0]['delivery-group'][0]['name']}  ${switch2_delivery_alias}
+    #Should be equal as strings   ${command_dictionary[0]['filter-interface-group'][0]['filter-group'][0]['name']}  ${switch1_filter_alias}
     Should be equal as strings   ${command_dictionary[0]['policy'][0]['action']}  forward
     Should be equal as strings   ${command_dictionary[0]['policy'][0]['delivery-group'][0]['name']}  ${switch2_delivery_alias}
     Should be equal as strings   ${command_dictionary[0]['policy'][0]['filter-group'][0]['name']}  ${switch1_filter_alias}
@@ -905,7 +906,7 @@ ${bigtap_policy_name}					offset-policy
     Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['gtp-v1-teid']}  100
     Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['ip-proto']}   17
     Should be equal as integers   ${command_dictionary[0]['policy'][0]['rule'][0]['sequence']}  1
-    [Tags]  feature
+    [Tags]  feature	
 
 19_Delete and re-add policy and verify flows get deleted and re-installed.
 
@@ -1074,7 +1075,7 @@ offset suite setup
     ${return_value}=  rest enable feature  l3-l4-offset-match
     Should be true   ${return_value}
     rest add switch alias  s1  ${switch1_alias}
-    rest add switch alias  s2  ${switch1_alias}
+    rest add switch alias  s2  ${switch2_alias}
     rest add interface role  s1  ${switch1_filter_intf_name}  filter    intf_nickname=${switch1_filter_alias} 
     rest add interface role  s2  ${switch2_delivery_intf_name}    delivery  intf_nickname=${switch2_delivery_alias}
     rest add policy  admin-view  ${bigtap_policy_name}  forward

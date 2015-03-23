@@ -63,6 +63,7 @@ _prompt_re = [re.compile(r'[\r\n\x07]+(\*?)(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([
 _error_re = [re.compile(r'%Error'),
              re.compile(r'error: running command', re.I),
              re.compile(r'error: unknown command', re.I),
+             re.compile(r'error: unexpected argument', re.I),
              re.compile(r'error: unexpected additional arguments', re.I),
              re.compile(r'error: bad command', re.I),
              re.compile(r'invalid input', re.I),
@@ -101,6 +102,8 @@ class BsnControllerDriver(Driver):
         return 0
 
     def init_terminal(self, conn):
+        # 2015-03-19 I noticed 'term len' is available on BCF. Not sure about BigTap.
+        # conn.execute('term len 0')
         pass
 
     # def auto_authorize(self, conn, account, flush, bailout):

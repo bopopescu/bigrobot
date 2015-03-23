@@ -22,9 +22,9 @@ TC000: Warmup
     Verify Tacacs Configuration  0  10.2.3.201  5
     Verify AAA Authentication Configuration
     Run Keyword and Ignore Error
-    ...  Cli Run  master  show tacacs  user=remote  password=remote
+    ...  Cli Run  master  show tacacs  user=remote  password=remote  reauth=True
     Run Keyword and Ignore Error
-    ...  Cli Run  slave  show tacacs  user=remote  password=remote
+    ...  Cli Run  slave  show tacacs  user=remote  password=remote  reauth=True
     Sleep  60
     # workaround for BSC-6771
     [Tags]  feature  BSC-6771
@@ -165,107 +165,110 @@ TC016. Verify that local-user account can be associated and disassociated from a
 	...  show group admin
 	...  admin \ \ \ \ \ admin, local-user
 	...  flag=False
+    Cli Run  master  no user local-user
 
 TC017. Verify that admin configured locally and associated with admin group can do actions
 	Cli Run  master  user admin
 	Cli Run  master  password adminadmin
 	Cli Run  master  group admin
 	Cli Run  master  associate user admin
-	Cli Run  master  enable  user=admin
-	Cli Run  slave  enable  user=admin
-	Cli Run  master  show running-config  user=admin
-	Cli Run  master  enable; config; no user test1234  user=admin
-	Cli Run  master  show controller  user=admin
-	Cli Run  master  show file  user=admin
-	Cli Run  master  enable; config; copy running-config file://test-file  user=admin
-	Cli Run  master  enable; config; delete file test-file  user=admin
+	Cli Run  master  enable  user=admin  reauth=True
+	Cli Run  slave  enable  user=admin  reauth=True
+	Cli Run  master  show running-config  user=admin  reauth=True
+	Cli Run  master  enable; config; no user test1234  user=admin  reauth=True
+	Cli Run  master  show controller  user=admin  reauth=True
+	Cli Run  master  show file  user=admin  reauth=True
+	Cli Run  master  enable; config; copy running-config file://test-file  user=admin  reauth=True
+	Cli Run  master  enable; config; delete file test-file  user=admin  reauth=True
 
 TC018. Verify that remote admin, associated with admin group can do actions
 	Cli Run  master  group admin
 	Cli Run  master  associate user remote-admin
-	Cli Run  master  enable  user=remote-admin
-	Cli Run  slave  enable  user=remote-admin
-	Cli Run  master  show running-config  user=remote-admin
-	Cli Run  master  enable; config; no user test1234  user=remote-admin
-	Cli Run  master  enable; config; tenant test4321  user=remote-admin
+	Cli Run  master  enable  user=remote-admin  reauth=True
+	Cli Run  slave  enable  user=remote-admin  reauth=True
+	Cli Run  master  show running-config  user=remote-admin  reauth=True
+	Cli Run  master  enable; config; no user test1234  user=remote-admin  reauth=True
+	Cli Run  master  enable; config; tenant test4321  user=remote-admin  reauth=True
 	Cli Run and Verify Output
 	...  master
 	...  show running-config tenant
 	...  tenant test4321
-	Cli Run  master  show controller  user=remote-admin
+	Cli Run  master  show controller  user=remote-admin  reauth=True
 	Sleep  5
-	Cli Run  master  show file  user=remote-admin
-	Sleep  5
-	Run Keyword and Expect Error  *
-	...  Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin
+	Cli Run  master  show file  user=remote-admin  reauth=True
 	Sleep  5
 	Run Keyword and Expect Error  *
-	...  Cli Run  master  enable; config; delete file test-file  user=remote-admin
+    ...  Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin  reauth=True
+	Sleep  5
+	Run Keyword and Expect Error  *
+    ...  Cli Run  master  enable; config; delete file test-file  user=remote-admin  reauth=True
 
 TC019. Verify that remote admin provisioned locally, associated with admin group can do actions
 	Cli Run  master  user remote-admin
 	Cli Run  master  group admin
 	Cli Run  master  associate user remote-admin
-	Cli Run  master  enable  user=remote-admin
-	Cli Run  slave  enable  user=remote-admin
-	Cli Run  master  show running-config  user=remote-admin
-	Cli Run  master  enable; config; no user test1234  user=remote-admin
-	Cli Run  master  enable; config; tenant test4321  user=remote-admin
+	Cli Run  master  enable  user=remote-admin  reauth=True
+	Cli Run  slave  enable  user=remote-admin  reauth=True
+	Cli Run  master  show running-config  user=remote-admin  reauth=True
+	Cli Run  master  enable; config; no user test1234  user=remote-admin  reauth=True
+	Cli Run  master  enable; config; tenant test4321  user=remote-admin  reauth=True
 	Cli Run and Verify Output
 	...  master
 	...  show running-config tenant
 	...  tenant test4321
-	Cli Run  master  show controller  user=remote-admin
+	Cli Run  master  show controller  user=remote-admin  reauth=True
 	Sleep  5
-	Cli Run  master  show file  user=remote-admin
+	Cli Run  master  show file  user=remote-admin  reauth=True
 	Sleep  5
-	Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin
+	Cli Run  master  enable; config; copy running-config file://test-file  user=remote-admin  reauth=True
 	Sleep  5
-	Cli Run  master  enable; config; delete file test-file  user=remote-admin
+	Cli Run  master  enable; config; delete file test-file  user=remote-admin  reauth=True
     Cli Run and Verify Output
     ...  master
     ...  show file
     ...  None.
     ...  user=remote-admin
+    Cli Run  master  no user remote-admin
 
 TC020. Verify that user configured locally and associated with admin group can do actions
 	Cli Run  master  user user
 	Cli Run  master  password adminadmin
 	Cli Run  master  group admin
 	Cli Run  master  associate user user
-	Cli Run  master  enable  user=user
-	Cli Run  slave  enable  user=user
-	Cli Run  master  show running-config  user=user
-	Cli Run  master  enable; config; no user test1234  user=user
-	Cli Run  master  enable; config; tenant test4321  user=user
+	Cli Run  master  enable  user=user  reauth=True
+	Cli Run  slave  enable  user=user  reauth=True
+	Cli Run  master  show running-config  user=user  reauth=True
+	Cli Run  master  enable; config; no user test1234  user=user  reauth=True
+	Cli Run  master  enable; config; tenant test4321  user=user  reauth=True
 	Cli Run and Verify Output
 	...  master
 	...  show running-config tenant
 	...  tenant test4321
-	Cli Run  master  show controller  user=user
+	Cli Run  master  show controller  user=user  reauth=True
 	Sleep  5
-	Cli Run  master  show file  user=user
+	Cli Run  master  show file  user=user  reauth=True
 	Sleep  5
-	Cli Run  master  enable; config; copy running-config file://test-file  user=user
+	Cli Run  master  enable; config; copy running-config file://test-file  user=user  reauth=True
 	Sleep  5
-	Cli Run  master  enable; config; delete file test-file  user=user
+	Cli Run  master  enable; config; delete file test-file  user=user  reauth=True
     Cli Run and Verify Output
     ...  master
     ...  show file
     ...  None.
     ...  user=user
+    Cli Run  master  no user user
 
 TC021. Verify that remote-admin not associated with admin group can not do actions
 	Cli Run  master  group admin
 	Sleep  5
 	Run Keyword and Expect Error  *
-	...  Cli Run  master  enable  user=remote  password=remote
+	...  Cli Run  master  enable  user=remote  password=remote  reauth=True
 	Sleep  5
 	Run Keyword and Expect Error  *
-	...  Cli Run  slave  enable  user=remote  password=remote
+	...  Cli Run  slave  enable  user=remote  password=remote  reauth=True
 	Sleep  5
 	Run Keyword and Expect Error  *
-	...  Cli Run  master  show run  user=remote  password=remote
+	...  Cli Run  master  show run  user=remote  password=remote  reauth=True
 	Sleep  5
 * Keywords
 
@@ -308,6 +311,8 @@ verify version  [Arguments]  ${username}  ${new_password}  ${local}
     Should Contain  ${content}  ${projectname}
 
 tacacs test teardown
+    Run Keyword If Test Failed
+    ...  Restore Firstboot Config  ${master_name}
 	Cli Copy  snapshot://test-config  running-config
     ${result}=  cli delete user from group  tacacsadmin  admin
     Should be true  ${result}
@@ -318,6 +323,13 @@ tacacs test teardown
 
 Tacacs Suite Setup
 	Base Suite Setup
+	Set Suite Variable  ${master_name}  c1
+    Set Suite Variable  ${slave_name}  c2
+    ${status}=  Run Keyword and Return Status  Cli Run  ${master_name}  ena;conf; no user aaa_test  reauth=True
+    Run Keyword If  '${status}'=='False'
+    ...  Set Suite Variable  ${master_name}  c2
+    Run Keyword If  '${status}'=='False'
+    ...  Set Suite Variable  ${slave_name}  c1
 	Cli Copy  running-config  snapshot://startup-config  node=master
 	Cli Copy  running-config  snapshot://startup-config  node=slave
 
