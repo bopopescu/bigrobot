@@ -335,7 +335,12 @@ Test get_node_hostname
     log             c1 hostname is '${hostname}"
 
 Test sudo
-    #[Tags]  skipped
+    [Tags]  skipped
     test sudo        c1
     get active node names
+
+Test new CLI commands
+    #[Tags]  skipped
+    cli    c1    show versionX
+
 
