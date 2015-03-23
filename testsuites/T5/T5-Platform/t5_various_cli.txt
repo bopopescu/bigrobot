@@ -540,6 +540,7 @@ T44 no tacacs server host 10.2.3.201 timeout 10 key secret
     Cli Run and Verify Output  master
     ...  show running-config tacacs
     ...  tacacs server host 10.2.3.201
+    ...  flag=False
     Cli Run  master  no tacacs server host 10.2.3.201
     Cli Run and Verify Output  master
     ...  show running-config tacacs
