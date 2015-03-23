@@ -14,21 +14,21 @@ Library				Collections
 
 
 *** Variables ***
-
+${release}  JF300
 
 *** Test Cases ***
 T0 Basic check
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config  snapshot://extensive-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/${release}/extensive-config  snapshot://extensive-config
 	Sleep  5
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  file://extensive-file
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/${release}/extensive-file  file://extensive-file
 	Compare  file://extensive-file  snapshot://extensive-config
 	Sleep  5
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-config  running-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/${release}/extensive-config  running-config
 	Compare  snapshot://extensive-config  running-config
 	Compare  file://extensive-file  running-config
 	Cli Copy  snapshot://startup-config  running-config
 	Sleep  5
-	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/extensive-file  running-config
+	Cli Copy  scp://bsn@10.9.16.52:file-management-testsuite/${release}/extensive-file  running-config
 
 T1.1. Deleting ntp time-zone
 	${command}=  Set Variable  ntp time-zone America/Los_Angeles
@@ -231,8 +231,7 @@ T12. Deleting tacacs server host
 T13. Deleting tacacs server host
     ${command}=  Set Variable  tacacs server host 2.2.2.2 key 7 68010e0f162f3f
     ${diff}=  Create List
-    ...  tacacs server host 2.2.2.2 timeout 20
-    ...  tacacs server host 2.2.2.2 timeout 20 key 7 68010e0f162f3f
+    ...  tacacs server host 2.2.2.2 timeout 6 key 7 68010e0f162f3f
     Delete single running config line and verify
     ...  ${command}
     ...  ${diff}
@@ -245,17 +244,17 @@ T14. Deleting tacacs server key
 	...  ${diff}
 
 T15. Deleting tacacs server timeout
-	${command}=  Set Variable  tacacs server timeout 10
-	${diff}=  Create List  tacacs server timeout 10
+    Cli Run  master  tacacs server timeout 3
+	${command}=  Set Variable  tacacs server timeout 3
+	${diff}=  Create List  tacacs server timeout 3
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
 
 T16. Deleting tacacs server host timeout
-    ${command}=  Set Variable  tacacs server host 2.2.2.2 timeout 20
+    ${command}=  Set Variable  tacacs server host 2.2.2.2 timeout 6
     ${diff}=  Create List
-    ...  tacacs server host 2.2.2.2 key 7 68010e0f162f3f
-    ...  tacacs server host 2.2.2.2 timeout 20 key 7 68010e0f162f3f
+    ...  tacacs server host 2.2.2.2 timeout 6 key 7 68010e0f162f3f
     Delete single running config line and verify
     ...  ${command}
     ...  ${diff}
@@ -627,8 +626,8 @@ T29.2. Deleting aaa authentication
 ### This is wrong! It should be necessary to add "group tacacs+/local" at the end of the commands below
 T29.3. Deleting aaa authentication
     Cli Run  master  aaa authentication login default local
-    ${command}=  Set Variable  aaa authentication login default local group tacacs+
-    ${diff}=  Create List  aaa authentication login default local
+    ${command}=  Set Variable  aaa authentication login default local
+    ${diff}=  Set Variable  ${Empty}
     Delete single running config line and verify
     ...  ${command}
     ...  ${diff}
@@ -659,9 +658,9 @@ Suite Setup
 	Config  master  no aaa authentication login default group tacacs+ local
 	Cli Copy  running-config  snapshot://startup-config
 	Cli Copy  running-config  snapshot://startup-config  node=slave
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  snapshot://extensive-config
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  file://extensive-file
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/${release}/extensive-config  snapshot://extensive-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/${release}/extensive-file  file://extensive-file
+	Cli Copy  scp://bsn@regress:file-management-testsuite/${release}/extensive-file  running-config
 	Cli Copy  running-config  snapshot://test-config
 
 Test Setup

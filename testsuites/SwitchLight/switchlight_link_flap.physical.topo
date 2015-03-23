@@ -1,0 +1,22 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+    ip: 10.8.34.1
+c2:
+    ip: 10.8.34.2
+
+s1:                   ## S1 is the DUT
+    ip: 10.8.34.20
+    interfaces:
+       s2: ethernet5
+       s3: ethernet9  ## This needs to be an unused interface in DOWN state
+
+s2:
+    ip: 10.8.34.21
+    interfaces:
+       s1: ethernet49
