@@ -1,8 +1,10 @@
 * Settings
 Documentation   	Test suite with tests to configure tenants. The tests have
 ...             	a workflow that is created using keywords from the resource file.
-Suite Setup  		config suite setup
-Suite Teardown  	config suite teardown
+Suite Setup  		Login Suite Setup
+Suite Teardown  	Login Suite Teardown
+Test Setup  		Login Test Setup
+Test Teardown  		Login Test Teardown
 Force Tags      	GUI BCF Ironhorse
 Library         	keywords/BsnCommon.py
 Library         	keywords/T5Utilities.py
@@ -20,7 +22,7 @@ Library       		String
 T1.1 Local admin        
 	Valid Login					admin          		adminadmin
 T1.2 Remote admin1  
-	Valid Login                 bt-admin       		adminadmin
+	Valid Login                 bsn-vsa-admin-user       		adminadmin
 T1.3 Remote admin2
 	Valid Login                 admin          		Password1
 T1.4 Local user1 
@@ -28,7 +30,7 @@ T1.4 Local user1
 T1.5 Local user2      
 	Valid Login                 test-user-local     ,./[]<:{}`~!@#$^&*()_-1234567890
 T1.6 Remote user1
-	Valid Login                 remote         		remote
+	Valid Login                 taco-user         		taco
 T1.7 Remote user2
 	Valid Login	                test-user-remote   `0-=~!@#$^&*()_+,./;[]<>?:{}|
 
@@ -52,59 +54,88 @@ T3.1 Local Only
 	Logout
 	Valid Login  admin  adminadmin
 	Configure Authentication  Local  None
-	Login With Invalid Credentials Should Fail  remote  remote
+	Configure Authorization  Local  None
+	Login With Invalid Credentials Should Fail  bsn-vsa-admin-user  adminadmin
 	Valid Login  admin  adminadmin
-	Login With Invalid Credentials Should Fail  remote  remote
+	Login With Invalid Credentials Should Fail  bsn-vsa-read-only-user  adminadmin
 	Valid Login  admin  adminadmin
 
 T3.2 Remote Only
 	Valid Login  admin  adminadmin
-	Configure Authentication  TACACS  None
+	Configure Authentication  Remote  None  TACACS
+	Configure Authorization  Remote  None  TACACS
 	Logout
     Run Keyword and Ignore Error
-    ...  Cli Run  master  show tacacs  user=remote  password=remote
+    ...  Cli Run  master  show tacacs  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
     Sleep  30
 	Login With Invalid Credentials Should Fail  admin  adminadmin
-	Valid Login  remote  remote
-	Logout
-	Valid Login  admin  Password1
-	Configure Authentication  TACACS  Local
+	Valid Login  bsn-vsa-admin-user  adminadmin
+	Configure Authentication  Remote  Local  TACACS
+	Configure Authorization  Remote  Local  TACACS
 	Valid Login  admin  adminadmin
 
 T3.3 Local Then Remote
-	Valid Login  admin  Password1
-	Configure Authentication  Local  TACACS
-	Valid Login  remote  remote
+	Valid Login  admin  adminadmin
+	Configure Authentication  Local  Remote  TACACS
+	Configure Authorization  Local  Remote  TACACS
+	Logout
+    Run Keyword and Ignore Error
+    ...  Cli Run  master  show tacacs  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
+    Sleep  30
+	Valid Login  bsn-vsa-admin-user  adminadmin
 	Valid Login  admin  adminadmin
 
 T3.4 Remote Then Local
 	Valid Login  admin  adminadmin
-	Configure Authentication  TACACS  Local
-	Valid Login  remote  remote
+	#Configure Authentication  Remote  Local  TACACS
+	#Configure Authorization  Remote  Local  TACACS
+	Valid Login  bsn-vsa-admin-user  adminadmin
 	Valid Login  admin  adminadmin
 
 * Keyword
-config suite setup
-    base suite setup
+Login Suite Setup
+    Base Suite Setup
+    Set Selenium Timeout  20
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
     Set Selenium Timeout  20
-    Rest Add Tacacs Server  10.2.3.201  secret  10
-    Rest Add Tacacs Authentication
-    CLI Configure User    test    adminadmin
-    CLI Configure User    test-user-local    ,./[]<:{}`~!@#$^&*()_-1234567890
-    CLI Run  master  group admin; associate user tomasz; associate user test-user-local
-    Run Keyword and Ignore Error
-    ...  Cli Run  master  show tacacs  user=remote  password=remote  reauth=True
-    Run Keyword and Ignore Error
-    ...  Cli Run  slave  show tacacs  user=remote  password=remote  reauth=True
-    Sleep  60
+    Set Suite Variable  ${master_name}  c1
+    Set Suite Variable  ${slave_name}  c2
+    ${status}=  Run Keyword and Return Status  Cli Run  ${master_name}  ena;conf; user aaa_test  reauth=True
+    Run Keyword If  '${status}'=='False'
+    ...  Set Suite Variable  ${master_name}  c2
+    Run Keyword If  '${status}'=='False'
+    ...  Set Suite Variable  ${slave_name}  c1
+    Cli Run  ${master_name}  copy snapshot://firstboot-config running-config  reauth=True
+    Cli Run  master  tacacs server host 10.2.3.201 timeout 5 key secret
+    Cli Run  master  aaa authentication login default group tacacs+ local
+    Cli Run  master  aaa authorization exec default group tacacs+ local
+    Cli Configure User    test    adminadmin
+    Cli Configure User    test-user-local    ,./[]<:{}`~!@#$^&*()_-1234567890
+    Cli Run  master  group admin; associate user tomasz; associate user test; associate user test-user-local; associate user taco-user; associate user test-user-remote
+    #Run Keyword and Ignore Error
+    #...  Cli Run  master  show tacacs  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
+    #Run Keyword and Ignore Error
+    #...  Cli Run  slave  show tacacs  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
+    #Sleep  60
     Start Selenium Server  -trustAllSSLCertificates
     Open Browser To Login Page
     Valid Login  admin  adminadmin
+
+Login Test Setup
+    Base Test Setup
+    Cli Run  ${master_name}  copy running-config snapshot://test-config  reauth=True
+
+
+Login Test Teardown
+	Run Keyword If Test Failed
+    ...  Restore Firstboot Config  ${master_name}
+    Cli Run  ${master_name}  copy snapshot://test-config running-config  reauth=True
+    Base Test Teardown
 	
-config suite teardown
+Login Suite Teardown
 	Close Browser
     Stop Selenium Server
-    base suite teardown
+    Cli Run  ${master_name}  copy snapshot://firstboot-config running-config  reauth=True
+    Base Suite Teardown
