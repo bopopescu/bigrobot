@@ -1,0 +1,105 @@
+*Settings
+Documentation               Switch Light Interface Link Flap Counter Test Suite
+Suite Setup                 environment suite setup
+Suite Teardown              base suite teardown
+Force Tags                  corsair-450 switch  
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords_dev/ilum/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
+
+* Variable
+
+* Test Case
+TC1: Verify interface link flap up_count down_count
+    ${loops}=   set variable  3
+    cli clear interface statistics  s1
+    Sleep  10  reason="Wait for stats to clear" 
+    cli_show_interface_statistics  s1  ${S1_IF}  #snapshot of stats
+    :FOR  ${index}  IN RANGE  0  ${loops}  
+    \    cli disable interface  s2  ${S2_IF}
+    \    Sleep  10 
+    \    cli enable interface  s2  ${S2_IF}
+    \    Sleep  10 
+    \    cli_show_interface_statistics  s1  ${S1_IF}  #snapshot of stats
+    ${up_flaps}=  cli show interface link flap count  s1  up  ${S1_IF}   #Check up_count
+    should be equal as integers  ${up_flaps}  ${loops} 
+    ${down_flaps}=  cli show interface link flap count  s1  down  ${S1_IF}   #Check down_count 
+    should be equal as integers  ${down_flaps}  ${loops} 
+    [Tags]   full   feature  
+
+
+TC2: Verify interface link flap up_count down_count clear_stats
+    ${loops}=   set variable  3
+    :FOR  ${index}  IN RANGE  0  ${loops}
+    \    cli disable interface  s2  ${S2_IF}
+    \    Sleep  10
+    \    cli enable interface  s2  ${S2_IF} 
+    \    Sleep  10
+    \    cli_show_interface_statistics  s1  ${S1_IF}  #snapshot of stats
+    cli clear interface statistics  s1
+    Sleep  10  reason="Wait for stats to clear"
+    ${up_flaps}=  cli show interface link flap count  s1  up  ${S1_IF}   #Check up_count
+    should be equal as integers  ${up_flaps}  0 
+    ${down_flaps}=  cli show interface link flap count  s1  down  ${S1_IF}   #Check down_count
+    should be equal as integers  ${down_flaps}  0 
+    [Tags]   full   feature  
+    [Tags]    
+
+TC3: Verify interface last flap time never 
+    ${time}=  cli show interface link flap time   s1   ${S1_IF_DOWN} 
+    should be equal  ${time}   never up 
+    [Tags]   full   feature  
+
+TC4: Verify interface link flap time link_up 
+    ${duration}=   set variable  90 
+    ${lower_limit}=  evaluate  ${duration}-10
+    ${upper_limit}=  evaluate  ${duration}+10
+    cli clear interface statistics  s1
+    Sleep  10  reason="Wait for stats to clear"
+    cli disable interface  s2  ${S2_IF}
+    Sleep  10
+    cli enable interface  s2  ${S2_IF}
+    Sleep  ${duration} 
+    ${time}=  cli show interface link flap time   s1   ${S1_IF} 
+    ${result}=  verify value is in range  ${time}  ${lower_limit}  ${upper_limit}
+    should be true  ${result}   
+    [Tags]   full   feature  
+
+TC5: Verify interface link flap time link_down 
+    ${duration}=   set variable  90
+    ${lower_limit}=  evaluate  ${duration}-10
+    ${upper_limit}=  evaluate  ${duration}+10
+    cli clear interface statistics  s1
+    Sleep  10  reason="Wait for stats to clear"
+    cli enable interface  s2  ${S2_IF}
+    Sleep  10
+    cli disable interface  s2  ${S2_IF}
+    Sleep  ${duration}
+    ${time}=  cli show interface link flap time   s1   ${S1_IF}
+    ${result}=  verify value is in range  ${time}  ${lower_limit}  ${upper_limit}
+    should be true  ${result}
+    [Tags]   full   feature  
+
+
+*Keywords
+environment suite setup
+    base suite setup        
+    ${s1_if}=   get_switch_int_topo  s1  s2
+    ${s1_if_down}=   get_switch_int_topo  s1  s3
+    ${s2_if}=   get_switch_int_topo  s2  s1
+    set suite variable    ${S1_IF}  ${s1_if}
+    set suite variable    ${S1_IF_DOWN}  ${s1_if_down}
+    set suite variable    ${S2_IF}  ${s2_if}
+    cli enable interface  s1  ${S1_IF}
+    cli enable interface  s2  ${S2_IF}
+    sleep  10
+    
+environment suite teardown
+    base suite teardown
+    cli enable interface  s1  ${S1_IF}
+    cli enable interface  s2  ${S2_IF
