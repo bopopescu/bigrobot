@@ -1891,28 +1891,61 @@ initialize host
     BASH run command                                h5                                ifdown bond0
     BASH run command                                h6                                ifdown bond0
     sleep                                           1
-    BASH run command                                h1                                ifup eth2
-    sleep                                           1
-    BASH run command                                h1                                ifup eth3
-    BASH run command                                h2                                ifup eth2
-    sleep                                           1
-    BASH run command                                h2                                ifup eth3
-    BASH run command                                h3                                ifup eth2
-    sleep                                           1
-    BASH run command                                h3                                ifup eth3
-    BASH run command                                h4                                ifup eth2
-    sleep                                           1
-    BASH run command                                h4                                ifup eth3
-    BASH run command                                h5                                ifup eth2
-    sleep                                           1
-    BASH run command                                h5                                ifup eth3
-    BASH run command                                h6                                ifup eth2
-    sleep                                           1
-    BASH run command                                h6                                ifup eth3
-    sleep                                           1
-    BASH run command                                h6                                ifup eth2
-    sleep                                           1
-    BASH run command                                h6                                ifup eth3
+    BASH init intf                              h1                              ${h1_leaf0a_int0}
+    BASH init intf                              h1                              ${h1_leaf0b_int0}
+    #BASH init intf                              h1                              eth3
+    BASH init intf                              h2                              ${h2_leaf0a_int0}
+    BASH init intf                              h2                              ${h2_leaf0b_int0}
+    #BASH init intf                              h2                              eth3
+    BASH init intf                              h3                              ${h3_leaf1a_int0}
+    BASH init intf                              h3                              ${h3_leaf1b_int0}
+    #BASH init intf                              h3                              eth3
+    BASH init intf                              h4                              ${h4_leaf1a_int0}
+    BASH init intf                              h4                              ${h4_leaf1b_int0}
+    #BASH init intf                              h4                              eth3
+    BASH init intf                              h5                              ${h5_leaf2a_int0}
+    BASH init intf                              h5                              ${h5_leaf2b_int0}
+    #BASH init intf                              h5                              eth3
+    BASH init intf                              h6                              ${h6_leaf2a_int0}
+    BASH init intf                              h6                              ${h6_leaf2b_int0}
+    #BASH init intf                              h6                              eth2
+    #BASH init intf                              h6                              eth3
+    BASH init intf                              h1                              bond0
+    BASH init intf                              h2                              bond0
+    BASH init intf                              h3                              bond0
+    BASH init intf                              h4                              bond0
+    BASH init intf                              h5                              bond0
+    BASH init intf                              h6                              bond0
+    BASH run command                            h1                              ifdown bond0
+    BASH run command                            h2                              ifdown bond0
+    BASH run command                            h3                              ifdown bond0
+    BASH run command                            h4                              ifdown bond0
+    BASH run command                            h5                              ifdown bond0
+    BASH run command                            h6                              ifdown bond0
+    BASH run command                            h1                              ifup ${h1_leaf0a_int0}
+    BASH run command                            h1                              ifup ${h1_leaf0b_int0}
+    #BASH run command                            h1                              ifup eth3
+    #BASH run command                            h1                              ifup eth3
+    BASH run command                            h2                              ifup ${h2_leaf0a_int0}
+    BASH run command                            h2                              ifup ${h2_leaf0b_int0}
+    #BASH run command                            h2                              ifup eth3
+    #BASH run command                            h2                              ifup eth3
+    BASH run command                            h3                              ifup ${h3_leaf1a_int0}
+    BASH run command                            h3                              ifup ${h3_leaf1b_int0}
+    #BASH run command                            h3                              ifup eth3
+    #BASH run command                            h3                              ifup eth3
+    BASH run command                            h4                              ifup ${h4_leaf1a_int0}
+    BASH run command                            h4                              ifup ${h4_leaf1b_int0}
+    #BASH run command                            h4                              ifup eth3
+    #BASH run command                            h4                              ifup eth3
+    BASH run command                            h5                              ifup ${h5_leaf2a_int0}
+    BASH run command                            h5                              ifup ${h5_leaf2b_int0}
+    #BASH run command                            h5                              ifup eth3
+    #BASH run command                            h5                              ifup eth3
+    BASH run command                            h6                              ifup ${h6_leaf2a_int0}
+    BASH run command                            h6                              ifup ${h6_leaf2b_int0}
+    #BASH run command                            h6                              ifup eth3
+    #BASH run command                            h6                              ifup eth3
     BASH ifup intf                              h1                                bond0
     BASH ifup intf                              h2                                bond0
     BASH ifup intf                              h3                                bond0
@@ -2105,31 +2138,8 @@ T5 base suite setup
     base suite setup
     add fabric switch
     reconnect_switch_ips
-    sleep                                           5
-    ${result} =                                     CLI verify controller       s1                          c1      
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s1                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s2                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s2                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s3                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s3                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s4                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s4                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s5                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s5                          c2
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s6                          c1
-    Should Be True                                  ${result}
-    ${result} =                                     CLI verify controller       s6                          c2
-    Should Be True                                  ${result}       
+    set l3 host int variables
+    Set l3 switch int variables      
     REST add portgroup                              ${leaf0_pc1}
     REST add portgroup                              ${leaf0_pc2}
     REST add portgroup                              ${leaf1_pc1}

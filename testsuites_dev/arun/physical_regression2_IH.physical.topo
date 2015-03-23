@@ -145,6 +145,7 @@ s5:
     spine1_int0: ethernet52
     h5_int0: ethernet47
     h6_int0: ethernet48
+    h5_int1: ethernet25
   set_session_ssh: false
   set_init_ping: false
 s6:
