@@ -1,0 +1,303 @@
+*Settings
+Documentation               Switch Light CLI include exclude using | (pipe) 
+Suite Setup                 environment suite setup
+Suite Teardown              base suite teardown
+Force Tags                  corsair-450 switch  
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords_dev/ilum/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
+
+* Variable
+
+* Test Case
+TC1: Verify CLI show boot 
+    ${command}=  set variable  show boot
+    verify wc  ${command} 
+    verify include  ${command} 
+    verify exclude  ${command} 
+    verify cat  ${command} 
+    verify sed  ${command} 
+    [Tags]   full   feature   
+
+TC2: Verify CLI show cdp neighbor 
+    ${command}=  set variable  show cdp neighbor 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC3: Verify CLI show clock 
+    ${command}=  set variable  show clock 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC4: Verify CLI show datapath 
+    ${command}=  set variable  show datapath 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC5: Verify CLI show environment 
+    ${command}=  set variable  show environment 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC6: Verify CLI show flowtable 
+    ${command}=  set variable  show flowtable 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC7: Verify CLI show forwarding crc status 
+    ${command}=  set variable  show forwarding crc status 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC8: Verify CLI show forwarding l2cache status
+    ${command}=  set variable  show forwarding l2cache status
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC9: Verify CLI show forwarding pause status
+    ${command}=  set variable  show forwarding pause status
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC10: Verify CLI show forwarding pimu status
+    ${command}=  set variable  show forwarding pimu status
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC11: Verify CLI show interface 
+    ${command}=  set variable  show interface 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC12: Verify CLI show interface ethernet detail
+    ${command}=  set variable  show interface ${S1_IF} detail
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC13: Verify CLI show interface negotiate 
+    ${command}=  set variable  show interface negotiate 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC14: Verify CLI show interface optics-always-enabled 
+    ${command}=  set variable  show interface optics-always-enabled
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC15: Verify CLI show inventory 
+    ${command}=  set variable  show inventory
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC16: Verify CLI show lldp neighbors 
+    ${command}=  set variable  show lldp neighbors 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC17: Verify CLI show log 
+    ${command}=  set variable  show log
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC18: Verify CLI show ntp 
+    ${command}=  set variable  show ntp 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC19: Verify CLI show running-config 
+    ${command}=  set variable  show running-config 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC20: Verify CLI show port-channel 
+    ${command}=  set variable  show port-channel 1
+    cli add portchannel  s1  1  20-21  l3
+    sleep  10
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    cli delete portchannel  s1  1
+    [Tags]   full   feature
+
+TC21: Verify CLI show snmp-server 
+    ${command}=  set variable  show snmp-server 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC22: Verify CLI show startup-config 
+    ${command}=  set variable  show startup-config 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC23: Verify CLI show tunnel 
+    ${command}=  set variable  show tunnel 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC24: Verify CLI show udf 
+    ${command}=  set variable  show udf 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC25: Verify CLI show udld neighbors 
+    ${command}=  set variable  show udld neighbors 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC26: Verify CLI show users 
+    ${command}=  set variable  show users 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC27: Verify CLI show version 
+    ${command}=  set variable  show version 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+TC28: Verify CLI history
+    ${command}=  set variable  show history 
+    verify wc  ${command}
+    verify include  ${command}
+    verify exclude  ${command}
+    verify cat  ${command}
+    verify sed  ${command}
+    [Tags]   full   feature
+
+
+
+*Keywords
+verify wc  [Arguments]  ${command}
+    cli  s1  ${command} | wc 
+
+verify include  [Arguments]  ${command}
+    cli  s1  ${command} | grep Version 
+
+verify exclude  [Arguments]  ${command}
+    cli  s1  ${command} | grep -v Version 
+
+verify egrep  [Arguments]  ${command}
+    cli  s1  ${command} | egrep 'SFP|SN' 
+
+verify cat  [Arguments]  ${command}
+    cli  s1  ${command} | cat 
+
+verify sed  [Arguments]  ${command}
+    cli  s1  ${command} | sed --version 
+
+environment suite setup
+    base suite setup        
+    ${s1_if}=   get_switch_int_topo  s1  s2
+    ${s2_if}=   get_switch_int_topo  s2  s1
+    set suite variable    ${S1_IF}  ${s1_if}
+    set suite variable    ${S2_IF}  ${s2_if}
+    sleep  5 
+    
+environment suite teardown
+    base suite teardown
