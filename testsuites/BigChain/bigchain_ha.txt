@@ -819,6 +819,8 @@ TC028: Controller HA: Reboot both controllers and verify chain is hitless
 
 sanity suite setup
     base suite setup
+    rest disable feature  tunneling
+    rest enable feature  l3-l4-mode
     ${switch_dpid_s1}=  rest return switch dpid from ip  s1
     ${switch_dpid_s2}=  rest return switch dpid from ip  s2
     ${result1}=  rest add switch alias  s1  ${switch1_alias}

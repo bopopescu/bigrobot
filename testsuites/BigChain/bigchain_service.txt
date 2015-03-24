@@ -1293,6 +1293,8 @@ TC047: Configure out-skip and verify service instance is skipped when traffic is
 
 service suite setup
     base suite setup
+    rest disable feature  tunneling
+    rest enable feature  l3-l4-mode
     ${result1}=  rest add switch alias  s1  ${switch1_alias}
     Should be true  ${result1}
     ${result2}=  rest add switch role  node=s1  mode=bigchain
