@@ -52,40 +52,56 @@ bring up host bond0 interface
 Configure Multiple L2 Tenants With Single VNS & Failover
 	[Tags]	sanity  feature  daily-sanity
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
+	${switches}=  rest_get_disconnect_switch
+	Should Be Empty   ${switches}
 	Reboot the master node & verify fabric integrity
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
 
 Verify HA Cluster Formation
-   [Tags]  sanity  feature  daily-sanity
-   Verify the cluster formation 
+    [Tags]  sanity  feature  daily-sanity
+    ${switches}=  rest_get_disconnect_switch
+    Should Be Empty   ${switches}
+    Verify the cluster formation 
    
 Verify Cluster Election Take-Leader
 	[Tags]  sanity  feature  daily-sanity
+	${switches}=  rest_get_disconnect_switch
+	Should Be Empty   ${switches}
 	Verify cluster election take leader
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology
 	
 Verify Cluster Election Re-run
 	[Tags]  feature   daily-sanity
+	${switches}=  rest_get_disconnect_switch
+	Should Be Empty   ${switches}
 	Verify cluster election rerun 
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology
 	
 Verify Cluster Master Reboot
 	[Tags]  sanity  feature
+	${switches}=  rest_get_disconnect_switch
+	Should Be Empty   ${switches}
 	Reboot the master node & verify fabric integrity
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology
 	
 Verify Cluster Slave Reboot
 	[Tags]  sanity  feature
+	${switches}=  rest_get_disconnect_switch
+	Should Be Empty   ${switches}
 	Reboot the Slave node & verify fabric integrity
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology
 
 Master Failover/Failback & Verify Connectivity
    [Tags]  feature  
+   ${switches}=  rest_get_disconnect_switch
+   Should Be Empty   ${switches}
    Failover/Failback by rebooting the master and verify connectivity
 
    
 Slave Failover/Failback & Verify Connectivity
    [Tags]  feature 
+   ${switches}=  rest_get_disconnect_switch
+   Should Be Empty   ${switches}
    Failover/Failback by rebooting the slave and verify connectivity
 
 	
@@ -93,12 +109,16 @@ Cluster Election Take-Leader & Verify Connectivity
    [Tags]  feature    
    # To be: This test case only checks the take-leader in slave.
    # 			Need to implement this in the master
+   ${switches}=  rest_get_disconnect_switch
+   Should Be Empty   ${switches}
    Failover/Failback by issuing take-leader in master & verify connectivity
 
 Cluster Election Re-run & Verify Connectivity
    [Tags]  feature   
    # To be: Make sure to do it on both master & slave when the commands
    #		are finalized
+   ${switches}=  rest_get_disconnect_switch
+   Should Be Empty   ${switches}
    Re-run the election and verify connectivity
 
    
@@ -171,9 +191,6 @@ Re-run the election and verify connectivity
 
 
 Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology 
-
-   auto configure fabric switch  ${spineList}  ${leafList}  2
-   sleep  30
    Set Test Variable  ${h1_intf0}  ethernet48
    Set Test Variable  ${h1_intf1}  ethernet48
    Set Test Variable  ${h2_intf0}  ethernet47
