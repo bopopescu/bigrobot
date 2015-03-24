@@ -6,7 +6,7 @@ Force Tags                  corsair-450 switch cli
 Library                     keywords/BsnCommon.py
 Library                     keywords/AppController.py
 Library                     keywords/BigTap.py
-Library                     keywords_dev/ilum/SwitchLight.py
+Library                     keywords/SwitchLight.py
 Library                     keywords/Ixia.py
 Library                     Collections.py
 Library                     OperatingSystem.py
