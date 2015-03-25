@@ -20,14 +20,14 @@ Library         String
 
 *Variables
 
-${counterint}=              300
-${headersize}=              128
-${samplerate}=              5000
+${switch1_name}=  	leaf0-a
+${switch3_name}=  	leaf1-a
+${switch7_name}=  	spine0
 
-
-${switch1_name}=  leaf0-a
-${switch3_name}=  leaf1-a
-${switch7_name}=  spine0
+${collectorip}=    	70.1.1.5
+${counterint}=      300
+${headersize}=      128
+${samplerate}=      5000
 
 ${tenant1}=        testTenant1 
 ${vns1}=           seg1
@@ -43,25 +43,39 @@ ${src_mac}=       00:11:01:00:00:01
 ${dst_mac}=       00:12:01:00:00:02
 
 
- 
-
 *Test Case
 
 ###
 ### Section I : BCF sflow confguration from controller 
 ###
 
-TC01 Configure sflow counter interval in seconds 
-    [Tags]   feature  sflow  test1 
+TC01 Configure sflow collector with dst ip tenant and segment  
+    [Tags]   feature  sflow     
+    Log  Step 1 - Configure the sflow collector 
+    rest add sflow collector  ${collectorip}  ${tenant1}  ${vns1}
+
+TC02 Delete sflow collector with ip  
+    [Tags]   feature  sflow  test2   
+    Log  Step 1 - Configure the sflow collector 
+    rest delete sflow collector  ${collectorip}
+
+TC03 Configure sflow counter interval in seconds 
+    [Tags]   feature  sflow   
     Log  Step 1 - Configure the sflow counter interval 
     rest add sflow counterint  ${counterint}  
 
-TC02 Configure sflow header size in Bytes 
-    [Tags]   feature  sflow  test1 
+TC04 Configure sflow header size in Bytes 
+    [Tags]   feature  sflow   
     Log  Step 1 - Configure the sflow counter interval 
-    rest add sflow headersize  128
+    rest add sflow headersize  ${headersize}
 
-    
+TC05 Configure sflow sample rate 
+    [Tags]   feature  sflow   
+    Log  Step 1 - Configure the sflow sample rate 
+    rest add sflow samplerate  ${samplerate}    
+
+      
+
 
        
 * Keywords
