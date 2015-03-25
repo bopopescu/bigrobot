@@ -100,7 +100,7 @@ TC001: Verify initial configuration
     sleep  5
     verify results  a  b  transmitted_frames  received_valid_frames  50
     verify results  a  b  received_valid_frames  transmitted_frames  50
-    [Tags]  full  ha  runthis
+    [Tags]  full  ha
 
 TC002: Switch HA:Clear interface statistics on switch and verify chain 
     ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
