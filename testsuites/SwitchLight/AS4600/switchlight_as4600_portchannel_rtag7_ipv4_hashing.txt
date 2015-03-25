@@ -63,7 +63,6 @@ ${dst_port}                             8201
 ${range}                                16
 
 *Test Case
-*Test Case
 TC001: Verify Configuration
     verify portchannel interface is up   s1  ${s1_1g_name_1}
     verify portchannel interface is up   s1  ${s1_1g_name_2}
@@ -2017,6 +2016,46 @@ TC123: Verify source and destination IP, source and destination L4 port, protoco
     send and verify traffic
     [Tags]  full  feature  traffic
 
+### Misc Testcases
+
+TC124: Verify with cli command "hash ipv4 disable" hashing on ipv4 is disabled and all traffic goes on one link
+    config  node=s1  cmd=hash ipv4 disable
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${src_port}=  Evaluate  1234 + ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${dst_port}=  Evaluate  ${port} + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:00:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:00:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+    
+TC125: Verify with cli command "hash ipv4 disable" hashing on ipv4 is disabled and L2 based hashing occurs
+    config  node=s1  cmd=hash ipv4 disable
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    :FOR    ${port}  IN RANGE  3  35  2
+    \   ${src_ip_value}=  Catenate  SEPARATOR=  10.100.100.  ${port}
+    \   ${src_port}=  Evaluate  1234 + ${port}
+    \   ${dst_ip_value}=  Catenate  SEPARATOR=  10.100.200.  ${port}
+    \   ${dst_port}=  Evaluate  ${port} + ${port}
+    \   ${vlan}=  Evaluate  ${port} * ${port}
+    \   ${stream}=  L3 add  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=6250  no_arp=True
+    \   ...     src_mac=${src_mac}   src_mac_step=00:00:01:00:00:00  dst_mac=${dst_mac}   dst_mac_step=00:00:01:00:00:00
+    \   ...     src_ip=${src_ip_value}  src_gw=${dst_ip_value}  src_gw_step=0.0.0.0  src_cnt=1  src_gw_prefix=16
+    \   ...     dst_ip=${dst_ip_value}  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=16
+    \   ...     protocol=${port}  src_port=${src_port}  dst_port=${dst_port}  name=atob_l4_dst_port
+    \   ...     vlan_id=${vlan}  ethertype=8100
+    send and verify traffic
+    [Tags]  full  feature  traffic
+    
 * Keywords 
 rtag7 suite setup
     base suite setup
