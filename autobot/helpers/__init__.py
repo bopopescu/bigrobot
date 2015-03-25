@@ -53,6 +53,12 @@ def ctrl(char):
     return ascii.ctrl(char)
 
 
+def lib_location(_file):
+    if re.match(r'.*bigrobot/.+/vendors/', _file):
+        return "Local"
+    else:
+        return "Remote"
+
 def bigrobot_env_variables():
     env_str = ''
     for key in os.environ.keys():
@@ -67,22 +73,25 @@ def bigrobot_module_dependencies():
     # import pexpect
     import httplib2
     import celery
-    
+
     s = "BigRobot version        %s\n" % get_version()
 
     try:
         import robot
-        s += "Robot Framework version %s\n" % robot.version.VERSION
+        s += ("Robot Framework version %s  <%s>\n"
+              % (robot.version.VERSION, lib_location(robot.__file__)))
     except:
         pass
 
-    s += "Exscript version        %s\n" % Exscript.version.__version__
-    s += "Paramiko version        %s\n" % paramiko.__version__
+    s += ("Exscript version        %s  <%s>\n"
+          % (Exscript.version.__version__, lib_location(Exscript.__file__)))
+    s += ("Paramiko version        %s  <%s>\n"
+          % (paramiko.__version__, lib_location(paramiko.__file__)))
     s += "Crypto version          %s\n" % Crypto.__version__
     # s += "Pexpect version         %s\n" % pexpect.__version__
     s += "Httplib2 version        %s\n" % httplib2.__version__
     s += "Celery version          %s\n" % celery.VERSION_BANNER
-    
+
     pversion = sys.version_info
     s += "Python version          %s.%s.%s" % (pversion.major,
                                                pversion.minor,
@@ -1380,7 +1389,7 @@ def datetime_format(s):
     Input in seconds. Return the time in hours:minutes:seconds. If the total
     seconds exceeds a day, return number of days also. E.g.,
         03:25:45
-        1d 01:57:03  
+        1d 01:57:03
     """
     days = int(s / 86400)
     date_str = time.strftime('%H:%M:%S', time.gmtime(s % 86400))

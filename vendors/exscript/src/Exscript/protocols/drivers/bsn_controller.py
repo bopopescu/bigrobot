@@ -63,6 +63,7 @@ _prompt_re = [re.compile(r'[\r\n\x07]+(\*?)(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([
 _error_re = [re.compile(r'%Error'),
              re.compile(r'error: running command', re.I),
              re.compile(r'error: unknown command', re.I),
+             re.compile(r'error: unexpected argument', re.I),
              re.compile(r'error: unexpected additional arguments', re.I),
              re.compile(r'error: bad command', re.I),
              re.compile(r'invalid input', re.I),

@@ -6,6 +6,7 @@ import robot
 if ('BIGROBOT_ESB' in os.environ and os.environ['BIGROBOT_ESB'].lower() == 'true'):
     bigrobot_path = os.path.dirname(__file__) + '/../..'
     sys.path.insert(0, bigrobot_path + '/vendors/exscript/src')
+    sys.path.insert(0, bigrobot_path + '/vendors/paramiko')
     sys.path.insert(0, bigrobot_path + '/esb')
     sys.path.insert(0, bigrobot_path)
 
