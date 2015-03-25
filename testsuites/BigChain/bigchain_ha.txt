@@ -90,13 +90,17 @@ TC001: Verify initial configuration
     clear stats
     cli clear interface statistics  s1
     cli clear interface statistics  s2
+    config  node=s3  cmd=clear counters
+    config  node=s4  cmd=clear counters
     start traffic  ${stream_new}
     sleep  10
     stop traffic  ${stream_new}
+    config  node=s3  cmd=show interfaces counters
+    config  node=s4  cmd=show interfaces counters
     sleep  5
     verify results  a  b  transmitted_frames  received_valid_frames  50
     verify results  a  b  received_valid_frames  transmitted_frames  50
-    [Tags]  full  ha
+    [Tags]  full  ha  runthis
 
 TC002: Switch HA:Clear interface statistics on switch and verify chain 
     ${stream_new}=  L3 add  name=a_b_flow  flow=a<->b  frame_rate=10000   frame_size=128  frame_cnt=100000
@@ -843,7 +847,21 @@ sanity suite setup
     config  node=master  cmd=deployment role bigchain
     ${content5}=   cli_content   node=master
     Should not contain  ${content5}  Error
-    ## START: configure passive lag on s3 (app-arista-1)
+    
+    ## START: configure active lag on s3 (app-arista-1)
+    config  node=s3  cmd=interface ethernet 1-48
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport mode trunk
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
     config  node=s3  cmd=interface ${arista_ixia_interface_s3}
     ${content1}=  cli_content  node=s3
     Should Not Contain  ${content1}  Error
@@ -893,6 +911,19 @@ sanity suite setup
 
 
     ## START: configure passive lag on s4 (app-arista-2)
+    config  node=s4  cmd=interface ethernet 1-48
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=no switchport mode trunk
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=no switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=no switchport
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=exit
     config  node=s4  cmd=interface ${arista_ixia_interface_s4}
     ${content1}=  cli_content  node=s4
     Should Not Contain  ${content1}  Error
@@ -1150,4 +1181,30 @@ sanity suite teardown
     rest delete switch alias  s2
     rest delete switch  s1
     rest delete switch  s2
+    config  node=s3  cmd=interface ethernet 1-48
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport mode trunk
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=no switchport
+    ${content1}=  cli_content  node=s3
+    Should Not Contain  ${content1}  Error
+    config  node=s3  cmd=exit
+    config  node=s4  cmd=interface ethernet 1-48
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=no switchport mode trunk
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=no switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=no switchport
+    ${content1}=  cli_content  node=s4
+    Should Not Contain  ${content1}  Error
+    config  node=s4  cmd=exit
     base suite teardown
