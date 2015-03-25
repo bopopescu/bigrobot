@@ -1523,7 +1523,7 @@ class T5Platform(object):
             output = helpers.strip_cli_output(content)
             lines = helpers.str_to_list(output)
             assert(len(lines) == 3)
-            assert "ipv4 address" in lines[0]
+            assert "Ipv4 address" in lines[0]
         except:
             helpers.test_log(c.cli_content())
             return None
