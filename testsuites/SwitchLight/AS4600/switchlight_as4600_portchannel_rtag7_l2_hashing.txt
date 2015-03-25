@@ -63,7 +63,6 @@ ${dst_port}                             8201
 ${range}                                16
 
 *Test Case
-*Test Case
 TC001: Verify Configuration
     verify portchannel interface is up   s1  ${s1_1g_name_1}
     verify portchannel interface is up   s1  ${s1_1g_name_2}
