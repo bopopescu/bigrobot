@@ -2120,6 +2120,203 @@ def _ping(*args, **kwargs):
     test_error("Unknown ping error. Please check the output log.")
 
 
+def _run_ping6_cmd(host, count=10, timeout=None, quiet=False, source_if=None,
+          record_route=False, node_handle=None, mode=None, ttl=None,
+          interval=0.4, ping6_output=None, background=False, label=None):
+    if background:
+        if node_handle == None or mode != 'bash':
+            test_error("Background ping6 is only support for bash mode")
+        if label == None:
+            test_error("You must provide a unique label (string) for background ping6")
+        count = None
+
+    if count == None or int(count) == -1:  # disable count
+        cmd = "ping6"
+    else:
+        cmd = "ping6 -c %s" % count
+    if source_if:
+        cmd = "%s -I %s" % (cmd, source_if)
+    if record_route:
+        cmd = "%s -R" % (cmd)
+    if interval:
+        # Mac OS X < 13 (Maverick) requires minimum interval of 1 second.
+        if (platform.system() == 'Darwin' and
+            int(platform.release().split('.')[0]) < 13):
+            interval = 1
+        if float(interval) < 0.2:
+            test_error("Ping6 interval cannot be less than 0.2 seconds.")
+        cmd = "%s -i %s" % (cmd, interval)
+
+    # Ping initiated from the staging machine (likely is your MacBook)
+    if not node_handle and platform.system() == 'Darwin':
+        # MacOS X platform
+        if ttl:
+            cmd = "%s -T %s" % (cmd, ttl)
+        if timeout:
+            cmd = "%s -t %s" % (cmd, timeout)
+    else:
+        # Linux platform
+        if ttl:
+            cmd = "%s -t %s" % (cmd, ttl)
+        if timeout:
+            cmd = "%s -w %s" % (cmd, timeout)
+
+    cmd = "%s %s" % (cmd, host)
+
+    prefix_str = 'bigrobot'
+    bigrobot_devcmd_write("%-9s: %s\n" % (prefix_str, cmd))
+
+    if not node_handle:
+        if not quiet:
+            log("Ping6 command: %s" % cmd, level=4)
+        _, ping6_output = run_cmd(cmd, shell=False, quiet=True,
+                                 ignore_stderr=True)
+    else:
+        if mode == 'bash':
+            if not quiet:
+                log("Ping6 command: %s" % cmd, level=4)
+            if background:
+                output_file = '/tmp/ping6_background_output.%s.log' % label
+                node_handle.bash("rm -f %s" % output_file)
+                result = node_handle.bash(cmd + " > " + output_file + " &")
+                pid = str_to_list(node_handle.bash("echo $!")['content'])[1]
+                log("Ping6 is running in the background. PID=%s" % pid)
+                node_handle.bash("echo %s > %s" % (pid, output_file + ".pid"))
+
+                return pid
+            else:
+                result = node_handle.bash(cmd)
+                ping6_output = result["content"]
+
+        elif mode == 'cli':
+            # Ping command on Controller is very basic. It doesn't support
+            # any option besides count.
+
+            cmd = "ping6"
+            if is_bcf(node_handle.platform()) or is_bigtap(node_handle.platform()):
+                if source_if:
+                    test_error("source_if option not supported for controller CLI ping6.")
+                if count == None or int(count) == -1:  # disable count
+                    pass
+                else:
+                    cmd = "%s count %s" % (cmd, count)
+
+            cmd = "%s %s" % (cmd, host)
+            if not quiet:
+                log("Ping6 command: %s" % cmd, level=4)
+            result = node_handle.cli(cmd)
+            ping6_output = result["content"]
+        else:
+            test_error("Unknown mode '%s'. Only 'bash' or 'cli' supported."
+                       % mode)
+    return ping6_output
+
+
+def _ping6(*args, **kwargs):
+    """
+    Ping6 options:
+      :param host: (Str) ping6 this host
+      :param count : (Int) number of packets to send, equivalent to -c <counter>
+                      If count is -1 or None, disable count.
+                      If background is specified, disable count.
+      :param source_inf : -I <interface>
+      :param record_route : -R
+      :param ttl : -t <ttl> (on Linux), -T <ttl> (on Mac OS X)
+      :param timeout : (Int) time in seconds to wait for a reply, equivalent
+             to -w <timeout> (on Linux), -t <timeout> (on Mac OS X)
+      :param interval : (Real) time in seconds to wait between sending packets.
+             equivalent to -i <wait>. Interval value less than 0.2 will
+             trigger an error (not supported).
+      :param ping6_output : (Str) if specified, assuming ping6 action happened
+             as a separate activity and simply process the ping6 output.
+
+    Return value:
+      { "packets_sent": nnn,
+        "packets_received": nnn,
+        "packets_loss": nnn,
+        "packets_loss_percentage": nnn,
+        "background_ping6_output" = abc
+      }
+
+    See also Host.bash_ping6() to see how to use ping6 as a BigRobot keyword.
+    """
+
+    if args:
+        host = args[0]
+    else:
+        host = kwargs.get('host')
+    output = kwargs.get('ping6_output', None)
+    if output == None:
+        output = _run_ping6_cmd(*args, **kwargs)
+
+    if kwargs.get('background'):
+        return {"background_ping6_output": output}
+
+    if not kwargs.get('quiet'):
+        log("Ping6 output:\n%s" % output, level=4)
+
+    # Linux output:
+    #   3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+    #   3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2014ms
+    #       This is when ping failed with 'ping6 -c 3 -w 4 -I eth0 101.195.0.131'
+    #
+    # Mac OS X output:
+    #   3 packets transmitted, 3 packets received, 0.0% packet loss
+    #
+    # BigSwitch controller output:
+    #   localhost> ping6 qa-kvm-32
+    #   PING qa-kvm-32.bigswitch.com (10.192.88.32) 56(84) bytes of data.
+    #   64 bytes from qa-kvm-32.bigswitch.com (10.192.88.32): icmp_req=1 ttl=64 time=16.1 ms
+    #   64 bytes from qa-kvm-32.bigswitch.com (10.192.88.32): icmp_req=2 ttl=64 time=0.550 ms
+    #   64 bytes from qa-kvm-32.bigswitch.com (10.192.88.32): icmp_req=3 ttl=64 time=0.548 ms
+    #   64 bytes from qa-kvm-32.bigswitch.com (10.192.88.32): icmp_req=4 ttl=64 time=0.512 ms
+    #   64 bytes from qa-kvm-32.bigswitch.com (10.192.88.32): icmp_req=5 ttl=64 time=0.540 ms
+    #
+    #   --- qa-kvm-32.bigswitch.com ping statistics ---
+    #   5 packets transmitted, 5 received, 0% packet loss, time 4007ms
+    #   rtt min/avg/max/mdev = 0.512/3.669/16.196/6.263 ms
+
+    if kwargs.get('source_if'):
+        match = re.search(r'ping6: unknown iface (\w+)',
+                          output,
+                          re.M | re.I)
+        if match:
+            test_error("Ping6 error - unknown source interface '%s'"
+                       % match.group(1))
+
+    match = re.search(r'.*?(\d+) packets transmitted, (\d+)( packets)? received, .*?(\d+\.?(\d+)?)% packet loss.*',
+                      output,
+                      re.M | re.I)
+    if match:
+        packets_sent = int(match.group(1))
+        packets_received = int(match.group(2))
+        loss_pct = int(float(match.group(4)))
+        s = ("Ping6 host '%s' - %d transmitted, %d received, %d%% loss"
+             % (host, packets_sent, packets_received,
+                loss_pct))
+
+        calculated_loss_pct = int((float(packets_sent) -
+                                   float(packets_received))
+                                  / float(packets_sent) * 100.0)
+        if calculated_loss_pct != loss_pct:
+            warn("Reported ping6 loss%% (%s) does not equal calculated %% (%s)"
+                 % (loss_pct, calculated_loss_pct))
+
+        log("Ping6 result: %s%s"
+            % (s, br_utils.end_of_output_marker()), level=4)
+        return {
+                "packets_sent": packets_sent,
+                "packets_received": packets_received,
+                "packets_loss": packets_sent - packets_received,
+                "packets_loss_pct": calculated_loss_pct
+                }
+
+    if re.search(r'no route to host', output, re.M | re.I):
+        test_error("Ping6 error - no route to host")
+
+    test_error("Unknown ping6 error. Please check the output log.")
+
+
 def ping(host=None, count=10, timeout=None, loss=0, ping_output=None,
          quiet=False, return_stats=False):
     """
