@@ -16,12 +16,12 @@ import robot
 # Determine BigRobot path(s) based on this executable (which resides in
 # the bin/ directory.
 bigrobot_path = os.path.dirname(__file__) + '/..'
-paramiko_path = bigrobot_path + '/vendors/paramiko'
+# paramiko_path = bigrobot_path + '/vendors/paramiko'
 exscript_path = bigrobot_path + '/vendors/exscript/src'
 marvin_path = bigrobot_path + '/vendors/marvin'
 sys.path.insert(0, marvin_path)
 sys.path.insert(0, exscript_path)
-sys.path.insert(0, paramiko_path)
+# sys.path.insert(0, paramiko_path)
 sys.path.insert(0, bigrobot_path)
 
 
