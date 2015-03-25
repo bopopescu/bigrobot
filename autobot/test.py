@@ -1130,36 +1130,35 @@ class Test(object):
                     % (helpers.indent_str(helpers.bigrobot_env_variables()),
                        br_utils.end_of_output_marker()))
 
-        if not helpers.is_esb():
-            helpers.log("BigRobot dependencies:\n%s%s"
-                        % (helpers.bigrobot_module_dependencies(),
-                           br_utils.end_of_output_marker()))
-            helpers.log("BigRobot repository (Git):\n%s%s"
-                        % (helpers.run_cmd2("/usr/bin/git branch -lvv",
-                                            shell=True,
-                                            quiet=True)[1],
-                           br_utils.end_of_output_marker()))
-            helpers.log("Staging system info:\n%s%s"
-                        % (helpers.sysinfo(),
-                           br_utils.end_of_output_marker()))
-            helpers.log("Staging system uptime:\n%s%s"
-                        % (helpers.uptime(),
-                           br_utils.end_of_output_marker()))
-            helpers.log("Staging system ulimit:\n%s%s"
-                        % (helpers.ulimit(),
-                           br_utils.end_of_output_marker()))
-            helpers.log("Staging User ID:\n%s%s"
-                        % (helpers.user_id(),
-                           br_utils.end_of_output_marker()))
+        helpers.log("BigRobot dependencies:\n%s%s"
+                    % (helpers.bigrobot_module_dependencies(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("BigRobot repository (Git):\n%s%s"
+                    % (helpers.run_cmd2("/usr/bin/git branch -lvv",
+                                        shell=True,
+                                        quiet=True)[1],
+                       br_utils.end_of_output_marker()))
+        helpers.log("Staging system info:\n%s%s"
+                    % (helpers.sysinfo(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("Staging system uptime:\n%s%s"
+                    % (helpers.uptime(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("Staging system ulimit:\n%s%s"
+                    % (helpers.ulimit(),
+                       br_utils.end_of_output_marker()))
+        helpers.log("Staging User ID:\n%s%s"
+                    % (helpers.user_id(),
+                       br_utils.end_of_output_marker()))
 
-            jenkins_env = [x for x in ['BUILD_NAME', 'BUILD_URL'] if os.environ.get(x, None)]
-            for i in range(0, len(jenkins_env)):
-                if i == 0:
-                    helpers.log("Jenkins environment:")
-                if i + 1 == len(jenkins_env):
-                    helpers.log("\t%s: %s%s" % (jenkins_env[i], os.environ[jenkins_env[i]], br_utils.end_of_output_marker()))
-                else:
-                    helpers.log("\t%s: %s" % (jenkins_env[i], os.environ[jenkins_env[i]]))
+        jenkins_env = [x for x in ['BUILD_NAME', 'BUILD_URL'] if os.environ.get(x, None)]
+        for i in range(0, len(jenkins_env)):
+            if i == 0:
+                helpers.log("Jenkins environment:")
+            if i + 1 == len(jenkins_env):
+                helpers.log("\t%s: %s%s" % (jenkins_env[i], os.environ[jenkins_env[i]], br_utils.end_of_output_marker()))
+            else:
+                helpers.log("\t%s: %s" % (jenkins_env[i], os.environ[jenkins_env[i]]))
 
         self._init_in_progress = True  # pylint: disable=W0201
 
