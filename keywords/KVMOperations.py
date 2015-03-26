@@ -479,6 +479,7 @@ class KVMOperations(object):
 #         helpers.log("Sleeping 20 secs...")
 #         time.sleep(20)
         n_console.expect(r'Escape character.*[\r\n]')
+        n_console.send('')
         options = n_console.expect([r't6-mininet login: ', n_console.get_prompt()])
         if options[0] == 1:
             helpers.log("Autotomatci Mininet Log is enabled no need to log into mininet..")
