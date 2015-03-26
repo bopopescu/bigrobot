@@ -480,13 +480,15 @@ class KVMOperations(object):
 #         time.sleep(20)
         n_console.expect(r'Escape character.*[\r\n]')
         n_console.send('')
-        n_console.send('')
-        n_console.expect(r't6-mininet login: ')
-        n_console.send('mininet')
-        n_console.expect(r'Password: ')
-        n_console.send('mininet')
+        options = n_console.expect([r't6-mininet login: ', n_console.get_prompt()])
+        if options[0] == 1:
+            helpers.log("Autotomatci Mininet Log is enabled no need to log into mininet..")
+        else:
+            helpers.log("Sending mininet password..")
+            n_console.send('mininet')
+            n_console.expect(r'Password: ')
+            n_console.send('mininet')
         time.sleep(1)
-        n_console.expect()
 #         n_console.bash('pwd')
 #         n_console.expect()
         if get_ip:
