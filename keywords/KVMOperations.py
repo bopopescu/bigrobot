@@ -494,6 +494,7 @@ class KVMOperations(object):
         if get_ip:
             helpers.log("Just getting DHCP IP from Mininet VM ..")
             n_console.send('sudo ifconfig | grep inet | awk \'{print $2}\'')
+            time.sleep(1)
             output = n_console.content()
             output_lines = output.split('\n')
             helpers.log("Mininet IP Content:")
