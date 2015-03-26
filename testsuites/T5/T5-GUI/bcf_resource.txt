@@ -222,7 +222,7 @@ ${ENDPOINT SWITCH INTERFACE LIST} 				xpath=//div[@id='dijit_form_FilteringSelec
 ${ENDPOINT SWITCH INTERFACE FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Switch Port')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div/div[3]/input[1]
 
 ${ADD IP ADDRESS PLUS BUTTON}				xpath=//div[@data-dojo-attach-point='nodeIpAddresses']/descendant::div[@class='icon_node plus']
-${ENTER IPV4 ADDRESS POPUP}					xpath=//div[@title='Enter IPv4 Address/Mask Pair(s)']
+${ENTER IPV4 ADDRESS POPUP}					xpath=//div[@title='Enter IPv4 Address(es)']
 ${IP ADDRESS TEXT FIELD}					xpath=//div[@data-dojo-attach-point='messageMultipleAddress']/following-sibling::div/textarea
 ${APPEND IP ADDRESSES BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
 #${APPEND SEGMENT ENDPOINTS BUTTON}			xpath=//span[@id='dijit_form_Button_20_label']	
@@ -257,7 +257,7 @@ ${DHCP RELAY SERVER IP FIELD}					xpath=//div[@data-dojo-attach-point='titleNode
 ${SAVE SEGMENT INTERFACE BUTTON}				xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
 
 ## Next Hop group page
-${NEXT HOP GROUP PLUS BUTTON}						xpath=//h2[contains(text(), 'Next Hop Groups')]/parent::div[@data-dojo-attach-point='nextHopGroupBlock']/descendant::div[@class='icon_node plus']
+${NEXT HOP GROUP PLUS BUTTON}						xpath=//div[@data-dojo-attach-point='nextHopGroupsNode']/descendant::div[@class='icon_node plus']
 ${CREATE NEXT HOP GROUP POPUP}						xpath=//div[@title='Create Next Hop Group']
 ${NEXT HOP GROUP NAME FIELD}						xpath=//div[starts-with(@id, 'bcf_widgets_formDialog_NextHopGroup')]/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Name')]/parent::h2/parent::div/following-sibling::div/div[2]/input
 ${NEXT HOP GROUP APPEND IP ADDRESSES BUTTON}		xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
