@@ -428,10 +428,10 @@ class KVMOperations(object):
                                                    password=kvm_password)
             vm_state = self._get_vm_running_state(kvm_handle=kvm_handle,
                                                   vm_name=vm_name)
-
-            if 'running' or 'paused' in vm_state:
-                helpers.summary_log("Tearing down VM with Name on kvm host: %s"
-                                    % vm_name)
+            helpers.summary_log("vm_State: %s\n" % str(vm_state))
+            if re.match(r'.*running.*', vm_state) or re.match(r'.*paused.*', vm_state):
+                helpers.summary_log("Tearing down VM with Name:%s on kvm host: %s"
+                                    % (vm_name, kvm_host))
                 self._destroy_vm(kvm_handle=kvm_handle, vm_name=vm_name)
                 self._undefine_vm(kvm_handle=kvm_handle, vm_name=vm_name)
                 helpers.log("Checking The State of Vm : %s" % vm_name)
@@ -442,9 +442,8 @@ class KVMOperations(object):
                     self.vm_teardown(vm_name, kvm_host, kvm_user, kvm_password)
                 else:
                     helpers.log("Vm Is Dead!")
-
-            elif 'shut' in vm_state:
-                helpers.summary_log("Deleting down the VM : %s" % vm_name)
+            elif re.match(r'.*shut.*', vm_state):
+                helpers.summary_log("Deleting down the VM : %s on KVM_HOST: %s" % (vm_name, kvm_host))
                 self._undefine_vm(kvm_handle=kvm_handle, vm_name=vm_name)
             else:
                 helpers.summary_log("VM with given name %s doesn't exists on KVM host! %s"
