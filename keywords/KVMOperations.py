@@ -480,7 +480,6 @@ class KVMOperations(object):
 #         time.sleep(20)
         n_console.expect(r'Escape character.*[\r\n]')
         n_console.send('')
-        n_console.send('')
         options = n_console.expect([r't6-mininet login: ', r'mininet@t6-mininet:~$ '])
         if options[0] == 1:
             helpers.log("Autotomatci Mininet Log is enabled no need to log into mininet..")
