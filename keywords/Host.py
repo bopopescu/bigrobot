@@ -148,6 +148,95 @@ class Host(object):
         else:
             return stats["packets_loss_pct"]
 
+    def bash_ping6_background_start(self, *args, **kwargs):
+        """
+        Start background ping6. It accepts the same options as bash_ping6
+        although it requires an additional 'label' argument. The label is
+        used to name the output log and to store the background PID. So it
+        needs to be unique for the duration of the background ping6. The reason
+        the label is required is because multiple background ping6 may get
+        issued in parallel.
+
+        To stop background ping6, call the keyword 'bash ping6 background stop'
+        and provide it with the label.
+
+        Example:
+        | bash ping6 background start | c1 | dest_ip=www.cnn.com | label=test001 |
+        | bash ping6 background stop | c1 | label=test001 |
+        | bash ping6 background stop | c1 | label=test001 | return_stats=${true} |
+
+        Return value:
+          - packet loss percentage (default)
+          - stats dict if return_stats is ${true}
+        """
+        _ = self.bash_ping6(background=True, *args, **kwargs)
+
+    def bash_ping6_background_stop(self, node, label, return_stats=False):
+        """
+        See details in keyword 'bash ping6 background start'.
+        """
+        t = test.Test()
+        n = t.node(node)
+        ping6_output_file = '/tmp/ping6_background_output.%s.log' % label
+        ping6_pid_file = ping6_output_file + ".pid"
+        pid = helpers.str_to_list(n.bash('cat %s' % ping6_pid_file)['content'])[1]
+        n.bash('kill -2 %s' % pid)
+        ping6_output = n.bash('tail -20 %s' % ping6_output_file)['content']
+        stats = helpers._ping6(ping6_output=ping6_output)
+        if return_stats:
+            return stats
+        else:
+            return stats["packets_loss_pct"]
+
+    def bash_ping6(self, node=None, dest_ip=None, dest_node=None,
+                  return_stats=False, *args, **kwargs):
+        """
+        Perform a ping6 from the shell. Returns the loss percentage
+        - 0   - 0% loss (default)
+        - 100 - 100% loss (default)
+        - Stats dict if return_stats is ${true}
+
+        Inputs:
+        - node:      The device name as defined in the topology file, e.g., 'c1', 's1', etc.
+        - dest_ip:   Ping6 this destination IP address
+        - dest_node  Ping6 this destination node ('c1', 's1', etc)
+        - source_if: Source interface
+        - count:     Number of ping6 packets to send
+        - ttl:       IP Time-to-live
+        - record_route:  ${true}  - to include RECORD ROUTE option
+        - interval:  Time in seconds (floating point value allowed) to wait between sending packets.
+
+        Example:
+        | ${lossA} = | Bash Ping6 | h1          | 10.192.104.1 | source_if=eth1 |
+        | ${lossB} = | Bash Ping6 | node=master | dest_node=s1 |                |
+        =>
+        - ${lossA} = 0
+        - ${lossB} = 100
+
+        Miscellaneous:
+        - See also Controller.cli ping6
+        - See also autobot.helpers.__init__.py to see what Unix ping6 command option is used for each input parameter.
+        """
+        t = test.Test()
+        n = t.node(node)
+
+        if not dest_ip and not dest_node:
+            helpers.test_error("Must specify 'dest_ip' or 'dest_node'")
+        if dest_ip and dest_node:
+            helpers.test_error("Specify 'dest_ip' or 'dest_node' but not both")
+        if dest_ip:
+            dest = dest_ip
+        if dest_node:
+            dest = t.node(dest_node).ip()
+        stats = helpers._ping6(dest, node_handle=n, mode='bash', *args, **kwargs)
+        if kwargs.get('background', False):
+            return stats
+        elif return_stats:
+            return stats
+        else:
+            return stats["packets_loss_pct"]
+
+
     def bash_add_tag(self, node, intf, vlan):
         """
         Add vlan tag to a Host eth interfaces.
@@ -491,7 +580,7 @@ class Host(object):
             helpers.test_error("lsb_release command output is invalid",
                                soft_error=soft_error)
 
-    def bash_get_distributor(self, node,soft_error=False):
+    def bash_get_distributor(self, node, soft_error=False):
         """
         Return the distributor id: Ubuntu
         """
@@ -501,7 +590,7 @@ class Host(object):
         match = re.search(r'Distributor ID:\s+(.*)', content, re.M)
         if match:
             return  match.group(1)
-           
+
         else:
             helpers.test_error("lsb_release command output is invalid",
                                soft_error=soft_error)
@@ -537,20 +626,20 @@ class Host(object):
         n.sudo("arp -s %s %s" % (ipaddr, hwaddr))
         return True
 
-    def Host_reboot(self,host):
+    def Host_reboot(self, host):
 
-        ''' Reboot a host and wait for it to come back.           
+        ''' Reboot a host and wait for it to come back.
         '''
         t = test.Test()
-        node = t.node(host)   
+        node = t.node(host)
         ipAddr = node.ip()
-        content = node.bash('reboot')['content']       
+        content = node.bash('reboot')['content']
         helpers.log("*****Output is :*******\n%s" % content)
-        if re.search(r'The system is going down for reboot NOW!', content): 
+        if re.search(r'The system is going down for reboot NOW!', content):
             helpers.log("system is rebooting")
-            helpers.sleep(120)       
+            helpers.sleep(120)
         else:
-            helpers.log("USR ERROR: system did NOT reboot") 
+            helpers.log("USR ERROR: system did NOT reboot")
             return False
         count = 0
         while (True):
@@ -570,17 +659,17 @@ class Host(object):
 
         return True
 
-    def Host_powercycle(self,host):
+    def Host_powercycle(self, host):
 
-        ''' power cycle a host and wait for it to come back.           
+        ''' power cycle a host and wait for it to come back.
         '''
         t = test.Test()
-        node = t.node(host)   
+        node = t.node(host)
         ipAddr = node.ip()
-        t.power_cycle(host, minutes= 0)          
+        t.power_cycle(host, minutes=0)
         helpers.log("*****system went through power cycle********")
-         
-        helpers.sleep(120) 
+
+        helpers.sleep(120)
         count = 0
         while (True):
             loss = helpers.ping(ipAddr)
@@ -597,4 +686,4 @@ class Host(object):
                 helpers.sleep(30)
                 break
 
-        return True        
+        return True

@@ -1060,8 +1060,15 @@ class Test(object):
         elif match[0] == 1:
             helpers.log("Found the BSN device prompt. Exiting system.")
             n_console.send('logout')
-            match = n_console.expect(prompt=[prompt_login])
-            login()
+            match = n_console.expect(prompt=[prompt_login,
+                                             prompt_device_cli])
+            if match[0] == 0:
+                login()
+            elif match[0] == 1:
+                helpers.log("Found the BSN device prompt. Exiting system.")
+                n_console.send('logout')
+                match = n_console.expect(prompt=[prompt_login])
+                login()
 
         # Assume that the device mode is CLI by default.
         n_console.mode('cli')
