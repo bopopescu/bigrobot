@@ -5,7 +5,7 @@ Documentation    T5 Controller Platform Test Suite - Visibiility (SPAN/TestPath)
 Suite Setup      T0 Setup
 Suite Teardown   base suite teardown
 #Test Setup       T5 Platform Test Setup
-Test Teardown    base test teardown
+Test Teardown    Test TearDown Test path
 Force Tags       T5  IronHorse  Platform  Visibility
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
@@ -634,6 +634,7 @@ T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Swit
 
 T7 Intra Tenant/ Different Segments: SRC & DST Are In Different Racks
 	[Tags]  testpath  feature  daily-sanity
+	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_ip}  ip-protocol=icmp
@@ -1125,7 +1126,10 @@ Configure Tenants For SPAN & Test Path
       
    sleep  10
 
-
+Test TearDown Test path
+	 base test teardown
+     rest clear testpath
+     
 Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
    
    ###	Verify L2 ping between autoT1-v1   
