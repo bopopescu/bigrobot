@@ -479,8 +479,7 @@ class KVMOperations(object):
 #         helpers.log("Sleeping 20 secs...")
 #         time.sleep(20)
         n_console.expect(r'Escape character.*[\r\n]')
-        n_console.send('')
-        options = n_console.expect([r't6-mininet login: ', r'mininet@t6-mininet:~$ '])
+        options = n_console.expect([r't6-mininet login: ', n_console.get_prompt()])
         if options[0] == 1:
             helpers.log("Autotomatci Mininet Log is enabled no need to log into mininet..")
         else:
@@ -488,15 +487,8 @@ class KVMOperations(object):
             n_console.expect(r'Password: ')
             n_console.send('mininet')
         time.sleep(1)
-        n_console.expect()
 #         n_console.bash('pwd')
 #         n_console.expect()
-        n_console.send('/opt/t6-mininet/setup.sh')
-        options = n_console.expect([r'[Y/n] ', r'mininet@t6-mininet:~$ '])
-        if options[0] == 0:
-            helpers.log("Sending Yes to setup install packages on Mininet ..")
-            n_console.send('Y')
-        n_console.expect()
         if get_ip:
             helpers.log("Just getting DHCP IP from Mininet VM ..")
             n_console.send('sudo ifconfig | grep inet | awk \'{print $2}\'')
