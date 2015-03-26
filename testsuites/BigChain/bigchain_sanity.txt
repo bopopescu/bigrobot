@@ -273,6 +273,8 @@ TC018: Verify switch mode cannot be changed to bigchain mode if service interfac
 
 sanity suite setup
     base suite setup
+    rest disable feature  tunneling
+    rest enable feature  l3-l4-mode
     rest add switch alias  s1  ${switch1_alias}
     rest add switch alias  s2  ${switch2_alias}
         

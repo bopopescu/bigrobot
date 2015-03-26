@@ -428,10 +428,10 @@ class KVMOperations(object):
                                                    password=kvm_password)
             vm_state = self._get_vm_running_state(kvm_handle=kvm_handle,
                                                   vm_name=vm_name)
-
-            if 'running' or 'paused' in vm_state:
-                helpers.summary_log("Tearing down VM with Name on kvm host: %s"
-                                    % vm_name)
+            helpers.summary_log("vm_State: %s\n" % str(vm_state))
+            if re.match(r'.*running.*', vm_state) or re.match(r'.*paused.*', vm_state):
+                helpers.summary_log("Tearing down VM with Name:%s on kvm host: %s"
+                                    % (vm_name, kvm_host))
                 self._destroy_vm(kvm_handle=kvm_handle, vm_name=vm_name)
                 self._undefine_vm(kvm_handle=kvm_handle, vm_name=vm_name)
                 helpers.log("Checking The State of Vm : %s" % vm_name)
@@ -442,9 +442,8 @@ class KVMOperations(object):
                     self.vm_teardown(vm_name, kvm_host, kvm_user, kvm_password)
                 else:
                     helpers.log("Vm Is Dead!")
-
-            elif 'shut' in vm_state:
-                helpers.summary_log("Deleting down the VM : %s" % vm_name)
+            elif re.match(r'.*shut.*', vm_state):
+                helpers.summary_log("Deleting down the VM : %s on KVM_HOST: %s" % (vm_name, kvm_host))
                 self._undefine_vm(kvm_handle=kvm_handle, vm_name=vm_name)
             else:
                 helpers.summary_log("VM with given name %s doesn't exists on KVM host! %s"
@@ -481,22 +480,27 @@ class KVMOperations(object):
 #         time.sleep(20)
         n_console.expect(r'Escape character.*[\r\n]')
         n_console.send('')
-        n_console.send('')
-        n_console.expect(r't6-mininet login: ')
-        n_console.send('mininet')
-        n_console.expect(r'Password: ')
-        n_console.send('mininet')
+        options = n_console.expect([r't6-mininet login: ', n_console.get_prompt()])
+        if options[0] == 1:
+            helpers.log("Autotomatci Mininet Log is enabled no need to log into mininet..")
+            n_console.send('')
+        else:
+            helpers.log("Sending mininet password..")
+            n_console.send('mininet')
+            n_console.expect(r'Password: ')
+            n_console.send('mininet')
         time.sleep(1)
-        n_console.expect()
+        output = n_console.expect()
+        helpers.log("Expect output before sending IP: %s" % str(output))
 #         n_console.bash('pwd')
 #         n_console.expect()
         if get_ip:
             helpers.log("Just getting DHCP IP from Mininet VM ..")
             n_console.send('sudo ifconfig | grep inet | awk \'{print $2}\'')
-            n_console.expect()
+            n_console.expect(n_console.get_prompt())
             output = n_console.content()
             output_lines = output.split('\n')
-            helpers.log("Mininet IP Content:")
+            helpers.log("Mininet IP Content: %s " % output_lines)
             ips = output_lines[1].split(':')
             helpers.log("Mininet IP is : %s" % ips[1])
             return ips[1]

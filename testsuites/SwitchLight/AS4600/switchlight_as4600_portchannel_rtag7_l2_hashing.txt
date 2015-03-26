@@ -1,0 +1,712 @@
+*Settings
+Documentation               BigTap SwitchLight Platform Test Suite
+Suite Setup                 rtag7 suite setup
+Suite Teardown              rtag7 suite teardown
+Test Setup                  rtag7 test setup
+Test Teardown               rtag7 test teardown
+Force Tags                  BigTap  SwitchLight  accton-as4600  switch-platform  RTAG7_L2  lag  hashing 
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
+
+* Variable
+${switchlight_version}                  Switch Light OS SWL-BT-
+${s1_1g_name_1}                         port-channel1  
+${s1_1g_port_range_1}                   13,15,17,19
+${s1_1g_port_range_small_1_1}           13,15
+${s1_1g_port_range_small_1_2}           17,19
+${s1_1g_number_1}                       1
+${s1_lag_mem_1_1}                       13          
+${s1_lag_mem_1_2}                       15          
+${s1_lag_mem_1_3}                       17          
+${s1_lag_mem_1_4}                       19          
+
+${s1_1g_name_2}                         port-channel2
+${s1_1g_port_range_2}                   14,16,18,20
+${s1_1g_port_range_small_2_1}           14,16
+${s1_1g_port_range_small_2_2}           18,20
+${s1_1g_number_2}                       2
+${s1_lag_mem_2_1}                       14          
+${s1_lag_mem_2_2}                       16          
+${s1_lag_mem_2_3}                       18          
+${s1_lag_mem_2_4}                       20          
+
+${policy_name_1}                        RTAG7_POLICY_1
+${filter_1}                             ethernet1
+${filter_nick_1}                        ixia-2-1
+${delivery_1}                           port-channel1
+${delivery_nick_1}                      rtag7_delivery
+
+${policy_name_2}                        RTAG7_POLICY_2
+${filter_2}                             port-channel2
+${filter_nick_2}                        rtag7_filter
+${delivery_2}                           ethernet2
+${delivery_nick_2}                      ixia-2-2
+
+${src_mac}                              00:11:01:01:01:01  
+${src_mac_step}                         00:00:00:00:01:00
+${src_cnt}                              28
+${dst_mac}                              00:12:01:01:01:01
+${dst_cnt}                              28
+${dst_mac_step}                         00:00:00:00:01:00
+${frame_rate}                           10000
+${frame_cnt}                            100000
+${frame_cnt_1}                          10000
+${frame_size}                           64
+${src_port}                             8101
+${dst_port}                             8201
+${range}                                16
+
+*Test Case
+TC001: Verify Configuration
+    verify portchannel interface is up   s1  ${s1_1g_name_1}
+    verify portchannel interface is up   s1  ${s1_1g_name_2}
+    [Tags]  full  feature  
+
+#### L2 Single Tuple hashing
+
+TC002: Verify source mac address hashing
+    config  node=s1  cmd= hash l2 src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}  
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC003: Disable two links and Verify source mac address hashing
+    config  node=s1  cmd= hash l2 src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}  
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic
+
+TC004: With src-mac as same, verify when src-mac hashing is specified all traffic goes on one link
+    config  node=s1  cmd= hash l2 src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  vlan_id=2  vlan_step=20  vlan_cnt=${src_cnt}    
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC005: Verify destination mac address hashing
+    config  node=s1  cmd= hash l2 dst-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC006: Disable two links and Verify destination mac address hashing
+    config  node=s1  cmd= hash l2 dst-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic
+
+TC007: With dst-mac as same, verify when dst-mac hashing is specified all traffic goes on one link
+    config  node=s1  cmd= hash l2 dst-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  vlan_id=2  vlan_step=20  vlan_cnt=${src_cnt}    
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+
+TC008: Verify ether-type hashing
+    config  node=s1  cmd= hash l2 eth-type
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC009: Disable two links and Verify ether-type hashing
+    config  node=s1  cmd= hash l2 eth-type
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic
+
+TC010: With ether-type as same, verify when ether-type hashing is specified all traffic goes on one link
+    config  node=s1  cmd= hash l2 eth-type
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  ethertype=800  ethertype_cnt=1  ethertype_step=0
+    ...  vlan_id=2  vlan_step=20  vlan_cnt=${src_cnt}    
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC011: Verify vlan-id based hashing
+    config  node=s1  cmd= hash l2 vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  vlan_id=100  vlan_step=5  vlan_cnt=${src_cnt}
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic  
+
+TC012: Disable two links and Verify vlan-id based hashing
+    config  node=s1  cmd= hash l2 vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  vlan_id=100  vlan_step=5  vlan_cnt=${src_cnt}
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  
+
+TC013: With vlan-id as same, verify when vlan-id based hashing is specified all traffic goes on one link
+    config  node=s1  cmd= hash l2 vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  vlan_id=100  vlan_step=0  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+#### L2 Two Tuple hashing
+
+TC014: Verify ethertype and destination mac address hashing
+    config  node=s1  cmd= hash l2 dst-mac eth-type
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC015: Disable two links and Verify ethertype and destination mac address hashing
+    config  node=s1  cmd= hash l2 dst-mac eth-type
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic
+
+TC016: With ethertype and destination mac as same, verify when ethertype and destination mac hashing is specified all traffic goes on one link
+    config  node=s1  cmd= hash l2 dst-mac eth-type
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=1  ethertype_step=0
+    ...  vlan_id=100  vlan_step=0  vlan_cnt=1
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC017: Verify source mac and destination mac address hashing
+    config  node=s1  cmd= hash l2 dst-mac src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}  
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC018: Disable two links and Verify source mac and destination mac address hashing
+    config  node=s1  cmd= hash l2 dst-mac src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}  
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic
+
+TC019: With source mac and destination mac as same, verify when source mac and destination mac hashing is specified all traffic goes on one link
+    config  node=s1  cmd= hash l2 dst-mac src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  vlan_id=100  vlan_step=0  vlan_cnt=1
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC020: Verify vlan-id and destination mac address hashing
+    config  node=s1  cmd=hash l2 dst-mac vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  vlan_id=100  vlan_step=20  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC021: Disable two links and Verify vlan-id and destination mac address hashing
+    config  node=s1  cmd=hash l2 dst-mac vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  vlan_id=100  vlan_step=5  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic  
+
+TC022: With vlan-id and destination mac as same, verify when vlan-id and destination mac hashing is specified all traffic goes on one link
+    config  node=s1  cmd=hash l2 dst-mac vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}  
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=1  ethertype_step=0
+    ...  vlan_id=100  vlan_step=0  vlan_cnt=1
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC023: Verify ethertype and source mac address hashing
+    config  node=s1  cmd=hash l2 eth-type src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC024: Disable two links and Verify ethertype and source mac address hashing
+    config  node=s1  cmd=hash l2 eth-type src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic
+
+TC025: With ethertype and source mac as same, verify when ethertype and source mac hashing is specified all traffic goes on one link
+    config  node=s1  cmd=hash l2 eth-type src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  ethertype=800  ethertype_cnt=1  ethertype_step=0
+    ...  vlan_id=100  vlan_step=100  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC026: Verify ethertype and vlan-id hashing
+    config  node=s1  cmd=hash l2 eth-type vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  vlan_id=100  vlan_step=100  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC027: Disable two links and Verify ethertype and vlan-id hashing
+    config  node=s1  cmd=hash l2 eth-type vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=1
+    ...  vlan_id=100  vlan_step=100  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic
+
+TC028: With ethertype and vlan-id as same, verify when ethertype and vlan-id is specified all traffic goes on one link
+    config  node=s1  cmd=hash l2 eth-type vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  ethertype=800  ethertype_cnt=1  ethertype_step=0
+    ...  vlan_id=100  vlan_step=0  vlan_cnt=1
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+TC029: Verify vlan-id and source mac address hashing
+    config  node=s1  cmd=hash l2 eth-type src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=1  ethertype_step=0
+    ...  vlan_id=100  vlan_step=100  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC030: Disable two links and Verify vlan-id and source mac address hashing
+    config  node=s1  cmd=hash l2 eth-type src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_3} 
+    bash execute command  s1  ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_DISABLE ${s1_lag_mem_1_4}
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=1  ethertype_step=0
+    ...  vlan_id=100  vlan_step=100  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for disabled interfaces
+    [Tags]  full  feature  traffic
+
+TC031: With vlan-id and source mac as same, verify when vlan-id and source mac hashing is specified all traffic goes on one link
+    config  node=s1  cmd=hash l2 eth-type src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  ethertype=800  ethertype_cnt=1  ethertype_step=0
+    ...  vlan_id=100  vlan_step=0  vlan_cnt=1
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic for incorrect hash
+    [Tags]  full  feature  traffic
+
+#### L2 Three tuple hashing
+
+TC032: Verify destination mac address, ethertype, source mac address hashing
+    config  node=s1  cmd=hash l2 dst-mac eth-type src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  vlan_id=100  vlan_step=0  vlan_cnt=1
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC033: Verify destination mac address, ethertype, vlan-id hashing
+    config  node=s1  cmd=hash l2 dst-mac eth-type vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=1  src_mac_step=00:00:00:00:00:00
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=2
+    ...  vlan_id=100  vlan_step=100  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC034: Verify destination mac address, source mac address, vlan-id hashing
+    config  node=s1  cmd=hash l2 dst-mac src-mac vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  ethertype=800  ethertype_cnt=1  ethertype_step=0
+    ...  vlan_id=100  vlan_step=100  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC035: Verify ethertype, source mac address, vlan-id hashing
+    config  node=s1  cmd=hash l2 eth-type src-mac vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_mac=${dst_mac}  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=1
+    ...  vlan_id=100  vlan_step=100  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+TC036: Verify destination mac address, ethertype, source mac address, vlan-id hashing
+    config  node=s1  cmd=hash l2 eth-type src-mac vlan-id
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=${src_mac}  src_cnt=${src_cnt}  src_mac_step=${src_mac_step}
+    ...  dst_cnt=${dst_cnt}  dst_mac_step=${dst_mac_step}  dst_mac=${dst_mac}
+    ...  ethertype=800  ethertype_cnt=28  ethertype_step=1
+    ...  vlan_id=100  vlan_step=100  vlan_cnt=28
+    ...  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    send and verify traffic
+    [Tags]  full  feature  traffic
+
+* Keywords 
+rtag7 suite setup
+    base suite setup
+    rest enable feature  full-match
+    config  node=s1  cmd=port-channel ${s1_1g_number_1} interface-list ${s1_1g_port_range_1} hash enhanced
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    config  node=s1  cmd=port-channel ${s1_1g_number_2} interface-list ${s1_1g_port_range_2} hash enhanced
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${config3}=  rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}
+    Should be True  ${config3}
+    ${config4}=  rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
+    Should be True  ${config4}
+    ${config5}=  rest add interface role  s1  ${filter_2}  filter  ${filter_nick_2}
+    Should be True  ${config5}
+    ${config6}=  rest add interface role  s1  ${delivery_2}  delivery  ${delivery_nick_2}
+    Should be True  ${config6}
+    ${config7}=  rest add policy  admin-view  ${policy_name_1}  forward
+    Should be True  ${config7}
+    ${config8}=  rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${config8}
+    ${config9}=  rest add policy interface  admin-view  ${policy_name_1}  ${filter_nick_1}  filter
+    Should be True  ${config9}
+    ${config10}=  rest add policy interface  admin-view  ${policy_name_1}  ${delivery_nick_1}  delivery
+    Should be True  ${config10}
+    ${config11}=  rest add policy  admin-view  ${policy_name_2}  forward
+    Should be True  ${config11}
+    ${config12}=  rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    Should be True  ${config12}
+    ${config13}=  rest add policy interface  admin-view  ${policy_name_2}  ${filter_nick_2}  filter
+    Should be True  ${config13}
+    ${config14}=  rest add policy interface  admin-view  ${policy_name_2}  ${delivery_nick_2}  delivery
+    Should be True  ${config14}
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+
+
+rtag7 test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
+
+verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
+    ${inft_state}=  cli show interface state  ${switch}  ${interface_name}
+    Should Contain  ${inft_state}  up
+
+send and verify traffic
+    clear stats  
+    cli execute command  s1  clear interface statistics
+    start traffic    
+    sleep  10
+    stop traffic
+    sleep  2
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  transmitted_frames
+    ${rx_value}=  verify dict key  ${report}  b  received_valid_frames
+    ${in_range_0}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range_0}
+    ${in_range_1}=  ixia verify traffic rate  ${tx_value}  100000  50
+    Should be true  ${in_range_1}
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value}  100000  50
+    Should be true  ${in_range_2}
+    ${member1_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet13  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${member2_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet15  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${member3_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet17  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    ${member4_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet19  tx
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    ${member1_s2}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet14  rx
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    ${member2_s2}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet16  rx
+    Should Not Be Equal As Integers  ${member2_s2}  0
+    ${member3_s2}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet18  rx
+    Should Not Be Equal As Integers  ${member3_s2}  0
+    ${member4_s2}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet20  rx
+    Should Not Be Equal As Integers  ${member4_s2}  0
+    ${range_1}=   Evaluate  ${member1_s1} - ${member1_s2}
+    ${range_2}=   Evaluate  ${member2_s1} - ${member2_s2}
+    ${range_3}=   Evaluate  ${member3_s1} - ${member3_s2}
+    ${range_4}=   Evaluate  ${member4_s1} - ${member4_s2}
+    ${result1}=  verify value is in range  ${range_1}  -10  10
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${range_2}  -10  10
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${range_3}  -10  10
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${range_4}  -10  10
+    Should be true  ${result4}
+    ${mem1s1}=  Convert to Integer  ${member1_s1}
+    ${mem2s1}=  Convert to Integer  ${member2_s1}
+    ${mem3s1}=  Convert to Integer  ${member3_s1}
+    ${mem4s1}=  Convert to Integer  ${member4_s1}
+    ${percent_1}=   Evaluate  100*(operator.truediv(int(${mem1s1}),${frame_cnt}))  operator
+    ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),${frame_cnt}))  operator
+    ${percent_3}=   Evaluate  100*(operator.truediv(int(${mem3s1}),${frame_cnt}))  operator
+    ${percent_4}=   Evaluate  100*(operator.truediv(int(${mem4s1}),${frame_cnt}))  operator
+    ${result1}=  verify value is in range  ${percent_1}  10  40
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${percent_2}  10  40
+    Should be true  ${result2}
+    ${result3}=  verify value is in range  ${percent_3}  10  40
+    Should be true  ${result3}
+    ${result4}=  verify value is in range  ${percent_4}  10  40
+    Should be true  ${result4}
+
+
+send and verify traffic for disabled interfaces
+    clear stats  
+    cli execute command  s1  clear interface statistics
+    start traffic    
+    sleep  10
+    stop traffic
+    sleep  2
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  transmitted_frames
+    ${rx_value}=  verify dict key  ${report}  b  received_valid_frames
+    ${in_range_0}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range_0}
+    ${in_range_1}=  ixia verify traffic rate  ${tx_value}  100000  50
+    Should be true  ${in_range_1}
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value}  100000  50
+    Should be true  ${in_range_2}
+    ${member1_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet13  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    ${member2_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet15  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    ${member1_s2}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet14  rx
+    Should Not Be Equal As Integers  ${member1_s2}  0
+    ${member2_s2}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet16  rx
+    Should Not Be Equal As Integers  ${member2_s2}  0
+    ${range_1}=   Evaluate  ${member1_s1} - ${member1_s2}
+    ${range_2}=   Evaluate  ${member2_s1} - ${member2_s2}
+    ${result1}=  verify value is in range  ${range_1}  -10  10
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${range_2}  -10  10
+    Should be true  ${result2}
+    ${mem1s1}=  Convert to Integer  ${member1_s1}
+    ${mem2s1}=  Convert to Integer  ${member2_s1}
+    ${percent_1}=   Evaluate  100*(operator.truediv(int(${mem1s1}),${frame_cnt}))  operator
+    ${percent_2}=   Evaluate  100*(operator.truediv(int(${mem2s1}),${frame_cnt}))  operator
+    ${result1}=  verify value is in range  ${percent_1}  40  60
+    Should be true  ${result1}
+    ${result2}=  verify value is in range  ${percent_2}  40  60
+    Should be true  ${result2}
+
+
+
+send and verify traffic for incorrect hash
+    clear stats  
+    cli execute command  s1  clear interface statistics
+    start traffic    
+    sleep  10
+    stop traffic
+    sleep  2
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  transmitted_frames
+    ${rx_value}=  verify dict key  ${report}  b  received_valid_frames
+    ${in_range_0}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range_0}
+    ${in_range_1}=  ixia verify traffic rate  ${tx_value}  100000  50
+    Should be true  ${in_range_1}
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value}  100000  50
+    Should be true  ${in_range_2}
+
+    ${member1_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet13  tx
+    ${range_mem1}=  ixia verify traffic rate  ${member1_s1}  100000  50
+    ${member2_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet15  tx
+    ${range_mem2}=  ixia verify traffic rate  ${member2_s1}  100000  50
+    ${member3_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet17  tx
+    ${range_mem3}=  ixia verify traffic rate  ${member3_s1}  100000  50
+    ${member4_s1}=  cli return member interface stats  s1  ${s1_1g_number_1}  ethernet19  tx    
+    ${range_mem4}=  ixia verify traffic rate  ${member4_s1}  100000  50
+    ${member1_s4}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet14  rx
+    ${range_mem5}=  ixia verify traffic rate  ${member1_s4}  100000  50
+    ${member2_s4}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet16  rx
+    ${range_mem6}=  ixia verify traffic rate  ${member2_s4}  100000  50
+    ${member3_s4}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet18  rx
+    ${range_mem7}=  ixia verify traffic rate  ${member3_s4}  100000  50
+    ${member4_s4}=  cli return member interface stats  s1  ${s1_1g_number_2}  ethernet20  rx
+    ${range_mem8}=  ixia verify traffic rate  ${member4_s4}  100000  50
+    ${testPass}=  Set Variable If  
+    ...   '${range_mem1}' == 'True'  1
+    ...   '${range_mem2}' == 'True'  2
+    ...   '${range_mem3}' == 'True'  3
+    ...   '${range_mem4}' == 'True'  4
+    Should Not Be Empty  ${testPass}
+
+
+rtag7 test teardown
+    delete traffic
+    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_3}
+    bash execute command    s1   ofad-ctl phy spe SWITCH_PORT_ACTION_ADMIN_ENABLE ${s1_lag_mem_1_4}
+    sleep  5
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+    
+rtag7 suite teardown
+    rest delete policy  admin-view  ${policy_name_1}
+    rest delete policy  admin-view  ${policy_name_2}
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_nick_1} 
+    rest delete interface role  s1  ${filter_2}  filter  ${filter_nick_2} 
+    rest delete interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
+    rest delete interface role  s1  ${delivery_2}  delivery  ${delivery_nick_2}
+    rest delete interface  s1  ${filter_1}
+    rest delete interface  s1  ${filter_2}
+    rest delete interface  s1  ${delivery_1}
+    rest delete interface  s1  ${delivery_2}
+    cli delete portchannel  s1  ${s1_1g_number_1}
+    cli delete portchannel  s1  ${s1_1g_number_2}
+    rest delete switch  s1
+    base suite teardown

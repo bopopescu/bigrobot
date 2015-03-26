@@ -16,10 +16,12 @@ import robot
 # Determine BigRobot path(s) based on this executable (which resides in
 # the bin/ directory.
 bigrobot_path = os.path.dirname(__file__) + '/..'
+# paramiko_path = bigrobot_path + '/vendors/paramiko'
 exscript_path = bigrobot_path + '/vendors/exscript/src'
 marvin_path = bigrobot_path + '/vendors/marvin'
 sys.path.insert(0, marvin_path)
 sys.path.insert(0, exscript_path)
+# sys.path.insert(0, paramiko_path)
 sys.path.insert(0, bigrobot_path)
 
 
@@ -153,14 +155,14 @@ def copy_suite(f, p, quiet=False):
     for ext in ['txt']:
         filename = ''.join((f, '.', ext))
         if os.path.exists(filename):
-            #print("Copying %s to %s" % (filename, p))
+            # print("Copying %s to %s" % (filename, p))
             shutil.copy(filename, p)
-    
+
     topo_file = helpers.bigrobot_topology()
     if os.path.exists(topo_file):
-        #print("Copying %s to %s" % (topo_file, p))
+        # print("Copying %s to %s" % (topo_file, p))
         shutil.copy(topo_file, p)
-    
+
 
 def touch_log_files():
     log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html',
@@ -350,7 +352,7 @@ def test_command(*args):
 
     rc = robot.run(test_suite, **options)
     time_end = helpers.time_now()
-    
+
     print("Execution time is %s"
           % helpers.datetime_format(time_end - time_start))
     print("Robot Framework return code is %s" % rc)

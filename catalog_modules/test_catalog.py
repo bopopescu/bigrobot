@@ -114,8 +114,8 @@ class TestCatalog(object):
             ihplus_bcf_40g-132_Special_security_patch
             ^      ^   ^   ^   ^
             |      |   |   |   |
-            |      |   |   |   +-- optional description
-            |      |   |   +------ platform name
+            |      |   |   |   +-- build description (optional)
+            |      |   |   +------ build id
             |      |   +---------- testbed name (e.g., 10g, 40g, common, virtual)
             |      +-------------- product name (including image tag)
             +--------------------- release name
@@ -127,12 +127,13 @@ class TestCatalog(object):
                  match.group(2) == product name
                  match.group(3) == testbed
                  match.group(4) == build id
+                 match.group(5) == build description
            - string matching the field
         """
 
         # !!! FIXME: The regex match is not very stringent at this point.
         #            Will need to tighten down on requirements in the future.
-        match = re.match(r'^([A-Za-z0-9-]+)_([A-Za-z0-9-]+)_([A-Za-z0-9-]+)-(.+)', build_name)
+        match = re.match(r'^([A-Za-z0-9-]+)_([A-Za-z0-9-]+)_([A-Za-z0-9-]+)-(\d+)(.*)', build_name)
         result = None
         if match:
             if field == 'release':
@@ -143,6 +144,8 @@ class TestCatalog(object):
                 result = match.group(3)
             elif field == 'build_id':
                 result = match.group(4)
+            elif field == 'build_descr':
+                result = match.group(5).lstrip('-_')
             else:
                 result = match
         return result

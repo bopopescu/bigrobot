@@ -334,6 +334,11 @@ Test get_node_hostname
     ${hostname}=    get node hostname   c1
     log             c1 hostname is '${hostname}"
 
+Test new CLI commands
+    # Note: This test will fail because the command is invalid.
+    [Tags]  skipped
+    cli    c1    show versionX
+
 Test sudo
     #[Tags]  skipped
     test sudo        c1

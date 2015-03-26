@@ -237,9 +237,12 @@ class SSH2(Protocol):
                        self._paramiko_auth_agent,
                        self._paramiko_auth_autokey,
                        self._paramiko_auth_none):
-            self._dbg(1, 'Authenticating with %s' % method.__name__)
+            # self._dbg(1, 'Authenticating with %s' % method.__name__)
+            self._dbg(1, 'MM: _paramiko_auth: Authenticating with %s (username:%s, password:%s)'
+                      % (method.__name__, username, password))
             try:
                 method(username, password)
+                self._dbg(4, "MM: _paramiko_auth: Success for method %s" % method.__name__)
                 return
             except BadHostKeyException, e:
                 self._dbg(1, 'Bad host key!')
