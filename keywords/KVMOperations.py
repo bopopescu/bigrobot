@@ -484,6 +484,7 @@ class KVMOperations(object):
         if options[0] == 1:
             helpers.log("Autotomatci Mininet Log is enabled no need to log into mininet..")
         else:
+            helpers.log("Sending mininet password..")
             n_console.send('mininet')
             n_console.expect(r'Password: ')
             n_console.send('mininet')
@@ -493,7 +494,6 @@ class KVMOperations(object):
         if get_ip:
             helpers.log("Just getting DHCP IP from Mininet VM ..")
             n_console.send('sudo ifconfig | grep inet | awk \'{print $2}\'')
-            n_console.expect()
             output = n_console.content()
             output_lines = output.split('\n')
             helpers.log("Mininet IP Content:")
