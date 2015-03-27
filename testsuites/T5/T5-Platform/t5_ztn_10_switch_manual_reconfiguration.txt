@@ -64,6 +64,7 @@ T10.1.1. Connected, change config on switch, reload
 	Run Keyword and Expect Error  *  Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Sleep  60
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+    [Tags]  Sanity
 
 T10.1.2. Connected, change config on switch, reboot
 	Sleep  10
@@ -213,6 +214,7 @@ T10.1.11. Connected, disconnect, change config on switch, reconnect
 	Failover
 	Sleep  60
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+    [Tags]  Sanity
 
 T10.1.12. Connected, change config on switch, flap
 	Sleep  10

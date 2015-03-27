@@ -65,6 +65,7 @@ T2.1.1. Verify that switch is successfully provisioned when no fabric role for t
 	Verify Switch Connection State  True  ${s1_alias}
 	Verify Switch Fabric Connection State  suspended  ${s1_alias}
 	Verify Switch Suspended Reason  No fabric role configured  ${s1_alias}
+    [Tags]  Sanity
 
 T2.1.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
 	Cli Run  master  enable; config
@@ -155,6 +156,7 @@ T2.2.1. Verify that switch is successfully provisioned when no fabric role for t
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Fabric Connection State  suspended  ${s2_alias}
 	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
+    [Tags]  Sanity
 
 
 T2.2.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
