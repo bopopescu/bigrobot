@@ -40,7 +40,7 @@ s1:
     spine1_int0: ethernet52
     h1_int0: ethernet48
     h2_int0: ethernet47
-    h2_int1: ethernet26
+    h2_int1: ethernet28
     h1_int1: ethernet25
   set_session_ssh: false
   set_init_ping: false
