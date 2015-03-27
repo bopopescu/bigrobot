@@ -208,6 +208,24 @@ class T5Openstack(object):
 			subnetIp = out_dict["gateway_ip"]["value"]
 			return subnetIp
 
+	def openstack_show_subnet_cidr(self, subnetName):
+		'''Get subnet CIDR value
+			Input: subnet Name
+			Output: CIDR for the network
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		result = os1.bash("neutron subnet-show %s" % (subnetName))
+		output = result["content"]
+		match = re.search(r'Unable to find subnet with name', output)
+		if match:
+			helpers.log("subnet Not found")
+			return ''
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			subnet_cidr = out_dict["cidr"]["value"]
+			return subnet_cidr
+	
 	def openstack_show_net(self, netName):
 		'''Get Nova net Id
 			Input:
@@ -1282,6 +1300,117 @@ S
 			if int(data[0]["segment-count"]) != ncount:
 				helpers.test_failure("All Openstack segments are not present in a tenant")
 				return False
+			i = i + 1
+		return True
+	
+	def openstack_t6_verify_router_interface(self, tenantName, subnetName):
+		'''verify router gateway IP creaetd as logical router interface
+			Input:subnetName
+			Output : Verify the subnet gateway IP created in endpoint
+		'''
+		t = test.Test()
+		c = t.controller('master')
+		os1 = t.openstack_server('os1')
+		tenantId = self.openstack_show_tenant(tenantName)
+		subnetIp = self.openstack_show_subnet_ip(subnetName)
+		subnet_cidr = self.openstack_show_subnet_cidr(subnetName)
+		netId = self.openstack_show_subnet(subnetName)
+		subnet_mask = subnet_cidr.split('/')
+		interface_ip = subnetIp + "/" + subnet_mask[1]
+		url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/segment-interface' % (tenantId)
+		c.rest.get(url)
+		data = c.rest.content()
+		if len(data) != 0:		
+			for i in range(0,len(data)):
+				if data[0][i]["segment"] == str(netId) and data[0][i]["ip-cidr"] == interface_ip and data[0][i]["state"] == "Active":
+					helpers.log("L3 Interface is present in BCF controller for the network")
+					return True
+				else:
+					continue
+			return False
+		else:
+			helpers.log("No Logical router interface are present")
+			return False
+		
+	def openstack_l3agent_scale_test(self, extName, tcount, rcount, tName='p', rName='r', nName='n', sName='s', subnet):
+		'''Function to add multiple routers to each tenant
+		   Input: no of tenant count and external network
+		   Output: routers will be added to each tenants and create a getway to external network for each tenant router
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		extId = self.openstack_show_net(extName)
+		tcount = int(tcount)
+		i = 1
+		j = 1
+		rcount = int(rcount)
+		while (i <= tcount):
+			tenantName = tName
+			tenantName += str(i)
+			tenantId = self.openstack_show_tenant(tenantName)
+			while (j <= rcount): 
+				r_name = rName
+				n_name = nName
+				s_name = sName
+				r_name += str(j)
+				n_name += str(j)
+				s_name += str(j)
+				routerName = r_name + "_" + tenantId
+				netName = n_name + "_" + tenantId
+				subnetName = s_name + "_" + tenantId 
+				ipaddr = "%s.%s.0" % (subnet, j)
+				subnet_ip = ipaddr + "/" + str(24)
+				os1.bash("neutron net-create --tenant-id %s %s" % (tenantId, netName))
+				helpers.sleep(5)
+				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, subnetName, netName, subnet_ip))
+				os1.bash("neutron router-create --tenant-id %s %s" % (tenantId, routerName))
+				routerId = self.openstack_show_router(routerName)
+				subnetId = self.openstack_show_subnet(subnetName)
+				os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))
+				helpers.sleep(5)
+				os1.bash("neutron router-gateway-set %s %s" % (routerId, extId))
+				j = j + 1
+			i = i + 1
+		return True
+	
+	def openstack_l3agent_scale_test_delete(self, tcount, rcount, tName='p', rName='r', nName='n', sName='s'):
+		'''Function to add multiple routers to each tenant
+		   Input: no of tenant count and external network
+		   Output: routers will be added to each tenants and create a getway to external network for each tenant router
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		tcount = int(tcount)
+		i = 1
+		j = 1
+		rcount = int(rcount)
+		while (i <= tcount):
+			tenantName = tName
+			tenantName += str(i)
+			tenantId = self.openstack_show_tenant(tenantName)
+			while (j <= rcount): 
+				r_name = rName
+				n_name = nName
+				s_name = sName
+				r_name += str(j)
+				n_name += str(j)
+				s_name += str(j)
+				routerName = r_name + "_" + tenantId
+				netName = n_name + "_" + tenantId
+				subnetName = s_name + "_" + tenantId 
+				routerId = self.openstack_show_router(routerName)
+				subnetId = self.openstack_show_subnet(subnetName)
+				os1.bash("neutron router-gateway-clear %s" % (routerId))
+				helpers.sleep(5)
+				os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
+				helpers.sleep(5)
+				os1.bash("neutron router-delete %s" % (routerName))
+				helpers.sleep(5)
+				os1.bash("neutron subnet-delete %s" % (subnetName))
+				helpers.sleep(5)
+				os1.bash("neutron net-delete %s " % (netName))
+				helpers.sleep(5)
+				j = j + 1
 			i = i + 1
 		return True
 				

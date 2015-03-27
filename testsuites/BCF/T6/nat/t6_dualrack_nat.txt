@@ -58,7 +58,7 @@ basic cli show commands test case
    enable  c1  show switch
    
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]      
+   [Tags]  run      
    sleep  5
    rest verify fabric switch all
    rest verify fabric vswitch all
@@ -106,7 +106,7 @@ verify nat-profile CLI and output
 	Should not be True  ${result}
 	
 verify nat-profile CLI and delete pat for tenant
-	[Tags]   
+	[Tags]  run   
 	rest add nat profile  A  nat1
 	rest add pat  A  nat1
 	rest add pat public ip  A  nat1  10.0.4.254  
@@ -117,8 +117,10 @@ verify nat-profile CLI and delete pat for tenant
     rest verify pat profile  A  nat1
 	rest verify nat endpoint  A  nat1  external  E
 	rest verify tenant route nat  A  nat1
+	rest add pat public ip  A  nat1  10.0.4.253 
 	rest delete pat  A  nat1
-	${result}=  rest verify nat profile  A  nat1
+	sleep  5
+	${result}=  rest verify nat endpoint  A  nat1  external  E
 	Should not be True  ${result}
 
 validation error test public ip for nat same as public ip for another nat

@@ -214,6 +214,29 @@ verify vm connectivity multiple floating IP
     ${loss}=  mininet ping  vm1  ${vm4_ip}
     Should Be True  ${loss} == 0
 	
+verify vm connectivity multiple floating IP from external VM
+	[Tags]      
+	rest add nat profile  A  nat1
+	rest add nat remote tenant  A  nat1  external  E
+	rest add floating ip  A  nat1  10.0.4.200
+	rest add private ip  A  nat1  10.0.4.200  ${vm0_ip}
+	rest add public mac  A  nat1  10.0.4.200  00:00:11:11:11:11
+	sleep  5
+	${result}=  rest verify floating ip  A  nat1  10.0.4.200  ${vm0_ip}
+	Should be True  ${result}
+	rest add static routes  A  0.0.0.0/0  {"nat-profile": "nat1"}
+	sleep  10
+	rest add floating ip  A  nat1  10.0.4.201
+	rest add private ip  A  nat1  10.0.4.201  ${vm1_ip}
+	rest add public mac  A  nat1  10.0.4.201  00:00:11:11:11:12
+	sleep  5
+	${result}=  rest verify floating ip  A  nat1  10.0.4.201  ${vm1_ip}
+	Should be True  ${result}
+	${loss}=  mininet ping  vm4  10.0.4.200
+    Should Be True  ${loss} == 0
+    ${loss}=  mininet ping  vm4  10.0.4.201
+    Should Be True  ${loss} == 0
+
 verify vm connectivity after changing floating ip assignment
    [Tags]   
     rest add nat profile  A  nat1
