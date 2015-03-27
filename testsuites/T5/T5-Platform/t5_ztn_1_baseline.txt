@@ -77,12 +77,13 @@ T1.3. Check supported platforms of SWI and installer
 T1.4. Check Running config for a switch
 	Cli Run  master  show run
 	Sleep  30
-    #Reboot Switches From CLI
 	Verify All Switches Running Config
+	[Tags]  Sanity
 
 T1.5. Check Startup config for a switch
 	Cli Run  master  show run
 	Verify All Switches Startup Config
+    [Tags]  Sanity
 
 T1.6. Test switch reboot
 	Telnet Reboot Switch  s1
@@ -136,6 +137,7 @@ T1.8. Reboot switches from CLI
 	Sleep  20
 	Verify All Switches Running Config
 	Verify All Switches In Provisioned Mode
+    [Tags]  Sanity
 
 T1.9. Verify startup config after failover
     Reboot Switches From CLI
@@ -152,6 +154,7 @@ T1.9. Verify startup config after failover
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
 	Verify Switch Startup Config  ${s5_mac}  ${s5_alias}
+	[Tags]  Sanity
 
 T1.10. Verify switches Switchlight SWI version
 	Verify Switch SWI Version  ${s1_alias}
@@ -456,6 +459,7 @@ T0.4. Show remote on Active
 	Cli Run and Verify Output  master
 	...  show switch ${s5_alias} memory-use
 	...  Free
+    [Tags]  Sanity
 
 T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
@@ -642,3 +646,4 @@ T0.5. Show remote on Standby
 	Cli Run and Verify Output  slave
 	...  show switch ${s5_alias} memory-use
 	...  Free
+    [Tags]  Sanity
