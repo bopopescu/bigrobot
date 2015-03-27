@@ -604,6 +604,24 @@ class T5Openstack(object):
 				return False
 		return True
 	
+	def openstack_add_net_external_juno(self, netName, phy_network_name, vlan_id):
+		'''create a external network
+			Input:
+				network name
+				physical bridge name : typically physnet1 or physnet2
+				vlan ID to be used for external network segment
+			Return: id for created subnet
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		try:
+				os1.bash("neutron net-create %s --router:external --provider:network_type vlan --provider:physical_network %s --provider:segmentation_id %s" % (netName, phy_network_name, vlan_id))
+		except:
+				output = helpers.exception_info_value()
+				helpers.log("Output: %s" % output)
+				return False
+		return True
+	
 	def openstack_add_subnet_external(self,  netName, subnetName, external_gateway_ip, subnet_ip):
 		'''create subnet
 			Input:
@@ -1332,7 +1350,7 @@ S
 			helpers.log("No Logical router interface are present")
 			return False
 		
-	def openstack_l3agent_scale_test(self, extName, tcount, rcount, tName='p', rName='r', nName='n', sName='s', subnet):
+	def openstack_l3agent_scale_test(self, extName, tcount, rcount, subnet, tName='p', rName='r', nName='n', sName='s'):
 		'''Function to add multiple routers to each tenant
 		   Input: no of tenant count and external network
 		   Output: routers will be added to each tenants and create a getway to external network for each tenant router
@@ -1342,12 +1360,14 @@ S
 		extId = self.openstack_show_net(extName)
 		tcount = int(tcount)
 		i = 1
-		j = 1
 		rcount = int(rcount)
+		subnet = int(subnet)
 		while (i <= tcount):
 			tenantName = tName
 			tenantName += str(i)
 			tenantId = self.openstack_show_tenant(tenantName)
+			subnet = subnet + 1
+			j = 1
 			while (j <= rcount): 
 				r_name = rName
 				n_name = nName
@@ -1358,12 +1378,13 @@ S
 				routerName = r_name + "_" + tenantId
 				netName = n_name + "_" + tenantId
 				subnetName = s_name + "_" + tenantId 
-				ipaddr = "%s.%s.0" % (subnet, j)
+				ipaddr = "35.%d.%d.0" % (subnet, j)
 				subnet_ip = ipaddr + "/" + str(24)
 				os1.bash("neutron net-create --tenant-id %s %s" % (tenantId, netName))
 				helpers.sleep(5)
 				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, subnetName, netName, subnet_ip))
 				os1.bash("neutron router-create --tenant-id %s %s" % (tenantId, routerName))
+				helpers.sleep(5)
 				routerId = self.openstack_show_router(routerName)
 				subnetId = self.openstack_show_subnet(subnetName)
 				os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))
@@ -1382,12 +1403,12 @@ S
 		os1 = t.openstack_server('os1')
 		tcount = int(tcount)
 		i = 1
-		j = 1
 		rcount = int(rcount)
 		while (i <= tcount):
 			tenantName = tName
 			tenantName += str(i)
 			tenantId = self.openstack_show_tenant(tenantName)
+			j = 1
 			while (j <= rcount): 
 				r_name = rName
 				n_name = nName
@@ -1401,15 +1422,13 @@ S
 				routerId = self.openstack_show_router(routerName)
 				subnetId = self.openstack_show_subnet(subnetName)
 				os1.bash("neutron router-gateway-clear %s" % (routerId))
-				helpers.sleep(5)
 				os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
-				helpers.sleep(5)
+				helpers.sleep(3)
 				os1.bash("neutron router-delete %s" % (routerName))
-				helpers.sleep(5)
 				os1.bash("neutron subnet-delete %s" % (subnetName))
-				helpers.sleep(5)
+				helpers.sleep(3)
 				os1.bash("neutron net-delete %s " % (netName))
-				helpers.sleep(5)
+				helpers.sleep(3)
 				j = j + 1
 			i = i + 1
 		return True
