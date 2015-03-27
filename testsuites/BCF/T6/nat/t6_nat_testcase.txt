@@ -22,109 +22,113 @@ Resource		 testsuites/BCF/T6/t6_virtual_resource.txt
 Add/Delete/show command CLI test for PNAT and Floating IP 
 ++++++++++++++++++++++++++++++++++++++++++++
 Test PNAT CLI command 
-    [Tags]   
+    [Tags]  skipped   
 Test CLI external tenant for nat
-    [Tags]  
+    [Tags]  skipped	  
 CLI Test for private IP configration
-	[Tags]
+	[Tags]  skipped
 CLI test for public mac configueration
-	[Tags]
+	[Tags]  skipped
 CLI test for public IP configuration
-	[Tags]
+	[Tags]  skipped
 CLI test for public segment IP which is not present in the config
-	[Tags]
+	[Tags]  skipped
 CLI test for floating IP configuration
-	[Tags]
+	[Tags]  skipped
 Configuration save/reload with NAT CLI
 	[Tags]
 Config upload/reload with NAT/Floating IP CLI
 	[Tags]
 CLI test for NAT_pool switch configuration
-	[Tags]	
+	[Tags]  skipped	
 CLI test to check only vswitch available for adding to nat pool
-	[Tags]
+	[Tags]  skipped
 Verify Public IP in NAT same as some static endpoint in external segment
-	[Tags]
+	[Tags]  skipped
 Verify Public mac in NAT same as some static MAC or learned MAC in external segment
-	[Tags]
+	[Tags]  skipped
 Verify Public IP in NAT which is outside the subnet of exteral segment
-	[Tags]
+	[Tags]  skipped
 Verify Public IP in one NAT porfile same as other NAT profiles public IP
-	[Tags]
+	[Tags]  skipped
 Verify floating IP IP in NAT same as some static endpoint in external segment
-	[Tags]
+	[Tags]  skipped
 Verify floating IP in NAT which is outside the subnet of exteral segment
-	[Tags]
+	[Tags]  skipped
 Verify floating IP in one NAT porfile same as other NAT profiles public IP
-	[Tags]
+	[Tags]  skipped
 verify floating IP mac does not fall under multicast range
-	[Tags]
+	[Tags]  skipped
 show command for NAT/floating IP
-	[Tags]
+	[Tags]  skipped
 CLI command to add policy with nat next-hop
+	[Tags]
+Check NAT endpoints to be shown under show fabric
 	[Tags]
 	
 Functionality Test (NAT/Floating IP)
 +++++++++++++++++++++++++++++++++++++
 Configure NAT for a tenant, verify VM and BM connectivity using NAT container
-	[Tags]
+	[Tags]  skipped
 Configure NAT for a tenant, verify VM and BM connectivity using NAT container on different rack vswitch
-	[Tags]
+	[Tags]  skipped
 configure NAT for a tennt , verify VM connectivity VM and NAY container on same vswitch
-	[Tags]
+	[Tags]  skipped
 configure NAT for multiple tenant , Verify VM connectivity between the tenants
-	[Tags]
+	[Tags]  skipped
 Verify NAT table output for vswitch and pswitch with internal vlan entries
-	[Tags]
+	[Tags]  skipped
 Verify connectivity with specific route point to NAT container 
-	[Tags]
+	[Tags]  skipped
 verify connectvity using specific NAT switch insted of auto pick
-	[Tags]
+	[Tags]  skipped
 verify connectivity using NAT switch failover in nat-pool
-	[Tags]
+	[Tags]  skipped
 Verify connectivity using NAT switch failover in auto mode
-	[Tags]
+	[Tags]  skipped
 add/delete nat-profile default routes (change from system to NAT)
-	[Tags]
+	[Tags]  skipped
 add/delete nat-profile specific routes next-hop to nat profile
-	[Tags]
+	[Tags]  skipped
 add floating IP configuration to specific VM and verify the connectivity
-	[Tags]
+	[Tags]  skipped
 add multiple floating IP configuration to multiple VM
-	[Tags]
+	[Tags]  skipped
 add multiple floating IP configuration to multiple VM , multiple tenants
-	[Tags]
+	[Tags]  skipped
 Test floating IP and PNAT together in a tenant
-	[Tags]
+	[Tags]  skipped
 Test Vswitch NAT container load balence scenario (multiple NAT profile , multiple tenants , multiple Vswitches)
-	[Tags]
+	[Tags]  skipped
 Test connectivity using fixed nat-pool switch
-	[Tags]
+	[Tags]  skipped
 Verify multiple NAT profiles applied to same tenant
-	[Tags]
+	[Tags]  skipped
 Verify Test path to check the forwarding Path using Nat-profile
-	[Tags]
+	[Tags]  skipped
 Verify debug logs assiociation with NAT profile
 	[Tags]
 Verify debug logs associatation with Floating IP profile
 	[Tags]
 Verify forwarding entries in pswitch/vswitch for NAT and floating IP table
-	[Tags]
+	[Tags]  skipped
 verify single vswitch NAT container capacity and check the log messages in floodlight logs
-	[Tags]
+	[Tags]  skipped
 verify connectivity with policy applied to router with nat-next-hop
+	[Tags]
+Check NAT related debug events
 	[Tags]
 
 Failover Cases
 ++++++++++++++
 Test PNAT case with Controller Failover 
-	[Tags]
+	[Tags]  skipped
 Test floating IP case with Controller Failover 
-	[Tags]
+	[Tags]  skipped
 Test connectivity with bringing down Interface for Vswitch NAT container 
-	[Tags]
+	[Tags]  skipped
 Test connectivity with NAT switch failover
-	[Tags]
+	[Tags]  skipped
 	
 PNAT/Floating IP with Openstack
 +++++++++++++++++++++++++++++++
@@ -162,8 +166,6 @@ verify packet contents with PNAT and floating IP together in a tenant
 	[Tags]
 verify openstack tenant with no NAT configuration workflow
 	[Tags]
-exhaust floating IP network in openstack and check the BCF NAT container behaviour
-	[Tags]
 verify multiple external network floating IP workflow
 	[Tags]
 verify multiple external network PNAT workflow
@@ -171,6 +173,8 @@ verify multiple external network PNAT workflow
 verify nat stats counter on vswitch 
 	[Tags]
 workflow to test policy next-hop using nat
+	[Tags]
+Upgrade BCF with NAT/Floating IP Config
 	[Tags]
 
 

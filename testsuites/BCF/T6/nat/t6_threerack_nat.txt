@@ -12,6 +12,7 @@ Library          keywords/T5.py
 Library			 keywords/T5L3.py
 Library          keywords/T5Platform.py
 Library			 keywords/T6.py
+Library			 keywords/T5Platform.py
 Library			 Collections.py
 Library          keywords/Mininet.py
 Resource		 testsuites/BCF/T6/t6_virtual_resource.txt
@@ -357,7 +358,7 @@ verify vm connectivity changing route from system to nat
     Should Be True  ${loss} == 0
 	
 verify NAT connectvity after controller failover
-	[Tags]  skipped
+	[Tags]  skipped  
 	add a tenant  external
     add a vns  external  s1
     add a vns  external  s2
@@ -394,7 +395,7 @@ verify NAT connectvity after controller failover
     Should be True  ${loss} == 100
 	
 verify NAT configuration changes after controller failover
-	[Tags]  skipped
+	[Tags]  skipped  
 	add a tenant  external
     add a vns  external  s1
     add a vns  external  s2
@@ -444,7 +445,7 @@ verify NAT configuration changes after controller failover
     Should Be True  ${loss} == 0
     
 verify NAT connectvity after controller failover and failback
-	[Tags]  skipped
+	[Tags]  skipped 
 	add a tenant  external
     add a vns  external  s1
     add a vns  external  s2
@@ -485,7 +486,7 @@ verify NAT connectvity after controller failover and failback
     Should be True  ${loss} == 100
 
 verify vm connectivity with nat switch interface failover
-   [Tags]  nat  feature     
+   [Tags]      
     add a tenant  external
     add a vns  external  s1
     add a vns  external  s2
@@ -523,7 +524,7 @@ verify vm connectivity with nat switch interface failover
     \	Should Be True  ${loss} == 0
 
 verify vm connectivity with dynamic nat switch failover
-	[Tags]  nat feature    
+	[Tags]   
 	add a tenant  external
 	add a tenant  external1
     add a vns  external  s1
