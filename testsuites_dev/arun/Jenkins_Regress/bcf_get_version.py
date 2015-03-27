@@ -1,11 +1,11 @@
 '''
 Created on Mar 27, 2015
-
 @author: mallinaarun
 '''
 '''
     Pring version string of the controller
 '''
+#!/usr/bin/env python
 import paramiko
 import re
 import os
