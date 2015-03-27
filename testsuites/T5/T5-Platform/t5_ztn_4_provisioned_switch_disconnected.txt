@@ -82,6 +82,7 @@ T5.2.2. Power down, delete
 	Power Up Switch  s3
 	Sleep  30
 	Telnet Verify ZTN Discovery Failed  s3
+    [Tags]  Sanity
 
 T5.2.3. Power down, change config, failover
 	Sleep  60
@@ -128,6 +129,7 @@ T5.3.1. Disconnect, change config, reconnect, reload
 	Sleep  60
 	Verify All Switches In Provisioned Mode
 	Verify All Switches Running Config
+    [Tags]  Sanity
 
 T5.3.2. Disconnect, delete, reconnect, reload (reboot?)
 	Verify Switch In Provisioned Mode  ${s2_alias}
