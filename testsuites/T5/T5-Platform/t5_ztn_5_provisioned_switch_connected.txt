@@ -88,6 +88,7 @@ T5.5.3. Connected, change config, reboot
 	Sleep  30
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+    [Tags]  Sanity
 
 T5.5.4. Connected, delete, reboot
 	Sleep  30
@@ -191,6 +192,7 @@ T5.5.11. Connected, change config, double failover, reboot
 	Sleep  30
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+    [Tags]  Sanity
 
 T5.5.12. Connected, delete, double failover, reboot
 	Sleep  15

@@ -336,9 +336,11 @@ class T6(object):
         data = c.rest.content()
         for i in range(0, len(data[0]["logical-router"]["nat-profile"])):
             if data[0]["logical-router"]["nat-profile"][i]["name"] == nat_profile:
-                public_ip = data[0]["logical-router"]["nat-profile"][i]["pat"]["ip-address"]
-            else:
-                continue
+                if "pat" in data[0]["logical-router"]["nat-profile"][i]:
+                    public_ip = data[0]["logical-router"]["nat-profile"][i]["pat"]["ip-address"]
+                    break
+                else:
+                    return False
         url1 = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % public_ip
         c.rest.get(url1)
         data1 = c.rest.content()

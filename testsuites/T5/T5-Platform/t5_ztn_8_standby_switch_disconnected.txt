@@ -66,6 +66,7 @@ T5.1.1. Power down, change config
 	Verify All Switches Startup Config
 	Verify All Switches Running Config
 	Verify All Switches Connected
+    [Tags]  Sanity
 
 T5.1.2. Power down, delete
 	Power Down All Switches
@@ -128,6 +129,7 @@ T5.4.1. Disconnect, change config, reconnect, reload
 	Verify All Switches In Standby Mode
 	Verify All Switches Startup Config
 	Verify All Switches Running Config
+    [Tags]  Sanity
 
 T5.4.2. Disconnect, delete, reconnect, reload (reboot?)
 	Cli Run  master  enable;config

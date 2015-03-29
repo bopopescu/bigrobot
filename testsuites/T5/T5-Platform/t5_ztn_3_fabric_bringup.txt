@@ -96,6 +96,7 @@ T3.3. Change ZTN configuration, do not reload the switch, restore old config (ch
 	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Fabric Connection State  connected  ${s2_alias}
+    [Tags]  Sanity
 
 T3.4. Change ZTN configuration, do not reload the switch, change config again (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
 	Randomize ZTN Configuration
@@ -327,3 +328,4 @@ T4.9. Provision two switches, power them both off, swap MACs, power them both on
 	Verify Switch Startup Config  ${s2_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s2_alias}
+    [Tags]  Sanity

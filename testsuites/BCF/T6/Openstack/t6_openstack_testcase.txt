@@ -1,12 +1,12 @@
-== T5 Functional Openstack Integration work flow test ==
+== T6 Functional Openstack Integration work flow test ==
 
 * Setting
-Documentation    T5 BCF  Openstack integration feature and solution work flow test suite
+Documentation    T6 BCF  Openstack integration feature and solution work flow test suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
 Test Teardown    base test teardown
-Force Tags       T5 
+Force Tags       T6  openstack 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library          keywords/T5Platform.py
@@ -21,6 +21,43 @@ Resource         testsuites/T5/t5_openstack_variables.txt
 * Test Case 
 	
 
+create/delete projects
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+create/delete networks in project
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+check multiple subnets for single network
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+check multiple router creation for single project
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+check external network creation workflow
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+check external and shared to be same network belong to admin project
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+check external and shared to be same network belog to non-admin project
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+check security group policy for a tenant and check the vswitch rule creation
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+check source NAT (PNAT) to be enabled for a project (default behaviour)
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+verify router grid rules for a tenant (All combinations)
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+verify L3 connectivity between networks in single tenant
+verify L3 connectivity between networks in multiple tenants
+verify L3 connectivity between network in user tenant and external router
+verify topology sync with L2/L3 endpoints and routers
+verify deployment methods (Fuel/Foreman/packstack) T6 topology 
+
+
 Create/delete VMs with floating IP
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed 
@@ -34,27 +71,27 @@ delete multiple VMs with floating IP
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
 exhaust floating IPs in a tenant
-	[Tags]  feature  openstack  IronHorse  manual  skipped
+	[Tags]  feature  openstack  IronHorse  manual  
 	manual passed
-Verify that traffic is correctly blocked between projects (tenants)
+Verify that traffic is correctly blocked between projects (tenants) using security rules 
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
 Test with different traffic (IP, TCP, Jumbo Frame)
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
 Verify behavior of broadcast traffic from VMs (ARP broadcast forward between VM)
-	[Tags]  feature  openstack  IronHorse  manual  skipped
-	manual passed
-Verify behavior of multicast traffic from VMs
-	[Tags]  feature  openstack  IronHorse  manual  skipped
+	[Tags]  feature  openstack  IronHorse  manual  
 	manual passed
 Test L3 Silent Host scenario (Replace the device with non VRRP Scenario)
 	[Tags]  feature  openstack  IronHorse  manual  skipped
 	manual passed
-Verify floating IP connectivity between 2 VNS
+Verify floating IP connectivity between 2 networks in single tenant
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
-verify floating IP connectivity between VNS and external router
+Verify floating IP connectivity between 2 networks in multiple tenant
+	[Tags]  feature  openstack  IronHorse  manual
+	manual passed
+verify floating IP connectivity between VM in user tenant and external router
 	[Tags]  feature  openstack  IronHorse  manual
 	manual passed
 
@@ -101,10 +138,10 @@ Use seperate storage VLAN to provide a storage traffic going through the fabric 
 	[Tags]  solution  openstack  IronHorse  manual  skipped 
 	manual passed
 
-Scale upto VM which can support either openstack or 200 server limit (Using Tiny VM size)
+Scale upto VM which can support either openstack 
 	[Tags]  scaling  openstack  IronHorse  manual  skipped	
 	manual passed
-Measure Openstack Scaling limit (Topology: Single Nova controller)
+Measure Openstack Scaling limit (neutron server)
 	[Tags]  scaling  openstack  IronHorse  manual  skipped
 	manual passed
 
@@ -177,16 +214,17 @@ Process failure (OFAD) all spine
 	manual passed
 
 
-OVS - Nova Controller start/stop process
+Node - Nova Controller start/stop process
 	[Tags]  solution  openstack  IronHorse  manual  skipped
 	manual passed
 
-OVS - Compute node start/stop process
+Node - Compute node start/stop process
 	[Tags]  solution  openstack  IronHorse  manual  skipped
 	manual passed
-OVS - Storage if any process starts
+Node - Storage if any process starts
 	[Tags]  solution  openstack  IronHorse  manual  skipped
 	manual passed
+
 
 Multiple failure: All servers fail and recover
 	[Tags]  solution  openstack  IronHorse  manual  skipped

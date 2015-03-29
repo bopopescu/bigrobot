@@ -1875,4 +1875,22 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/forwardin
 
         else:
             helpers.log("Given tenant name did not match the config")
+            
+    def rest_get_policy_name(self, tenant):
+        ''' Function to get policy name for a tenant
+        Input: tenant name
+        Output: policy log counter
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/policy-list' % (tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0, len(data)):
+            if data[i]["applied"] == "true":
+                policy = data[i]["policy"]
+                return policy
+            else:
+                continue
+                
 

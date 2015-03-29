@@ -12,7 +12,7 @@ c2:
   ip: 10.9.18.8
 
 s1:
-  ip: 10.9.19.7
+  ip: 10.9.19.1
 
 tg1:
   platform: 'ixia'
@@ -23,6 +23,6 @@ tg1:
   set_init_ping: false
   ports:
     a:
-      name: 1/5 
+      name: 2/1
     b:
-      name: 1/6
+      name: 2/2

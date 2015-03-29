@@ -61,6 +61,7 @@ T5.6.1. Connected, change config, flap interface, reload
 	Verify All Switches Connected
 	Verify All Switches Startup Config
 	Verify All Switches Running Config
+    [Tags]  Sanity
 
 T5.6.2. Connected, delete, flap interface, reload (reboot?)
 	Set All Switches Mode Standby
@@ -214,6 +215,7 @@ T5.6.11. Connected, change config, double failover, reboot
 	Failover
 	Failover
 	Reboot Switches
+    [Tags]  Sanity
 
 T5.6.12. Connected, delete, double failover, reboot
 	Set All Switches Mode Standby

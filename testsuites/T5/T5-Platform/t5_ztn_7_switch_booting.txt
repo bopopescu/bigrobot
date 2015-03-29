@@ -64,6 +64,7 @@ T7.26.1 - while Installer download - no SWI download
 	Telnet Verify ZTN Discovery Failed  s1
 	Verify Switch Connection State  False  ${s1_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s1_alias}
+    [Tags]  Sanity
 
 T7.26.2.1 - while SWI download - startup-config not cached - switch does not boot
     Telnet Delete ZTN Cache  all  s2
@@ -75,6 +76,7 @@ T7.26.2.1 - while SWI download - startup-config not cached - switch does not boo
     Telnet Verify ZTN Discovery Failed  s2
     Verify Switch Connection State  False  ${s2_alias}
     Verify Switch Fabric Connection State  not_connected  ${s2_alias}
+    [Tags]  Sanity
 
 T7.26.2.2 - while SWI download - startup-config cached - switch undefined
     Telnet Delete ZTN Cache  swi  s3
