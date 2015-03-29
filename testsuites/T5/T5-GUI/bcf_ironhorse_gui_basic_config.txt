@@ -1,8 +1,10 @@
 * Settings
 Documentation   	Test suite with tests create tenants. The tests have
 ...             	a workflow that is created using keywords from the resource file.
-Suite Setup  		config suite setup
-Suite Teardown  	config suite teardown
+Suite Setup  		Config Suite Setup
+Suite Teardown  	Config Suite Teardown
+Test Setup			Config Test Setup
+Test Teardown		Config Test Teardown
 Force Tags          T5  GUI  BCF  Feature  IronHorse
 Library         	keywords/BsnCommon.py
 Library        		keywords/BsnSelenium.py
@@ -19,18 +21,25 @@ Library       		String
 		
 T1.1 Create Tenant with name as small 
 	Create Tenant						tenant				Tenant name and description as small
+	[Tags]  configure-tenant-from-tenants-page
 T1.2 Create Tenant with a dot in between name
     Create Tenant						tenant.1			Tenant name 1 and description with a space	
+	[Tags]  configure-tenant-from-tenants-page
 T1.3 Create Tenant with a hypen in name
     Create Tenant					 	tenant-2			Tenant name-2-and description-with-hyphens
+	[Tags]  configure-tenant-from-tenants-page
 T1.4 Create Tenant with an underscore in name
     Create Tenant						tenant_3			Tenant_name and description_with_underscores
+	[Tags]  configure-tenant-from-tenants-page
 T1.5 Create Tenant with name in CAPS
     Create Tenant						TENANT				TENANT NAME AND DESCRIPTION ALL CAPS	
+	[Tags]  configure-tenant-from-tenants-page
 T1.6 Create Tenant with no description
     Create Tenant						TeNant5				${EMPTY}			
+	[Tags]  configure-tenant-from-tenants-page
 T1.7 Delete Tenants
     Delete All Tenants
+	[Tags]  remove-all-tenants
     
 ### Controller State
 
@@ -43,30 +52,55 @@ T2.2 Show stats for active controller
 
 T3.1 Add a switch								
 	Provision Switch			00:0a:99:02:00:ff		switch-1			None		${EMPTY}		
+	[Tags]  configure-switch-from-switches-page  standby-switch
+
 T3.2 Add a spine switch								
 	Provision Switch			00:0a:99:03:22:33		switch.spine		Spine		${EMPTY}
+	[Tags]  configure-switch-from-switches-page  spine-switch
+
 T3.3 Add a leaf switch with leaf group 'leaf-group'						
 	Provision Switch			00:aa:19:33:42:33		switch-LEAF.1		Leaf		leaf-group
+	[Tags]  configure-switch-from-switches-page  leaf-switch
+
 T3.4 Add a leaf switch using the previous leaf group								
 	Provision Switch			00:ff:00:0a:03:22		switch.2-leaf		Leaf		leaf-group
+	[Tags]  configure-switch-from-switches-page  leaf-switch
+
 T3.5 Add a leaf switch with new leaf group							
 	Provision Switch			00:09:22:33:50:78		switch-lEAf.3		Leaf		leaf_group_new
+	[Tags]  configure-switch-from-switches-page  leaf-switch
+
 T3.6 Remove the leaf group from the switch switch_lEAf_3
 	Change Switch Config			switch-lEAf.3		Leaf		${EMPTY}
+	[Tags]  modify-switch-from-switches-page  remove-leaf-group
+
 T3.7 Remove the leaf group from the switch switch-LEAF.1
 	Change Switch Config			switch-LEAF.1		Leaf		${EMPTY}
+	[Tags]  modify-switch-from-switches-page  remove-leaf-group
+
 T3.8 Change role for switch-1 to spine
 	Change Switch Config			switch-1			Spine		${EMPTY}
+	[Tags]  modify-switch-from-switches-page  modify-switch-role-standby-to-spine
+
 T3.9 Change leaf group for switch_leaf.2
 	Change Switch Config			switch.2-leaf		Leaf		leaf_group_new	
+	[Tags]  modify-switch-from-switches-page  modify-switch-leaf-group
+
 T3.10 Change role for switch_spine to leaf
 	Change Switch Config			switch.spine		Leaf		leaf-group	
+	[Tags]  modify-switch-from-switches-page  modify-switch-role-spine-to-leaf
+
 T3.11 Change role for switch-LEAF.1 to None
 	Change Switch Config			switch-LEAF.1		None		${EMPTY}	
+	[Tags]  modify-switch-from-switches-page  modify-switch-role-leaf-to-standby
+
 T3.12 Change role to none for switch_lEAf_3
 	Change Switch Config			switch-lEAf.3		None		${EMPTY}		
+	[Tags]  modify-switch-from-switches-page  modify-switch-role-leaf-to-standby
+
 T3.13 Clear Switch config
 	Clear Switch Config				switch-LEAF.1		
+	[Tags]  remove-switch-config
 
 
 ### Configure Switch Interfaces					
@@ -85,16 +119,26 @@ T4.4 Configure Interfaces for leaf switch switch_spine
 
 T5.1 Create Port group with name as small and mode Static
 	Create Port Group				portgroup		Static			leaf-group
+	[Tags]  configure-port-group-from-port-groups-page  static-mode-port-group
+
 T5.2 Create Port group with a dot in between name
     Create Port Group				port.group.1	Static			leaf_group_new
+	[Tags]  configure-port-group-from-port-groups-page  static-mode-port-group
+
 T5.3 Create Port group with a hyphen in name
     Create Port Group				port-group-2	Static			leaf-group
+	[Tags]  configure-port-group-from-port-groups-page  static-mode-port-group
+
 T5.4 Create Port group with an underscore in name
     Create Port Group				port_group_3	Static			leaf_group_new
+	[Tags]  configure-port-group-from-port-groups-page  static-mode-port-group
+
 T5.5 Create Port group with name in CAPS and mode as LACP
     Create Port Group				PORT-GROUP-4	LACP			leaf_group_new
 T5.11 Delete Port groups
     Delete All Port Groups
+    [Tags]  remove-all-port-groups
+
     
 #### Support Bundles
 
@@ -107,20 +151,32 @@ T6.2 Delete Support Bundle
 ### Configure User	  		Username 			Password 			Confirm Password  			Full Name				Group
 T7.1 User with password 	
  	Configure User			user1				testtest			testtest					User with password		${EMPTY}
+    [Tags]  configure-user-from-users-page  user-with-password  user-with-no-group-association  user-with-full-name
+
 T7.2 User no password		
  	Configure User			user2				${EMPTY}			${EMPTY}					User no password		${EMPTY}
+    [Tags]  configure-user-from-users-page  user-with-no-password  user-with-no-group-association  user-with-full-name
+
 T7.3 User wrong password
  	Configure User			user3				testtest1			testtest					User wrong password		${EMPTY}
+    [Tags]  configure-user-from-users-page  user-with-incorrect-password-confirmation  user-with-no-group-association  negative    user-with-full-name
+
 T7.4 User no full name	
  	Configure User			user4				testtest			testtest					${EMPTY}				${EMPTY}
+    [Tags]  configure-user-from-users-page  user-with-password  user-with-no-group-association  user-with-no-full-name
+
 T7.5 User group admin
  	Configure User			user5				adminadmin			adminadmin					User group admin		admin
+    [Tags]  configure-user-from-users-page  user-with-password  user-with-admin-group-association  user-with-full-name
+
 T7.6 User wrong password and new group
  	Configure User			user6				adminadmin			adminadmin					User new group			admin
-#T7.7 User unhashable pass
-#	Configure User			user7				;"$					testtest					User unhashable pass	${EMPTY}
+    [Tags]  configure-user-from-users-page  user-with-password  user-with-admin-group-association  user-with-full-name
+
 T7 Teardown
  	Delete All Users
+    [Tags]  remove-all-users
+
  	
 ### Configure SNMP Traps	Contact		Location	Community	Traps		Server		Port
 T8.1 Configure SNMP 	
