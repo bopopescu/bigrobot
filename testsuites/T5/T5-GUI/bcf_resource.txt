@@ -453,26 +453,41 @@ ${SNMP TRAPS THRESHOLDS STEP BUTTON}	xpath=//div[@class='step_text' and contains
 ${CPU THRESHOLDS KNOB}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
 ${CPU THRESHOLD PERCENTAGE FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'CPU Load Thresholds')]/parent::h2/parent::div/following-sibling::div[2]/div[2]/div/div[2]/div[1]/div[3]/input[1]
 ${MEMORY THRESHOLDS KNOB}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
-${MEMORY THRESHOLD PERCENTAGE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
+${MEMORY THRESHOLD PERCENTAGE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Memory Thresholds')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/descendant::input[@class='dijitReset dijitInputInner'][1]
 ${L2 FLOW TABLE THRESHOLDS KNOB}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
 ${L2 FLOW THRESHOLD PERCENTAGE FIELD}	xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'L2 Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
 ${TCAM FLOW THRESHOLDS KNOB}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow')]/parent::h2/parent::div/following-sibling::div[1]/div[1]/div/div[3]/div/descendant::div[@class='knob_icon']
 ${TCAM THRESHOLD PERCENTAGE FIELD}		xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'TCAM Flow Table')]/parent::h2/parent::div/following-sibling::div[1]/div[2]/div/div[2]/div[1]/div[3]/input[1]
 
-#### TACACS Page
-
-${ADD TACACS HOST PLUS BUTTON}				xpath=//div[@id='tacacs_hosts_table']/descendant::div[@class='icon_node plus']
+#### AAA Page
+${TACACS BLOCK}								xpath=//div[@id='tacacs_content']
+${RADIUS BLOCK}								xpath=//div[@id='radius_content']
+${ADD TACACS HOST PLUS BUTTON}				xpath=//div[@id='bcf_widgets_aaa_Configuration_0']/descendant::div[@class='icon_node plus']
 ${CREATE TACACS SERVER POPUP}				xpath=//div[@title='Create TACACS Server']
-${TACACS SERVER ADDRESS FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server Address')]/parent::h2/parent::div/following-sibling::div/div[2]/input
-${TACACS SERVER TIMEOUT FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Timeout')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
-${TACACS SERVER SECRET FIELD}				xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Secret')]/parent::h2/parent::div/following-sibling::div/div[2]/input
-${TACACS SERVER SECRET ENCRYPTION BUTTON}	xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node lock']
-${TACACS SERVER EDIT MENU ITEM}				xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
 ${EDIT TACACS SERVER POPUP}					xpath=//div[@title='Edit TACACS Server']
-${TACACS SERVER DELETE MENU ITEM}			xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
-${DELETE CONFIRM TACACS HOST POPUP}			xpath=//div[@title='Confirm']
-${TACACS DEFAULT SETTINGS BUTTON}			xpath=//div[@id='tacacs_default_settings']/descendant::div[@class='icon_node configure']
+${TACACS DEFAULT SETTINGS BUTTON}			xpath=//div[@id='bcf_widgets_aaa_Configuration_0']/descendant::div[@class='icon_node configure']
 ${DEFAULT TACACS SETTINGS POPUP}			xpath=//div[@title='Configure TACACS Defaults']
+${ALL TACACS SERVERS CHECKBOX}				xpath=//div[@id='bsn_widgets_form_CheckBox_0']/input
+${DELETE TACACS HOST MINUS BUTTON}			xpath=//div[@id='bcf_widgets_aaa_Configuration_0']/descendant::div[@class='icon_node minus']
+${SAVE TACACS SERVER BUTTON}				xpath=//div[contains(@title, 'TACACS Server')]/following-sibling::div/descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+${ADD RADIUS HOST PLUS BUTTON}				xpath=//div[@id='bcf_widgets_aaa_Configuration_1']/descendant::div[@class='icon_node plus']
+${RADIUS DEFAULT SETTINGS BUTTON}			xpath=//div[@id='bcf_widgets_aaa_Configuration_1']/descendant::div[@class='icon_node configure']
+${CREATE RADIUS SERVER POPUP}				xpath=//div[@title='Create Radius Server']
+${EDIT RADIUS SERVER POPUP}					xpath=//div[@title='Edit Radius Server']
+${DEFAULT RADIUS SETTINGS POPUP}			xpath=//div[@title='Configure Radius Defaults']
+${ALL RADIUS SERVERS CHECKBOX}				xpath=//div[@id='bsn_widgets_form_CheckBox_1']/input
+${DELETE RADIUS HOST MINUS BUTTON}			xpath=//div[@id='bcf_widgets_aaa_Configuration_1']/descendant::div[@class='icon_node minus']
+${SAVE RADIUS SERVER BUTTON}				xpath=//div[contains(@title, 'Radius Server')]/following-sibling::div/descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Save')]
+
+${AAA SERVER ADDRESS FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Server Address')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${AAA SERVER TIMEOUT FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Timeout')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
+${AAA SERVER SECRET FIELD}					xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Secret')]/parent::h2/parent::div/following-sibling::div/div[2]/input
+${AAA SERVER SECRET ENCRYPTION BUTTON}		xpath=//div[@data-dojo-attach-point='iconNode' and @class='icon_node lock']
+${AAA SERVER EDIT MENU ITEM}				xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Edit')]
+${AAA SERVER DELETE MENU ITEM}				xpath=//td[contains(@id, 'dijit_MenuItem') and contains(text(), 'Delete')]
+${DELETE CONFIRM AAA HOST POPUP}			xpath=//div[@title='Confirm']
+
 
 #### Advanced Query
 ${FILTER QUERY FIELD}						xpath=//span[@class='dijitPlaceHolder dijitInputField' and contains(text(), 'Filter table rows')]/parent::div/input
@@ -548,7 +563,9 @@ ${ACCOUNTING BLOCK}						xpath=//h2[@class='sidebar_title lead' and contains(tex
 ${ACCOUNTING LOCAL ROW}					${ACCOUNTING BLOCK}/child::div[1]
 ${ACCOUNTING REMOTE ROW}				${ACCOUNTING BLOCK}/child::div[3]
 ${ACCOUNTING LOCAL KNOB}				${ACCOUNTING LOCAL ROW}/descendant::div[@class='knob_icon']
-${ACCOUNTING REMOTE KNOB}				${ACCOUNTING REMOTE ROW}/descendant::div[@class='knob_icon']
+${ACCOUNTING REMOTE FIELD}				${ACCOUNTING REMOTE ROW}/descendant::input[@class='dijitReset dijitInputInner']
+${ACCOUNTING REMOTE BUTTON}				${ACCOUNTING REMOTE ROW}/descendant::div[contains(@class,'dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer')]
+${ACCOUNTING REMOTE LIST}				xpath=//div[@class='dijitPopup dijitComboBoxMenuPopup'][1]
 ${ACCOUNTING SETTINGS POPUP}			xpath=//div[@title='Accounting Settings']
 
 ${AUTHENTICATION BLOCK}					xpath=//h2[@class='sidebar_title lead' and contains(text(), 'Authentication Sources')]/parent::div
@@ -866,13 +883,6 @@ Delete All Remote Servers
 	Verify Element Visible  ${CONFIRM DELETION POPUP}
 	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
 	Verify Element Invisible  ${CONFIRM DELETION POPUP}
-
-Delete All TACACS Hosts
-	Go To TACACS Page
-    Delete All
-    Verify Element Visible   ${PROCEED DELTE BUTTON}
-	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
-	Verify Element Invisible  ${CONFIRM DELETION POPUP}
 	    
 Delete All
 	Verify Element Visible  ${CHECKBOX ALL}
@@ -886,9 +896,27 @@ Delete All
 	Verify Element Visible  ${MAIN MINUS BUTTON}
 	Click Element  ${MAIN MINUS BUTTON}  and don't wait
 	Verify Element Visible  ${CONFIRM DELETION POPUP}
-	
-	
-	
+
+Delete All TACACS Hosts
+	Go To AAA Page
+	Verify Element Visible  ${ALL TACACS SERVERS CHECKBOX}
+	Select Checkbox  ${ALL TACACS SERVERS CHECKBOX}
+	Verify Element Visible  ${DELETE TACACS HOST MINUS BUTTON}
+	Click Element  ${DELETE TACACS HOST MINUS BUTTON}  and don't wait
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+
+Delete All Radius Hosts
+	Go To AAA Page
+	Verify Element Visible  ${ALL RADIUS SERVERS CHECKBOX}
+	Select Checkbox  ${ALL RADIUS SERVERS CHECKBOX}
+	Verify Element Visible  ${DELETE RADIUS HOST MINUS BUTTON}
+	Click Element  ${DELETE RADIUS HOST MINUS BUTTON}  and don't wait
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+	Verify Element Invisible  ${CONFIRM DELETION POPUP}
+
 Select Checkbox
 	[Arguments]  ${checkbox}
 	${selected}  Set Variable  ${checkbox}/parent::div[@aria-checked='true']
@@ -2285,33 +2313,33 @@ Configure SNMP Traps
    Click Element  ${CONFIGURE SNMP SUBMIT BUTTON}  and don't wait
    
    Verify Element Invisible  ${CONFIGURE SNMP TRAPS POPUP}
-   
-   
+
+
 Add TACACS Host
 	[Arguments]  ${server}  ${tac_timeout}  ${secret}  ${encryption}
 	
-	Go To Tacacs Page
+	Go To AAA Page
 	
 	Verify Element Visible  ${ADD TACACS HOST PLUS BUTTON}
     Click Element  ${ADD TACACS HOST PLUS BUTTON}   and don't wait
     
     Verify Element Visible  ${CREATE TACACS SERVER POPUP}
     
-    Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${server}
+    Input Text And Verify   ${AAA SERVER ADDRESS FIELD}  ${server}
     
     Run Keyword Unless  '${tac_timeout}' == '${EMPTY}'
-    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${tac_timeout}
+    ...			Input Text And Verify   ${AAA SERVER TIMEOUT FIELD}  ${tac_timeout}
        
     Run Keyword Unless  '${secret}' == '${EMPTY}'
-    ...			Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
+    ...			Input Text And Verify   ${AAA SERVER SECRET FIELD}  ${secret}
     
-    Click Element  ${TACACS SERVER TIMEOUT FIELD}  and don't wait
+    Click Element  ${AAA SERVER TIMEOUT FIELD}  and don't wait
     
     Run Keyword If  '${encryption}' == 'Yes'
-    ...			Click Element   ${TACACS SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+    ...			Click Element   ${AAA SERVER SECRET ENCRYPTION BUTTON}  and don't wait
     
-    Verify Element Visible  ${SAVE BUTTON}
-    Click Element  ${SAVE BUTTON}  and don't wait
+    Verify Element Visible  ${SAVE TACACS SERVER BUTTON}
+    Click Element  ${SAVE TACACS SERVER BUTTON}  and don't wait
     
     Verify Element Invisible  ${CREATE TACACS SERVER POPUP}
     
@@ -2319,52 +2347,51 @@ Add TACACS Host
 Edit TACACS Host
 	[Arguments]  ${server}  ${new-server}  ${tac_timeout}  ${secret}  ${encryption}
 	
-	Go To Tacacs Page
+	Go To AAA Page
 	
-	${action_menu_tacacs_server}  Generate Action Menu Xpath Logging  div[@id='tacacs_hosts_table']  ${server} 
+	${action_menu_tacacs_server}  Generate Action Menu Xpath Logging  div[@data-dojo-attach-point='hostsTableNode']  ${server}
     Verify Element Visible  ${action_menu_tacacs_server}
     Click Element  ${action_menu_tacacs_server}  and don't wait
     
-    Verify Element Visible  ${TACACS SERVER EDIT MENU ITEM}
-    Click Element  ${TACACS SERVER EDIT MENU ITEM}  and don't wait
+    Verify Element Visible  ${AAA SERVER EDIT MENU ITEM}
+    Click Element  ${AAA SERVER EDIT MENU ITEM}  and don't wait
 
     Verify Element Visible  ${EDIT TACACS SERVER POPUP}
 	   
-    Input Text And Verify   ${TACACS SERVER ADDRESS FIELD}  ${new-server}
+    Input Text And Verify   ${AAA SERVER ADDRESS FIELD}  ${new-server}
     
     Run Keyword Unless  '${tac_timeout}' == '${EMPTY}'
-    ...			Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${tac_timeout}
+    ...			Input Text And Verify   ${AAA SERVER TIMEOUT FIELD}  ${tac_timeout}
     
     
     Run Keyword Unless  '${secret}' == '${EMPTY}'
-    ...			Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
+    ...			Input Text And Verify   ${AAA SERVER SECRET FIELD}  ${secret}
     
     Run Keyword If  '${encryption}' == 'Yes'
-    ...			Click Element   ${TACACS SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+    ...			Click Element   ${AAA SERVER SECRET ENCRYPTION BUTTON}  and don't wait
     
-    Verify Element Visible  ${SAVE BUTTON}
-    Click Element  ${SAVE BUTTON}  and don't wait
+    Verify Element Visible  ${SAVE TACACS SERVER BUTTON}
+    Click Element  ${SAVE TACACS SERVER BUTTON}  and don't wait
     
     Verify Element Invisible  ${EDIT TACACS SERVER POPUP}
     
   
 Delete TACACS Host
-	[Arguments]  ${server} 
-	
-	Go To Tacacs Page
-	
-	${action_menu_tacacs_server}  Generate Action Menu Xpath Logging  div[@id='tacacs_hosts_table']  ${server} 
+	[Arguments]  ${server}
+
+	Go To AAA Page
+
+	${action_menu_tacacs_server}  Generate Action Menu Xpath Logging  div[@data-dojo-attach-point='hostsTableNode']  ${server}
     Verify Element Visible  ${action_menu_tacacs_server}
     Click Element  ${action_menu_tacacs_server}  and don't wait
-    
-    Verify Element Visible  ${TACACS SERVER DELETE MENU ITEM}
-    Click Element  ${TACACS SERVER DELETE MENU ITEM}  and don't wait
-    
-    Verify Element Visible  ${DELETE CONFIRM TACACS HOST POPUP}
-    
+
+    Verify Element Visible  ${AAA SERVER DELETE MENU ITEM}
+    Click Element  ${AAA SERVER DELETE MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${DELETE CONFIRM AAA HOST POPUP}
+
     Verify Element Visible   ${PROCEED DELTE BUTTON}
 	Highlight Element  ${PROCEED DELTE BUTTON}
-	
     Click Element  ${PROCEED DELTE BUTTON}  and don't wait
 
 Configure TACACS Default Settings
@@ -2374,19 +2401,109 @@ Configure TACACS Default Settings
 
     Verify Element Visible  ${DEFAULT TACACS SETTINGS POPUP}
 
-    Input Text And Verify   ${TACACS SERVER TIMEOUT FIELD}  ${tac_timeout}
+    Input Text And Verify   ${AAA SERVER TIMEOUT FIELD}  ${tac_timeout}
 
-    Input Text And Verify   ${TACACS SERVER SECRET FIELD}  ${secret}
+    Input Text And Verify   ${AAA SERVER SECRET FIELD}  ${secret}
 
-    Click Element  ${TACACS SERVER TIMEOUT FIELD}  and don't wait
+    Click Element  ${AAA SERVER TIMEOUT FIELD}  and don't wait
 
     Run Keyword If  '${encryption}' == 'Yes'
-    ...			Click Element   ${TACACS SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+    ...			Click Element   ${AAA SERVER SECRET ENCRYPTION BUTTON}  and don't wait
 
     Verify Element Visible  ${GENERIC SUBMIT BUTTON}
     Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
 
     Verify Element Invisible  ${DEFAULT TACACS SETTINGS POPUP}
+
+Add RADIUS Host
+	[Arguments]  ${server}  ${rad_timeout}  ${secret}  ${encryption}
+	Go To AAA Page
+	Verify Element Visible  ${ADD RADIUS HOST PLUS BUTTON}
+    Click Element  ${ADD RADIUS HOST PLUS BUTTON}   and don't wait
+    Verify Element Visible  ${CREATE RADIUS SERVER POPUP}
+
+    Input Text And Verify   ${AAA SERVER ADDRESS FIELD}  ${server}
+
+    Run Keyword Unless  '${rad_timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${AAA SERVER TIMEOUT FIELD}  ${rad_timeout}
+    Run Keyword Unless  '${secret}' == '${EMPTY}'
+    ...			Input Text And Verify   ${AAA SERVER SECRET FIELD}  ${secret}
+
+    Click Element  ${AAA SERVER TIMEOUT FIELD}  and don't wait
+    Run Keyword If  '${encryption}' == 'Yes'
+    ...			Click Element   ${AAA SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+
+    Verify Element Visible  ${SAVE RADIUS SERVER BUTTON}
+    Click Element  ${SAVE RADIUS SERVER BUTTON}  and don't wait
+
+    Verify Element Invisible  ${CREATE RADIUS SERVER POPUP}
+
+Edit RADIUS Host
+	[Arguments]  ${server}  ${new-server}  ${rad_timeout}  ${secret}  ${encryption}
+	Go To AAA Page
+	${action_menu_radius_server}  Generate Action Menu Xpath Logging  div[@data-dojo-attach-point='hostsTableNode']  ${server}
+    Verify Element Visible  ${action_menu_radius_server}
+    Click Element  ${action_menu_radius_server}  and don't wait
+
+    Verify Element Visible  ${AAA SERVER EDIT MENU ITEM}
+    Click Element  ${AAA SERVER EDIT MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${EDIT RADIUS SERVER POPUP}
+
+    Input Text And Verify   ${AAA SERVER ADDRESS FIELD}  ${new-server}
+
+    Run Keyword Unless  '${rad_timeout}' == '${EMPTY}'
+    ...			Input Text And Verify   ${AAA SERVER TIMEOUT FIELD}  ${rad_timeout}
+
+    Run Keyword Unless  '${secret}' == '${EMPTY}'
+    ...			Input Text And Verify   ${AAA SERVER SECRET FIELD}  ${secret}
+
+    Run Keyword If  '${encryption}' == 'Yes'
+    ...			Click Element   ${AAA SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+
+    Verify Element Visible  ${SAVE RADIUS SERVER BUTTON}
+    Click Element  ${SAVE RADIUS SERVER BUTTON}  and don't wait
+
+    Verify Element Invisible  ${EDIT RADIUS SERVER POPUP}
+
+Delete RADIUS Host
+	[Arguments]  ${server}
+	Go To AAA Page
+
+	${action_menu_radius_server}  Generate Action Menu Xpath Logging  div[@data-dojo-attach-point='hostsTableNode']  ${server}
+    Verify Element Visible  ${action_menu_radius_server}
+    Click Element  ${action_menu_radius_server}  and don't wait
+
+    Verify Element Visible  ${AAA SERVER DELETE MENU ITEM}
+    Click Element  ${AAA SERVER DELETE MENU ITEM}  and don't wait
+
+    Verify Element Visible  ${DELETE CONFIRM AAA HOST POPUP}
+
+    Verify Element Visible   ${PROCEED DELTE BUTTON}
+	Highlight Element  ${PROCEED DELTE BUTTON}
+
+    Click Element  ${PROCEED DELTE BUTTON}  and don't wait
+
+Configure RADIUS Default Settings
+	[Arguments]  ${rad_timeout}  ${secret}  ${encryption}
+	Verify Element Visible  ${RADIUS DEFAULT SETTINGS BUTTON}
+    Click Element  ${RADIUS DEFAULT SETTINGS BUTTON}   and don't wait
+
+    Verify Element Visible  ${DEFAULT RADIUS SETTINGS POPUP}
+
+    Input Text And Verify   ${AAA SERVER TIMEOUT FIELD}  ${rad_timeout}
+
+    Input Text And Verify   ${AAA SERVER SECRET FIELD}  ${secret}
+
+    Click Element  ${AAA SERVER TIMEOUT FIELD}  and don't wait
+
+    Run Keyword If  '${encryption}' == 'Yes'
+    ...			Click Element   ${AAA SERVER SECRET ENCRYPTION BUTTON}  and don't wait
+
+    Verify Element Visible  ${GENERIC SUBMIT BUTTON}
+    Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
+
+    Verify Element Invisible  ${DEFAULT RADIUS SETTINGS POPUP}
 
 
 Add Simple Filtering Query
@@ -2909,7 +3026,7 @@ Configure Authentication
     ...  ${AUTHENTICATION REMOTE SOURCE ROW}${AUTHENTICATION SOURCE DROPDOWN FIELD SUFFIX}
     ...  ${remote}
 
-    Click Element  ${AUTHENTICATION LINK}  and don't wait
+    Click Element  xpath=//h2[@class='sidebar_title lead' and contains(text(), 'Authentication Sources')]  and don't wait
 
     Verify Element Visible  ${AUTHENTICATION SAVE BUTTON}
     Click Element  ${AUTHENTICATION SAVE BUTTON}  and don't wait
@@ -2957,11 +3074,10 @@ Configure Accounting
 	Go To AAA Page
 	Verify Element Visible  ${ACCOUNING LINK}
 	Click Element  ${ACCOUNING LINK}  and don't wait
+	Go To AAA Page
 	Verify Element Visible  ${ACCOUNTING BLOCK}
 	Verify Element Visible  ${ACCOUNTING LOCAL KNOB}
 	Highlight Element  ${ACCOUNTING LOCAL KNOB}
-	Verify Element Visible  ${ACCOUNTING REMOTE KNOB}
-	Highlight Element  ${ACCOUNTING REMOTE KNOB}
 
 	Assign ID to Element   ${ACCOUNTING LOCAL ROW}/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '${local}')]  LOCAL
     Drag And Drop   ${ACCOUNTING LOCAL KNOB}  target=LOCAL
@@ -2970,13 +3086,27 @@ Configure Accounting
     Run Keyword If  '${popup_count}' > '0'
     ...  Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
 
-	Assign ID to Element   ${ACCOUNTING REMOTE ROW}/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), '${remote}')]  REMOTE
-    Drag And Drop   ${ACCOUNTING REMOTE KNOB}  target=REMOTE
+	Run Keyword Unless  '${remote}' == 'No'
+	...  Select From List And Verify
+    ...  ${ACCOUNTING REMOTE BUTTON}
+    ...	 ${ACCOUNTING REMOTE LIST}
+    ...  ${ACCOUNTING REMOTE FIELD}
+    ...  ${remote}
+
+    Run Keyword If  '${remote}' == 'No'
+    ...  Mouse Down  ${ACCOUNTING REMOTE BUTTON}
+    Run Keyword If  '${remote}' == 'No'
+    ...  Mouse Up  ${ACCOUNTING REMOTE BUTTON}
+    Run Keyword If  '${remote}' == 'No'
+    ...  Input Text
+    ...  ${ACCOUNTING REMOTE FIELD}
+    ...  ${EMPTY}
+    Run Keyword If  '${remote}' == 'No'
+    ...  Click Element  xpath=//div[@class='toggle_description' and contains(text(), 'Remote')]  and don't wait
 
     ${popup_count}  Get Matching Xpath Count Tokenize  ${ACCOUNTING SETTINGs POPUP}
     Run Keyword If  '${popup_count}' > '0'
     ...  Click Element  ${GENERIC SUBMIT BUTTON}  and don't wait
-
 
 Test Path
 	[Arguments]  ${method}  ${src_ip}  ${dst_ip}  ${dst_input}=Endpoint  ${protocol}=ICMP  ${src_port}=None  ${dst_port}=None
