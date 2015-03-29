@@ -188,34 +188,36 @@ T8.3 Configure SNMP
 T8.4 Configure SNMP Traps	
 	Configure SNMP Traps	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}	${EMPTY}
 T8.5 Edit SNMP Traps
-	Configure SNMP Traps	${EMPTY}	1			${EMPTY}	1			50			${EMPTY}	${EMPTY}
+	Configure SNMP Traps	${EMPTY}	11			${EMPTY}	10			50			${EMPTY}	${EMPTY}
 T8.6 Edit SNMP Traps
-	Configure SNMP Traps		1		1			1			1			10			20			100
+	Configure SNMP Traps		15		13			14			12			10			20			100
 T8.7 Edit SNMP Traps
-	Configure SNMP Traps	${EMPTY}	${EMPTY}	1			1			${EMPTY}	${EMPTY}	0
+	Configure SNMP Traps	${EMPTY}	${EMPTY}	16			14			${EMPTY}	${EMPTY}	0
 
 
 #### Configure TACACS Server	Server		Timeout		Secret			Encryption
 
-T9.1 Add TACACS Host with timeout and no secret 	
- 	Add TACACS Host				1.2.3.4		10			${EMPTY}		No		
-T9.2 Add TACACS Host with no timeout and secret		
- 	Add TACACS Host				2.3.1.0		30			Secret!23		No	
-T9.3 Add TACACS Host with timeout and secret and encryption		
- 	Add TACACS Host				2.3.1.4		16			Encryption_1-@  Yes
+T9.1 Add TACACS Host with timeout and no secret
+	Add TACACS Host				1.2.3.4		6			${EMPTY}		No
+T9.2 Add TACACS Host with no timeout and secret
+	Add TACACS Host				2.3.1.0		3			300d595557  		No
+T9.3 Add TACACS Host with timeout and secret and encryption
+	Add TACACS Host				2.3.1.4		2			Encryption_1-@  Yes
 T9.4 Edit TACACS Host
- 	Edit TACACS Host			1.2.3.4		1.22.14.64  23			New-Secret		Yes
-T9.5 Edit TACACS Host	
- 	Edit TACACS Host			2.3.1.4		8.9.7.6		14			New_Encrypt		Yes
+	Edit TACACS Host			1.2.3.4		1.22.14.64  4			New-Secret		Yes
+T9.5 Edit TACACS Host
+	Edit TACACS Host			2.3.1.4		8.9.7.6		14			New_Encrypt		Yes
 T9.6 Delete TACACS Host
- 	Delete TACACS Host			1.22.14.64
+	Delete TACACS Host			1.22.14.64
 T9.7 Delete TACACS Host
- 	Delete TACACS Host			2.3.1.0	
+	Delete TACACS Host			2.3.1.0
 T9.8 Delete All TACACS Hosts
-	Delete All TACACS Hosts	
+	Delete All TACACS Hosts
+	Go To AAA Page
+	Page Should Not Contain  8.9.7.6
 
 T9.9 Default TACACS Settings - timeout
-	Go To Tacacs Page
+	Go To AAA Page
 	Configure TACACS Default Settings  10  ${EMPTY}  No
 	Page Should Contain  10
 	Cli Run and Verify Output  master
@@ -228,49 +230,47 @@ T9.9 Default TACACS Settings - timeout
 	[Tags]  BVS-2739
 
 T9.10 Default TACACS Settings - secret
-	Go To Tacacs Page
-	Configure TACACS Default Settings  ${EMPTY}  foo-secret  No
-	Page Should Contain  30
-	Page Should Contain  foo-secret
-	Cli Run and Verify Output  master
-	...  show running-config tacacs
-	...  tacacs server timeout 30
-	...  flag=False
-	Cli Run and Verify Output  master
-	...  show running-config tacacs
-	...  tacacs server key 7 foo-secret
-	[Tags]  BVS-2739
-
-T9.11 Default TACACS Settings - default timeout and secret
-	Go To Tacacs Page
-	#Configure TACACS Default Settings  30  secret  No
-	Configure TACACS Default Settings  30  foo-secret  No
-	Page Should Contain  30
-	Page Should Contain  foo-secret
-	Cli Run and Verify Output  master
-	...  show running-config tacacs
-	...  tacacs server timeout 30
-	...  flag=False
-	Cli Run and Verify Output  master
-	...  show running-config tacacs
-	...  tacacs server key 7 foo-secret
-	[Tags]  BVS-2739
-
-T9.12 Default TACACS Settings - timeout and secret
-	Go To Tacacs Page
-	Configure TACACS Default Settings  5  secret1234  No
+	Go To AAA Page
+	Configure TACACS Default Settings  ${EMPTY}  foo-secret  Yes
 	Page Should Contain  5
-	Page Should Contain  secret1234
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server timeout 5
+	...  flag=False
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
-	...  tacacs server key 7 secret1234
+	...  tacacs server key 7
 	[Tags]  BVS-2739
 
-T9.13 Default TACACS Settings - timeout and encryped secret
-	Go To Tacacs Page
+T9.11 Default TACACS Settings - default timeout and secret
+	Go To AAA Page
+	Configure TACACS Default Settings  5  67111d0441172f28362d27  No
+	Page Should Contain  5
+	Page Should Contain  67111d0441172f28362d27
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 5
+	...  flag=False
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key 7 67111d0441172f28362d27
+	[Tags]  BVS-2739
+
+T9.12 Default TACACS Settings - timeout and secret
+	Go To AAA Page
+	Configure TACACS Default Settings  13  890f0219  No
+	Page Should Contain  13
+	Page Should Contain  890f0219
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server timeout 13
+	Cli Run and Verify Output  master
+	...  show running-config tacacs
+	...  tacacs server key 7 890f0219
+	[Tags]  BVS-2739
+
+T9.13 Default TACACS Settings - timeout and encrypted secret
+	Go To AAA Page
 	Configure TACACS Default Settings  15  secret  Yes
 	Page Should Contain  15
 	Cli Run and Verify Output  master
@@ -282,15 +282,15 @@ T9.13 Default TACACS Settings - timeout and encryped secret
 	[Tags]  BVS-2739
 
 T9.14 Default TACACS Settings edit
-	Go To Tacacs Page
-	Configure TACACS Default Settings  10  secret-foo  No
+	Go To AAA Page
+	Configure TACACS Default Settings  10  121c0012  No
 	Page Should Contain  10
-	Page Should Contain  secret-foo
+	Page Should Contain  121c0012
 	Configure TACACS Default Settings  20  ${EMPTY}  No
 	Page Should Contain  20
-	Page Should Not Contain  secret-foo
-	Configure TACACS Default Settings  30  secret-foo  Yes
-	Page Should Contain  30
+	Page Should Not Contain  121c0012
+	Configure TACACS Default Settings  12  secret-foo  Yes
+	Page Should Contain  12
 	Page Should Not Contain  secret-foo
 	Configure TACACS Default Settings  20  secret-foo  Yes
 	Page Should Contain  20
@@ -298,50 +298,77 @@ T9.14 Default TACACS Settings edit
 	[Tags]  BVS-2739
 
 T9.15 Default TACACS Settings delete
-	Go To Tacacs Page
-	Configure TACACS Default Settings  ${EMPTY}  ${EMPTY}  Yes
-	Page Should Contain  30
+	Go To AAA Page
+	Configure TACACS Default Settings  ${EMPTY}  ${EMPTY}  No
+	Page Should Contain  5
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
-	...  tacacs server timeout 30
+	...  tacacs server timeout 5
 	...  flag=False
 	Cli Run and Verify Output  master
 	...  show running-config tacacs
 	...  tacacs server key
 	...  flag=False
 	[Tags]  BVS-2739
-	 
+
 #### Configure AAA Accounting
-T10.1 Accounting Configuration local+remote
-	Configure Accounting  Yes  Yes
-	Cli Run and Verify Output  master
-	...  show running-config
-	...  aaa accounting exec default start-stop local group tacacs+
-T10.2 Accounting Configuration local only
-	Configure Accounting  Yes  No
-	Cli Run and Verify Output  master
-	...  show running-config
-	...  aaa accounting exec default start-stop local
-T10.3 Accounting Configuration remote only
-	Configure Accounting  No  Yes
-	Cli Run and Verify Output  master
-	...  show running-config
-	...  aaa accounting exec default start-stop group tacacs+
-T10.4 Accounting Configuration none
+T10.1 Accounting Configuration none
 	Configure Accounting  No  No
 	Cli Run and Verify Output  master
 	...  show running-config
 	...  aaa accounting
 	...  flag=False
 
+T10.2 Accounting Configuration local only
+	Configure Accounting  Yes  No
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local group tacacs+
+	...  flag=False
+
+T10.3 Accounting Configuration local+remote
+	Configure Accounting  Yes  TACACS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local group tacacs+
+
+T10.4 Accounting Configuration local+remote
+	Configure Accounting  Yes  RADIUS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local group radius
+
+T10.5 Accounting Configuration remote only
+	Configure Accounting  No  TACACS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop group tacacs+
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local
+	...  flag=False
+
+T10.6 Accounting Configuration remote only
+	Configure Accounting  No  RADIUS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop group radius
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa accounting exec default start-stop local
+	...  flag=False
+
 #### Configure AAA Authentication
 T11.1 Authentication Configuration Local TACACS
-	Configure Authentication  Local  TACACS
+	Configure Authentication  Local  Remote  TACACS
 	Cli Run and Verify Output  master
 	...  show running-config
 	...  aaa authentication login default local group tacacs+
 T11.2 Authentication Configuration TACACS Local
-	Configure Authentication  TACACS  Local
+	Configure Authentication  Remote  Local  TACACS
 	Cli Run and Verify Output  master
 	...  show running-config
 	...  aaa authentication login default group tacacs+ local
@@ -349,14 +376,42 @@ T11.3 Authentication Configuration Local
 	Configure Authentication  Local  None
 	Cli Run and Verify Output  master
 	...  show running-config
-	...  aaa authentication login default local
+	...  aaa authentication
+	...  flag=False
 T11.4 Authentication Configuration Remote then None
-	Configure Authentication  TACACS  None
+	Configure Authentication  Remote  None  TACACS
 	Configure Authentication  None  ${EMPTY}
 	Cli Run and Verify Output  master
 	...  show running-config
-	...  aaa authentication
+	...  aaa authentication login default group tacacs+
 	...  flag=False
+	[Tags]  BSC-7319
+
+#### Configure AAA Authorization
+T11.5 Authorization Configuration Local TACACS
+	Configure Authorization  Local  Remote  TACACS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authorization exec default local group tacacs+
+T11.6 Authorization Configuration TACACS Local
+	Configure Authorization  Remote  Local  TACACS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authorization exec default group tacacs+ local
+T11.7 Authorization Configuration Local
+	Configure Authorization  Local  None
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authorization exec default local
+	...  flag=False
+T11.8 Authorization Configuration Remote then None
+	Configure Authorization  Remote  None  TACACS
+	Configure Authorization  None  ${EMPTY}
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authorization
+	...  flag=False
+	[Tags]  BSC-7319
 
 T12.1 Sync to bigswitch NTP server
 	Go To Clock Page
@@ -403,25 +458,212 @@ T12.3 Configure NTP Server and delete with minus button
 	Delete NTP Server Using Minus Button  1.1.1.1
 	[Tags]  NTP  BVS-2750
 
+T13.1 Add Radius Host with timeout and no secret
+	Add Radius Host				55.44.33.22		6			${EMPTY}		No
+T13.2 Add Radius Host with no timeout and secret
+	Add Radius Host				66.55.66.55		3			37301d154b5d43  		No
+T13.3 Add Radius Host with timeout and secret and encryption
+	Add Radius Host				32.34.32.34		2			Encryption_1-@  Yes
+T13.4 Edit Radius Host
+	Edit Radius Host			55.44.33.22		44.22.33.44  4			New-Secret		Yes
+T13.5 Edit Radius Host
+	Edit Radius Host			32.34.32.34		22.1.2.2		14			New_Encrypt		Yes
+T13.6 Delete Radius Host
+	Delete Radius Host			44.22.33.44
+T13.7 Delete Radius Host
+	Delete Radius Host			66.55.66.55
+T13.8 Delete All Radius Hosts
+	Delete All Radius Hosts
+	Go To AAA Page
+	Page Should Not Contain  22.1.2.2
+
+T13.9 Default Radius Settings - timeout
+	Go To AAA Page
+	Configure Radius Default Settings  10  ${EMPTY}  No
+	Page Should Contain  10
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server timeout 10
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server key
+	...  flag=False
+	[Tags]  BVS-2739
+
+T13.10 Default Radius Settings - secret
+	Go To AAA Page
+	Configure Radius Default Settings  ${EMPTY}  foo-secret  Yes
+	Page Should Contain  5
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server timeout 5
+	...  flag=False
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server key 7
+	[Tags]  BVS-2739
+
+T13.11 Default Radius Settings - default timeout and secret
+	Go To AAA Page
+	Configure Radius Default Settings  5  67111d0441172f28362d27  No
+	Page Should Contain  5
+	Page Should Contain  67111d0441172f28362d27
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server timeout 5
+	...  flag=False
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server key 7 67111d0441172f28362d27
+	[Tags]  BVS-2739
+
+T13.12 Default Radius Settings - timeout and secret
+	Go To AAA Page
+	Configure Radius Default Settings  13  890f0219  No
+	Page Should Contain  13
+	Page Should Contain  890f0219
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server timeout 13
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server key 7 890f0219
+	[Tags]  BVS-2739
+
+T13.13 Default Radius Settings - timeout and encrypted secret
+	Go To AAA Page
+	Configure Radius Default Settings  15  secret  Yes
+	Page Should Contain  15
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server timeout 15
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server key 7
+	[Tags]  BVS-2739
+
+T13.14 Default Radius Settings edit
+	Go To AAA Page
+	Configure Radius Default Settings  10  121c0012  No
+	Page Should Contain  10
+	Page Should Contain  121c0012
+	Configure Radius Default Settings  20  ${EMPTY}  No
+	Page Should Contain  20
+	Page Should Not Contain  121c0012
+	Configure Radius Default Settings  12  secret-foo  Yes
+	Page Should Contain  12
+	Page Should Not Contain  secret-foo
+	Configure Radius Default Settings  20  secret-foo  Yes
+	Page Should Contain  20
+	Page Should Not Contain  secret-foo
+	[Tags]  BVS-2739
+
+T13.15 Default Radius Settings delete
+	Go To AAA Page
+	Configure Radius Default Settings  ${EMPTY}  ${EMPTY}  Yes
+	Page Should Contain  5
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server timeout 5
+	...  flag=False
+	Cli Run and Verify Output  master
+	...  show running-config radius
+	...  radius server key
+	...  flag=False
+
+
+#### Configure AAA Authentication
+T14.1 Authentication Configuration Local RADIUS
+	Configure Authentication  Local  Remote  RADIUS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default local group radius
+T14.2 Authentication Configuration RADIUS Local
+	Configure Authentication  Remote  Local  RADIUS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default group radius local
+T14.3 Authentication Configuration Local
+	Configure Authentication  Local  None
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication login default local
+	...  flag=False
+T14.4 Authentication Configuration Remote then None
+	Configure Authentication  Remote  None  RADIUS
+	Configure Authentication  None  ${EMPTY}
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authentication
+	...  flag=False
+
+#### Configure AAA Authorization
+T14.5 Authorization Configuration Local RADIUS
+	Configure Authorization  Local  Remote  RADIUS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authorization exec default local group radius
+T14.6 Authorization Configuration RADIUS Local
+	Configure Authorization  Remote  Local  RADIUS
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authorization exec default group radius local
+T14.7 Authorization Configuration Local
+	Configure Authorization  Local  None
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authorization exec default local
+	...  flag=False
+T14.8 Authorization Configuration Remote then None
+	Configure Authorization  Remote  None  RADIUS
+	Configure Authorization  None  ${EMPTY}
+	Cli Run and Verify Output  master
+	...  show running-config
+	...  aaa authorization
+	...  flag=False
+
 * Keyword
-config suite setup
+Config Suite Setup
     base suite setup
-    Config  master  show running-conifg
+    Set Selenium Timeout  20
+    Set Suite Variable  ${master_name}  c1
+    Set Suite Variable  ${slave_name}  c2
+    ${status}=  Run Keyword and Return Status  Cli Run  ${master_name}  ena;conf; user aaa_test  reauth=True
+    Run Keyword If  '${status}'=='False'
+    ...  Set Suite Variable  ${master_name}  c2
+    Run Keyword If  '${status}'=='False'
+    ...  Set Suite Variable  ${slave_name}  c1
+    Config  master  show running-config
     Config  slave  show running-config
+    Cli Run  master  copy snapshot://firstboot-config running-config  reauth=True
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
     Start Selenium Server  -trustAllSSLCertificates
-    Sleep  30
+    #Sleep  30
     Open Browser To Login Page
     Valid Login  admin  adminadmin
     #Physical GUI Suite Setup
-	
-config suite teardown
+
+Config Test Setup
+    Base Test Setup
+    Cli Run  ${master_name}  copy running-config snapshot://test-config  reauth=True
+
+
+Config Test Teardown
+	Run Keyword If Test Failed
+    ...  Restore Firstboot Config  ${master_name}
+    Run Keyword If Test Failed
+    ...  Cli Run  ${master_name}  copy snapshot://test-config running-config  reauth=True
+    Base Test Teardown
+
+
+Config Suite Teardown
 	Clear Switch Config				switch-lEAf.3
 	Clear Switch Config				switch-1
 	Clear Switch Config				switch.2-leaf
 	Clear Switch Config				switch.spine
 	Close Browser
     Stop Selenium Server
+    Cli Run  master  copy snapshot://firstboot-config running-config  reauth=True
     base suite teardown
