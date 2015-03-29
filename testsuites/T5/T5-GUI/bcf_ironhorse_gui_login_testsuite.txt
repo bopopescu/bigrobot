@@ -60,7 +60,7 @@ T3.1 Local Only
 	Login With Invalid Credentials Should Fail  bsn-vsa-read-only-user  adminadmin
 	Valid Login  admin  adminadmin
 
-T3.2 Remote Only
+T3.2 Remote TACACS Only
 	Valid Login  admin  adminadmin
 	Configure Authentication  Remote  None  TACACS
 	Configure Authorization  Remote  None  TACACS
@@ -74,7 +74,7 @@ T3.2 Remote Only
 	Configure Authorization  Remote  Local  TACACS
 	Valid Login  admin  adminadmin
 
-T3.3 Local Then Remote
+T3.3 Local Then Remote TACACS
 	Valid Login  admin  adminadmin
 	Configure Authentication  Local  Remote  TACACS
 	Configure Authorization  Local  Remote  TACACS
@@ -85,10 +85,42 @@ T3.3 Local Then Remote
 	Valid Login  bsn-vsa-admin-user  adminadmin
 	Valid Login  admin  adminadmin
 
-T3.4 Remote Then Local
+T3.4 Remote TACACS Then Local
 	Valid Login  admin  adminadmin
 	#Configure Authentication  Remote  Local  TACACS
 	#Configure Authorization  Remote  Local  TACACS
+	Valid Login  bsn-vsa-admin-user  adminadmin
+	Valid Login  admin  adminadmin
+
+T3.5 Remote RADIUS Only
+	Valid Login  admin  adminadmin
+	Configure Authentication  Remote  None  RADIUS
+	Configure Authorization  Remote  None  RADIUS
+	Logout
+    Run Keyword and Ignore Error
+    ...  Cli Run  master  show radius  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
+    Sleep  30
+	Login With Invalid Credentials Should Fail  admin  adminadmin
+	Valid Login  bsn-vsa-admin-user  adminadmin
+	Configure Authentication  Remote  Local  RADIUS
+	Configure Authorization  Remote  Local  RADIUS
+	Valid Login  admin  adminadmin
+
+T3.6 Local Then Remote RADIUS
+	Valid Login  admin  adminadmin
+	Configure Authentication  Local  Remote  RADIUS
+	Configure Authorization  Local  Remote  RADIUS
+	Logout
+    Run Keyword and Ignore Error
+    ...  Cli Run  master  show radius  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
+    Sleep  30
+	Valid Login  bsn-vsa-admin-user  adminadmin
+	Valid Login  admin  adminadmin
+
+T3.7 Remote RADIUS Then Local
+	Valid Login  admin  adminadmin
+	Configure Authentication  Remote  Local  RADIUS
+	Configure Authorization  Remote  Local  RADIUS
 	Valid Login  bsn-vsa-admin-user  adminadmin
 	Valid Login  admin  adminadmin
 
@@ -109,6 +141,7 @@ Login Suite Setup
     ...  Set Suite Variable  ${slave_name}  c1
     Cli Run  ${master_name}  copy snapshot://firstboot-config running-config  reauth=True
     Cli Run  master  tacacs server host 10.2.3.201 timeout 5 key secret
+    Cli Run  master  radius server host 10.2.3.201 timeout 5 key secret
     Cli Run  master  aaa authentication login default group tacacs+ local
     Cli Run  master  aaa authorization exec default group tacacs+ local
     Cli Configure User    test    adminadmin
