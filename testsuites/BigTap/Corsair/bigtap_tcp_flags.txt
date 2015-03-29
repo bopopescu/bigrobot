@@ -4,7 +4,7 @@ Suite Setup             flag suite setup
 Suite Teardown          flag suite teardown
 Test Setup              flag test setup
 Test Teardown           flag test teardown 
-Force Tags              BigTap  corsair-400  Accton-AS5710  match-conditions  tcp-flags
+Force Tags              BigTap  corsair-400  Accton-AS4600  match-conditions  tcp-flags
 Library                 keywords/BsnCommon.py
 Library                 keywords/AppController.py
 Library                 keywords/BigTap.py
@@ -15,13 +15,13 @@ Library                 OperatingSystem.py
 Library                 String.py
 
 * Variable
-${switch1_alias}                          app-ras5710-1  #Alias for switch 1
+${switch1_alias}                          app-ras4600-1  #Alias for switch 1
 
 ### Ixia Ports
 ${switch1_filter_intf_1}                  ethernet1        #filter interface on switch 1
-${switch1_filter_alias_1}                 ixia-1-5        #Alias for filter interface on switch 1
+${switch1_filter_alias_1}                 ixia-2-1        #Alias for filter interface on switch 1
 ${switch1_delivery_intf_1}                ethernet2        #Delivery interface on switch 1
-${switch1_delivery_alias_1}               ixia-1-6        #Alias for delivery interface on switch 1
+${switch1_delivery_alias_1}               ixia-2-2        #Alias for delivery interface on switch 1
 
 ### BigTap Policy Configuration
 ${policy_name_1}                          policy_tcp_flags       #Policy Name that will use the tunnel interface
