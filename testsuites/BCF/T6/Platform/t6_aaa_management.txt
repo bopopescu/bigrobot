@@ -58,6 +58,7 @@ Library  String
 ${projectname}  Big Cloud Fabric Appliance
 @{radius_servers}  10.2.3.201  10.8.67.2  10.8.67.3
 @{tacacs_servers}  10.2.3.201  10.9.18.2  10.8.67.3
+@{unreachable_servers}  1.1.1.1  2.2.2.2  3.3.3.3
 @{servers}
 ${timeout}
 ${type}
@@ -1345,9 +1346,54 @@ T3.17.4 Three Configured & Unreachable AAA Servers & Set AAA to Remote then Loca
     Run Keyword and Expect Error  *  Verify Remote User Can Log In via Serial Console
 
 #T4. Misc
-T4.0 Verify behavior when floodlight is stopped
-    #placeholder
-    [Tags]  skipped
+T4.1 Verify behavior when floodlight is stopped
+    Configure One Unreachable AAA Server
+    Configure One Unreachable AAA Server
+    Configure One Unreachable AAA Server
+    Set AAA to Local
+    Cli Run  ${master_name}  sudo service floodlight stop  user=recovery  password=bsn  reauth=True
+    Cli Run  ${slave_name}  sudo service floodlight stop  user=recovery  password=bsn  reauth=True
+    Verify Recovery Can Log In via SSH
+    Verify Recovery Can Log In via Serial Console
+    Cli Run  ${master_name}  sudo service floodlight start  user=recovery  password=bsn  reauth=True
+    Cli Run  ${slave_name}  sudo service floodlight start  user=recovery  password=bsn  reauth=True
+
+T4.2 Verify behavior when floodlight is stopped
+    Configure One Unreachable AAA Server
+    Configure One Unreachable AAA Server
+    Configure One Unreachable AAA Server
+    Set AAA to Remote
+    Cli Run  ${master_name}  sudo service floodlight stop  user=recovery  password=bsn  reauth=True
+    Cli Run  ${slave_name}  sudo service floodlight stop  user=recovery  password=bsn  reauth=True
+    Verify Recovery Can Log In via SSH
+    Verify Recovery Can Log In via Serial Console
+    Cli Run  ${master_name}  sudo service floodlight start  user=recovery  password=bsn  reauth=True
+    Cli Run  ${slave_name}  sudo service floodlight start  user=recovery  password=bsn  reauth=True
+
+T4.3 Verify behavior when floodlight is stopped
+    Configure One Unreachable AAA Server
+    Configure One Unreachable AAA Server
+    Configure One Unreachable AAA Server
+    Set AAA to Local then Remote
+    Cli Run  ${master_name}  sudo service floodlight stop  user=recovery  password=bsn  reauth=True
+    Cli Run  ${slave_name}  sudo service floodlight stop  user=recovery  password=bsn  reauth=True
+    Verify Recovery Can Log In via SSH
+    Verify Recovery Can Log In via Serial Console
+    Cli Run  ${master_name}  sudo service floodlight start  user=recovery  password=bsn  reauth=True
+    Cli Run  ${slave_name}  sudo service floodlight start  user=recovery  password=bsn  reauth=True
+
+T4.4 Verify behavior when floodlight is stopped
+    Configure One Unreachable AAA Server
+    Configure One Unreachable AAA Server
+    Configure One Unreachable AAA Server
+    Set AAA to Remote then Local
+    Cli Run  ${master_name}  sudo service floodlight stop  user=recovery  password=bsn  reauth=True
+    Cli Run  ${slave_name}  sudo service floodlight stop  user=recovery  password=bsn  reauth=True
+    Verify Recovery Can Log In via SSH
+    Verify Recovery Can Log In via Serial Console
+    Cli Run  ${master_name}  sudo service floodlight start  user=recovery  password=bsn  reauth=True
+    Cli Run  ${slave_name}  sudo service floodlight start  user=recovery  password=bsn  reauth=True
+
 
 #T5. Other checks
 T4.1 BSC-4387
@@ -1419,7 +1465,8 @@ Configure One AAA Server With Incorrect Secret
     Cli Run  ${master_name}  enable; configure; ${type} server host ${tmp} timeout ${timeout} key foo  reauth=True
     Set Test Variable  ${server_counter}  ${server_counter + 1}
 Configure One Unreachable AAA Server
-    Cli Run  ${master_name}  enable; configure; ${type} server host 1.1.1.1 timeout ${timeout} key foo  reauth=True
+    ${tmp}=  Get From List  ${unreachable_servers}  ${server_counter}
+    Cli Run  ${master_name}  enable; configure; ${type} server host ${tmp} timeout ${timeout} key foo  reauth=True
     Set Test Variable  ${server_counter}  ${server_counter + 1}
 
 Configure Local User
