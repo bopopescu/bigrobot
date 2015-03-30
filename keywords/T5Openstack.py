@@ -638,6 +638,22 @@ class T5Openstack(object):
 				return False
 		return True
 
+	def openstack_add_subnet_external_pool(self,  netName, subnetName, start_ip, end_ip, external_gateway_ip, subnet_ip):
+		'''create subnet
+			Input:
+				network name , Subnet name , Subnet (e.g app-net , app-net1, 50.0.0.0/24) , start IP = DHCP start IP address , end IP : DHCP end ip address)
+			Return: id for created subnet
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		try:
+				os1.bash("neutron subnet-create %s --name %s --allocation-pool start=%s,end=%s --gateway %s %s" % (netName, subnetName, start_ip, end_ip, external_gateway_ip, subnet_ip))
+		except:
+				output = helpers.exception_info_value()
+				helpers.log("Output: %s" % output)
+				return False
+		return True
+	
 	def openstack_delete_subnet(self, subnetName):
 		'''create subnet
 			Input:
