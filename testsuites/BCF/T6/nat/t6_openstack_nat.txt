@@ -1,0 +1,606 @@
+== T6 Functional Openstack Integration NAT work flow test ==
+
+* Setting
+Documentation    T6 BVS APP Functional Openstack integration NAT test suite
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       T6 base test setup
+Test Teardown    T6 base test teardown
+Force Tags       T6 feature  openstack nat
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library			 keywords/T5L3.py
+Library          keywords/T5Platform.py
+Library	         keywords/SwitchLight.py
+Library	         keywords/Host.py
+Library          keywords/T5Openstack.py
+Library			 keywords/T6.py
+Library			 Collections.py
+Resource		 testsuites/T5/t5_physical_variables.txt
+Resource         testsuites/T5/t5_openstack_variables.txt
+Resource		 testsuites/BCF/T6/t6_physical_variables.txt
+
+* Variables
+${nh_ip}  192.168.4.1
+${start_ip}  192.168.4.15
+${end_ip}  192.168.4.100
+${ext_gateway}  192.168.4.5
+${h1_tag_ip}  192.168.4.0
+
+* Test Case 
+
+T6 Topology verification
+	[Tags]  skipped  
+   rest verify fabric switch all
+   rest verify fabric vswitch all
+   rest verify vswitch portgroup  3
+   rest verify fabric link common  20
+		
+T6 Openstack nat route creation/deleteion
+	[Tags]   
+	${tenant}=  openstack_show_tenant  red 
+	${result}=  rest get nat profile  ${tenant}
+	Should not be True  ${result}
+	openstack source  keystonerc_red
+	openstack add router gw  red-r1  external
+	sleep  5
+	${nat}=  rest get nat profile  ${tenant}
+	${result}=  rest verify nat profile  ${tenant}  ${nat}
+	Should be True  ${result}
+	openstack delete router gw  red-r1
+	sleep  5
+	${result}=  rest get nat profile  ${tenant}
+	Should not be True  ${result}
+
+T6 Openstack nat creation/deletion multiple tenants
+	[Tags]   
+	${tenant}=  openstack_show_tenant  red 
+	${result}=  rest get nat profile  ${tenant}
+	Should not be True  ${result}
+	${tenant1}=  openstack_show_tenant  blue 
+	${result1}=  rest get nat profile  ${tenant1}
+	Should not be True  ${result1}
+	openstack source  keystonerc_red
+	openstack add router gw  red-r1  external
+	sleep  5
+	${nat}=  rest get nat profile  ${tenant}
+	${result}=  rest verify nat profile  ${tenant}  ${nat}
+	Should be True  ${result}
+	openstack source  keystonerc_blue
+	openstack add router gw  blue-r1  external
+	sleep  5
+	${nat1}=  rest get nat profile  ${tenant1}
+	${result1}=  rest verify nat profile  ${tenant1}  ${nat1}
+	Should be True  ${result1}
+	openstack source  keystonerc_red
+	openstack delete router gw  red-r1
+	sleep  5
+	${result}=  rest get nat profile  ${tenant}
+	Should not be True  ${result}
+	openstack source  keystonerc_blue
+	openstack delete router gw  blue-r1
+	sleep  5
+	${result1}=  rest get nat profile  ${tenant1}
+	Should not be True  ${result1}
+	
+T6 Openstack nat floating IP assign and ping
+	[Tags]   
+	${tenant}=  openstack_show_tenant  red
+	${result}=  rest get nat profile  ${tenant}
+	Should not be True  ${result}
+	openstack source  keystonerc_red
+	openstack add router gw  red-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	${nat}=  rest get nat profile  ${tenant}
+	${result}=  rest verify nat profile  ${tenant}  ${nat}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip}
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20               
+	openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  red-r1
+    openstack nova floating ip delete
+	
+T6 Openstack nat floating IP move to different endpoint 
+	[Tags] 
+	${tenant}=  openstack_show_tenant  red
+	openstack source  keystonerc_red
+	openstack add router gw  red-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	${inst1_ip}=  openstack show instance ip  app-inst2  app
+	${nat}=  rest get nat profile  ${tenant}
+	${result}=  rest verify nat profile  ${tenant}  ${nat}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20               
+	openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack nova floating ip associate  app-inst2
+    sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst1_ip}
+    Should be True  ${result}
+    ${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20
+    openstack nova floating ip disassociate  app-inst2  app
+    sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst1_ip} 
+	Should not be True  ${result}
+    openstack delete router gw  red-r1
+    openstack nova floating ip delete  
+
+T6 Openstack nat multiple floating IP assign on same tenant
+	[Tags]  
+	${tenant}=  openstack_show_tenant  red
+	openstack source  keystonerc_red
+	openstack add router gw  red-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	${nat}=  rest get nat profile  ${tenant}
+	${result}=  rest verify nat profile  ${tenant}  ${nat}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20               
+	${inst1_ip}=  openstack show instance ip  app-inst2  app
+	openstack nova floating ip create  external
+	${floating_ip1}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst2
+	sleep  5
+	${result1}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip1}  ${inst1_ip} 
+	Should be True  ${result1}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} < 20          
+	openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack nova floating ip disassociate  app-inst2  app
+    sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip1}  ${inst1_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  red-r1
+    openstack nova floating ip delete 
+
+T6 Openstack nat multiple floating IP assign on different tenant
+	[Tags] 
+	${tenant}=  openstack_show_tenant  red
+	openstack source  keystonerc_red
+	openstack add router gw  red-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	${nat}=  rest get nat profile  ${tenant}
+	${result}=  rest verify nat profile  ${tenant}  ${nat}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20               
+	openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  red-r1
+    openstack nova floating ip delete
+    ${tenant1}=  openstack_show_tenant  blue
+	openstack source  keystonerc_blue
+	openstack add router gw  blue-r1  external
+	sleep  5
+	${inst1_ip}=  openstack show instance ip  web-inst1  web
+	${nat1}=  rest get nat profile  ${tenant1}
+	${result}=  rest verify nat profile  ${tenant1}  ${nat1}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip1}=  openstack get floating ip
+	openstack nova floating ip associate  web-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} < 20               
+	openstack nova floating ip disassociate  web-inst1  web
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  blue-r1
+    openstack nova floating ip delete  
+	
+T6 Openstack nat multiple floating IP assign on different tenant controller failover
+	[Tags]   
+	${tenant}=  openstack_show_tenant  red
+	openstack source  keystonerc_red
+	openstack add router gw  red-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	${nat}=  rest get nat profile  ${tenant}
+	${result}=  rest verify nat profile  ${tenant}  ${nat}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20               
+	${tenant1}=  openstack_show_tenant  blue
+	openstack source  keystonerc_blue
+	openstack add router gw  blue-r1  external
+	sleep  5
+	${inst1_ip}=  openstack show instance ip  web-inst1  web
+	${nat1}=  rest get nat profile  ${tenant1}
+	${result}=  rest verify nat profile  ${tenant1}  ${nat1}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip1}=  openstack get floating ip
+	openstack nova floating ip associate  web-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} < 20         
+	cli verify cluster master reboot
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} < 20
+	openstack source  keystonerc_red
+	openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  red-r1
+    openstack nova floating ip delete
+    ${tenant1}=  openstack_show_tenant  blue
+	openstack source  keystonerc_blue
+	openstack nova floating ip disassociate  web-inst1  web
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  blue-r1
+    openstack nova floating ip delete  
+	
+T6 Openstack nat creation/deletion multiple tenants controller failover
+	[Tags]  
+	${tenant}=  openstack_show_tenant  red
+	openstack source  keystonerc_red
+	openstack add router gw  red-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	${nat}=  rest get nat profile  ${tenant}
+	${result}=  rest verify nat profile  ${tenant}  ${nat}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20               
+	openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  red-r1
+    openstack nova floating ip delete
+    cli verify cluster master reboot
+    ${tenant1}=  openstack_show_tenant  blue
+	openstack source  keystonerc_blue
+	openstack add router gw  blue-r1  external
+	sleep  5
+	${inst1_ip}=  openstack show instance ip  web-inst1  web
+	${nat1}=  rest get nat profile  ${tenant1}
+	${result}=  rest verify nat profile  ${tenant1}  ${nat1}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip1}=  openstack get floating ip
+	openstack nova floating ip associate  web-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} < 20               
+	openstack nova floating ip disassociate  web-inst1  web
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  blue-r1
+    openstack nova floating ip delete
+	
+T6 Nat and floating IP sync test
+	[Tags] 
+	${tenant}=  openstack_show_tenant  red
+	openstack source  keystonerc_red
+	openstack add router gw  red-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	${nat}=  rest get nat profile  ${tenant}
+	${result}=  rest verify nat profile  ${tenant}  ${nat}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20               
+	${tenant1}=  openstack_show_tenant  blue
+	openstack source  keystonerc_blue
+	openstack add router gw  blue-r1  external
+	sleep  5
+	${inst1_ip}=  openstack show instance ip  web-inst1  web
+	${nat1}=  rest get nat profile  ${tenant1}
+	${result}=  rest verify nat profile  ${tenant1}  ${nat1}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip1}=  openstack get floating ip
+	openstack nova floating ip associate  web-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} < 20         
+	rest delete tenant  ${tenant}
+	rest delete tenant  ${tenant1}
+	sleep  70  
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} < 20
+	openstack source  keystonerc_red
+	openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  red-r1
+    openstack nova floating ip delete
+    ${tenant1}=  openstack_show_tenant  blue
+	openstack source  keystonerc_blue
+	openstack nova floating ip disassociate  web-inst1  web
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  blue-r1
+    openstack nova floating ip delete      
+	
+T6 Nat/PAT sync test after controller failover
+	[Tags]  
+	${tenant}=  openstack_show_tenant  red
+	openstack source  keystonerc_red
+	openstack add router gw  red-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	${nat}=  rest get nat profile  ${tenant}
+	${result}=  rest verify nat profile  ${tenant}  ${nat}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20               
+	${tenant1}=  openstack_show_tenant  blue
+	openstack source  keystonerc_blue
+	openstack add router gw  blue-r1  external
+	sleep  5
+	${inst1_ip}=  openstack show instance ip  web-inst1  web
+	${nat1}=  rest get nat profile  ${tenant1}
+	${result}=  rest verify nat profile  ${tenant1}  ${nat1}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip1}=  openstack get floating ip
+	openstack nova floating ip associate  web-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} < 20         
+	cli verify cluster master reboot 
+	rest delete tenant  ${tenant}
+	rest delete tenant  ${tenant1}
+	sleep  70  
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} < 20
+	openstack source  keystonerc_red
+	openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  red-r1
+    openstack nova floating ip delete
+    ${tenant1}=  openstack_show_tenant  blue
+	openstack source  keystonerc_blue
+	openstack nova floating ip disassociate  web-inst1  web
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  blue-r1
+    openstack nova floating ip delete
+    
+T6 Nat and PAT in a single tenant
+	[Tags]  skipped
+	${tenant}=  openstack_show_tenant  red
+	${result}=  rest get nat profile  ${tenant}
+	Should not be True  ${result}
+	openstack source  keystonerc_red
+	openstack add router gw  red-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	${nat}=  rest get nat profile  ${tenant}
+	${result}=  rest verify nat profile  ${tenant}  ${nat}
+	Should be True  ${result}
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} < 20               
+	openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
+	Should not be True  ${result}
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    Should Be True  ${loss} == 100
+    openstack delete router gw  red-r1
+    openstack nova floating ip delete  
+	
+T6 delete all network router interface except router and check the tenant is not deleted from BCF
+	[Tags]
+	openstack source  keystonerc_blue
+	openstack delete instance  web-inst1
+	openstack delete subnet to router  blue-r1  app
+	openstack delete router gw  blue-r1
+	openstack delete net  blue
+	openstack verify tenant  blue
+
+* keywords
+T6 Functional Suite Setup
+	base suite setup
+	rest add portgroup  p1 
+    rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
+    rest add interface to portgroup  leaf0-b  ${h1_intf1}  p1
+    rest add portgroup lacp  p1
+  	openstack source  keystonerc_admin
+  	openstack add tenant  red
+  	openstack add tenant  blue
+  	openstack add user  red  red  red  red@red.com
+  	openstack add user  blue  blue  blue  blue@blue.com
+  	openstack add net  red  app
+	openstack add subnet  red  app  app  30.0.0.0/24
+	openstack add net external  external  physnet1  3999
+	openstack add subnet external pool  external  external  ${start_ip}  ${end_ip}  ${ext_gateway}  ${h1_tag_ip}/24
+	openstack add router  red  red-r1
+	openstack add subnet to router  red-r1  app
+	openstack add net  blue  web
+	openstack add subnet  blue  web  web  31.0.0.0/24
+	openstack add router  blue  blue-r1
+	openstack add subnet to router  blue-r1  web
+	openstack source  keystonerc_red
+	openstack add secrule icmp  default
+	openstack add instance  cirros  app  app-inst1
+	openstack add instance  cirros  app  app-inst2
+	openstack source  keystonerc_blue
+	openstack add secrule icmp  default
+	openstack add instance  cirros  web  web-inst1
+	openstack source  keystonerc_admin
+	${tenant}=  openstack_show_tenant  admin  
+	${segment}=  openstack show external network  external 
+	rest add portgroup to vns  ${tenant}  ${segment}  p1  10 
+	rest add nexthopGroup ip  ${tenant}  h1_ip  ${nh_ip}
+	rest add static routes  ${tenant}  0.0.0.0/0  {"next-hop-group": "h1_ip"}
+	${policy_name}=  rest get policy name  ${tenant}  
+	rest add policy item  ${tenant}  ${policy_name}  10  permit  any  any
+	sleep  40
+  	
+T6 Functional Suite Teardown
+	openstack source  keystonerc_red
+	openstack delete instance  app-inst1
+	openstack delete instance  app-inst2
+	openstack delete subnet to router  red-r1  app
+	openstack delete router gw  red-r1
+	openstack delete router  red-r1
+	openstack delete net  app
+	openstack source  keystonerc_blue
+	openstack delete instance  web-inst1
+	openstack delete subnet to router  blue-r1  app
+	openstack delete router gw  blue-r1
+	openstack delete router  blue-r1
+	openstack delete net  blue
+	openstack source  keystonerc_admin
+	openstack delete net  external
+	openstack delete tenant  red
+	openstack delete user  red
+	openstack delete tenant  blue
+	openstack delete user  blue
+    rest delete portgroup  p1
+	base suite teardown
+
+T6 base test setup
+	base test setup
+	openstack source  keystonerc_admin
+	
+T6 base test teardown
+	openstack source  keystonerc_red
+	openstack nova floating ip disassociate  app-inst1  app
+	openstack nova floating ip disassociate  app-inst2  app
+	openstack delete router gw  red-r1
+    openstack nova floating ip delete
+    openstack source  keystonerc_blue
+	openstack nova floating ip disassociate  web-inst1  web
+	openstack delete router gw  blue-r1
+    openstack nova floating ip delete
+	base test teardown

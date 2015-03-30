@@ -1,0 +1,25 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+# os  : Openstack server
+
+c1:
+  ip: 10.8.29.11
+#c2:
+#  ip: 10.9.16.65
+
+os1:
+  ip: 10.8.4.8
+  user: root
+  password: bsn
+#  privatekey: /Users/mallinaarun/Documents/workspace/bigrobot/testsuites/T5/Openstack/fuel_rsa
+  
+h1:
+  ip: 10.8.65.1
+  user: root
+  password: bsn
+
+

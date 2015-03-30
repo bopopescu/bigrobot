@@ -591,7 +591,7 @@ class T6(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = 'api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/nat-profile' % (tenant)
+        url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/nat-profile' % (tenant)
         c.rest.get(url)
         data = c.rest_content()
         if len(data) != 0:
