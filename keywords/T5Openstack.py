@@ -124,10 +124,35 @@ class T5Openstack(object):
 				instanceIp = ip.split(',')  # should have 2 entries
 			else:
 				instanceIp = [ip]
-			return instanceIp
+			return instanceIp[0]
 		else:
 			helpers.log("Instance is not active in nova controller")
-		
+	
+	def openstack_show_instance_floating_ip(self, instanceName, netName):
+		'''Get instance id
+			Input:
+				instance name to be provided
+				net name for the IP address
+			Return: instance IP.
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		result = os1.bash("nova show %s" % instanceName)
+		output = result["content"]
+		instanceIp = []
+		out_dict = helpers.openstack_convert_table_to_dict(output)
+		if out_dict["status"]["value"] == "ACTIVE":
+			network = netName + " " + "network"
+			ip = out_dict[network]["value"]
+			if re.match(r'.+,.+', ip):
+				instanceIp = ip.split(',')  # should have 2 entries
+				helpers.log("instanceip=%s" % instanceIp)
+			else:
+				instanceIp = [ip]
+			return instanceIp[1]
+		else:
+			helpers.log("Instance is not active in nova controller")	
+	
 	def openstack_show_router(self, routerName):
 		'''Get router id
 			Input:
@@ -360,9 +385,15 @@ class T5Openstack(object):
 		'''
 		t = test.Test()
 		os1 = t.openstack_server("os1")
-		floating_ip = self.openstack_show_instance_ip(instanceName, netName)
-		os1.bash("nova floating-ip-disassociate %s %s" % (instanceName, floating_ip[1]))
-		return True
+		floating_ip = self.openstack_show_instance_floating_ip(instanceName, netName)
+		result = os1.bash("nova floating-ip-disassociate %s %s" % (instanceName, floating_ip))
+		output = result["content"]
+		match = re.search(r'ERROR', output)
+		if match:
+			helpers.log("floating ip not found")
+			return ''
+		else:
+			return True
 	
 	def openstack_nova_floating_ip_delete(self):
 		'''function to delete floating ip assigned for a tenant
