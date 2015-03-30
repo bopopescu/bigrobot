@@ -584,6 +584,25 @@ class T6(object):
                 status = False
             i = i + 1
         return status
-            
+    
+    def rest_get_nat_profile(self, tenant):
+        '''Function to get natprofile applied for a tenant
+        Input: tenant name
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = 'api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/nat-profile' % (tenant)
+        c.rest.get(url)
+        data = c.rest_content()
+        if len(data) != 0:
+            for i in range(0, len(data)):
+                if data[i]["state"] == "active":
+                    nat_profile = data[i]["name"]
+                    return nat_profile
+                else:
+                    continue
+        else:
+            helpers.log("nat profile is not present in tenant logical router")
+            return False
         
         

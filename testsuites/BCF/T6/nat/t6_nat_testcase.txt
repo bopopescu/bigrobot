@@ -133,41 +133,37 @@ Test connectivity with NAT switch failover
 PNAT/Floating IP with Openstack
 +++++++++++++++++++++++++++++++
 verify PNAT configuration workflow with openstack tenant routes
-	[Tags]
+	[Tags]  skipped
 verify PNAT default behaviour when user creates tenant/network/endpoint
-	[Tags]
+	[Tags]  skipped
 verify VM connectivity using openstack endpoint creation (NAT applied)
-	[Tags]
+	[Tags]  skipped
 check NSAPI workflow when there is no interfaces to router
-	[Tags]
+	[Tags]  skipped
 verify floating IP configuration workflow with Openstack
-	[Tags]
+	[Tags]  skipped
 verify VM connectivity using floating IP 
-	[Tags]
+	[Tags]  skipped
 Test PNAT/Floating IP with fixed nat container
-	[Tags]
+	[Tags]  skipped
 create a floating IP exaust case and check the behaviour BCF/NAT container
 	[Tags]
 verify floating IP with multiple external networks part of different tenants
 	[Tags]
 verify VM connectivity with nat container interface failover
-	[Tags]
+	[Tags]  skipped
 verify VM connectivity with NAT container failover (dynamic and fixed NAT switch)
-	[Tags]
+	[Tags]  skipped
 verify VM connecitiy with BCF controller failover
-	[Tags]
+	[Tags]  skipped
 verify NAT/Floating IP with neutron server failover
-	[Tags]
-verify vm connectivity with NAT switch reboot scenario
-	[Tags]
+	[Tags]  skipped
 create a scenario where single vswitch to be exceeded the ports using pnat/floating IP
 	[Tags]
 verify packet contents with PNAT and floating IP together in a tenant
 	[Tags]
 verify openstack tenant with no NAT configuration workflow
-	[Tags]
-verify multiple external network floating IP workflow
-	[Tags]
+	[Tags]  skipped
 verify multiple external network PNAT workflow
 	[Tags]
 verify nat stats counter on vswitch 
