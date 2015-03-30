@@ -15,6 +15,17 @@ Library             String
 
 
 *** Variables ***
+${switch1_alias}                        app-as5710-1  #Alias for switch 1
+${switch2_alias}                        app-rly2-1  #Alias for switch 2
+${switch3_alias}                        app-rlb9-1  #Alias for switch 3
+${switch4_alias}                        app-rly2-2  #Alias for switch 4
+${switch5_alias}                        app-rlb9-2  #Alias for switch 5
+${switch5_filter_intf_name}				ethernet3
+${switch5_filter_alias} 				ixia-2-9
+${switch2_delivery_intf_name} 			ethernet4
+${switch2_delivery_alias}				ixia-2-15
+${switch_read_only_intf_name}			ethernet1  
+
 
 *** Test Cases ***
 T1.0 Authorization - remote > local, authentication remote > local
@@ -63,7 +74,7 @@ T8.0 Authorization - local, authentication remote
 	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default group tacacs+
 	Verify remote admin
 	Valid Login   taco-user  taco
-	Configure Big Tap Policy	policy-remote-3	 local-rbac		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
+	Configure Big Tap Policy	policy-remote-3	 local-rbac		Forward	  IPv4 - 0x800 (2048)	${switch5_filter_alias}	  ${switch2_delivery_alias}	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
 	Delete Big Tap Policy  policy-remote-3
 	Run Keyword and Ignore Error  BT Cli Run  master  logout  user=taco-user  password=taco
 	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
@@ -76,7 +87,7 @@ T9.0 Authorization - remote, authentication local
 	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+; aaa authentication login default local
 	Verify local admin
 	Valid Login   rbac-user   local
-	Configure Big Tap Policy	policy-remote-1	 remote-rbac		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
+	Configure Big Tap Policy	policy-remote-1	 remote-rbac		Forward	  IPv4 - 0x800 (2048)	${switch5_filter_alias}	  ${switch2_delivery_alias}	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
 	Delete Big Tap Policy  policy-remote-1
 	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local
 
@@ -110,7 +121,7 @@ T13.0 Authorization - local > remote, authentication local
 T14.0 Authorization - remote > local, authentication local
 	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default local
 	Valid Login    taco-user   local
-	Configure Big Tap Policy	policy-remote-4	 local-rbac		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
+	Configure Big Tap Policy	policy-remote-4	 local-rbac		Forward	  IPv4 - 0x800 (2048)	${switch5_filter_alias}    ${switch2_delivery_alias}	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
 	Delete Big Tap Policy  policy-remote-4
 	Verify local access
 
@@ -126,7 +137,7 @@ T16.0 Authorization - remote > local, authentication remote
 	BT Cli Run  master  enable; config; aaa authorization exec default group tacacs+ local; aaa authentication login default group tacacs+
 	Verify remote access
 	Valid Login     taco-user   taco
-	Configure Big Tap Policy	policy-remote-5	 local-rbac		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
+	Configure Big Tap Policy	policy-remote-5	 local-rbac		Forward	  IPv4 - 0x800 (2048)	${switch5_filter_alias}    ${switch2_delivery_alias}	 ${EMPTY}	 ${EMPTY}	  	${EMPTY}
 	Delete Big Tap Policy  policy-remote-5
 	BT Cli Run  master  enable; config; aaa authorization exec default local; aaa authentication login default local  user=admin  password=Password1
 
@@ -149,11 +160,11 @@ AAA Suite Setup
     ${switch_dpid_s3}=  rest return switch dpid from ip  s3
     ${switch_dpid_s4}=  rest return switch dpid from ip  s4
     ${switch_dpid_s5}=  rest return switch dpid from ip  s5
-    #Configure Switch Alias  ${switch_dpid_s1}   app-as5710-1
-    Configure Switch Alias  ${switch_dpid_s2}   app-rly2-intern1 
-    Configure Switch Alias  ${switch_dpid_s3}   app-rlb9-intern1
-    Configure Switch Alias  ${switch_dpid_s4}   app-rly2-1 
-    Configure Switch Alias  ${switch_dpid_s5}   app-rlb9-1  
+    #Configure Switch Alias  ${switch_dpid_s1}  ${switch1_alias}
+    Configure Switch Alias  ${switch_dpid_s2}   ${switch2_alias} 
+    Configure Switch Alias  ${switch_dpid_s3}   ${switch3_alias}
+    Configure Switch Alias  ${switch_dpid_s4}   ${switch4_alias}
+    Configure Switch Alias  ${switch_dpid_s5}   ${switch5_alias}  
     Set Switching Mode  L3-L4 Offset Match 
 	BT Cli Run  master  enable; config; ssh connection timeout 300
 	BT Cli Run  master  enable; config; tacacs server host 10.2.3.201 timeout 5 key secret
@@ -172,16 +183,18 @@ AAA Suite Setup
 	BT Cli Run  master  enable; config; group bigtap-rbac; associate rbac-permission remote-rbac
 	BT Cli Run  master  enable; config; group local-bigtap-rbac; associate user taco-user
 	Configure Big Tap Service	service-ro			 		 service-new-1			service-new-2
-	Configure Big Tap Interface from Big Tap Menu            ethernet3              app-rlb9-1			   filter	        ixia-2-9
-    Configure Big Tap Interface from Big Tap Menu            ethernet4              app-rlb9-intern1       delivery         ixia-2-15
-	Configure Big Tap Interface Group from Big Tap Menu      filter                 filter-group          ixia-2-9
-	Configure Big Tap Policy	test-pol-read-only	 admin-view		Forward	  IPv4 - 0x800 (2048)	ixia-2-9	ixia-2-15	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
+	Configure Big Tap Interface from Big Tap Menu            ${switch5_filter_intf_name}              ${switch5_alias}	   filter	        	${switch5_filter_alias}
+    Configure Big Tap Interface from Big Tap Menu            ${switch2_filter_intf_name}              ${switch2_alias}       delivery           ${switch2_delivery_alias}
+	Configure Big Tap Interface Group from Big Tap Menu      filter                 filter-group      ${switch5_filter_alias}
+	Configure Big Tap Policy	test-pol-read-only	 admin-view		Forward	  IPv4 - 0x800 (2048)	${switch5_filter_alias}	  ${switch2_delivery_alias}	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
 	Bash  master  cp /opt/bigswitch/bigdb/db/config-bigtap.json /opt/bigswitch/bigdb/db/test-config.json
 
 AAA Suite Teardown
     BT Cli Run  master  sudo cp /opt/bigswitch/bigdb/db/startup-config.json /opt/bigswitch/bigdb/db/config-bigtap.json  user=recovery  password=bsn
     BT Cli Run  master  sudo service floodlight restart  user=recovery  password=bsn
     Sleep  10
+    Close Browser
+	Stop Selenium Server
 	Base Suite Teardown
 
 AAA Test Teardown
@@ -232,16 +245,16 @@ Verify local admin
 	Valid Login   admin   adminadmin
 	Configure User  test-local-admin    adminadmin   adminadmin    User group admin	   admin
 	Delete User   	test-local-admin
-	Configure Switch Alias                                00:00:08:9e:01:b3:0c:0c            	 app-rlb9-1
-	Configure Big Tap Interface from Controller Menu      ethernet1       app-rlb9-intern1       filter         filter-1
-	Configure Big Tap Interface from Big Tap Menu         ethernet1       app-rlb9-1             delivery       delivery_1
-	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1       delivery       delivery_new-1
-	Edit Big Tap Interface from Big Tap Menu              ethernet1       app-rlb9-1        	 filter         filter-new_1
+	Configure Switch Alias                                ${switch_dpid_s5}            	 ${switch5_alias}
+	Configure Big Tap Interface from Controller Menu        ${switch_read_only_intf_name}         ${switch3_alias}       filter         filter-1
+	Configure Big Tap Interface from Big Tap Menu           ${switch_read_only_intf_name}         ${switch5_alias}       delivery       delivery_1
+	Edit Big Tap Interface from Controller Menu             ${switch_read_only_intf_name}         ${switch3_alias}       delivery       delivery_new-1
+	Edit Big Tap Interface from Big Tap Menu                ${switch_read_only_intf_name}         ${switch5_alias}       filter         filter-new_1
 	Configure Big Tap Interface Group from Big Tap Menu   filter          filter_group1          filter-new_1
 	Configure Big Tap User Defined Offsets                udf0            L3 Start               8
 	Configure Big Tap Policy					 		  testpolicy	  admin-view		     Forward		IPv4 - 0x800 (2048)		filter-new_1	delivery_new-1	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
 	Delete Big Tap Policy  testpolicy
-	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1		 ${EMPTY}       ${EMPTY}
+	Edit Big Tap Interface from Controller Menu             ${switch_read_only_intf_name}         ${switch3_alias}		 ${EMPTY}       ${EMPTY}
 	Delete Big Tap Interface from Big Tap Menu 			  filter-new_1
 	Delete Big Tap Interface group   filter_group1
 	Go To Signout Page
@@ -250,16 +263,16 @@ Verify remote admin using shell:roles=bigtap-admin
 	Valid Login   	bt-admin   adminadmin
 	Configure User  test-remote-admin-1    adminadmin   adminadmin    User group admin	   admin
 	Delete User   	test-remote-admin-1
-	Configure Switch Alias                                00:00:08:9e:01:b3:0c:0c            	 app-rlb9-1
-	Configure Big Tap Interface from Controller Menu      ethernet1       app-rlb9-intern1       filter         filter-1
-	Configure Big Tap Interface from Big Tap Menu         ethernet1       app-rlb9-1             delivery       delivery_1
-	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1       delivery       delivery_new-1
-	Edit Big Tap Interface from Big Tap Menu              ethernet1       app-rlb9-1        	 filter         filter-new_1
+	Configure Switch Alias                                ${switch_dpid_s5}            	 ${switch5_alias}
+	Configure Big Tap Interface from Controller Menu        ${switch_read_only_intf_name}         ${switch3_alias}       filter         filter-1
+	Configure Big Tap Interface from Big Tap Menu           ${switch_read_only_intf_name}         ${switch5_alias}       delivery       delivery_1
+	Edit Big Tap Interface from Controller Menu             ${switch_read_only_intf_name}         ${switch3_alias}       delivery       delivery_new-1
+	Edit Big Tap Interface from Big Tap Menu                ${switch_read_only_intf_name}         ${switch5_alias}     	 filter         filter-new_1
 	Configure Big Tap Interface Group from Big Tap Menu   filter          filter_group1          filter-new_1
 	Configure Big Tap User Defined Offsets                udf0            L3 Start               8
 	Configure Big Tap Policy					 		  testpolicy	  admin-view		     Forward		IPv4 - 0x800 (2048)		filter-new_1	delivery_new-1	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
 	Delete Big Tap Policy  testpolicy
-	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1		 ${EMPTY}       ${EMPTY}
+	Edit Big Tap Interface from Controller Menu             ${switch_read_only_intf_name}         ${switch3_alias}		 ${EMPTY}       ${EMPTY}
 	Delete Big Tap Interface from Big Tap Menu 			  filter-new_1
 	Delete Big Tap Interface group   filter_group1
 	Go To Signout Page
@@ -268,16 +281,16 @@ Verify remote admin using shell:roles=admin
 	Valid Login   	remote   remote
 	Configure User  test-remote-admin-2    remote   remote    ${EMPTY}       ${EMPTY}
 	Delete User   	test-remote-admin-2
-	Configure Switch Alias                                00:00:08:9e:01:b3:0c:0c            	 app-rlb9-1
-	Configure Big Tap Interface from Controller Menu      ethernet1       app-rlb9-intern1       filter         filter-1
-	Configure Big Tap Interface from Big Tap Menu         ethernet1       app-rlb9-1             delivery       delivery_1
-	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1       delivery       delivery_new-1
-	Edit Big Tap Interface from Big Tap Menu              ethernet1       app-rlb9-1        	 filter         filter-new_1
+	Configure Switch Alias                                ${switch_dpid_s5}            	 ${switch5_alias}
+	Configure Big Tap Interface from Controller Menu        ${switch_read_only_intf_name}         ${switch3_alias}       filter         filter-1
+	Configure Big Tap Interface from Big Tap Menu           ${switch_read_only_intf_name}         ${switch5_alias}       delivery       delivery_1
+	Edit Big Tap Interface from Controller Menu             ${switch_read_only_intf_name}         ${switch3_alias}       delivery       delivery_new-1
+	Edit Big Tap Interface from Big Tap Menu                ${switch_read_only_intf_name}         ${switch5_alias}  	 filter         filter-new_1
 	Configure Big Tap Interface Group from Big Tap Menu   filter          filter_group1          filter-new_1
 	Configure Big Tap User Defined Offsets                udf0            L3 Start               8
 	Configure Big Tap Policy					 		  testpolicy	  admin-view		     Forward		IPv4 - 0x800 (2048)		filter-new_1	delivery_new-1	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
 	Delete Big Tap Policy  testpolicy
-	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1		 ${EMPTY}       ${EMPTY}
+	Edit Big Tap Interface from Controller Menu             ${switch_read_only_intf_name}         ${switch3_alias}		 ${EMPTY}       ${EMPTY}
 	Delete Big Tap Interface from Big Tap Menu 			  filter-new_1
 	Delete Big Tap Interface group   filter_group1
 	Go To Signout Page
@@ -286,16 +299,16 @@ Verify remote admin using BSN-User-Role=bigtap-admin
 	Valid Login   	bsn-vsa-bigtap-admin-user   adminadmin
 	Configure User  test-remote-admin-3    remote   remote    ${EMPTY}       ${EMPTY}
 	Delete User   	test-remote-admin-3
-	Configure Switch Alias                                00:00:08:9e:01:b3:0c:0c            	 app-rlb9-1
-	Configure Big Tap Interface from Controller Menu      ethernet1       app-rlb9-intern1       filter         filter-1
-	Configure Big Tap Interface from Big Tap Menu         ethernet1       app-rlb9-1             delivery       delivery_1
-	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1       delivery       delivery_new-1
-	Edit Big Tap Interface from Big Tap Menu              ethernet1       app-rlb9-1        	 filter         filter-new_1
+	Configure Switch Alias                                ${switch_dpid_s5}            	 ${switch5_alias}
+	Configure Big Tap Interface from Controller Menu        ${switch_read_only_intf_name}         ${switch3_alias}       filter         filter-1
+	Configure Big Tap Interface from Big Tap Menu           ${switch_read_only_intf_name}         ${switch5_alias}       delivery       delivery_1
+	Edit Big Tap Interface from Controller Menu             ${switch_read_only_intf_name}         ${switch3_alias}       delivery       delivery_new-1
+	Edit Big Tap Interface from Big Tap Menu                ${switch_read_only_intf_name}         ${switch5_alias}  	 filter         filter-new_1
 	Configure Big Tap Interface Group from Big Tap Menu   filter          filter_group1          filter-new_1
 	Configure Big Tap User Defined Offsets                udf0            L3 Start               8
 	Configure Big Tap Policy					 		  testpolicy	  admin-view		     Forward		IPv4 - 0x800 (2048)		filter-new_1	delivery_new-1	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
 	Delete Big Tap Policy  testpolicy
-	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1		 ${EMPTY}       ${EMPTY}
+	Edit Big Tap Interface from Controller Menu             ${switch_read_only_intf_name}         ${switch3_alias}		 ${EMPTY}       ${EMPTY}
 	Delete Big Tap Interface from Big Tap Menu 			  filter-new_1
 	Delete Big Tap Interface group   filter_group1
 	Go To Signout Page
@@ -304,16 +317,16 @@ Verify remote admin using BSN-User-Role=admin
 	Valid Login   	bsn-vsa-bigtap-admin-user   adminadmin
 	Configure User  test-remote-admin-4    remote   remote    ${EMPTY}       ${EMPTY}
 	Delete User   	test-remote-admin-4
-	Configure Switch Alias                                00:00:08:9e:01:b3:0c:0c            	 app-rlb9-1
-	Configure Big Tap Interface from Controller Menu      ethernet1       app-rlb9-intern1       filter         filter-1
-	Configure Big Tap Interface from Big Tap Menu         ethernet1       app-rlb9-1             delivery       delivery_1
-	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1       delivery       delivery_new-1
-	Edit Big Tap Interface from Big Tap Menu              ethernet1       app-rlb9-1        	 filter         filter-new_1
+	Configure Switch Alias                                ${switch_dpid_s5}            	 ${switch5_alias}
+	Configure Big Tap Interface from Controller Menu        ${switch_read_only_intf_name}         ${switch3_alias}       filter         filter-1
+	Configure Big Tap Interface from Big Tap Menu           ${switch_read_only_intf_name}         ${switch5_alias}       delivery       delivery_1
+	Edit Big Tap Interface from Controller Menu             ${switch_read_only_intf_name}         ${switch3_alias}       delivery       delivery_new-1
+	Edit Big Tap Interface from Big Tap Menu                ${switch_read_only_intf_name}         ${switch5_alias}   	 filter         filter-new_1
 	Configure Big Tap Interface Group from Big Tap Menu   filter          filter_group1          filter-new_1
 	Configure Big Tap User Defined Offsets                udf0            L3 Start               8
 	Configure Big Tap Policy					 		  testpolicy	  admin-view		     Forward		IPv4 - 0x800 (2048)		filter-new_1	delivery_new-1	  	 ${EMPTY}	  	${EMPTY}	  	${EMPTY}
 	Delete Big Tap Policy  testpolicy
-	Edit Big Tap Interface from Controller Menu           ethernet1       app-rlb9-intern1		 ${EMPTY}       ${EMPTY}
+	Edit Big Tap Interface from Controller Menu             ${switch_read_only_intf_name}         ${switch3_alias}		 ${EMPTY}       ${EMPTY}
 	Delete Big Tap Interface from Big Tap Menu 			  filter-new_1
 	Delete Big Tap Interface group   filter_group1
 	Go To Signout Page
@@ -327,8 +340,8 @@ Verify remote admin
 Verify local read-only user
 	Valid Login   	local   local
 	Check Main Landing Page for read-only user
-	Check Controller Switches Page for read-only user
-	Check Controller Interfaces Page for read-only user
+	Check Controller Switches Page for read-only user  ${switch_dpid_s4}
+	Check Controller Interfaces Page for read-only user  ${switch_dpid_s4}  ${switch4_alias} 
 	Check Big Tap Page for read-only user
 	Check Big Tap Policies Page for read-only user   
 	Check Big Tap Services Page for read-only user
@@ -350,8 +363,8 @@ Verify local read-only user
 Verify remote read-only user using shell:roles=bigtap-read-only
 	Valid Login   	bigtap-read-only   bsnbsn
 	Check Main Landing Page for read-only user
-	Check Controller Switches Page for read-only user
-	Check Controller Interfaces Page for read-only user
+	Check Controller Switches Page for read-only user  ${switch_dpid_s4}
+	Check Controller Interfaces Page for read-only user  ${switch_dpid_s4}  ${switch4_alias} 
 	Check Big Tap Page for read-only user
 	Check Big Tap Policies Page for read-only user
 	Check Big Tap Services Page for read-only user
@@ -372,8 +385,8 @@ Verify remote read-only user using shell:roles=bigtap-read-only
 Verify remote read-only user using shell:roles=read-only
 	Valid Login   	remote-reader   bsnbsn
 	Check Main Landing Page for read-only user
-	Check Controller Switches Page for read-only user
-	Check Controller Interfaces Page for read-only user
+	Check Controller Switches Page for read-only user  ${switch_dpid_s4}
+	Check Controller Interfaces Page for read-only user  ${switch_dpid_s4}  ${switch4_alias} 
 	Check Big Tap Page for read-only user
 	Check Big Tap Policies Page for read-only user
 	Check Big Tap Services Page for read-only user
@@ -394,8 +407,8 @@ Verify remote read-only user using shell:roles=read-only
 Verify remote read-only user using BSN-User-Role=bigtap-read-only
 	Valid Login   	bsn-vsa-read-only-user   bsnbsn
 	Check Main Landing Page for read-only user
-	Check Controller Switches Page for read-only user
-	Check Controller Interfaces Page for read-only user
+	Check Controller Switches Page for read-only user  ${switch_dpid_s4}
+	Check Controller Interfaces Page for read-only user  ${switch_dpid_s4}  ${switch4_alias} 
 	Check Big Tap Page for read-only user
 	Check Big Tap Policies Page for read-only user   
 	Check Big Tap Services Page for read-only user
@@ -416,8 +429,8 @@ Verify remote read-only user using BSN-User-Role=bigtap-read-only
 Verify remote read-only user using BSN-User-Role=read-only
 	Valid Login   	bsn-vsa-bigtap-read-only-user   bsnbsn
 	Check Main Landing Page for read-only user
-	Check Controller Switches Page for read-only user
-	Check Controller Interfaces Page for read-only user
+	Check Controller Switches Page for read-only user  ${switch_dpid_s4}
+	Check Controller Interfaces Page for read-only user  ${switch_dpid_s4}  ${switch4_alias} 
 	Check Big Tap Page for read-only user
 	Check Big Tap Policies Page for read-only user   
 	Check Big Tap Services Page for read-only user
@@ -437,17 +450,17 @@ Verify remote read-only user using BSN-User-Role=read-only
 
 Verify local rbac-user
 	Valid Login   	local-rbac-user   local
-	Configure Big Tap Policy  policy-remote-5   local-rbac		Forward		IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  ${EMPTY}	  	${EMPTY}	 ${EMPTY}
+	Configure Big Tap Policy  policy-remote-5   local-rbac		Forward		IPv4 - 0x800 (2048)		${switch5_filter_alias}		  ${switch2_delivery_alias}	  ${EMPTY}	  	${EMPTY}	 ${EMPTY}
 	Delete Big Tap Policy  policy-remote-5 
 	
 
 Verify remote rbac-user using shell:roles=bigtap-rbac
 	Valid Login   	rbac-user   bsnbsn
-	Configure Big Tap Policy  policy-remote-1   remote-rbac		Forward		IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  ${EMPTY}	  	${EMPTY}	 ${EMPTY}
+	Configure Big Tap Policy  policy-remote-1   remote-rbac		Forward		IPv4 - 0x800 (2048)		${switch5_filter_alias}		  ${switch2_delivery_alias}	  ${EMPTY}	  	${EMPTY}	 ${EMPTY}
 	Delete Big Tap Policy  policy-remote-1 
 
 Verify remote rbac-user using BSN-User-Role=bigtap-rbac
 	Valid Login   	bsn-vsa-bigtap-rbac-user   bsnbsn
-	Configure Big Tap Policy  policy-remote-2   remote-rbac		Forward		IPv4 - 0x800 (2048)		ixia-2-9		ixia-2-15	  ${EMPTY}	  	${EMPTY}	 ${EMPTY}
+	Configure Big Tap Policy  policy-remote-2   remote-rbac		Forward		IPv4 - 0x800 (2048)		${switch5_filter_alias}		  ${switch2_delivery_alias}	  ${EMPTY}	  	${EMPTY}	 ${EMPTY}
 	Delete Big Tap Policy  policy-remote-2 
 	
