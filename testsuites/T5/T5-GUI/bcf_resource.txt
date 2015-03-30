@@ -306,26 +306,26 @@ ${POLICY LIST PROTOCOL NUMBER FIELD}				xpath=//div[@data-dojo-attach-point='tit
 ${POLICY RULE LOG MATCHING PACKETS KNOB}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Log Matching Packets')]/parent::h2/parent::div/following-sibling::div/div[3]/div[1]/div[1]/div[@class='knob_icon']
 ${POLICY LIST RULE SOURCE STEP BUTTON}				xpath=//div[@class='step_text' and contains(text(), '2. Source')]
 ${POLICY LIST SOURCE MATCH DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[1]/input
-${POLICY LIST SOURCE MATCH LIST}					xpath=//div[@id='dijit_form_FilteringSelect_5_popup']
+${POLICY LIST SOURCE MATCH LIST}					xpath=//div[@id='dijit_form_FilteringSelect_6_popup']
 ${POLICY LIST SOURCE MATCH FIELD}					xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
 ${POLICY LIST RULE SOURCE IP FIELD}					xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input		
 ${POLICY LIST RULE SOURCE IP PREFIX FIELD}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[3]/div[3]/input[1]
 ${POLICY RULE SOURCE TENANT DROPDOWN BUTTON}  		xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[1]/input	
-${POLICY RULE SOURCE TENANT LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_6_popup']   
+${POLICY RULE SOURCE TENANT LIST} 					xpath=//div[@id='dijit_form_FilteringSelect_7_popup']
 ${POLICY RULE SOURCE TENANT FIELD}					xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[3]/input[1]
 ${POLICY LIST RULE SOURCE L4 PORT FIELD}			xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'L4 Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
 ${POLICY RULE LOGICAL SEGMENT INTERFACE CHECKBOX}			xpath=//div[@data-dojo-attach-point='titleNode' and contains(text(), 'Source Interface')]/parent::h2/parent::div/following-sibling::div/div[1]/input
 ${POLICY RULE LOGICAL SEGMENT INTERFACE DROPDOWN BUTTON}	xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='blockSegmentInterface']/div/div[1]/input	  
-${POLICY RULE LOGICAL SEGMENT INTERFACE LIST} 		xpath=//div[@id='dijit_form_FilteringSelect_9_popup']  
+${POLICY RULE LOGICAL SEGMENT INTERFACE LIST} 		xpath=//div[@id='dijit_form_FilteringSelect_10_popup']
 ${POLICY RULE LOGICAL SEGMENT INTERFACE FIELD}		xpath=//div[@data-dojo-attach-point='sourceNode']/descendant::div[@data-dojo-attach-point='blockSegmentInterface']/div/div[3]/input[1]	
 ${POLICY LIST RULE DESTINATION STEP BUTTON}			xpath=//div[@class='step_text' and contains(text(), '3. Destination')]	
 ${POLICY LIST DESTINATION MATCH DROPDOWN BUTTON} 	xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[1]/input 
-${POLICY LIST DESTINATION MATCH LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_11_popup']		
+${POLICY LIST DESTINATION MATCH LIST}  				xpath=//div[@id='dijit_form_FilteringSelect_12_popup']
 ${POLICY LIST DESTINATION MATCH FIELD}				xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Match')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
 ${POLICY LIST RULE DESTINATION IP FIELD}			xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[1]/div[2]/input
 ${POLICY LIST RULE DESTINATION IP PREFIX FIELD}		xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'IP Prefix')]/parent::h2/parent::div/following-sibling::div/div[2]/div[3]/div[3]/input[1]
 ${POLICY RULE DESTINATION TENANT DROPDOWN BUTTON} 	xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[1]/input	 
-${POLICY RULE DESTINATION TENANT LIST}				xpath=//div[@id='dijit_form_FilteringSelect_12_popup']     
+${POLICY RULE DESTINATION TENANT LIST}				xpath=//div[@id='dijit_form_FilteringSelect_13_popup']
 ${POLICY RULE DESTINATION TENANT FIELD}				xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'Tenant')]/parent::h2/parent::div/following-sibling::div[1]/div/div[3]/input[1]		
 ${POLICY LIST RULE DESTINATION L4 PORT FIELD}		xpath=//div[@data-dojo-attach-point='destinationNode']/descendant::div[@data-dojo-attach-point='titleNode' and contains(text(), 'L4 Port')]/parent::h2/parent::div/following-sibling::div/div[3]/input[1]
 ${LOGICAL ROUTER POLICY RULE APPEND BUTTON}			xpath=//descendant::span[contains(@id, 'dijit_form_Button') and contains(text(), 'Append')]
@@ -1816,7 +1816,7 @@ Apply Policy List
 	...		${policy-name}
 	
 	Click Element  ${APPLY INBOUND POLICY SUBMIT BUTTON}   and don't wait
-	Verify Element Invisible  ${APPLY INBOUND POLICY POPUP}
+	Page Should Not Contain Element  ${APPLY INBOUND POLICY POPUP}
 	
 Generate Support Bundle
 
