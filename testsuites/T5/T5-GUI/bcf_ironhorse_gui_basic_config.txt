@@ -648,6 +648,7 @@ Config Suite Setup
 Config Test Setup
     Base Test Setup
     Cli Run  ${master_name}  copy running-config snapshot://test-config  reauth=True
+    Cli Run  ${master_name}  show running-config  reauth=True
 
 
 Config Test Teardown
@@ -659,10 +660,10 @@ Config Test Teardown
 
 
 Config Suite Teardown
-	Clear Switch Config				switch-lEAf.3
-	Clear Switch Config				switch-1
-	Clear Switch Config				switch.2-leaf
-	Clear Switch Config				switch.spine
+	Run Keyword and Ignore Error  Clear Switch Config				switch-lEAf.3
+	Run Keyword and Ignore Error  Clear Switch Config				switch-1
+	Run Keyword and Ignore Error  Clear Switch Config				switch.2-leaf
+	Run Keyword and Ignore Error  Clear Switch Config				switch.spine
 	Close Browser
     Stop Selenium Server
     Cli Run  master  copy snapshot://firstboot-config running-config  reauth=True
