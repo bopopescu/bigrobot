@@ -3706,6 +3706,7 @@ Check Main Landing Page for read-only user
 	
 	
 Check Controller Switches Page for read-only user
+	[Arguments]  ${switch-dpid}
 	Go To Controller Switches Page
 	${action_menu}  Generate Action Menu Xpath Interfaces Tunnels  div[@id='switches_table']
 	Highlight Element   ${action_menu}
@@ -3715,12 +3716,13 @@ Check Controller Switches Page for read-only user
     Click Element  ${action_menu}  and don't wait
     Verify Element Visible  ${SHOW HIDE COLUMNS MENU ITEM}
     Verify Page Does Not Contain Element   ${SWITCH CREATE TUNNEL MENU ITEM}
-    Verify Page Contains Text  00:00:08:9e:01:f8:6b:8b
-    ${action_menu}  Generate Action Menu Xpath  div[@id='switches_table']  00:00:08:9e:01:f8:6b:8b
+    Verify Page Contains Text  ${switch-dpid}
+    ${action_menu}  Generate Action Menu Xpath  div[@id='switches_table']  ${switch-dpid}
     Verify Page Does Not Contain Element   ${action_menu}
     
     
 Check Controller Interfaces Page for read-only user
+	[Arguments]  ${switch-dpid}  ${switch-alias}
 	Go To Controller Interfaces Page
 	${action_menu}  Generate Action Menu Xpath Interfaces Tunnels  div[@id='interfaces_table']
 	Highlight Element   ${action_menu}
@@ -3734,10 +3736,10 @@ Check Controller Interfaces Page for read-only user
     #Click Element  ${SHOW 100 INTERFACES BUTTON}  and don't wait
     #Verify Page Contains Text  app-as5710-1
     #${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  00:00:70:72:cf:ab:36:d8  app-as5710-1
-    Add Simple Filtering Query  app-rly2-1
+    Add Simple Filtering Query  ${switch-alias}
     Click Element  ${SHOW 100 INTERFACES BUTTON}  and don't wait
-    Verify Page Contains Text  app-rly2-1
-    ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  00:00:08:9e:01:f8:6b:8b  app-rly2-1
+    Verify Page Contains Text  ${switch-alias}
+    ${action_menu}  Generate Action Menu Xpath Interface Controller   div[@id='interfaces_table']  [Arguments]  ${switch-dpid}  ${switch-alias}
     Verify Page Does Not Contain Element  ${action_menu}
     Clear Filtering Query
 	
@@ -3824,7 +3826,7 @@ Check Big Tap Interfaces Page for read-only user
 	#Verify Element Invisible  ${BIG TAP POLICY EDIT POPUP}
   	#Click Element  ${CANCEL BUTTON}  and don't wait
 	Verify Page Contains Text  ${interface-name}
-	${action_menu_interface}  Generate Action Menu Xpath Interfaces  div[@id='interfaces_table']  ixia-2-9
+	${action_menu_interface}  Generate Action Menu Xpath Interfaces  div[@id='interfaces_table']  ${interface-name}
 	Verify Element Visible  ${action_menu_interface}
 	Highlight Element   ${action_menu_interface}
 	Click Element  ${action_menu_interface}  and don't wait
@@ -3843,8 +3845,9 @@ Check Big Tap Interfaces Page for read-only user
     
     
 Check Big Tap Host Tracker Page for read-only user
+	${filter_query}  Set Variable  sakshi
 	Go To Big Tap Host Tracker Page
-	Add Simple Filtering Query  sakshi
+	Add Simple Filtering Query  ${filter_query}
     Clear Filtering Query
 	${action_menu}  Generate Action Menu Xpath Interfaces Tunnels  div[@id='host_tracker_table']
 	Highlight Element   ${action_menu}
@@ -3856,18 +3859,21 @@ Check Big Tap Host Tracker Page for read-only user
 	
 	
 Check Big Tap DHCP Tracker Page for read-only user
+	${filter_query}  Set Variable  sakshi
 	Go To Big Tap DHCP Tracker Page
-	Add Simple Filtering Query  sakshi
+	Add Simple Filtering Query  ${filter_query}
     Clear Filtering Query
     
 Check Big Tap DNS Tracker Page for read-only user
+	${filter_query}  Set Variable  sakshi
 	Go To Big Tap DNS Tracker Page
-	Add Simple Filtering Query  sakshi
+	Add Simple Filtering Query  ${filter_query}
     Clear Filtering Query
     
 Check Big Tap Observed IP Tracker Page for read-only user
+	${filter_query}  Set Variable  sakshi
 	Go To Big Tap Observed IP Tracker Page
-	Add Simple Filtering Query  sakshi
+	Add Simple Filtering Query  ${filter_query}
     Clear Filtering Query
     
 Check Big Tap IP Lists Page for read-only user
@@ -3986,6 +3992,7 @@ Create a BigChain Chain
     Verify Element Invisible  ${CREATE BIGCHAIN CHAIN POPUP}
     
     Verify Page Contains Text  ${name}
+    Verify Page Contains Text  ${name}
 
 Add Service Instance from Chain
 	[Arguments]  ${service}  ${serv-instance}
@@ -4046,6 +4053,7 @@ Create a BigChain Service
     
 Verify Switch Mode  
 	[Arguments]  ${switch}  ${mode}
+	Go To Controller Switches Page
 	Verify Element Visible  xpath=//div[@class='bsn_ellipsis' and contains (text(), '${switch}')]/parent::div/parent::td/following-sibling::td/div[@class='content']/descendant::div[@class='label' and contains(text(), '${mode}')]
 
 Configure Switch Deployment Role
