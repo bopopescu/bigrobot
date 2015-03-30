@@ -124,7 +124,13 @@ class T5Openstack(object):
 				instanceIp = ip.split(',')  # should have 2 entries
 			else:
 				instanceIp = [ip]
-			return instanceIp[0]
+			try:
+				value = instanceIp[0]
+			except IndexError:
+				helpers.log("instance ip is null")
+				return True
+			else:
+				return instanceIp[0]
 		else:
 			helpers.log("Instance is not active in nova controller")
 	
@@ -149,7 +155,13 @@ class T5Openstack(object):
 				helpers.log("instanceip=%s" % instanceIp)
 			else:
 				instanceIp = [ip]
-			return instanceIp[1]
+			try:
+				value = instanceIp[1]
+			except IndexError:
+				helpers.log("floating ip is null")
+				return True
+			else:
+				return instanceIp[1]
 		else:
 			helpers.log("Instance is not active in nova controller")	
 	
