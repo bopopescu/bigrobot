@@ -43,8 +43,8 @@ T1.13 Check Clock Page
     Go To Clock Page 
 T1.14 Check SNMP Page
     Go To SNMP Page
-T1.15 Check Tacacs Page
-    Go To Tacacs Page
+T1.15 Check AAA Page
+    Go To AAA Page
 T1.16 Check Logging Page
     Go To Logging Page  
 T1.17 Check Users Page
