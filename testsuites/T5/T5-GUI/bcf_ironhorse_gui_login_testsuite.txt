@@ -147,11 +147,11 @@ Login Suite Setup
     Cli Configure User    test    adminadmin
     Cli Configure User    test-user-local    ,./[]<:{}`~!@#$^&*()_-1234567890
     Cli Run  master  group admin; associate user tomasz; associate user test; associate user test-user-local; associate user taco-user; associate user test-user-remote
-    #Run Keyword and Ignore Error
-    #...  Cli Run  master  show tacacs  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
-    #Run Keyword and Ignore Error
-    #...  Cli Run  slave  show tacacs  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
-    #Sleep  60
+    Run Keyword and Ignore Error
+    ...  Cli Run  master  show tacacs  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
+    Run Keyword and Ignore Error
+    ...  Cli Run  slave  show tacacs  user=bsn-vsa-admin-user  password=adminadmin  reauth=True
+    Sleep  60
     Start Selenium Server  -trustAllSSLCertificates
     Open Browser To Login Page
     Valid Login  admin  adminadmin
