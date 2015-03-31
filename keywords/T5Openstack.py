@@ -133,6 +133,7 @@ class T5Openstack(object):
 				return instanceIp[0]
 		else:
 			helpers.log("Instance is not active in nova controller")
+			return True
 	
 	def openstack_show_instance_floating_ip(self, instanceName, netName):
 		'''Get instance id
@@ -164,6 +165,7 @@ class T5Openstack(object):
 				return instanceIp[1]
 		else:
 			helpers.log("Instance is not active in nova controller")	
+			return True
 	
 	def openstack_show_router(self, routerName):
 		'''Get router id
