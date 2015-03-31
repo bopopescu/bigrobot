@@ -34,6 +34,7 @@ ${USERS TITLE}				Users
 ${TOPOLOGY TITLE}			Topology
 ${AAA TITLE}				AAA
 ${SIGNOUT TITLE}  			Login
+${ANALYTICS TITLE}          Fabric Analytics
 
 
 ${SHOW ALL BUTTON}  			xpath=//div[contains(@class, 'item') and contains(text(), 'All')]
@@ -76,7 +77,7 @@ ${CLOCK LABEL}					xpath=//div[@class='nav_menu_item' and contains(text(), 'Cloc
 ${LOGGING LABEL}				xpath=//div[@class='nav_menu_item' and contains(text(), 'Logging')]
 ${USERS LABEL}					xpath=//div[@class='nav_menu_item' and contains(text(), 'Users')]
 ${SIGN OUT LABEL}		  		xpath=//div[@class='nav_menu_item' and contains(text(), 'Sign Out')]
-
+${ANALYTICS LABEL}              xpath=//div[@class='nav_menu_item' and contains(text(), 'Analytics')]
 
 
 ### Main Landing Page
@@ -650,6 +651,7 @@ Set URLs
 	Set Suite Variable     	${USERS URL}				https://${SERVER}/controller/security/users
 	Set Suite Variable		${SIGNOUT URL}				https://${SERVER}/login
 	Set Suite Variable		${LOGOUT URL}				https://${SERVER}/logout
+    Set Suite Variable      ${ANALYTICS URL}            https://${SERVER}/analytics/#/dashboard/file/default.json
 
 Valid Login
     [Arguments]  ${username}  ${password}
@@ -810,6 +812,12 @@ Go To Security Users Page
     Wait Until Page Loaded 
     Title Should Contain  ${USERS TITLE}
     Sleep  1 
+
+Go To Analytics Page
+    Go To  ${ANALYTICS URL}
+    Wait Until Page Loaded
+    Title Should Contain  ${ANALYTICS TITLE}
+    Sleep  1
 
 Go To Signout Page
 	Go To  ${SIGNOUT URL}
@@ -1067,7 +1075,7 @@ Check Hover
 	Wait Until Page Contains Element   ${label}
 	#Wait Until Keyword Succeeds  1 min  1 sec  Element Should Be Visible   ${label}
 	Click Element  ${label}
-	Location Should Be  ${dst}
+	Wait Until Keyword Succeeds  10s  1s  Location Should Be  ${dst}
 	Title Should Contain  ${title}
 
 Generate Checkbox Xpath

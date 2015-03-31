@@ -78,9 +78,11 @@ T2.8 Clock
 	Check Hover					${SETTINGS MENU}			${CLOCK LABEL}					${CLOCK URL}				${CLOCK TITLE}
 T2.9 Users			
 	Check Hover					${SECURITY MENU}			${USERS LABEL}					${USERS URL}				${USERS TITLE}
-T2.10 Sign Out		
+T2.10 Analytics
+    Check Hover                 ${VISIBILITY MENU}          ${ANALYTICS LABEL}              ${ANALYTICS URL}            ${ANALYTICS TITLE}
+    Go To Landing Page
+T2.11 Sign Out
 	Check Hover					${ADMIN MENU}				${SIGN OUT LABEL} 				${LOG IN URL}				${LOG IN TITLE}
-
 
 ###  Check Element			Element 
 T3 Setup
@@ -100,20 +102,52 @@ T3.5 Controller Tenants Pane
 T3.6 Controller Interfaces Pane
 	Check Element			${CONTROLLER INTERFACES PANE}
 
+T4.1 Analytics pages
+    Check Analytics Page  Major Events 24hrs
+    Check Analytics Page  All Logs
+    Check Analytics Page  Logs by Device
+    Check Analytics Page  Errors and Warnings  Errors
+    Check Analytics Page  Errors by Process  Errors
+    Check Analytics Page  Correlate Logs
+    Check Analytics Page  CLI Change 24hrs  Commands
+    Check Analytics Page  CLI Commands
+    Check Analytics Page  All Config Changes
+    Check Analytics Page  REST API calls  REST API CALLS
+    Check Analytics Page  Login/Logout
+    Check Analytics Page  Switch CPU and Memory
+    Check Analytics Page  Tenant
+    Check Analytics Page  Traffic (On active updated midnight)  table
+    Check Analytics Page  Segment
+    Check Analytics Page  All Endpoint Changes  Endpoint Information
+    Check Analytics Page  Endpoint by MAC Address  Endpoint Information
+    Check Analytics Page  Endpoint by IP Address  Endpoint Information
+    Check Analytics Page  Endpoint by Name  Endpoint Information
+    Check Analytics Page  VMware vCenter
+    [Tags]  Analytics
 
-			
 * Keyword
 config suite setup
     base suite setup
+    Set Selenium Timeout  20
 	${c1_ip}=            get node ip   master
     set suite variable  ${SERVER}  ${c1_ip}
     Set URLs
     Start Selenium Server  -trustAllSSLCertificates
     Open Browser To Login Page
     Valid Login  admin  adminadmin
-    
-	
+
 config suite teardown
 	Close Browser
     Stop Selenium Server
     base suite teardown
+
+Check Analytics Page
+    [Arguments]  ${link}  ${table}=Events
+    Go To Analytics Page
+    Verify Page Contains Text  ${link}
+    Verify Page Contains Element  xpath=//span[@class='panel-text panel-title ng-binding' and contains(text(), 'Events')]
+    Verify Page Contains Element  xpath=//span[@class='panel-text panel-title ng-binding' and contains(text(), 'Time Range Selector')]
+    Click Link  ${link}
+    Wait Until Page Loaded
+    Verify Page Contains Element  xpath=//span[@class='panel-text panel-title ng-binding' and contains(text(), '${table}')]
+    Capture Screenshot
