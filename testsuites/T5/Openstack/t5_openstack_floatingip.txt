@@ -1,7 +1,7 @@
 == T5 Functional Openstack Integration work flow test ==
 
 * Setting
-Documentation    T5 BVS APP Functional Openstack integration vm instance flow test suite
+Documentation    T5 BVS APP Functional Openstack integration floating IP test suite
 Suite Setup      T5 Functional Suite Setup
 Suite Teardown   T5 Functional Suite Teardown
 Test Setup       T5 base test setup
