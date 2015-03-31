@@ -1,0 +1,382 @@
+*Settings
+Documentation               BigTap SwitchLight Platform Test Suite
+Suite Setup                 lag suite setup
+Suite Teardown              lag suite teardown
+Test Setup                  lag test setup
+Test Teardown               lag test teardown
+Force Tags                  BigTap  SwitchLight  accton-as5710  switch-platform  24port  lag
+Library                     keywords/BsnCommon.py
+Library                     keywords/AppController.py
+Library                     keywords/BigTap.py
+Library                     keywords/SwitchLight.py
+Library                     keywords/Ixia.py
+Library                     Collections.py
+Library                     OperatingSystem.py
+Library                     String.py
+
+* Variable
+${arista_ixia_interface_s2}                 Ethernet1
+${arista_as5710_10G_port_range}             21-44
+${arista_as5710_10G_pc_number}              1
+${arista_as5710_portchannel_interface}      Port-Channel 1
+
+${as5710_arista_pc_name}                 port-channel1
+${policy_name_1}                            TRAFFIC_POLICY
+${filter_1}                                 ethernet2
+${filter_nick_1}                            ixia-10-2
+${delivery_1}                               port-channel1
+${delivery_nick_1}                          pc_delivery
+
+
+*Test Case
+TC001: Verify port-channel (hash-mode:L2) interface (1G links) is up on switch  
+    verify portchannel interface is up  s1  ${as5710_arista_pc_name}
+    [Tags]  sanity  feature
+
+TC002: Verify log messages are generated for link up/link down events for LAG interfaces
+    ${cintf_state1}=  cli disable interface  s1  ${as5710_arista_pc_name}
+    Should Be True  ${cintf_state1}
+    sleep  3
+    bash  node=s1  cmd=cat /var/log/ofad-debug | grep 'Disabling port port-channel1 (257)'
+    ${content1}=  bash_content  node=s1
+    ${number1}=  Get Count  ${content1}  Disabling port port-channel1 (257)
+    ${works1}=  Set Variable If  ${number1} > 1  True
+    Should be true  ${works1}
+    ${cintf_state2}=  cli enable interface  s1  ${as5710_arista_pc_name}
+    Should Be True  ${cintf_state2}
+    sleep  3
+    bash  node=s1  cmd=cat /var/log/ofad-debug | grep 'Enabling port port-channel1 (257)'
+    ${content2}=  bash_content  node=s1
+    ${number2}=  Get Count  ${content2}  Enabling port port-channel1 (257)
+    ${works2}=  Set Variable If  ${number2} > 1  True
+    Should be true  ${works2}
+    [Tags]  sanity  feature
+
+TC003: Verify basic RTAG3 hashing works
+    config  node=s1  cmd= hash l2 src-mac
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L2 add  name=atob  flow=a->b  src_mac=00:11:00:00:00:00  src_cnt=48  src_mac_step=00:00:00:01:00:00
+    ...  dst_mac=00:12:00:00:00:00  dst_cnt=1  dst_mac_step=00:00:00:00:00:00
+    ...  frame_rate=48000  frame_size=64  frame_cnt=480000
+    send and verify traffic rtag36
+    [Tags]  sanity  feature
+
+TC004: Verify basic RTAG6 hashing works
+    config  node=s1  cmd=port-channel ${arista_as5710_10G_pc_number} interface-list ${arista_as5710_10G_port_range} hash L3
+    ${content1}=  cli_content  node=s1
+    config  node=s1  cmd= hash ipv4 dst-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L3 add  name=atob  flow=a->b  frame_rate=48000  frame_size=128  frame_cnt=480000
+    ...  src_mac=00:11:01:01:01:01  dst_mac=00:10:01:01:01:01  no_arp=True
+    ...  src_cnt=1   src_ip=20.0.0.1  src_ip_step=0.0.0.0  src_gw=20.0.0.2  src_gw_step=0.0.0.1
+    ...  dst_cnt=48  dst_ip=20.0.0.2  dst_ip_step=0.0.0.1  dst_gw=20.0.0.1  dst_gw_step=0.0.0.0
+    send and verify traffic rtag36
+    [Tags]  sanity  feature
+    
+TC005: Verify basic RTAG7 hashing works
+    config  node=s1  cmd=port-channel ${arista_as5710_10G_pc_number} interface-list ${arista_as5710_10G_port_range} hash enhanced
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    config  node=s1  cmd=hash ipv4 src-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    config  node=s1  cmd=hash symmetric disable
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    sleep  2
+    ${stream}=  L3 add  name=atob  flow=a->b  frame_rate=48000  frame_size=128  frame_cnt=480000
+    ...  src_mac=00:11:01:01:01:01  dst_mac=00:10:01:01:01:01  no_arp=True
+    ...  src_cnt=1   src_ip=20.0.0.1  src_ip_step=0.0.0.0  src_gw=20.0.0.2  src_gw_step=0.0.0.1
+    ...  dst_cnt=48  dst_ip=20.0.0.2  dst_ip_step=0.0.0.1  dst_gw=20.0.0.1  dst_gw_step=0.0.0.0
+    #:FOR    ${port}  IN RANGE  3  99  2
+    #\   ${src_ip_value}=  Catenate  SEPARATOR=  100.1.1.  ${port}
+    #\   ${stream}=  L3 add  flow=a->b  frame_rate=1000  frame_size=128  frame_cnt=10000  no_arp=True
+    #\   ...     src_mac=00:11:00:00:00:00  src_mac_step=00:00:00:00:00:00
+    #\   ...     src_ip=${src_ip_value}  src_ip_step=0.0.0.0  src_cnt=1  src_gw_prefix=24  src_gw=100.1.1.1  src_gw_step=0.0.0.0
+    #\   ...     dst_mac=00:12:00:00:00:00  dst_mac_step=00:00:00:00:00:00
+    #\   ...     dst_ip=100.1.1.1  dst_ip_step=0.0.0.0  dst_cnt=1  dst_gw_prefix=24  dst_gw=${src_ip_value}  dst_gw_step=0.0.0.0
+    #\   ...     name=atob_l4_dst_port
+    clear stats  
+    cli execute command  s1  clear interface statistics
+    start traffic    
+    sleep  10
+    stop traffic
+    sleep  2
+    config  node=s1  cmd=hash symmetric
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  transmitted_frames
+    ${rx_value}=  verify dict key  ${report}  b  received_valid_frames
+    ${in_range_0}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
+    Should be true  ${in_range_0}
+    ${in_range_1}=  ixia verify traffic rate  ${tx_value}  480000  50
+    Should be true  ${in_range_1}
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value}  480000  50
+    Should be true  ${in_range_2}
+    [Tags]  sanity  feature
+
+TC006: Verify SNMP OID ifDescr of port-channel
+    config  node=s1  cmd=port-channel ${arista_as5710_10G_pc_number} interface-list ${arista_as5710_10G_port_range} hash enhanced
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${snmp_key}=  snmp cmd  s1  snmpget  public  ifDescr.1129
+    Should Contain   ${snmp_key}   port-channel1
+    [Tags]  sanity  feature
+
+TC007: Verify SNMP OID ifType of port-channel
+    config  node=s1  cmd=port-channel ${arista_as5710_10G_pc_number} interface-list ${arista_as5710_10G_port_range} hash enhanced
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${snmp_key}=  snmp cmd  s1  snmpget  public  ifType.1129
+    Should Contain   ${snmp_key}   ethernetCsmacd
+    [Tags]  sanity  feature
+    
+TC008: Verify SNMP OID ifAdminStatus of port-channel
+    config  node=s1  cmd=port-channel ${arista_as5710_10G_pc_number} interface-list ${arista_as5710_10G_port_range} hash enhanced
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${snmp_key}=  snmp cmd  s1  snmpget  public  ifAdminStatus.1129
+    Should Contain   ${snmp_key}   up
+    [Tags]  sanity  feature
+
+TC009: Verify SNMP OID ifOperStatus of port-channel
+    config  node=s1  cmd=port-channel ${arista_as5710_10G_pc_number} interface-list ${arista_as5710_10G_port_range} hash enhanced
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${snmp_key}=  snmp cmd  s1  snmpget  public  ifOperStatus.1129
+    Should Contain   ${snmp_key}   up
+    [Tags]  sanity  feature
+
+TC010: Verify SNMP OID ifSpeed of port-channel
+    config  node=s1  cmd=port-channel ${arista_as5710_10G_pc_number} interface-list ${arista_as5710_10G_port_range} hash enhanced
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${snmp_key}=  snmp cmd  s1  snmpget  public  ifSpeed.1129
+    Should Contain   ${snmp_key}   4294967295
+    [Tags]  sanity  feature
+
+TC011: Verify SNMP OID ifHighSpeed of port-channel
+    config  node=s1  cmd=port-channel ${arista_as5710_10G_pc_number} interface-list ${arista_as5710_10G_port_range} hash enhanced
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${snmp_key}=  snmp cmd  s1  snmpget  public  ifHighSpeed.1129
+    Should Contain   ${snmp_key}   240000
+    [Tags]  sanity  feature
+
+TC012: Verify SNMP OID ifHighSpeed of port-channel
+    config  node=s1  cmd=port-channel ${arista_as5710_10G_pc_number} interface-list ${arista_as5710_10G_port_range} hash enhanced
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${mac_address1}=  cli show interface macaddress  s1  port-channel1
+    ${my_mac_address}=  strip character from string  ${mac_address1}  ${0}  blank
+    ${snmp_key}=  snmp cmd  s1  snmpget  public  ifPhysAddress.1129
+    Should Contain   ${snmp_key}   ${my_mac_address}
+    [Tags]  sanity  feature
+
+TC013: Restart process OFAD and verify LAG interface shows up correctly
+    verify portchannel interface is up  s1  ${as5710_arista_pc_name}
+    bash restart process  s1  ofad
+    Sleep  120
+    verify portchannel interface is up  s1  ${as5710_arista_pc_name}
+    [Tags]  sanity  feature  runthis
+
+TC014: Save running-config to startup-config. Reboot switch and verify that LAG interface comes up correctly.
+    verify portchannel interface is up  s1  ${as5710_arista_pc_name}
+    config  node=s1  cmd=copy running-config startup-config
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    cli restart switch  s2
+    Sleep  120
+    verify portchannel interface is up  s1  ${as5710_arista_pc_name}
+    [Tags]  sanity  feature  runthis
+    
+* Keywords  
+lag suite setup
+    base suite setup
+    rest enable feature  full-match
+    ${as5710_lag_10G}=  cli add portchannel  s1  ${arista_as5710_10G_pc_number}   ${arista_as5710_10G_port_range}  L2
+    Should be true  ${as5710_lag_10G}
+    config  node=s2  cmd=interface ${arista_ixia_interface_s2}
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=switchport
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=exit
+    config  node=s2  cmd=interface ${arista_as5710_portchannel_interface}
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=switchport
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=switchport mode trunk
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=switchport trunk allowed vlan all
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=exit
+    config  node=s2  cmd=interface Ethernet ${arista_as5710_10G_port_range}
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=shutdown
+    sleep  2
+    config  node=s2  cmd=no shutdown
+    config  node=s2  cmd=channel-group ${arista_as5710_10G_pc_number} mode on
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=exit
+    sleep  2
+    rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}
+    rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
+    rest add policy  admin-view  ${policy_name_1}  forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${filter_nick_1}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${delivery_nick_1}  delivery
+    Should Not Contain  ${content1}  Error
+    config  node=s1  cmd=snmp-server community ro public
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    config  node=s1  cmd=snmp-server enable
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    Sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+
+lag test setup
+    ${result1}=  write version to file
+    Should be true  ${result1}
+    ${result2}=  start syslog monitor
+    Should be true  ${result2}
+
+send and verify traffic rtag36
+    clear stats  
+    cli execute command  s1  clear interface statistics
+    config  node=s2  cmd=clear counters
+    start traffic    
+    sleep  10
+    stop traffic
+    sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  transmitted_frames
+    ${rx_value}=  verify dict key  ${report}  b  received_valid_frames
+    ${in_range_0}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
+    Should be true  ${in_range_0}
+    ${in_range_1}=  ixia verify traffic rate  ${tx_value}  480000  50
+    Should be true  ${in_range_1}
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value}  480000  50
+    Should be true  ${in_range_2}
+    ${member1_s1}=  cli return member interface stats  s1  1  ethernet21  tx
+    Should Not Be Equal As Integers  ${member1_s1}  0
+    Should Be Equal As Integers      ${member1_s1}  20000
+    ${member2_s1}=  cli return member interface stats  s1  1  ethernet22  tx
+    Should Not Be Equal As Integers  ${member2_s1}  0
+    Should Be Equal As Integers      ${member2_s1}  20000
+    ${member3_s1}=  cli return member interface stats  s1  1  ethernet23  tx
+    Should Not Be Equal As Integers  ${member3_s1}  0
+    Should Be Equal As Integers      ${member3_s1}  20000
+    ${member4_s1}=  cli return member interface stats  s1  1  ethernet24  tx
+    Should Not Be Equal As Integers  ${member4_s1}  0
+    Should Be Equal As Integers      ${member4_s1}  20000
+    ${member5_s1}=  cli return member interface stats  s1  1  ethernet25  tx
+    Should Not Be Equal As Integers  ${member5_s1}  0
+    Should Be Equal As Integers      ${member5_s1}  20000
+    ${member6_s1}=  cli return member interface stats  s1  1  ethernet26  tx
+    Should Not Be Equal As Integers  ${member6_s1}  0
+    Should Be Equal As Integers      ${member6_s1}  20000
+    ${member7_s1}=  cli return member interface stats  s1  1  ethernet27  tx
+    Should Not Be Equal As Integers  ${member7_s1}  0
+    Should Be Equal As Integers      ${member7_s1}  20000
+    ${member8_s1}=  cli return member interface stats  s1  1  ethernet28  tx
+    Should Not Be Equal As Integers  ${member8_s1}  0
+    Should Be Equal As Integers      ${member8_s1}  20000
+    ${member9_s1}=  cli return member interface stats  s1  1  ethernet29  tx
+    Should Not Be Equal As Integers  ${member9_s1}  0
+    Should Be Equal As Integers      ${member9_s1}  20000
+    ${member10_s1}=  cli return member interface stats  s1  1  ethernet30  tx
+    Should Not Be Equal As Integers  ${member10_s1}  0
+    Should Be Equal As Integers      ${member10_s1}  20000
+    ${member11_s1}=  cli return member interface stats  s1  1  ethernet31  tx
+    Should Not Be Equal As Integers  ${member11_s1}  0
+    Should Be Equal As Integers      ${member11_s1}  20000
+    ${member12_s1}=  cli return member interface stats  s1  1  ethernet32  tx
+    Should Not Be Equal As Integers  ${member12_s1}  0
+    Should Be Equal As Integers      ${member12_s1}  20000
+    ${member13_s1}=  cli return member interface stats  s1  1  ethernet33  tx
+    Should Not Be Equal As Integers  ${member13_s1}  0
+    Should Be Equal As Integers      ${member13_s1}  20000
+    ${member14_s1}=  cli return member interface stats  s1  1  ethernet34  tx
+    Should Not Be Equal As Integers  ${member14_s1}  0
+    Should Be Equal As Integers      ${member14_s1}  20000
+    ${member15_s1}=  cli return member interface stats  s1  1  ethernet35  tx
+    Should Not Be Equal As Integers  ${member15_s1}  0
+    Should Be Equal As Integers      ${member15_s1}  20000
+    ${member16_s1}=  cli return member interface stats  s1  1  ethernet36  tx
+    Should Not Be Equal As Integers  ${member16_s1}  0
+    Should Be Equal As Integers      ${member16_s1}  20000
+    ${member17_s1}=  cli return member interface stats  s1  1  ethernet37  tx
+    Should Not Be Equal As Integers  ${member17_s1}  0
+    Should Be Equal As Integers      ${member17_s1}  20000
+    ${member18_s1}=  cli return member interface stats  s1  1  ethernet38  tx
+    Should Not Be Equal As Integers  ${member18_s1}  0
+    Should Be Equal As Integers      ${member18_s1}  20000
+    ${member19_s1}=  cli return member interface stats  s1  1  ethernet39  tx
+    Should Not Be Equal As Integers  ${member19_s1}  0
+    Should Be Equal As Integers      ${member19_s1}  20000
+    ${member20_s1}=  cli return member interface stats  s1  1  ethernet40  tx
+    Should Not Be Equal As Integers  ${member20_s1}  0
+    Should Be Equal As Integers      ${member20_s1}  20000
+    ${member21_s1}=  cli return member interface stats  s1  1  ethernet41  tx
+    Should Not Be Equal As Integers  ${member21_s1}  0
+    Should Be Equal As Integers      ${member21_s1}  20000
+    ${member22_s1}=  cli return member interface stats  s1  1  ethernet42  tx
+    Should Not Be Equal As Integers  ${member22_s1}  0
+    Should Be Equal As Integers      ${member22_s1}  20000
+    ${member23_s1}=  cli return member interface stats  s1  1  ethernet43  tx
+    Should Not Be Equal As Integers  ${member23_s1}  0
+    Should Be Equal As Integers      ${member23_s1}  20000
+    ${member24_s1}=  cli return member interface stats  s1  1  ethernet44  tx
+    Should Not Be Equal As Integers  ${member24_s1}  0
+    Should Be Equal As Integers      ${member24_s1}  20000
+    
+verify portchannel interface is up  [Arguments]  ${switch}  ${interface_name}  
+    ${inft_state}=  cli show interface state  ${switch}  ${interface_name}
+    Should Contain  ${inft_state}  up
+    ${cintf_state}=  rest verify interface is up  ${switch}  ${interface_name}
+    Should Be True  ${cintf_state}
+
+lag test teardown
+    ${result1}=  stop syslog monitor
+    Should be true  ${result1}
+
+lag suite teardown
+    config  node=s1  cmd=no snmp-server community ro public
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    config  node=s1  cmd=no snmp-server enable
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    rest delete policy  admin-view  ${policy_name_1}
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_nick_1} 
+    rest delete interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
+    rest delete interface  s1  ${filter_1}
+    rest delete interface  s1  ${delivery_1}
+    cli delete portchannel  s1  ${arista_as5710_10G_pc_number}
+    config  node=s2  cmd=no interface ${arista_as5710_portchannel_interface}
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    rest delete switch  s1
+    base suite teardown
