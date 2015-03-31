@@ -177,14 +177,55 @@ TC012: Verify SNMP OID ifHighSpeed of port-channel
     Should Contain   ${snmp_key}   ${my_mac_address}
     [Tags]  sanity  feature
 
-TC013: Restart process OFAD and verify LAG interface shows up correctly
+TC014: Disable one member interface from remote end and verify traffoc (PAN-1675)
+    config  node=s1  cmd=port-channel ${arista_as5710_10G_pc_number} interface-list ${arista_as5710_10G_port_range} hash L3
+    ${content1}=  cli_content  node=s1
+    config  node=s1  cmd= hash ipv4 dst-ip
+    ${content1}=  cli_content  node=s1
+    Should Not Contain  ${content1}  Error
+    ${stream}=  L3 add  name=atob  flow=a->b  frame_rate=48000  frame_size=128  frame_cnt=480000
+    ...  src_mac=00:11:01:01:01:01  dst_mac=00:10:01:01:01:01  no_arp=True
+    ...  src_cnt=1   src_ip=20.0.0.1  src_ip_step=0.0.0.0  src_gw=20.0.0.2  src_gw_step=0.0.0.1
+    ...  dst_cnt=48  dst_ip=20.0.0.2  dst_ip_step=0.0.0.1  dst_gw=20.0.0.1  dst_gw_step=0.0.0.0
+    send and verify traffic rtag36
+    config  node=s2  cmd=interface Ethernet 25
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=shutdown
+    ${content2}=  cli_content  node=s2
+    Should Not Contain  ${content2}  Error
+    sleep  5
+    clear stats  
+    cli execute command  s1  clear interface statistics
+    config  node=s2  cmd=clear counters
+    start traffic
+    sleep  10
+    stop traffic
+    sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  transmitted_frames
+    ${rx_value}=  verify dict key  ${report}  b  received_valid_frames
+    ${in_range_0}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  50
+    Should be true  ${in_range_0}
+    ${in_range_1}=  ixia verify traffic rate  ${tx_value}  480000  50
+    Should be true  ${in_range_1}
+    ${in_range_2}=  ixia verify traffic rate  ${rx_value}  480000  50
+    Should be true  ${in_range_2}
+    config  node=s2  cmd=no shutdown
+    ${content2}=  cli_content  node=s2
+    Should Not Contain  ${content2}  Error
+    sleep  5
+    send and verify traffic rtag36
+    [Tags]  negative  feature  runthis
+    
+TC014: Restart process OFAD and verify LAG interface shows up correctly
     verify portchannel interface is up  s1  ${as5710_arista_pc_name}
     bash restart process  s1  ofad
     Sleep  120
     verify portchannel interface is up  s1  ${as5710_arista_pc_name}
-    [Tags]  sanity  feature  runthis
+    [Tags]  full  ha
 
-TC014: Save running-config to startup-config. Reboot switch and verify that LAG interface comes up correctly.
+TC015: Save running-config to startup-config. Reboot switch and verify that LAG interface comes up correctly.
     verify portchannel interface is up  s1  ${as5710_arista_pc_name}
     config  node=s1  cmd=copy running-config startup-config
     ${content1}=  cli_content  node=s1
@@ -192,7 +233,7 @@ TC014: Save running-config to startup-config. Reboot switch and verify that LAG 
     cli restart switch  s2
     Sleep  120
     verify portchannel interface is up  s1  ${as5710_arista_pc_name}
-    [Tags]  sanity  feature  runthis
+    [Tags]  full  ha
     
 * Keywords  
 lag suite setup
@@ -200,6 +241,9 @@ lag suite setup
     rest enable feature  full-match
     ${as5710_lag_10G}=  cli add portchannel  s1  ${arista_as5710_10G_pc_number}   ${arista_as5710_10G_port_range}  L2
     Should be true  ${as5710_lag_10G}
+    config  node=s2  cmd=interface Ethernet 1-52
+    config  node=s2  cmd=no switchport
+    config  node=s2  cmd=vlan 1
     config  node=s2  cmd=interface ${arista_ixia_interface_s2}
     ${content1}=  cli_content  node=s2
     Should Not Contain  ${content1}  Error
@@ -252,7 +296,7 @@ lag suite setup
     config  node=s1  cmd=snmp-server enable
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
-    Sleep  10
+    Sleep  20
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
 
@@ -363,6 +407,12 @@ lag test teardown
     Should be true  ${result1}
 
 lag suite teardown
+    config  node=s2  cmd=interface Ethernet 25
+    ${content1}=  cli_content  node=s2
+    Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=no shutdown
+    ${content2}=  cli_content  node=s2
+    Should Not Contain  ${content2}  Error
     config  node=s1  cmd=no snmp-server community ro public
     ${content1}=  cli_content  node=s1
     Should Not Contain  ${content1}  Error
@@ -378,5 +428,7 @@ lag suite teardown
     config  node=s2  cmd=no interface ${arista_as5710_portchannel_interface}
     ${content1}=  cli_content  node=s2
     Should Not Contain  ${content1}  Error
+    config  node=s2  cmd=interface Ethernet 1-52
+    config  node=s2  cmd=no switchport
     rest delete switch  s1
     base suite teardown
