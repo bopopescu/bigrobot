@@ -1,0 +1,185 @@
+== T5 Functional Openstack Integration work flow test ==
+
+* Setting
+Documentation    T5 BVS APP Functional Openstack integration vm instance flow test suite
+Suite Setup      T5 Functional Suite Setup
+Suite Teardown   T5 Functional Suite Teardown
+Test Setup       T5 base test setup
+Test Teardown    T5 base test teardown
+Force Tags       T5  IronHorse  feature 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Platform.py
+Library	         keywords/SwitchLight.py
+Library	         keywords/Host.py
+Library          keywords/T5Openstack.py
+Library			 Collections.py
+Resource		 testsuites/T5/t5_physical_variables.txt
+Resource         testsuites/T5/t5_openstack_variables.txt
+
+* Variables
+
+${ext_gateway}  192.168.4.1
+${h1_tag_ip}  192.168.4.0
+${source_intf}  bond0.10
+
+* Test Case 
+	   
+add/delete floating IP to a VM in single tenant
+	[Tags]   openstack
+	${tenant}=  openstack_show_tenant  t5test
+	openstack source  keystonerc_t5test
+	openstack add router gw  t5test-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
+    Should Be True  ${loss} < 20               
+	openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
+    Should Be True  ${loss} == 100
+    openstack delete router gw  t5test-r1
+    openstack nova floating ip delete
+
+add/delete floating IP to a VM in multiple tenants 
+	[Tags]   openstack
+	${tenant}=  openstack_show_tenant  t5test
+	openstack source  keystonerc_t5test
+	openstack add router gw  t5test-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
+    Should Be True  ${loss} < 20               
+	${tenant1}=  openstack_show_tenant  t5test1
+	openstack source  keystonerc_t5test1
+	openstack add router gw  t5test1-r1  external
+	sleep  5
+	${inst_ip1}=  openstack show instance ip  web-inst1  web
+	openstack nova floating ip create  external
+	${floating_ip1}=  openstack get floating ip
+	openstack nova floating ip associate  web-inst1
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
+    Should Be True  ${loss} < 20               
+	openstack nova floating ip disassociate  web-inst1  web
+	sleep  5
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
+    Should Be True  ${loss} == 100
+    openstack nova floating ip delete
+    openstack delete router gw  t5test1-r1
+    openstack source  keystonerc_t5test
+    openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
+    Should Be True  ${loss} == 100
+    openstack nova floating ip delete
+    openstack delete router gw  t5test-r1
+
+add/delete floating IP to a VM after controller failover
+	[Tags]  oopenstack
+	${tenant}=  openstack_show_tenant  t5test
+	openstack source  keystonerc_t5test
+	openstack add router gw  t5test-r1  external
+	sleep  5
+	${inst_ip}=  openstack show instance ip  app-inst1  app
+	openstack nova floating ip create  external
+	${floating_ip}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst1
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
+    Should Be True  ${loss} < 20               
+	cli verify cluster master reboot
+	${inst_ip1}=  openstack show instance ip  app-inst2  app
+	openstack nova floating ip create  external
+	${floating_ip1}=  openstack get floating ip
+	openstack nova floating ip associate  app-inst2
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
+    Should Be True  ${loss} < 20
+	openstack nova floating ip disassociate  app-inst1  app
+	sleep  5
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
+    Should Be True  ${loss} == 100
+    openstack nova floating ip disassociate  app-inst2  app
+	sleep  5
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
+    Should Be True  ${loss} == 100
+    openstack nova floating ip delete
+    openstack delete router gw  t5test-r1
+	
+* keywords
+T5 Functional Suite Setup
+	base suite setup
+	rest add portgroup  p1 
+    rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
+    rest add interface to portgroup  leaf0-b  ${h1_intf1}  p1
+    rest add portgroup lacp  p1
+  	openstack source  keystonerc_admin
+  	openstack add tenant  t5test
+  	openstack add tenant  t5test1
+  	openstack add user  t5test  t5test  t5test  t5test@t5test.com
+  	openstack add user  t5test1  t5test1  t5test1  t5test1@t5test1.com
+  	openstack add net  t5test  app
+	openstack add subnet  t5test  app  app  30.0.0.0/24
+	openstack add net external  external  physnet1  3999
+	openstack add subnet external  external  external  ${ext_gateway}  ${h1_tag_ip}/24
+	openstack add router  t5test  t5test-r1
+	openstack add subnet to router  t5test-r1  app
+	openstack add net  t5test1  web
+	openstack add subnet  t5test1  web  web  31.0.0.0/24
+	openstack add router  t5test1  t5test1-r1
+	openstack add subnet to router  t5test1-r1  web
+	openstack source  keystonerc_t5test
+	openstack add secrule icmp  default
+	openstack add instance  cirros  app  app-inst1
+	openstack add instance  cirros  app  app-inst2
+	openstack source  keystonerc_t5test1
+	openstack add secrule icmp  default
+	openstack add instance  cirros  web  web-inst1
+	openstack source  keystonerc_admin
+	${tenant}=  openstack_show_tenant  admin  
+	${segment}=  openstack show external network  external 
+	rest add portgroup to vns  ${tenant}  ${segment}  p1  10 
+	sleep  40
+  	
+T5 Functional Suite Teardown
+	openstack source  keystonerc_t5test
+	openstack delete instance  app-inst1
+	openstack delete instance  app-inst2
+	openstack delete subnet to router  t5test-r1  app
+	openstack delete router gw  t5test-r1
+	openstack delete router  t5test-r1
+	openstack delete net  app
+	openstack source  keystonerc_t5test1
+	openstack delete instance  web-inst1
+	openstack delete subnet to router  t5test1-r1  web
+	openstack delete router gw  t5test1-r1
+	openstack delete router  t5test1-r1
+	openstack delete net  web
+	openstack source  keystonerc_admin
+	openstack delete net  external
+	openstack delete tenant  t5test
+	openstack delete user  t5test
+	openstack delete tenant  t5test1
+	openstack delete user  t5test1
+    rest delete portgroup  p1
+	base suite teardown
+	
+T5 base test setup
+	base test setup
+	openstack source  keystonerc_admin
+	
+T5 base test teardown
+	openstack source  keystonerc_t5test
+	openstack nova floating ip disassociate  app-inst1  app
+	openstack nova floating ip disassociate  app-inst2  app
+    openstack nova floating ip delete
+	openstack delete router gw  t5test-r1
+    openstack source  keystonerc_t5test1
+	openstack nova floating ip disassociate  web-inst1  web
+    openstack nova floating ip delete
+	openstack delete router gw  t5test1-r1
+	base test teardown

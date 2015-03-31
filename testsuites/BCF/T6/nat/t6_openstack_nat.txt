@@ -26,6 +26,7 @@ ${start_ip}  192.168.4.15
 ${end_ip}  192.168.4.100
 ${ext_gateway}  192.168.4.5
 ${h1_tag_ip}  192.168.4.0
+${source_intf}  eth4
 
 * Test Case 
 
@@ -101,16 +102,16 @@ T6 Openstack nat floating IP assign and ping
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip}
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20               
 	openstack nova floating ip disassociate  app-inst1  app
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} == 100
-    openstack delete router gw  red-r1
     openstack nova floating ip delete
+    openstack delete router gw  red-r1
 	
 T6 Openstack nat floating IP move to different endpoint 
 	[Tags] 
@@ -129,26 +130,26 @@ T6 Openstack nat floating IP move to different endpoint
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20               
 	openstack nova floating ip disassociate  app-inst1  app
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} == 100
     openstack nova floating ip associate  app-inst2
     sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst1_ip}
     Should be True  ${result}
-    ${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+    ${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20
     openstack nova floating ip disassociate  app-inst2  app
     sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst1_ip} 
 	Should not be True  ${result}
+    openstack nova floating ip delete
     openstack delete router gw  red-r1
-    openstack nova floating ip delete  
 
 T6 Openstack nat multiple floating IP assign on same tenant
 	[Tags]  
@@ -166,7 +167,7 @@ T6 Openstack nat multiple floating IP assign on same tenant
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20               
 	${inst1_ip}=  openstack show instance ip  app-inst2  app
 	openstack nova floating ip create  external
@@ -175,22 +176,22 @@ T6 Openstack nat multiple floating IP assign on same tenant
 	sleep  5
 	${result1}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip1}  ${inst1_ip} 
 	Should be True  ${result1}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} < 20          
 	openstack nova floating ip disassociate  app-inst1  app
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} == 100
     openstack nova floating ip disassociate  app-inst2  app
     sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip1}  ${inst1_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} == 100
+    openstack nova floating ip delete
     openstack delete router gw  red-r1
-    openstack nova floating ip delete 
 
 T6 Openstack nat multiple floating IP assign on different tenant
 	[Tags] 
@@ -208,16 +209,16 @@ T6 Openstack nat multiple floating IP assign on different tenant
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20               
 	openstack nova floating ip disassociate  app-inst1  app
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} == 100
-    openstack delete router gw  red-r1
     openstack nova floating ip delete
+    openstack delete router gw  red-r1
     ${tenant1}=  openstack_show_tenant  blue
 	openstack source  keystonerc_blue
 	openstack add router gw  blue-r1  external
@@ -232,16 +233,16 @@ T6 Openstack nat multiple floating IP assign on different tenant
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} < 20               
 	openstack nova floating ip disassociate  web-inst1  web
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} == 100
+    openstack nova floating ip delete
     openstack delete router gw  blue-r1
-    openstack nova floating ip delete  
 	
 T6 Openstack nat multiple floating IP assign on different tenant controller failover
 	[Tags]   
@@ -259,7 +260,7 @@ T6 Openstack nat multiple floating IP assign on different tenant controller fail
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20               
 	${tenant1}=  openstack_show_tenant  blue
 	openstack source  keystonerc_blue
@@ -275,36 +276,36 @@ T6 Openstack nat multiple floating IP assign on different tenant controller fail
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} < 20         
 	cli verify cluster master reboot
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} < 20
 	openstack source  keystonerc_red
 	openstack nova floating ip disassociate  app-inst1  app
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} == 100
-    openstack delete router gw  red-r1
     openstack nova floating ip delete
+    openstack delete router gw  red-r1
     ${tenant1}=  openstack_show_tenant  blue
 	openstack source  keystonerc_blue
 	openstack nova floating ip disassociate  web-inst1  web
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} == 100
+    openstack nova floating ip delete
     openstack delete router gw  blue-r1
-    openstack nova floating ip delete  
 	
 T6 Openstack nat creation/deletion multiple tenants controller failover
 	[Tags]  
@@ -322,16 +323,16 @@ T6 Openstack nat creation/deletion multiple tenants controller failover
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20               
 	openstack nova floating ip disassociate  app-inst1  app
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} == 100
-    openstack delete router gw  red-r1
     openstack nova floating ip delete
+    openstack delete router gw  red-r1
     cli verify cluster master reboot
     ${tenant1}=  openstack_show_tenant  blue
 	openstack source  keystonerc_blue
@@ -347,17 +348,17 @@ T6 Openstack nat creation/deletion multiple tenants controller failover
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} < 20               
 	openstack nova floating ip disassociate  web-inst1  web
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} == 100
-    openstack delete router gw  blue-r1
     openstack nova floating ip delete
-	
+    openstack delete router gw  blue-r1
+
 T6 Nat and floating IP sync test
 	[Tags] 
 	${tenant}=  openstack_show_tenant  red
@@ -374,7 +375,7 @@ T6 Nat and floating IP sync test
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20               
 	${tenant1}=  openstack_show_tenant  blue
 	openstack source  keystonerc_blue
@@ -390,38 +391,38 @@ T6 Nat and floating IP sync test
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} < 20         
 	rest delete tenant  ${tenant}
 	rest delete tenant  ${tenant1}
 	sleep  70  
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} < 20
 	openstack source  keystonerc_red
 	openstack nova floating ip disassociate  app-inst1  app
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} == 100
-    openstack delete router gw  red-r1
     openstack nova floating ip delete
+    openstack delete router gw  red-r1
     ${tenant1}=  openstack_show_tenant  blue
 	openstack source  keystonerc_blue
 	openstack nova floating ip disassociate  web-inst1  web
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} == 100
+    openstack nova floating ip delete     
     openstack delete router gw  blue-r1
-    openstack nova floating ip delete      
 	
 T6 Nat/PAT sync test after controller failover
 	[Tags]  
@@ -439,7 +440,7 @@ T6 Nat/PAT sync test after controller failover
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20               
 	${tenant1}=  openstack_show_tenant  blue
 	openstack source  keystonerc_blue
@@ -455,7 +456,7 @@ T6 Nat/PAT sync test after controller failover
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} < 20         
 	cli verify cluster master reboot 
 	rest delete tenant  ${tenant}
@@ -463,31 +464,31 @@ T6 Nat/PAT sync test after controller failover
 	sleep  70  
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} < 20
 	openstack source  keystonerc_red
 	openstack nova floating ip disassociate  app-inst1  app
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} == 100
-    openstack delete router gw  red-r1
     openstack nova floating ip delete
+    openstack delete router gw  red-r1
     ${tenant1}=  openstack_show_tenant  blue
 	openstack source  keystonerc_blue
 	openstack nova floating ip disassociate  web-inst1  web
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant1}  ${nat1}  ${floating_ip1}  ${inst1_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip1}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip1}  source_if=${source_intf}
     Should Be True  ${loss} == 100
-    openstack delete router gw  blue-r1
     openstack nova floating ip delete
+    openstack delete router gw  blue-r1
     
 T6 Nat and PAT in a single tenant
 	[Tags]  skipped
@@ -507,16 +508,16 @@ T6 Nat and PAT in a single tenant
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} < 20               
 	openstack nova floating ip disassociate  app-inst1  app
 	sleep  5
 	${result}=  rest verify floating ip  ${tenant}  ${nat}  ${floating_ip}  ${inst_ip} 
 	Should not be True  ${result}
-	${loss}=  bash ping  h1  ${floating_ip}  source_if=eth4
+	${loss}=  bash ping  h1  ${floating_ip}  source_if=${source_intf}
     Should Be True  ${loss} == 100
+    openstack nova floating ip delete
     openstack delete router gw  red-r1
-    openstack nova floating ip delete  
 	
 T6 delete all network router interface except router and check the tenant is not deleted from BCF
 	[Tags]
@@ -576,10 +577,10 @@ T6 Functional Suite Teardown
 	openstack delete net  app
 	openstack source  keystonerc_blue
 	openstack delete instance  web-inst1
-	openstack delete subnet to router  blue-r1  app
+	openstack delete subnet to router  blue-r1  web
 	openstack delete router gw  blue-r1
 	openstack delete router  blue-r1
-	openstack delete net  blue
+	openstack delete net  web
 	openstack source  keystonerc_admin
 	openstack delete net  external
 	openstack delete tenant  red
@@ -597,10 +598,10 @@ T6 base test teardown
 	openstack source  keystonerc_red
 	openstack nova floating ip disassociate  app-inst1  app
 	openstack nova floating ip disassociate  app-inst2  app
-	openstack delete router gw  red-r1
     openstack nova floating ip delete
+	openstack delete router gw  red-r1
     openstack source  keystonerc_blue
 	openstack nova floating ip disassociate  web-inst1  web
-	openstack delete router gw  blue-r1
     openstack nova floating ip delete
+	openstack delete router gw  blue-r1
 	base test teardown
