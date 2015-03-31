@@ -216,7 +216,7 @@ TC014: Disable one member interface from remote end and verify traffoc (PAN-1675
     Should Not Contain  ${content2}  Error
     sleep  5
     send and verify traffic rtag36
-    [Tags]  negative  feature  runthis
+    [Tags]  negative  feature
     
 TC014: Restart process OFAD and verify LAG interface shows up correctly
     verify portchannel interface is up  s1  ${as5710_arista_pc_name}
