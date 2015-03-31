@@ -473,14 +473,18 @@ class T6(object):
         data = c.rest.content()
         for i in range(0, len(data)):
             if data[i]["logical-router"] == tenant and data[i]["nat-profile"] == nat_profile:
-                if data[i]["floating-ip"] == public_ip and data[i]["private-ip"] == private_ip and data[i]["state"] == "active":
+                if data[i]["private-ip"] == private_ip:
+                    if data[i]["floating-ip"] == public_ip and data[i]["state"] == "active":
                         helpers.log("given floating ip is applied to tenant logical router and status is active")
                         return True
-                else:
+                    else:
                         helpers.log("given floating ip is not active")
                         return False
+                else:
+                    continue
             else:
                 continue
+        return True
             
     def rest_delete_floating_ip(self, tenant, nat_profile, public_ip):
         '''Function to delete floating IP from nat-profile
