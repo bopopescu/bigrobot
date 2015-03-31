@@ -2328,6 +2328,7 @@ class BsnCommon(object):
         if match:
             id_string = match.group(1)
         return id_string
+
     def pretty_log(self, *args, **kwargs):
         """
         To print out a Python data structure, consider using this keyword.
@@ -2339,3 +2340,11 @@ class BsnCommon(object):
         | pretty log | ${data} | format_newline=${false} | Pretty print data structure, preserve \n in result |
         """
         helpers.pretty_log(*args, **kwargs)
+
+    def get_time_now_in_utc_format(self):
+        """
+        Objective:
+        Return the current time in UTC format, e.g., "2013-09-26T15:57:49.123Z"
+        """
+        return helpers.ts_long()
+
