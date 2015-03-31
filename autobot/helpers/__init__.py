@@ -1349,9 +1349,55 @@ def ts_logger():
     return local_datetime.strftime("%Y%m%d %H:%M:%S.%f")[:-3]
 
 
+def ts_str_to_secs(ts_str, utc=True, output_format="float"):
+    """
+    Description:
+      Take an input which is a string timestamp and convert it to localtime
+      format in float or string.
+       
+    Options:
+      @param ts_str: (Str) timestamp string, e.g., "2013-09-26T15:57:49.123Z"
+                           or "2013-09-26T15:57:49.123"
+      @param utc: (Bool) hour offset relative to UTC. E.g.,
+                            0 = UTC (default)
+                           -8 = Localtime (e.g., Pacific Time)
+      @param output_format: (Str) "float" (default, time.time() format or "string" timestamp format)
+
+    Example:
+      utc_time_in_secs1 = helpers.ts_str_to_secs(helpers.ts_long())   # current timestamp in UTC time
+      utc_time_in_secs2 = helpers.ts_str_to_secs(helpers.ts_long_local(), utc=False)  # current timestamp in local time (Pacific Time)
+
+      print("utc_time_in_secs1 : %s" % (utc_time_in_secs1))  # >>> utc_time_in_secs1 : 1427808955.0
+      print("utc_time_in_secs2 : %s" % (utc_time_in_secs2))  # >>> utc_time_in_secs2 : 1427808955.0
+      
+    Return value:
+      (Float) 1380236269.0
+         Note: This is the time in seconds since the epoch as a floating point
+               number, like result of time.time().
+    or
+      (String) "2015-03-30-23:44:02"
+    """
+    date_fmt = "%Y-%m-%dT%H:%M:%S.%f"
+    offset_secs = 0
+    if utc == True:
+        offset = time.timezone if (time.localtime().tm_isdst == 0) else time.altzone
+        offset = offset / 60 / 60 * -1
+        offset_secs = offset * 60 * 60
+    ts_str = ts_str.rstrip('Z')
+    date_obj = datetime.datetime.strptime(ts_str, date_fmt)
+    secs = time.mktime(date_obj.timetuple()) + float(offset_secs)  # seconds as float
+
+    if output_format == "float":
+        return secs
+    elif output_format == "string":
+        return time.strftime('%Y-%m-%d-%H:%M:%S', time.localtime(secs))
+    return None
+
+
 def time_now():
     """
-    Return the current time.
+    Return the current time,
+    e.g., 1427777342.958587
     """
     return time.time()
 

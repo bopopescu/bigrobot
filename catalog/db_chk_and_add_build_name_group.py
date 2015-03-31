@@ -60,5 +60,5 @@ if __name__ == '__main__':
                                            createtime=args.createtime,
                                            updatetime=args.updatetime,
                                            quiet=not args.verbose)
-    if args.verbose: print "Doc: %s" % helpers.prettify(doc)
+    if args.verbose: print "Doc (before update): %s" % helpers.prettify(doc)
 
