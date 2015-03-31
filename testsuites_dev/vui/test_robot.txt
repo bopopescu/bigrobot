@@ -64,11 +64,21 @@ ${POLICY_BM0_IP}   None
 ${KW_COUNTER}      0
 
 * Test Cases
+Test Time UTC
+    #[Tags]           skipped
+    ${time_str1}=     get time now in utc format
+    sleep  5
+    ${time_str2}=     get time now in utc format
+    ${diff}=          time difference   ${time_str1}   ${time_str2}
+    Log    The difference between the time is ${diff} seconds
+
+
+
 Test var assignment
     [Documentation]  This is the long description for a test case.
     ...
     ...              This is line 2 for the test case long description.
-    #[Tags]           skipped
+    [Tags]           skipped
     variable assignment  ${123}
 
 Test run keyword if

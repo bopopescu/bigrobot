@@ -1424,4 +1424,9 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         c = t.node_spawn(h.ip())
         c.bash("uname -n")
 
+    def time_difference(self, time_str1, time_str2):
+        time1 = helpers.ts_str_to_secs(time_str1)
+        time2 = helpers.ts_str_to_secs(time_str2)
 
+        time_diff = int(time2) - int(time1)
+        return time_diff
