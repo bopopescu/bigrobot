@@ -56,8 +56,8 @@ if __name__ == '__main__':
     doc = db.find_and_add_build_name(args.build,
                                      regression_tags=args.regression_tags,
                                      quiet=not args.verbose)
-    if args.verbose: print "Doc: %s" % helpers.prettify(doc)
+    if args.verbose: print "Doc (before update): %s" % helpers.prettify(doc)
 
     doc = db.find_and_add_build_name_group(args.build, quiet=not args.verbose)
-    if args.verbose: print "Doc: %s" % helpers.prettify(doc)
+    if args.verbose: print "Doc (before update): %s" % helpers.prettify(doc)
 
