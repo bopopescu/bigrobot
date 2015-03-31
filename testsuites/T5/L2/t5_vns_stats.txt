@@ -1,7 +1,7 @@
 == T5 Functional L2  feature Test Suite ==
 
 * Setting
-Documentation    T5 BVS APP Functional VNS/Fabric Interface Stats Test suite
+Documentation    T5 BVS APP Functional segment/Fabric Interface Stats Test suite
 Suite Setup      T5 Functional Suite Setup
 Suite Teardown   T5 Functional Suite Teardown
 Test Setup       base test setup
@@ -31,27 +31,27 @@ add Single Leaf Three Rack setup
    rest verify fabric link
    Wait Until Keyword Succeeds   10 min  30 sec   rest verify fabric link common  6
 	
-verify show vns and tenant counters CLI output
+verify show segment and tenant counters CLI output
 	[Tags]  L2  feature  IronHorse    sanity
 	rest add tenant  t1
 	rest add vns  t1  v1	
-	${result}=  cli  c1  show vns v1 counter 
+	${result}=  cli  c1  show segment v1 counter 
 	Should Not be Empty  ${result}
 	${result}=  cli  c1  show tenant t1 counter  
 	Should Not be Empty  ${result}
-	${result}=  cli  c1  show tenant t1 vns v1 counter 
+	${result}=  cli  c1  show tenant t1 segment v1 counter 
 	Should Not be Empty  ${result}
 	rest delete tenant  t1
 
-verify show vns and tenant rate CLI output
+verify show segment and tenant rate CLI output
 	[Tags]  L2  feature  IronHorse   sanity
 	rest add tenant  t1
 	rest add vns  t1  v1	
-	${result}=  cli  c1  show vns v1 rate 
+	${result}=  cli  c1  show segment v1 rate 
 	Should Not be Empty  ${result}
 	${result}=  cli  c1  show tenant t1 rate  
 	Should Not be Empty  ${result}
-	${result}=  cli  c1  show tenant t1 vns v1 rate 
+	${result}=  cli  c1  show tenant t1 segment v1 rate 
 	Should Not be Empty  ${result}
 	rest delete tenant  t1
 	
@@ -59,11 +59,11 @@ verify CLI interface rx and tx counter output for all possible options
 	[Tags]  L2  feature  IronHorse   
 	rest add tenant  t1
 	rest add vns  t1  v1	
-	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} rx-counter  
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} counters incoming  
 	Should Not be Empty  ${result}
-	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} tx-counter   
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} counters outgoing   
 	Should Not be Empty  ${result}
-	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} stats-brief  
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} counters  
 	Should Not be Empty  ${result}
 	rest delete tenant  t1
 
@@ -71,9 +71,9 @@ verify CLI interface rx and tx rate output for all possible options
 	[Tags]  L2  feature  IronHorse   sanity
 	rest add tenant  t1
 	rest add vns  t1  v1	
-	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} rx-rate  
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} counters incoming 
 	Should Not be Empty  ${result}
-	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} tx-rate   
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} counters outgoing   
 	Should Not be Empty  ${result}
 	rest delete tenant  t1
 	
@@ -81,11 +81,11 @@ verify CLI switch interface rx and tx counter output for all possible options
 	[Tags]  L2  feature  IronHorse   sanity
 	rest add tenant  t1
 	rest add vns  t1  v1	
-	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} rx-counter  
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} counters incoming  
 	Should Not be Empty  ${result}
-	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} tx-counter   
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} counters outgoing   
 	Should Not be Empty  ${result}
-	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} stats-brief  
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} counters  
 	Should Not be Empty  ${result}
 	rest delete tenant  t1
 	
@@ -93,13 +93,13 @@ verify CLI switch interface rx and tx rate output for all possible options
 	[Tags]  L2  feature  IronHorse   sanity
 	rest add tenant  t1
 	rest add vns  t1  v1	
-	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} rx-rate  
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} counters incoming  
 	Should Not be Empty  ${result}
-	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} tx-rate   
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} counters outgoing 
 	Should Not be Empty  ${result}
 	rest delete tenant  t1
 	
-Verify single VNS rx/tx stats between rack
+Verify single segment rx/tx stats between rack
 	[Tags]  L2  feature  IronHorse      sanity    
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -127,7 +127,7 @@ Verify single VNS rx/tx stats between rack
     rest verify vns tx stats  t1  v1  10000
     rest delete tenant  t1
    
-Verify single VNS rx/tx stats within same rack
+Verify single segment rx/tx stats within same rack
 	[Tags]  L2  feature  IronHorse            
 	rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
@@ -162,7 +162,7 @@ Verify single VNS rx/tx stats within same rack
     rest delete tenant  t1
     sleep  125
     
-Verify single vns rx/tx rates same rack
+Verify single segment rx/tx rates same rack
 	[Tags]  L2  feature  IronHorse   sanity
     rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
@@ -197,7 +197,7 @@ Verify single vns rx/tx rates same rack
     rest delete tenant  t1
     sleep  125
 
-verify single vns rx/tx rates different rack
+verify single segment rx/tx rates different rack
 	[Tags]  L2  feature  IronHorse      sanity
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -426,7 +426,7 @@ verify interface LLDP/control packet count different rack
     rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000  15
     rest delete tenant  t1
 
-verify multiple vns counters different rack
+verify multiple segment counters different rack
 	[Tags]  L2  feature  IronHorse    
 
 	rest add tenant  t1
@@ -468,7 +468,7 @@ verify multiple vns counters different rack
     rest verify vns tx stats  t1  v2  10000
     rest delete tenant  t1
 
-verify multiple vns counters on 2 different tenant 
+verify multiple segment counters on 2 different tenant 
 	[Tags]  L2  feature  IronHorse
 
 	rest add tenant  t1
@@ -543,7 +543,7 @@ verify the single tenant stats
     rest verify tenant tx stats  t1  10000
     rest delete tenant  t1
 	
-verify single tenant stats using multiple VNS 
+verify single tenant stats using multiple segment 
 	[Tags]  L2  feature  IronHorse   sanity
 	ixia initialize  tg1  init=True
 	rest add tenant  t1
@@ -662,7 +662,7 @@ verify multiple tenant rates
     rest delete tenant  t1
     rest delete tenant  t2
        
-Master node controller reboot with multiple vns/interface stats
+Master node controller reboot with multiple segment/interface stats
 	[Tags]  L2  feature  IronHorse  
 	ixia initialize  tg1  init=True
 	rest add tenant  t1
@@ -727,11 +727,11 @@ add a tenant  [Arguments]  ${tenant}
 delete a tenant  [Arguments]  ${tenant} 
   	REST delete tenant  ${tenant}    
 
-add a vns  [Arguments]  ${tenant}  ${vns}  
-	REST add vns  ${tenant}  ${vns}   
+add a segment  [Arguments]  ${tenant}  ${segment}  
+	rest add vns  ${tenant}  ${segment}   
 
-delete a vns  [Arguments]  ${tenant}  ${vns} 
-  	REST delete vns  ${tenant}  ${vns}   
+delete a segment  [Arguments]  ${tenant}  ${segment} 
+  	REST delete segment  ${tenant}  ${segment}   
 
 add a portgroup  [Arguments]  ${pg}
   	REST add portgroup  ${pg}    
@@ -739,11 +739,11 @@ add a portgroup  [Arguments]  ${pg}
 delete a portgroup  [Arguments]  ${pg}
   	REST delete portgroup  ${pg}    
 
-add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
-  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
+add a endpoint  [Arguments]  ${tenant}  ${segment}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${segment}  ${endpoint}  
 
-delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
-  	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
+delete a endpoint  [Arguments]  ${tenant}  ${segment}  ${endpoint}
+  	REST delete endpoint  ${tenant}  ${segment}  ${endpoint}  
 
 add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
   	REST add interface to portgroup  ${switch}  ${intf}  ${pg}  
@@ -751,14 +751,14 @@ add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg}
 delete interface from portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
   	REST delete interface from portgroup  ${switch}  ${intf}  ${pg}  
 
-add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
-  	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
+add portgroup to segment  [Arguments]  ${tenant}  ${segment}  ${pg}  ${vlan}
+  	REST add portgroup to segment  ${tenant}  ${segment}  ${pg}  ${vlan} 
 
-add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
-    REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+add portgroup to endpoint  [Arguments]  ${tenant}  ${segment}  ${endpoint}  ${pg}  ${vlan} 
+    REST add portgroup to endpoint  ${tenant}  ${segment}  ${endpoint}  ${pg}  ${vlan} 
 
-delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
-    REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+delete portgroup from segment  [Arguments]  ${tenant}  ${segment}  ${pg}  ${vlan} 
+    REST delete portgroup from segment  ${tenant}  ${segment}  ${pg}  ${vlan}
 
 verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
     Sleep  5
