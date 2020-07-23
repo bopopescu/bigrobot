@@ -63,9 +63,9 @@ class MailWindow(Frame):
     def _update_subject(self):
         subject = self.widget.get_mail().get_subject()
         if subject:
-            self.master.title(subject)
+            self.main.title(subject)
         else:
-            self.master.title('Send a mail')
+            self.main.title('Send a mail')
 
     def __getattr__(self, name):
         return getattr(self.widget, name)

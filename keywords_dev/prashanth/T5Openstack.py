@@ -578,7 +578,7 @@ S
 			Return: verify the tenant created in BSN controller
 		'''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
 		c.rest.get(url)
 		data = c.rest.content()
@@ -596,7 +596,7 @@ S
 			Return: verify the vns created in BSN controller
 		'''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		tenantId = self.openstack_show_tenant(tenantName)
 		netId = self.openstack_show_subnet(subnetName)
 		if netId != '':
@@ -631,7 +631,7 @@ S
 			Return: verify the endpoint is created and active
 		'''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints'
 		c.rest.get(url)
 		data = c.rest.content()

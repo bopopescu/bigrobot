@@ -32,8 +32,8 @@ class Test(object):
             self._has_a_topo_file = False
             self._params = {}
             self._bigtest_node_info = {}
-            self._current_controller_master = None
-            self._current_controller_slave = None
+            self._current_controller_main = None
+            self._current_controller_subordinate = None
             self._settings = {}
             self._checkpoint = 0
             self._is_bcf_topology = False
@@ -81,8 +81,8 @@ class Test(object):
             # A node in BigRobot may have a alias associated with it. One way
             # you can refer to a node using it's defined name, e.g., 'c1',
             # 'c2', 's1', 'mn', etc. Another way is to refer to its alias.
-            # For HA,  'master' and 'slave' are considered as dynamic aliases,
-            # since the alias will change when mastership changes. You can also
+            # For HA,  'main' and 'subordinate' are considered as dynamic aliases,
+            # since the alias will change when mainship changes. You can also
             # define static aliases such as:
             #    s1:
             #        alias: leaf1-a
@@ -314,8 +314,8 @@ class Test(object):
                                     "'%s' has alias '%s' which does not match"
                                     " the allowable alias names"
                                     % (node, alias))
-            self._node_static_aliases['master'] = 'master'
-            self._node_static_aliases['slave'] = 'slave'
+            self._node_static_aliases['main'] = 'main'
+            self._node_static_aliases['subordinate'] = 'subordinate'
             self._node_static_aliases['mn'] = 'mn1'
             self._node_static_aliases['mn1'] = 'mn1'
             helpers.log("Node aliases:\n%s"
@@ -553,18 +553,18 @@ class Test(object):
         else:
             return self._topology
 
-    def is_master_controller(self, name):
+    def is_main_controller(self, name):
         name = self.alias(name)
         n = self.topology(name)
         platform = n.platform()
 
         if self._has_a_single_controller:
-            # helpers.debug("Topology has a single controller. Assume it's the master.")
+            # helpers.debug("Topology has a single controller. Assume it's the main.")
             return True
 
         if helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
             # We don't want REST object to save the result from the REST
-            # command to detect mastership.
+            # command to detect mainship.
             result = n.rest.get("/rest/v1/system/ha/role",
                                 save_last_result=False, log_level='trace')
             content = result['content']
@@ -596,41 +596,41 @@ class Test(object):
         """
         return [self.controller(n) for n in self.topology_params_nodes() if re.match(r'^c\d+', n)]
 
-    def controller(self, name='c1', resolve_mastership=False):
+    def controller(self, name='c1', resolve_mainship=False):
         """
-        :param resolve_mastership: (Bool)
+        :param resolve_mainship: (Bool)
                 - If False, it returns the faux controller node (HaControllerNode)
-                - If True, it resolves 'master' (or 'slave') to a controller
+                - If True, it resolves 'main' (or 'subordinate') to a controller
                   name (e.g., 'c1', 'c2', etc).
         """
         t = self
         name = self.alias(name)
 
-        if not resolve_mastership and name in ('master', 'slave'):
+        if not resolve_mainship and name in ('main', 'subordinate'):
             return ha_wrappers.HaControllerNode(name, t)
 
-        if name == 'master':
-            if self.is_master_controller('c1'):
+        if name == 'main':
+            if self.is_main_controller('c1'):
                 node = 'c1'
-            elif self.is_master_controller('c2'):
+            elif self.is_main_controller('c2'):
                 node = 'c2'
             else:
                 helpers.environment_failure("Neither 'c1' nor 'c2' is the"
-                                            " master. This is an impossible"
+                                            " main. This is an impossible"
                                             " state!")
-            helpers.log("Device '%s' is the master" % node)
-            self._current_controller_master = node
-        elif name == 'slave':
-            if not self.is_master_controller('c1'):
+            helpers.log("Device '%s' is the main" % node)
+            self._current_controller_main = node
+        elif name == 'subordinate':
+            if not self.is_main_controller('c1'):
                 node = 'c1'
-            elif not self.is_master_controller('c2'):
+            elif not self.is_main_controller('c2'):
                 node = 'c2'
             else:
                 helpers.environment_failure("Neither 'c1' nor 'c2' is the"
-                                            " slave. This is an impossible"
+                                            " subordinate. This is an impossible"
                                             " state!")
-            helpers.log("Device '%s' is the slave" % node)
-            self._current_controller_slave = node
+            helpers.log("Device '%s' is the subordinate" % node)
+            self._current_controller_subordinate = node
         else:
             node = name
 
@@ -697,7 +697,7 @@ class Test(object):
         if name == 'mn':
             name = 'mn1'
 
-        if re.match(r'^(master|slave)$', name):
+        if re.match(r'^(main|subordinate)$', name):
             return self.controller(*args, **kwargs)
         else:
             return self.topology(*args, **kwargs)
@@ -778,7 +778,7 @@ class Test(object):
                      controller_ip=None, controller_ip2=None,
                      protocol=None, no_ping=False, devconf_debug_level=0, quiet=0):
         # Matches the following device types:
-        #  Controllers: c1, c2, controller, controller1, controller2, master, slave
+        #  Controllers: c1, c2, controller, controller1, controller2, main, subordinate
         #  Mininet: mn, mn1, mn2
         #  Switches: s1, s2, spine1, leaf1, filter1, delivery1
         #  Hosts: h1, h2, h3
@@ -787,7 +787,7 @@ class Test(object):
         #
         # Note: No node_connect support for PDUs. Use node_spawn().
         #
-        match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+|os\d+|ixia\d*)$', node)
+        match = re.match(r'^(c\d|controller\d?|main|subordinate|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+|os\d+|ixia\d*)$', node)
         if not match:
             helpers.environment_failure("Unknown/unsupported device '%s'"
                                         % node)
@@ -935,29 +935,29 @@ class Test(object):
         helpers.log("Node reconnect for '%s'" % node)
 
         if helpers.is_controller(node):
-            if node in ['master', 'slave']:
+            if node in ['main', 'subordinate']:
                 try:
-                    c = self.controller(node, resolve_mastership=True)
+                    c = self.controller(node, resolve_mainship=True)
                     node_name = c.name()
                 except:
-                    # Resolve 'master' or 'slave' to actual name (e.g., 'c1', 'c2'). But
+                    # Resolve 'main' or 'subordinate' to actual name (e.g., 'c1', 'c2'). But
                     # don't do it using REST since we've probably lost the connection.
-                    if node == 'master':
-                        if self._current_controller_master:
-                            node_name = self._current_controller_master
+                    if node == 'main':
+                        if self._current_controller_main:
+                            node_name = self._current_controller_main
                         else:
                             helpers.environment_failure("Unable to resolve actual name"
-                                                        " of master controller.")
-                    elif node == 'slave':
-                        if self._current_controller_slave:
-                            node_name = self._current_controller_slave
+                                                        " of main controller.")
+                    elif node == 'subordinate':
+                        if self._current_controller_subordinate:
+                            node_name = self._current_controller_subordinate
                         else:
                             helpers.environment_failure("Unable to resolve actual name"
-                                                        " of slave controller.")
+                                                        " of subordinate controller.")
             else:
                 node_name = node
 
-            # node_name = self.controller(node, resolve_mastership=True).name()
+            # node_name = self.controller(node, resolve_mainship=True).name()
         else:
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
@@ -1530,18 +1530,18 @@ class Test(object):
             return True
         c1_ip = self.params('c1', 'ip')
         c2_ip = self.params('c2', 'ip')
-        helpers.log("First Adding Switch in master controller for ZTN Bootup...")
-        master = self.controller("master")
+        helpers.log("First Adding Switch in main controller for ZTN Bootup...")
+        main = self.controller("main")
         console = self.params(name, 'console')
         cmds = ['switch %s' % self.params(name, 'alias'), 'fabric-role %s' % fabric_role, \
                 'mac %s' % self.params(name, 'mac')]
         helpers.log("Executing cmds ..%s" % str(cmds))
         for cmd in cmds:
             helpers.log('Executin cmd: %s' % cmd)
-            master.config(cmd)
+            main.config(cmd)
         if fabric_role == 'leaf':
             helpers.log("Adding leaf group for leaf %s" % name)
-            master.config('leaf-group %s' % leaf_group)
+            main.config('leaf-group %s' % leaf_group)
         helpers.log("Success adding switch in controller..%s" % str(name))
         helpers.log("Waiting 30 secs for the switche to get connected to Controller..")
         helpers.sleep(155)
@@ -1649,8 +1649,8 @@ class Test(object):
 
         params = self.topology_params_nodes()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
-        master = self.controller("master")
-        standby = self.controller("slave")
+        main = self.controller("main")
+        standby = self.controller("subordinate")
 
         # CAUTION: The following section may not execute properly if the device
         # is connected via console, or if the device is in firstboot state. So
@@ -1695,8 +1695,8 @@ class Test(object):
                         self.setup_switch_post_clean_config(key)
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
-                master = self.controller("master")
-                standby = self.controller("slave")
+                main = self.controller("main")
+                standby = self.controller("subordinate")
                 for key in params:
                     self.setup_ztn_phase1(key)
                 if helpers.bigrobot_ztn_installer().lower() != "true":
@@ -1706,8 +1706,8 @@ class Test(object):
                     helpers.log("Loader install on Switch is trigerred need to wait for more time for switches to come up:")
                     helpers.sleep(400)
                 url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
-                master.rest.get(url1)
-                data = master.rest.content()
+                main.rest.get(url1)
+                data = main.rest.content()
                 for i in range (0, len(data)):
                     helpers.log("Checking switch Connections state from controller...state: %s" % data[i]["fabric-connection-state"])
                     if (data[i]["fabric-connection-state"] == "suspended") or (data[i]["fabric-connection-state"] == "not_connected"):
@@ -1720,10 +1720,10 @@ class Test(object):
                         self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
-                master.config("show switch")
-                master.config("show running-config")
-                master.config("show logging level")
-                master.config("enable; config; copy running-config snapshot://ztn-base-config")
+                main.config("show switch")
+                main.config("show running-config")
+                main.config("show logging level")
+                main.config("enable; config; copy running-config snapshot://ztn-base-config")
                 helpers.log("########  Stand_by config after ZTN setup: ")
                 standby.config("show switch")
                 standby.config("show running-config")
@@ -1732,27 +1732,27 @@ class Test(object):
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
             if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.log("Env BIGROBOT_TEST_ZTN is True. Loading ZTN-based config as BIGROBOT_TEST SETUP is False, make sure switches are brought up with ZTN on these controllers!")
-                master = self.controller("master")
-                master.enable("show switch")
-#                 master.enable("copy snapshot://ztn-base-config running-config ")
-                master.config("show logging level")
-                master.enable("show running-config")
-                master.enable("show switch")
+                main = self.controller("main")
+                main.enable("show switch")
+#                 main.enable("copy snapshot://ztn-base-config running-config ")
+                main.config("show logging level")
+                main.enable("show running-config")
+                main.enable("show switch")
                 helpers.log("Trying to log into switch consoles to update ZTN IP's on topo files")
                 for key in params:
                     self.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
-                master = self.controller("master")
-                master.enable("show switch")
+                main = self.controller("main")
+                main.enable("show switch")
 
         if helpers.bigrobot_ha_logging().lower() == "true":
             helpers.log("Env BIGROBOT_HA_LOGGING is True. Enabling HA Debug logging for Dev to debug HA failures....")
-            master.config("logging level org.projectfloodlight.ha debug")
-            master.config("logging level org.projectfloodlight.sync.internal.transaction debug")
-            master.config("logging level org.projectfloodlight.db.data.PackedFileStateRepository debug")
-            master.config("logging level org.projectfloodlight.db.data.SyncServiceStateRepository debug")
-            master.config("show logging level")
+            main.config("logging level org.projectfloodlight.ha debug")
+            main.config("logging level org.projectfloodlight.sync.internal.transaction debug")
+            main.config("logging level org.projectfloodlight.db.data.PackedFileStateRepository debug")
+            main.config("logging level org.projectfloodlight.db.data.SyncServiceStateRepository debug")
+            main.config("show logging level")
         self._setup_completed = True  # pylint: disable=W0201
         self.checkpoint("Test object setup ends.")
 
@@ -1823,7 +1823,7 @@ class Test(object):
 
         self.checkpoint("Running clean-config on devices in topology")
         if (helpers.is_controller(name) and helpers.is_t5(n.platform())
-            and self.is_master_controller(name)):
+            and self.is_main_controller(name)):
 
             helpers.log("Running clean-config on T5 controller '%s'"
                         " (establishing baseline config setup)" % name)

@@ -17,7 +17,7 @@ class  T5SwitchTraffic(object):
         To get Switch DPID and use in the same class object
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url)
@@ -32,7 +32,7 @@ class  T5SwitchTraffic(object):
             output - none
            ''' 
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             T5 = T5.T5()
             dpid = self.rest_get_switch_dpid(switch)
             helpers.log("The switch is %s,dpid is %s and interface is %s"  % (switch, dpid, intf))
@@ -54,7 +54,7 @@ class  T5SwitchTraffic(object):
             '''
             t = test.Test()
             fabric = T5.T5()
-            c = t.controller('master')
+            c = t.controller('main')
             dpid = fabric.rest_get_dpid(switch)
             #dpid = self.rest_get_switch_dpid(switch)
             helpers.log("The switch is %s,dpid is %s and interface is %s"  % (switch, dpid, intf))

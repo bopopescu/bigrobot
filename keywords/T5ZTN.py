@@ -8,7 +8,7 @@ import traceback
 
 class T5ZTN(object):
 
-    def bash_verify_switchlight_images(self, node='master'):
+    def bash_verify_switchlight_images(self, node='main'):
         """
         Check if SwitchLight images are present on the controller
 
@@ -62,7 +62,7 @@ class T5ZTN(object):
 
         return True
 
-    def bash_verify_switchlight_manifests(self, node='master'):
+    def bash_verify_switchlight_manifests(self, node='main'):
         """
         Check if SwitchLight images are accompanied
         by appropriate manifest files
@@ -136,7 +136,7 @@ class T5ZTN(object):
 
         return True
 
-    def bash_get_switchlight_version(self, image, node='master',
+    def bash_get_switchlight_version(self, image, node='main',
                                      arch='powerpc'):
         """
         Get SWI or Installer Versions in the controller bundle
@@ -176,7 +176,7 @@ class T5ZTN(object):
             swi_release = swi_manifest['sha1']
             return swi_release
 
-    def controller_get_release_string(self, node='master'):
+    def controller_get_release_string(self, node='main'):
         """
         Get Release String of the controller bundle
 
@@ -260,7 +260,7 @@ class T5ZTN(object):
         - List of supported platforms or None in case of errors
         """
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log("Getting list of supported platforms"
                     " for SwitchLight %s" % image)
         if image == "installer":
@@ -661,18 +661,18 @@ class T5ZTN(object):
         """
         t = test.Test()
         bsn_common = bsnCommon()
-        master_ip = bsn_common.get_node_ip('master')
+        main_ip = bsn_common.get_node_ip('main')
         single = False
         try:
-            slave_ip = bsn_common.get_node_ip('slave')
+            subordinate_ip = bsn_common.get_node_ip('subordinate')
         except:
             helpers.log("Single node cluster")
             single = True
 
         if not single:
             url = ("http://%s/ztn/switch/%s/startup_config?proxy=1"
-                   % (str(slave_ip), str(mac)))
-            helpers.log("Verifying that Slave controller does not provide"
+                   % (str(subordinate_ip), str(mac)))
+            helpers.log("Verifying that Subordinate controller does not provide"
                         " any startup-config for the switch")
             helpers.log("Trying to get switch startup config at %s" % url)
             try:
@@ -681,34 +681,34 @@ class T5ZTN(object):
                 helpers.log("Response is: %s" % res)
                 config = res.read()
                 helpers.log("Response is: %s" % ''.join(config))
-                helpers.log("Slave responded with startup-config. Erroring out")
-                helpers.test_failure("Slave responded with startup-config")
+                helpers.log("Subordinate responded with startup-config. Erroring out")
+                helpers.test_failure("Subordinate responded with startup-config")
             except urllib2.HTTPError as err:
                 if err.code == 404:
                     helpers.log("Error 404 trying to get startup-config"
-                                " from Slave - it is expected")
+                                " from Subordinate - it is expected")
                 else:
-                    return helpers.test_failure("Error connecting to Slave")
+                    return helpers.test_failure("Error connecting to Subordinate")
             except:
-                return helpers.test_failure("Other error connecting to Slave")
+                return helpers.test_failure("Other error connecting to Subordinate")
 
             url = ("http://%s/ztn/switch/%s/startup_config?internal=1&proxy=1"
-                   % (str(slave_ip), str(mac)))
-            helpers.log("Verifying that Slave can compute startup config"
+                   % (str(subordinate_ip), str(mac)))
+            helpers.log("Verifying that Subordinate can compute startup config"
                         " for us if internal=1 flag attached")
             helpers.log("Trying to get switch startup config at %s" % url)
             try:
                 req = urllib2.Request(url)
                 res = urllib2.urlopen(req)
                 helpers.log("Response is: %s" % res)
-                slave_config = res.read()
-                helpers.log("Response is: %s" % ''.join(slave_config))
+                subordinate_config = res.read()
+                helpers.log("Response is: %s" % ''.join(subordinate_config))
             except:
                 helpers.log(traceback.print_exc())
-                return helpers.test_failure("Other error connecting to Slave")
+                return helpers.test_failure("Other error connecting to Subordinate")
 
         url = ("http://%s/ztn/switch/%s/startup_config?proxy=1"
-               % (str(master_ip), str(mac)))
+               % (str(main_ip), str(mac)))
         helpers.log("Trying to get switch startup config at %s" % url)
         try:
             req = urllib2.Request(url)
@@ -719,22 +719,22 @@ class T5ZTN(object):
         except:
             helpers.log(traceback.print_exc())
             return helpers.test_failure("Error trying to get startup-config"
-                   " from Master")
+                   " from Main")
         config = config.replace('\\x', '\\0x')
         config = config.split('\n')
 
         if not single:
-            slave_config = slave_config.replace('\\x', '\\0x')
-            slave_config = slave_config.split('\n')
-            if slave_config == config:
-                helpers.log("Master: %s" % config)
-                helpers.log("Slave: %s" % slave_config)
-                helpers.log("Configs generated by Master and Slave are equal")
+            subordinate_config = subordinate_config.replace('\\x', '\\0x')
+            subordinate_config = subordinate_config.split('\n')
+            if subordinate_config == config:
+                helpers.log("Main: %s" % config)
+                helpers.log("Subordinate: %s" % subordinate_config)
+                helpers.log("Configs generated by Main and Subordinate are equal")
                 return config
             else:
-                helpers.log("Master: %s" % config)
-                helpers.log("Slave: %s" % slave_config)
-                return helpers.test_failure("Slave and Master generated"
+                helpers.log("Main: %s" % config)
+                helpers.log("Subordinate: %s" % subordinate_config)
+                return helpers.test_failure("Subordinate and Main generated"
                        " different startup configs")
         return config
 
@@ -752,10 +752,10 @@ class T5ZTN(object):
         """
         t = test.Test()
         bsn_common = bsnCommon()
-        master_ip = bsn_common.get_node_ip('master')
+        main_ip = bsn_common.get_node_ip('main')
 
         url = ("http://%s/ztn/switch/%s/switch_light_manifest?platform=powerpc-as5710-54x-r0b"
-               % (str(master_ip), str(mac)))
+               % (str(main_ip), str(mac)))
         helpers.log("Trying to get switch manifest at %s" % url)
         try:
             req = urllib2.Request(url)
@@ -766,7 +766,7 @@ class T5ZTN(object):
         except:
             helpers.log(traceback.print_exc())
             return helpers.test_failure("Error trying to get manifest"
-                   " from Master")
+                   " from Main")
         return manifest
 
 
@@ -784,9 +784,9 @@ class T5ZTN(object):
         """
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         bsn_common = bsnCommon()
-        master_ip = bsn_common.get_node_ip('master')
+        main_ip = bsn_common.get_node_ip('main')
         # If this is s0, s1, ... then get hostname of topo file
         # otherwise just use the provided hostname
         if re.match(r's\d*$', hostname):
@@ -798,7 +798,7 @@ class T5ZTN(object):
 
         single = False
         try:
-            slave_ip = bsn_common.get_node_ip('slave')
+            subordinate_ip = bsn_common.get_node_ip('subordinate')
         except:
             helpers.log("Single node cluster")
             single = True
@@ -933,12 +933,12 @@ class T5ZTN(object):
         ztn_config.append("interface ma1 ip-address dhcp")
         ztn_config.append("hostname %s" % switch_name)
         ztn_config.append("datapath id 00:00:%s" % mac.lower())
-        ztn_config.append("controller %s port 6653" % master_ip)
+        ztn_config.append("controller %s port 6653" % main_ip)
         ztn_config.append("ssh enable")
-        ztn_config.append("logging host %s" % master_ip)
+        ztn_config.append("logging host %s" % main_ip)
         if not single:
-            ztn_config.append("controller %s port 6653" % slave_ip)
-            ztn_config.append("logging host %s" % slave_ip)
+            ztn_config.append("controller %s port 6653" % subordinate_ip)
+            ztn_config.append("logging host %s" % subordinate_ip)
 
         for ztn_config_line in ztn_config:
             if ztn_config_line not in startup_config:
@@ -1853,7 +1853,7 @@ class T5ZTN(object):
             return None
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log('INFO: Entering ==> cli_get_switch_image ')
         c.cli('show switch %s version ' % switch)
         content = c.cli_content()

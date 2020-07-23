@@ -142,7 +142,7 @@ class KVMOperations(object):
             if jenkins_project_name is not None:
                 output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/%s/builds | grep lastSuccessfulBuild' % jenkins_project_name)['content']
             else:
-                output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/bcf_master/builds | grep lastSuccessfulBuild')['content']
+                output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/bcf_main/builds | grep lastSuccessfulBuild')['content']
         elif vm_type == 'mininet':
             output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/t6-mininet-vm/builds | grep lastSuccessfulBuild')['content']
 
@@ -150,7 +150,7 @@ class KVMOperations(object):
         latest_build_number = output_lines[1].split('->')[-1]
         return latest_build_number.strip()
 
-    def _get_latest_kvm_build_number(self, vm_type='bcf', kvm_handle=None, jenkins_project_name="bcf_master"):
+    def _get_latest_kvm_build_number(self, vm_type='bcf', kvm_handle=None, jenkins_project_name="bcf_main"):
         output = None
         if vm_type == 'bcf':
             output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep %s | awk \'{print $9}\'' % jenkins_project_name)['content']
@@ -204,7 +204,7 @@ class KVMOperations(object):
             latest_kvm_build_number = build_number
         file_name = None
         if vm_type == 'bcf':
-            if jenkins_project_name == "bcf_master":
+            if jenkins_project_name == "bcf_main":
                 file_name = "controller-jf_bcf_virtual-%s.qcow2" % (latest_build_number)
             else:
                 file_name = "controller-%s_virtual-%s.qcow2" % (jenkins_project_name, latest_build_number)
@@ -337,8 +337,8 @@ class KVMOperations(object):
             #       /tmp/<vm_name>/.
             helpers.summary_log("Creating VM with Name: %s " % vm_name)
             helpers.summary_log("Created log_path %s" % self.log_path)
-            # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bcf/controller-bcf-2.0.8-SNAPSHOT.qcow2")
-            remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bcf-*.qcow2")
+            # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ main/lastSuccessful/archive/target/appliance/images/bcf/controller-bcf-2.0.8-SNAPSHOT.qcow2")
+            remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bcf_main/lastSuccessful/archive/controller-bcf-*.qcow2")
             remote_qcow_mininet_path = kwargs.get("remote_qcow_mininet_path", "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2")
 
             topo_file = self._create_temp_topo(kvm_host=kvm_host, vm_name=vm_name)

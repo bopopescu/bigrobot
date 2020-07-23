@@ -47,7 +47,7 @@ class T5(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 # Get the hashed value of password
                 url1 = '/api/v1/data/controller/core/aaa/hash-password[password=%s]' % json.dumps(password)
@@ -66,7 +66,7 @@ class T5(object):
     def rest_add_tenant(self, tenant):
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]' % (tenant)
         try:
                 c.rest.put(url, {"name": tenant})
@@ -77,7 +77,7 @@ class T5(object):
 
     def _rest_show_tenant(self, tenant=None, negative=False):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         if tenant:
             # Show a specific tenant
@@ -128,7 +128,7 @@ class T5(object):
 
     def rest_delete_tenant(self, tenant=None):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.log("Input arguments: tenant = %s" % tenant)
 
@@ -144,7 +144,7 @@ class T5(object):
         ''' delete all tenant in the system
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.log("Entering ===> to delete all tenants")
         url_get_tenant = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant'
@@ -175,7 +175,7 @@ class T5(object):
 
     def rest_add_vns(self, tenant, vns):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s" % (tenant, vns))
 
@@ -194,7 +194,7 @@ class T5(object):
         Output: system will created specified no of vns
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         count = int(count)
         i = 1
         while (i <= count):
@@ -216,7 +216,7 @@ class T5(object):
         output : will add specified interfaces into all vns in a tenant as tagged starting with 1
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
@@ -237,7 +237,7 @@ class T5(object):
         output : will add all interface to all created vns
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
@@ -251,7 +251,7 @@ class T5(object):
 
     def rest_delete_vns(self, tenant, vns=None):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s" % (tenant, vns))
 
@@ -265,7 +265,7 @@ class T5(object):
 
     def rest_show_vns(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment' % ()
         try:
@@ -277,7 +277,7 @@ class T5(object):
 
     def rest_add_portgroup(self, pg):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: port-group = %s" % pg)
 
@@ -292,7 +292,7 @@ class T5(object):
 
     def rest_delete_portgroup(self, pg=None):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: port-group = %s" % pg)
 
@@ -308,7 +308,7 @@ class T5(object):
         ''' delete all port group config in the system
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.log("Entering ===> to delete all port group")
 
@@ -342,7 +342,7 @@ class T5(object):
         '''
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s, vns = %s, endpoint = %s" % (tenant, vns, endpoint))
 
@@ -356,7 +356,7 @@ class T5(object):
 
     def rest_delete_endpoint(self, tenant, vns, endpoint=None):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s" % (tenant, vns, endpoint))
 
@@ -370,7 +370,7 @@ class T5(object):
 
     def rest_add_interface_to_portgroup(self, switch, intf, pg):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: switch = %s interface = %s port-group = %s" % (switch, intf, pg))
 
@@ -384,7 +384,7 @@ class T5(object):
 
     def rest_add_portgroup_lacp(self, pg):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: port-group = %s" % (pg))
 
@@ -400,7 +400,7 @@ class T5(object):
 
     def rest_delete_portgroup_lacp(self, pg):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: port-group = %s" % (pg))
 
@@ -414,7 +414,7 @@ class T5(object):
 
     def rest_delete_interface_from_portgroup(self, switch, intf, pg):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: switch = %s interface = %s port-group = %s" % (switch, intf, pg))
 
@@ -428,7 +428,7 @@ class T5(object):
 
     def rest_add_portgroup_to_vns(self, tenant, vns, pg, vlan):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s port-group = %s vlan = %s" % (tenant, vns, pg, vlan))
 
@@ -443,7 +443,7 @@ class T5(object):
 
     def rest_add_switch_endpoint_to_vns(self, tenant, vns, endpoint, vlan, switch, switch_if):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s vlan = %s switch = %s switch_if = %s" % (tenant, vns, endpoint, vlan, switch, switch_if))
 
@@ -460,7 +460,7 @@ class T5(object):
 
     def rest_add_portgroup_to_endpoint(self, tenant, vns, endpoint, pg, vlan):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s port-group = %s vlan = %s" % (tenant, vns, endpoint, pg, vlan))
 
@@ -474,7 +474,7 @@ class T5(object):
 
     def rest_delete_portgroup_from_vns(self, tenant, vns, pg, vlan):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s port-group = %s vlan = %s" % (tenant, vns, pg, vlan))
 
@@ -488,7 +488,7 @@ class T5(object):
 
     def rest_add_interface_to_vns(self, tenant, vns, switch, intf, vlan, rest_type="put"):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s switch = %s interface = %s vlan = %s" % (tenant, vns, switch, intf, vlan))
 
@@ -505,7 +505,7 @@ class T5(object):
 
     def rest_delete_interface_from_vns(self, tenant, vns, switch, intf, vlan):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s switch = %s interface = %s vlan = %s" % (tenant, vns, switch, intf, vlan))
 
@@ -519,7 +519,7 @@ class T5(object):
 
     def rest_add_interface_to_endpoint(self, tenant, vns, endpoint, switch, intf, vlan):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s switch = %s interface = %s vlan = %s" % (tenant, vns, endpoint, switch, intf, vlan))
 
@@ -533,7 +533,7 @@ class T5(object):
 
     def rest_add_ip_endpoint(self, tenant, vns, endpoint, ip):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]' % (tenant, vns, endpoint)
         try:
             c.rest.patch(url, {"ip-address": ip})
@@ -544,7 +544,7 @@ class T5(object):
 
     def rest_add_mac_endpoint(self, tenant, vns, endpoint, mac):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]' % (tenant, vns, endpoint)
         try:
             c.rest.patch(url, {"mac": mac})
@@ -561,7 +561,7 @@ class T5(object):
             Return: true if it matches the added VNS (string starts with "v")
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -585,7 +585,7 @@ class T5(object):
             Return: true if it matches the added VNS (string starts with "v")
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="%s"]' % tenant
         c.rest.get(url)
         data = c.rest.content()
@@ -607,7 +607,7 @@ class T5(object):
             Return: true if it matches the added tenant (string starts with "t")
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -634,7 +634,7 @@ class T5(object):
             Return: true if it matches the added tenant
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant[name="%s"]' % tenant
         c.rest.get(url)
         data = c.rest.content()
@@ -653,7 +653,7 @@ class T5(object):
             Return: true if it matches Value specified
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -684,7 +684,7 @@ class T5(object):
             Return: true if it matches Value specified
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
         c.rest.get(url)
         data = c.rest.content()
@@ -710,7 +710,7 @@ class T5(object):
             Return: true if it matches Value specified
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
         c.rest.get(url)
         data = c.rest.content()
@@ -737,7 +737,7 @@ class T5(object):
             Return: true if it matches Value specified and added attachment point is true
          '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
         c.rest.get(url)
         data = c.rest.content()
@@ -763,7 +763,7 @@ class T5(object):
             Return: true if it matches Value specified and added attachment point is true
          '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
         c.rest.get(url)
         data = c.rest.content()
@@ -794,7 +794,7 @@ class T5(object):
         Return: true if mac exists or not according to the test
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l2-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -827,7 +827,7 @@ class T5(object):
             Return: true if it matches Value specified
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -854,7 +854,7 @@ class T5(object):
             Return: true if it matches Value specified and added attachment point is true
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -882,7 +882,7 @@ class T5(object):
             Return: Num of ports part of the specific VNS
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[name="%s"]' % (vns)
         c.rest.get(url)
         data = c.rest.content()
@@ -906,7 +906,7 @@ class T5(object):
             Return: vlan table from the forwarding table with membership ports.
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/vlan-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -931,7 +931,7 @@ class T5(object):
             Return: port table with associated Lag id will be provided
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -950,7 +950,7 @@ class T5(object):
             Return: vlan xlate matching in forwarding table.
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -981,7 +981,7 @@ class T5(object):
             Return: Function will verify those fabric interfaces must be tagged for all vlans.
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/core/switch[name="%s"]/interface' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -1022,7 +1022,7 @@ class T5(object):
             Return: True or False depends on the edge interface present as untagged in a vlan
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/vlan-member-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -1047,7 +1047,7 @@ class T5(object):
             Return: return True or False depends on the edge port present as Tagged in a vlan
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/vlan-member-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -1072,7 +1072,7 @@ class T5(object):
             Return: True or false based on the entry present in the forwarding table.
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         # Get the Lag id for the Given interface
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switch)
         c.rest.get(url)
@@ -1119,7 +1119,7 @@ class T5(object):
             Return: True or false based on the entry present in the forwarding table.
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         # Get the Lag id for the Given interface
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switch)
         c.rest.get(url)
@@ -1168,7 +1168,7 @@ class T5(object):
             Output: Static creation of endpoint in a given tenant and vns with switch/interface
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         i = 1
         while (i <= int(count)):
             endpoint_new = "%s_%d" % (endpoint, i)
@@ -1189,7 +1189,7 @@ class T5(object):
          Output: No of endoints match aginst the specifed count in vns table
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[name="%s"]' % (vns)
         c.rest.get(url, quiet=quiet)
         data = c.rest.content()
@@ -1206,7 +1206,7 @@ class T5(object):
          Output: No of endoints match aginst the specifed count in endpoint table
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -1224,7 +1224,7 @@ class T5(object):
         Output: given vns counters will be cleared
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         if vns is None or vns is "all":
             url = '/api/v1/data/controller/applications/bcf/info/statistic/segment-counter'
         else:
@@ -1238,7 +1238,7 @@ class T5(object):
         Output: given vns counters will be showed
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         url = '/api/v1/data/controller/applications/bcf/info/statistic/segment-counter[name="%s"][tenant-name="%s"]' % (vns, tenant)
@@ -1260,7 +1260,7 @@ class T5(object):
         Output: given vns rates will be displayed and match against the expected rate
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/statistic/segment-rate[name="%s"][tenant-name="%s"]' % (vns, tenant)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
@@ -1285,7 +1285,7 @@ class T5(object):
         Output: given vns counters will be showed
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         url = '/api/v1/data/controller/applications/bcf/info/statistic/segment-counter[name="%s"][tenant-name="%s"]' % (vns, tenant)
@@ -1307,7 +1307,7 @@ class T5(object):
         Output: given vns rates will be displayed and match against the expected rate
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/statistic/segment-rate[name="%s"][tenant-name="%s"]' % (vns, tenant)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
@@ -1331,7 +1331,7 @@ class T5(object):
 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         # url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats/interface'
         url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter/interface'
@@ -1343,7 +1343,7 @@ class T5(object):
             Returns: gives list of connected switches
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
         c.rest.get(url)
 
@@ -1355,7 +1355,7 @@ class T5(object):
             Returns: Print the Total fabric links
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/applications/bcf/info/fabric?select=link' % ()
         c.rest.get(url)
@@ -1374,7 +1374,7 @@ class T5(object):
             helpers.log("ZTN is enabled , should not be adding switch again..")
             return True
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]' % (switch)
         try:
@@ -1390,7 +1390,7 @@ class T5(object):
             helpers.log("ZTN is enabled , should not be adding switch again..")
             return True
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]' % (switch)
         try:
@@ -1407,7 +1407,7 @@ class T5(object):
             return True
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]' % (switch)
         try:
@@ -1422,7 +1422,7 @@ class T5(object):
             helpers.log("ZTN is enabled , should not be adding switch again..")
             return True
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]' % (switch)
         try:
@@ -1442,7 +1442,7 @@ class T5(object):
             helpers.log("ZTN is enabled , should not be adding switch again..")
             return True
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/leaf-group' % (switch)
         try:
             c.rest.delete(url, {"leaf-group": None})
@@ -1456,7 +1456,7 @@ class T5(object):
             helpers.log("ZTN is enabled , should not be deleting switch again..")
             return True
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]' % (switch)
         try:
@@ -1468,7 +1468,7 @@ class T5(object):
 
     def rest_verify_fabric_switch_all(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
         c.rest.get(url1)
         data = c.rest.content()
@@ -1480,7 +1480,7 @@ class T5(object):
 
     def rest_verify_fabric_link_after_switch_removal(self, switch):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/fabric?select=link' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -1498,7 +1498,7 @@ class T5(object):
         Output: True or False
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/fabric?select=link' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -1515,7 +1515,7 @@ class T5(object):
 
     def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/fabric/switch'
         c.rest.get(url)
         data = c.rest.content()
@@ -1542,7 +1542,7 @@ class T5(object):
             helpers.log("ZTN is enabled , should not be adding switch again..")
             return True
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/fabric-role' % (switch)
         c.rest.delete(url, {"fabric-role": role})
@@ -1559,7 +1559,7 @@ class T5(object):
           output : Will provide the No of lag it is suppose to form between Spine and Leaf in Dual Rack or single rack setup
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/core/switch[name="%s"]/interface' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -1625,7 +1625,7 @@ class T5(object):
     def rest_verify_fabric_switch(self, switch):
         # Function verify fabric switch status with role configured
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -1645,7 +1645,7 @@ class T5(object):
 
     def rest_verify_fabric_link(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/core/switch/interface' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -1672,7 +1672,7 @@ class T5(object):
 
     def rest_verify_no_of_rack(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -1691,7 +1691,7 @@ class T5(object):
 
     def rest_verify_no_of_spine(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -1709,7 +1709,7 @@ class T5(object):
             Output: Will check the total no of spine switches and compare against the rack connection spine switches.
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (switcha)
         c.rest.get(url)
         data = c.rest.content()
@@ -1732,7 +1732,7 @@ class T5(object):
             Return: Match forwarding table lag/Port for peer switch edge ports
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/lag-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -1765,7 +1765,7 @@ class T5(object):
 
     def rest_verify_fabric_interface_lacp(self, switch, intf):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
@@ -1785,7 +1785,7 @@ class T5(object):
 
     def rest_verify_fabric_error_invalid_link(self, rack1, rack2):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/errors/fabric/invalid-link' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -1803,7 +1803,7 @@ class T5(object):
 
     def rest_verify_fabric_error_missing_link(self, switcha, switchb, rack1):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/errors/fabric/missing-link' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -1821,7 +1821,7 @@ class T5(object):
 
     def rest_verify_forwarding_port_table(self, switch):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]?select=port-table' % (switch)
         c.rest.get(url)
         if not c.rest.status_code_ok():
@@ -1835,7 +1835,7 @@ class T5(object):
         Output" Rest output of the fabric interface for various validation
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.get(url)
         return c.rest.content()
@@ -1847,7 +1847,7 @@ class T5(object):
         Output" validation of the fabric interface status
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
@@ -1880,7 +1880,7 @@ class T5(object):
          Output" True/false based on the lag-id creation for the same edge port-groups on both the leaf switches
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         intf0 = (re.sub("\D", "", intf0))
         intf1 = (re.sub("\D", "", intf1))
         url_a = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switcha)
@@ -1916,7 +1916,7 @@ class T5(object):
         Output" Find the fabric interface for the switch and check the source mac check setting
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/core/switch[name="%s"]/interface' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -1952,7 +1952,7 @@ class T5(object):
 
     def rest_disable_fabric_interface(self, switch, intf):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url0 = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.put(url0, {"name": str(intf)})
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
@@ -1977,7 +1977,7 @@ class T5(object):
 
     def rest_enable_fabric_interface(self, switch, intf, timeout=30):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
@@ -2009,7 +2009,7 @@ class T5(object):
         Output: reusult will be compared against the frame_cnt given in the arguments
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         dpid = self.rest_get_dpid(switch)
         url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         frame_cnt = int(frame_cnt)
@@ -2038,7 +2038,7 @@ class T5(object):
         Output: Results will be compared against frame_cnt given
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         dpid = self.rest_get_dpid(switch)
         url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-counter[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         frame_cnt = int(frame_cnt)
@@ -2067,7 +2067,7 @@ class T5(object):
         Output: reusult will be compared against the frame_rate given in the arguments
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         dpid = self.rest_get_dpid(switch)
         url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-rate[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         frame_rate = int(frame_rate)
@@ -2090,7 +2090,7 @@ class T5(object):
         Output: Results will be compared against frame_rate given
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         dpid = self.rest_get_dpid(switch)
         url = '/api/v1/data/controller/applications/bcf/info/statistic/interface-rate[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         frame_rate = int(frame_rate)
@@ -2113,7 +2113,7 @@ class T5(object):
         Output: given Tenant counters will be showed and matched aginst the value
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         url = '/api/v1/data/controller/applications/bcf/info/statistic/tenant-counter[name="%s"]' % (tenant)
@@ -2135,7 +2135,7 @@ class T5(object):
         Output: given Tenant counters will be showed and matched aginst the value
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         url = '/api/v1/data/controller/applications/bcf/info/statistic/tenant-counter[name="%s"]' % (tenant)
@@ -2157,7 +2157,7 @@ class T5(object):
         Output: given Tenant counters will be showed and matched aginst the value
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         url = '/api/v1/data/controller/applications/bcf/info/statistic/tenant-rate[name="%s"]' % (tenant)
@@ -2179,7 +2179,7 @@ class T5(object):
         Output: given Tenant counters will be showed and matched aginst the value
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         url = '/api/v1/data/controller/applications/bcf/info/statistic/tenant-rate[name="%s"]' % (tenant)
@@ -2201,7 +2201,7 @@ class T5(object):
         Output: Function will go through the specific tenant and match the provided count (e.g , 1000 vns , 2 ports each , will be 2000 count)
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         count = int(count)
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant[name="%s"]' % tenant
         c.rest.get(url)
@@ -2219,7 +2219,7 @@ class T5(object):
         Output: Execute show inteface from CLI and verify the output is not empty.
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.cli("show interface %s %s" % switch, intf)
         result = c.cli_content()
         return result
@@ -2230,7 +2230,7 @@ class T5(object):
         Output: Execute show switch from CLI and verify the output is not empty
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.cli("show switch %s" % switch)
         result = c.cli_content()
         return result
@@ -2241,7 +2241,7 @@ class T5(object):
         Output: Execute show lag from CLI and verify the output is not empty
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.cli("show lag %s %s" % switch, lag_name)
         result = c.cli_content()
         return result
@@ -2252,7 +2252,7 @@ class T5(object):
         Output: Execute show lacp from CLI and verify the output is not empty
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.cli("show lacp %s" % switch)
         result = c.cli_content()
         return result
@@ -2263,20 +2263,20 @@ class T5(object):
         Output: Execute show link from CLI and verify the output is not empty
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.cli("show link")
         result = c.cli_content()
         return result
 
     def cli_controller_reboot_switch(self, switch=None):
-        '''Function to reboot switch from master controllers CLI
+        '''Function to reboot switch from main controllers CLI
             if switch argument is not passed reboot all switchs
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         params = t.topology_params()
         if switch is None:
-            helpers.log("Executing switch reboot for all switchs from master controller")
+            helpers.log("Executing switch reboot for all switchs from main controller")
             c.enable('system reboot switch all', prompt=':')
             c.enable('yes', timeout=300)
             helpers.sleep(120)
@@ -2288,8 +2288,8 @@ class T5(object):
                     t.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
-                master = t.controller("master")
-                master.enable("show switch")
+                main = t.controller("main")
+                main.enable("show switch")
                 helpers.log("Successfully rebooted switchs from controller and re-connected switch IP's with ssh admin account..")
                 return True
             else:
@@ -2313,8 +2313,8 @@ class T5(object):
                             t.setup_ztn_phase2(key)
                 helpers.debug("Updated topology info:\n%s"
                               % helpers.prettify(params))
-                master = t.controller("master")
-                master.enable("show switch")
+                main = t.controller("main")
+                main.enable("show switch")
                 helpers.log("Successfully rebooted switchs from controller and re-connected switch IP's with ssh admin account..")
                 return True
             else:
@@ -2326,7 +2326,7 @@ class T5(object):
         Output: Set the configured number and verify the interval setting
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         intf_value = int(intf_value)
         vns_value = int(vns_value)
         url = '/api/v1/data/controller/applications/bcf/stats-config'
@@ -2348,7 +2348,7 @@ class T5(object):
         Output: verify the lag id for the given interface from both switch
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         intf0 = re.sub("\D", "", intf0)
         intf1 = re.sub("\D", "", intf1)
         lag_id_a = []
@@ -2378,7 +2378,7 @@ class T5(object):
         Output: verify stats brief with both rx and tx on the same CLI output for a given switch and interface
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         url = '/api/v1/data/controller/applications/bcf/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=brief' % (switch, intf)
@@ -2402,7 +2402,7 @@ class T5(object):
                  False
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log("********* rest_delete_all_tenant ")
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant'
         c.rest.get(url)
@@ -2431,7 +2431,7 @@ class T5(object):
                  False
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/core/switch-config[name="%s"]' % (switch)
         try:
             c.rest.patch(url, {"shutdown": True})
@@ -2447,7 +2447,7 @@ class T5(object):
                  False
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/shutdown' % (switch)
         try:
             c.rest.delete(url, {})
@@ -2456,7 +2456,7 @@ class T5(object):
         else:
             return True
 
-    def clean_configuration(self, node='master'):
+    def clean_configuration(self, node='main'):
         '''
             Objective: Delete all user configuration
         '''
@@ -2470,7 +2470,7 @@ class T5(object):
         Output : remove shutdown command
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/core/switch-config?config=true'
         c.rest.get(url)
         data = c.rest.content()
@@ -2491,7 +2491,7 @@ class T5(object):
         Output : True or false based on the entry present in the forwarding lag.
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/lag-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -2520,7 +2520,7 @@ class T5(object):
         '''
         helpers.test_log("Entering ==> rest_get_fabric_interface_info  for switch: %s  interface: %s" % (switch, intf))
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url1 = '/api/v1/data/controller/core/switch?select=name'
         c.rest.get(url1)
@@ -2566,7 +2566,7 @@ class T5(object):
 
     def rest_delete_fabric_interface(self, switch, intf):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {})
         helpers.sleep(2)
@@ -2588,7 +2588,7 @@ class T5(object):
         Output: Execute show switch from CLI and verify the output is not empty
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         if tenant:
             c.cli("show running-config tenant %s" % tenant)
         else:
@@ -2603,7 +2603,7 @@ class T5(object):
         Output: True or false based on the no of routes to be present and system VRF table no (1023 Fixed)
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l3-cidr-route-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -2628,7 +2628,7 @@ class T5(object):
         Output: True or false based on the no of routes to be present
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l3-cidr-route-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -2701,7 +2701,7 @@ class T5(object):
         '''
         helpers.test_log("Entering ==> cli_get_links_nodes_list: %s  - %s" % (node1, node2))
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         cli = 'show link | grep ' + node1 + ' | grep ' + node2
         content = c.cli(cli)['content']
         temp = helpers.strip_cli_output(content, to_list=True)
@@ -2727,7 +2727,7 @@ class T5(object):
         http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/endpoint-manager/clear[mac="90:e2:ba:6f:00:20"][segment="X1"][tenant="X"]
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.test_log("Input arguments: tenant = %s segment name = %s mac address = %s " % (tenant, segment, mac))
 
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/clear[mac="%s"][segment="%s"][tenant="%s"]' % (mac, segment, tenant)
@@ -2747,7 +2747,7 @@ class T5(object):
         output : will add end into all vns in a tenant
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="%s"]' % (tenant)
         c.rest.get(url)
@@ -2776,7 +2776,7 @@ class T5(object):
         output : will add end into all vns in a tenant
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/interface/segment-interface[logical-router="%s"]' % (tenant)
         c.rest.get(url)
@@ -2807,7 +2807,7 @@ class T5(object):
         Function to set the orchestration setting to global
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/applications/bcf/global-setting?single=true'
         c.rest.get(url)
@@ -2820,7 +2820,7 @@ class T5(object):
         Function to set the orchestration setting to default
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/applications/bcf/global-setting?single=true'
         c.rest.get(url)
@@ -2833,7 +2833,7 @@ class T5(object):
         Function to verify the internal vlan ID
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[name="%s"][tenant="%s"]' % (vns, tenant)
         c.rest.get(url)
@@ -2850,7 +2850,7 @@ class T5(object):
         Function to get DPID from switch name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url)
@@ -2890,7 +2890,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         dpid = self.rest_get_dpid(switch)
         helpers.test_log("Input arguments: switch = %s dpid = %s interface = %s" % (switch, dpid, intf))
         # url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
@@ -2912,7 +2912,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         dpid = self.rest_get_dpid(switch)
         helpers.test_log("Input arguments: switch = %s dpid = %s interface = %s" % (switch, dpid, intf))
         # url = '/api/v1/data/controller/applications/bcf/info/stats/interface/stats[interface/name="%s"][switch-dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
@@ -2932,7 +2932,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         Output : List of connections
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/fabric?select=link'
         try:
             helpers.log("Trying to issue the command %s" % (url))
@@ -2965,7 +2965,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         Function which returns list of links which has same sfp
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         sl = SwitchLight.SwitchLight()
         for pair in lis:
             sw1_url = '/api/v1/data/controller/core/zerotouch/device[mac-address="%s"]/action/status/inventory' % (pair.values()[0][0])
@@ -3009,7 +3009,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"vlan-mapping": "default"}
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/global-setting'
         try:
             c.rest.patch(url, {"vlan-mapping": mode})
@@ -3025,7 +3025,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/global-setting {"vlan-mapping": "default"}
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/global-setting'
         if mode is None:
             try:
@@ -3048,7 +3048,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="T-1"]/segment[name="T-1-1"] {"member-vlan": 5}
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.test_log("Input arguments: tenant = %s segment = %s vlanid = %s" % (tenant, segment, vlanid))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]' % (tenant, segment)
         try:
@@ -3065,7 +3065,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
             DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="T-1"]/segment[name="T-1-1"]/member-vlan {}
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.test_log("Input arguments: tenant = %s segment = %s" % (tenant, segment))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/segment[name="%s"]/member-vlan' % (tenant, segment)
         try:
@@ -3081,7 +3081,7 @@ GET http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/info/statistic
         Output , Rest show tenant to verify each and number of segment in each tenant
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant'
         c.rest.get(url)
         data = c.rest.content()

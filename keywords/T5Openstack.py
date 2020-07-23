@@ -892,7 +892,7 @@ S
 			Return: verify the tenant created in BSN controller
 		'''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/tenant'
 		c.rest.get(url)
 		data = c.rest.content()
@@ -910,7 +910,7 @@ S
 			Return: verify the vns created in BSN controller
 		'''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		tenantId = self.openstack_show_tenant(tenantName)
 		netId = self.openstack_show_subnet(subnetName)
 		if netId != '':
@@ -942,7 +942,7 @@ S
 			Return: verify the endpoint is created and active
 		'''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		instanceIp = self.openstack_show_instance_ip(instanceName, netName)
 		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (instanceIp)
 		c.rest.get(url)
@@ -989,7 +989,7 @@ S
 			Output : Verify the subnet gateway IP created in endpoint
 		'''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		subnetIp = self.openstack_show_subnet_ip(subnetName)
 		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (subnetIp)
 		c.rest.get(url)
@@ -1086,7 +1086,7 @@ S
 			Output : Verify the specific endpoint created in BCF controller
 		'''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		os1 = t.openstack_server('os1')
 		content = os1.bash("neutron router-port-list %s" % (routerName))['content']
 		output = helpers.strip_cli_output(content).strip()
@@ -1155,7 +1155,7 @@ S
 			Output: show tenant will count the no of segments created in controller
 	    '''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		count = int(count)
 		if str(tenantName) != "global":
 			tenantId = self.openstack_show_tenant(tenantName)
@@ -1342,7 +1342,7 @@ S
 		Output: list of port group members in dictionary format
 		'''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		instanceIp = self.openstack_show_instance_ip(instanceName, netName)
 		url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint[ip="%s"]' % (instanceIp)
 		c.rest.get(url)
@@ -1364,7 +1364,7 @@ S
 			Output: verify each tenant with expected network count in each tenant
 	    '''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		os1 = t.openstack_server('os1')
 		tcount = int(tcount)
 		ncount = int(ncount)
@@ -1388,7 +1388,7 @@ S
 			Output : Verify the subnet gateway IP created in endpoint
 		'''
 		t = test.Test()
-		c = t.controller('master')
+		c = t.controller('main')
 		os1 = t.openstack_server('os1')
 		tenantId = self.openstack_show_tenant(tenantName)
 		subnetIp = self.openstack_show_subnet_ip(subnetName)

@@ -56,14 +56,14 @@ class BigtapCommands(object):
     def execute_ha_failover(self, params, node):
         def run():
             '''
-            Execute HA failover from master controller
+            Execute HA failover from main controller
             '''
             try:
                 t = test.Test()
             except:
                 return False
             else:
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url1 = '/rest/v1/system/ha/failback'
                     c.rest.put(url1, {})

@@ -3,7 +3,7 @@
 #   Display a list of test suites and their authors for IronHorse release.
 #
 # Usage:
-#   % BUILD_NAME="bvs master #2761" ./dump_suite_authors_ironhorse.py
+#   % BUILD_NAME="bvs main #2761" ./dump_suite_authors_ironhorse.py
 #
 #   <Output>
 #   ...

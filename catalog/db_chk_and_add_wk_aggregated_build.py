@@ -22,17 +22,17 @@ def prog_args():
 Check the database collection 'aggregated_builds' for a document which
 matches the env BUILD_NAME.
    - If found, return the aggregated build name.
-   - If not found and build_name matches a typical build name (e.g., 'bvs master #1234'),
+   - If not found and build_name matches a typical build name (e.g., 'bvs main #1234'),
      create a new document, then return the weekly aggregated build name.
    - If not found and build_name does not match a typical build name (e.g., a Beta build
-     does not have a typical build name - 'bvs master #bcf-2.0.0_13'), don't create a
+     does not have a typical build name - 'bvs main #bcf-2.0.0_13'), don't create a
      new document. You should instead rerun command and specify the aggregated beta build name
      using the option --aggregated-build-name.
 
 Examples:
-   % BUILD_NAME="bvs master #3436" ./db_chk_and_add_wk_aggregated_build.py
-   % BUILD_NAME="bvs master #bcf-2.0.0_13" ./db_chk_and_add_wk_aggregated_build.py \\
-                     --aggregated-build-name "bvs master bcf-2.0.0 aggregated"
+   % BUILD_NAME="bvs main #3436" ./db_chk_and_add_wk_aggregated_build.py
+   % BUILD_NAME="bvs main #bcf-2.0.0_13" ./db_chk_and_add_wk_aggregated_build.py \\
+                     --aggregated-build-name "bvs main bcf-2.0.0 aggregated"
 """
     parser = argparse.ArgumentParser(
                         prog='db_chk_and_add_wk_aggregated_build',
@@ -43,10 +43,10 @@ Examples:
                         help=("Print verbose output"))
     parser.add_argument('--build',
                         help=("Jenkins build string,"
-                              " e.g., 'bvs master #2007'"))
+                              " e.g., 'bvs main #2007'"))
     parser.add_argument('--aggregated-build-name',
                         help=("Aggregated build name,"
-                              " e.g., 'bvs master bcf-2.0.0 aggregated'"))
+                              " e.g., 'bvs main bcf-2.0.0 aggregated'"))
     _args = parser.parse_args()
 
     # _args.build <=> env BUILD_NAME

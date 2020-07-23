@@ -23,8 +23,8 @@ Given the release (RELEASE_NAME env) and build (BUILD_NAME env), print a list
 of failed test cases.
 
 Examples:
-   % RELEASE_NAME=ironhorse BUILD_NAME="bvs master bcf-2.0.0 fcs" ./dump_test_cases_not_in_release.py
-   % ./dump_test_cases_not_in_release.py --release ironhorse --build "bvs master aggregated 2014 wk40"
+   % RELEASE_NAME=ironhorse BUILD_NAME="bvs main bcf-2.0.0 fcs" ./dump_test_cases_not_in_release.py
+   % ./dump_test_cases_not_in_release.py --release ironhorse --build "bvs main aggregated 2014 wk40"
 
 """
     parser = argparse.ArgumentParser(prog='dump_test_cases_not_in_release',
@@ -32,7 +32,7 @@ Examples:
                                      description=descr)
     parser.add_argument('--build',
                         help=("Jenkins build string,"
-                              " e.g., 'bvs master #2007'"))
+                              " e.g., 'bvs main #2007'"))
     parser.add_argument('--release',
                         help=("Product release, e.g., 'IronHorse'"))
     parser.add_argument('--show-tags', action='store_true', default=False,

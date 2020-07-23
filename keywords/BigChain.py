@@ -41,7 +41,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -75,7 +75,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -109,7 +109,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -156,7 +156,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -201,7 +201,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -314,7 +314,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -366,7 +366,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
         except:
@@ -511,7 +511,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             BigChain1 = BigChain()
         except:
             helpers.test_log("Could not execute command")
@@ -551,7 +551,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -637,7 +637,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -688,7 +688,7 @@ class BigChain(object):
     def rest_verify_bigchain_address_group(self, chain_addressgrp_name=None, chain_addressgrp_type='ipv4', chain_addressgrp_data=None):
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -734,7 +734,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -797,7 +797,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -861,7 +861,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -892,7 +892,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -923,7 +923,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -948,7 +948,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -982,7 +982,7 @@ class BigChain(object):
        '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1010,7 +1010,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1036,7 +1036,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1072,7 +1072,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1097,7 +1097,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1122,7 +1122,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -1159,7 +1159,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1198,7 +1198,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1239,7 +1239,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1264,7 +1264,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1294,7 +1294,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1323,7 +1323,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1349,7 +1349,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -1403,7 +1403,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1428,7 +1428,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1453,7 +1453,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1481,7 +1481,7 @@ class BigChain(object):
     def rest_add_span_service_to_chain(self, chain_name=None, endpoint1=False, endpoint2=False, span_service_name=None, span_instance_id=1, update=False):
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1519,7 +1519,7 @@ class BigChain(object):
     def rest_delete_span_service_from_chain(self, chain_name=None, endpoint1=False, endpoint2=False):
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1568,7 +1568,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1604,7 +1604,7 @@ class BigChain(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1631,7 +1631,7 @@ class BigChain(object):
     def rest_add_bigchain_address_group(self, chain_addressgrp_name=None, chain_addressgrp_type='ipv4', chain_addressgrp_data=None):
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -1671,7 +1671,7 @@ class BigChain(object):
     def rest_delete_bigchain_address_group(self, chain_addressgrp_name=None):
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False

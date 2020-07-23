@@ -356,13 +356,13 @@ class ControllerNode(Node):
     def devconf(self):
         return self.dev
 
-    def is_master(self):
+    def is_main(self):
         """
-        Am I the master controller? This functionality is already implemented
+        Am I the main controller? This functionality is already implemented
         in Test class so simply refer to it.
         """
         node = self.name()
-        return self.t.is_master_controller(node)
+        return self.t.is_main_controller(node)
 
     def node_id(self):
         """
@@ -373,7 +373,7 @@ class ControllerNode(Node):
         'show cluster' API has 'local-node-id' which is the node-id for the
         node we want.
 
-        Input: Node name (e.g., 'master', 'c1', 'c2', etc.)
+        Input: Node name (e.g., 'main', 'c1', 'c2', etc.)
         Output: Integer value for the node-id
         """
         node = self.name()

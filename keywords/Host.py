@@ -33,7 +33,7 @@ class Host(object):
         | timeout | how log to wait before timeout (default is 180 seconds) |
 
         Example:
-        | bash scp | node=c1 | source=bsn@jenkins:/var/lib/jenkins/jobs/bvs\\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg | dest=. |
+        | bash scp | node=c1 | source=bsn@jenkins:/var/lib/jenkins/jobs/bvs\\ main/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg | dest=. |
         | bash_scp | node=h1 | source=/var/log/floodlight/* | dest=jenkins-w9.bigswitch.com:/var/www/regression_logs/vui/test_mininet_20140509_060230 | password='bsn' | timeout=60 |
         Return Value:
         - True if scp succeeds
@@ -120,7 +120,7 @@ class Host(object):
 
         Example:
         | ${lossA} = | Bash Ping | h1          | 10.192.104.1 | source_if=eth1 |
-        | ${lossB} = | Bash Ping | node=master | dest_node=s1 |                |
+        | ${lossB} = | Bash Ping | node=main | dest_node=s1 |                |
         =>
         - ${lossA} = 0
         - ${lossB} = 100
@@ -208,7 +208,7 @@ class Host(object):
 
         Example:
         | ${lossA} = | Bash Ping6 | h1          | 10.192.104.1 | source_if=eth1 |
-        | ${lossB} = | Bash Ping6 | node=master | dest_node=s1 |                |
+        | ${lossB} = | Bash Ping6 | node=main | dest_node=s1 |                |
         =>
         - ${lossA} = 0
         - ${lossB} = 100
@@ -484,7 +484,7 @@ class Host(object):
         | path | directory to get listing for |
 
         Example:
-        - bash ls    master    /home/admin
+        - bash ls    main    /home/admin
         - bash ls    h1        /etc/passwd
 
         Return Value:

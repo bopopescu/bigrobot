@@ -119,12 +119,12 @@ class DevConf(object):
 
           $ ssh admin@10.8.1.225
           Warning: Permanently added '10.8.1.225' (RSA) to the list of known hosts.
-          Big Cloud Fabric Appliance 2.0.0-master01-SNAPSHOT (bcf_master #3338)      <=== Authen banner
+          Big Cloud Fabric Appliance 2.0.0-main01-SNAPSHOT (bcf_main #3338)      <=== Authen banner
           Log in as 'admin' to configure
 
           admin@10.8.1.225's password: *****
           Last login: Tue Feb  3 17:42:28 2015 from 10.1.13.188
-          Big Cloud Fabric Appliance 2.0.0-master01-SNAPSHOT (bcf_master #3338)      <=== Login banner
+          Big Cloud Fabric Appliance 2.0.0-main01-SNAPSHOT (bcf_main #3338)      <=== Login banner
           Logged in as admin, 2015-02-24 19:13:13.431000 UTC, auth from 10.1.10.25
           standby controller>
 

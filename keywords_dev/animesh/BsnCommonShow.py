@@ -20,7 +20,7 @@ class BsnCommonShow(object):
 #   Return Value:  Version String
     def rest_show_version(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         # url='http://%s:%s/rest/v1/system/version' % (c.ip,c.http_port)
         url = '/rest/v1/system/version'
         c.rest.get(url)
@@ -29,12 +29,12 @@ class BsnCommonShow(object):
         return content[0]['controller']
 
 
-#   Objective: Return Current Controller Role viz. Master/Slave
+#   Objective: Return Current Controller Role viz. Main/Subordinate
 #   Input: N/A
-#   Return Value:  Current Controller Role viz. Master/Slave
+#   Return Value:  Current Controller Role viz. Main/Subordinate
     def rest_ha_role(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         # url = '%s/system/ha/role'  % (c.base_url)
         url = '/rest/v1/system/ha/role'
         c.rest.get(url)
@@ -49,7 +49,7 @@ class BsnCommonShow(object):
 #   Return Value:  Return Current Controller ID
     def rest_controller_id(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = 'http://%s:%s/rest/v1/system/controller' % (c.ip, c.http_port)
         url = '/rest/v1/system/controller'
         c.rest.get(url)
@@ -62,7 +62,7 @@ class BsnCommonShow(object):
 #   Return Value:  Return a dictionary of SNMP related values
     def rest_snmp_show(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = 'http://%s:%s/rest/v1/model/snmp-server-config/' % (c.ip, c.http_port)
         url = '/rest/v1/model/snmp-server-config/'
         c.rest.get(url)
@@ -81,7 +81,7 @@ class BsnCommonShow(object):
 #   Return Value:  return the SNMP Walk O/P
     def rest_snmp_get(self, snmpCommunity, snmpOID):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = "/usr/bin/snmpwalk -v2c -c %s %s %s" % (str(snmpCommunity), c.ip, str(snmpOID))
         returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
         (out, err) = returnVal.communicate()
@@ -93,7 +93,7 @@ class BsnCommonShow(object):
 #   Return Value:  return the SNMP Walk O/P
     def rest_snmp_getnext(self, snmpCommunity, snmpOID):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = "/usr/bin/snmpgetnext -v2c -c %s %s %s" % (str(snmpCommunity), c.ip, str(snmpOID))
         returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
         (out, err) = returnVal.communicate()
@@ -106,7 +106,7 @@ class BsnCommonShow(object):
 #   Return Value:  return the SNMP Walk O/P
     def rest_snmp_cmd(self, snmp_cmd, snmpOptions, snmpCommunity, snmpOID):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         if snmpOptions == "None" or snmpOptions == "none":
                 snmpOptions = " "
         url = "/usr/bin/%s -v2c %s -c %s %s %s" % (str(snmp_cmd), str(snmpOptions), str(snmpCommunity), c.ip, str(snmpOID))
@@ -120,7 +120,7 @@ class BsnCommonShow(object):
 # Output: Dictionary of Switch DPID and IP Addresses
     def rest_show_switch(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         # url='http://%s:%s/api/v1/data/controller/core/switch' % (c.ip,c.http_port)
         url = '/api/v1/data/controller/core/switch'
         helpers.log("URL is %s  " % url)
@@ -141,7 +141,7 @@ class BsnCommonShow(object):
 
     def return_switch_dpid_from_alias(self, switch_alias):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         try:
             # url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias' %(c.ip,c.http_port)
             url = '/api/v1/data/controller/core/switch?select=alias'
@@ -166,7 +166,7 @@ class BsnCommonShow(object):
             Returns: Hardware/MAC Address of Interface
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         try:
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -199,7 +199,7 @@ class BsnCommonShow(object):
             Returns: True if the interface is up, false otherwise
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         try:
             if (switch_alias is None and sw_dpid is not None):
                 switch_dpid = sw_dpid
@@ -230,13 +230,13 @@ class BsnCommonShow(object):
 
             Input:
                processName        Name of process to be restarted
-               controllerRole        Where to execute the command. Accepted values are `Master` and `Slave`
+               controllerRole        Where to execute the command. Accepted values are `Main` and `Subordinate`
         '''
         t = test.Test()
-        if (controllerRole == 'Master'):
-            c = t.controller('master')
+        if (controllerRole == 'Main'):
+            c = t.controller('main')
         else:
-            c = t.controller('slave')
+            c = t.controller('subordinate')
         conn = SSH2()
         conn.connect(c.ip)
         conn.login(Account("admin", "adminadmin"))
@@ -253,7 +253,7 @@ class BsnCommonShow(object):
         '''Execute a generic command on the controller and return ouput.
 
             Input:
-                controllerRole        Where to execute the command. Accepted values are `Master` and `Slave`
+                controllerRole        Where to execute the command. Accepted values are `Main` and `Subordinate`
                 input            Command to be executed on switch
 
             Return Value: Output from command execution
@@ -264,10 +264,10 @@ class BsnCommonShow(object):
 
         '''
         t = test.Test()
-        if (controllerRole == 'Master'):
-            c = t.controller('master')
+        if (controllerRole == 'Main'):
+            c = t.controller('main')
         else:
-            c = t.controller('slave')
+            c = t.controller('subordinate')
         conn = SSH2()
         conn.connect(c.ip)
         conn.login(Account("admin", "adminadmin"))
@@ -280,24 +280,24 @@ class BsnCommonShow(object):
         conn.close()
         return output
 
-    def return_master_slave_ip_address(self):
+    def return_main_subordinate_ip_address(self):
         t = test.Test()
         ip_address_list = {}
         try:
             t.controller('c2')
         except:
-            return {'Master':str(t.controller('c1').ip)}
+            return {'Main':str(t.controller('c1').ip)}
         else:
-            if(self.btc.rest_is_c1_master_controller()):
-                ip_address_list = {'Master':str(t.controller('c1').ip), 'Slave':str(t.controller('c2').ip)}
+            if(self.btc.rest_is_c1_main_controller()):
+                ip_address_list = {'Main':str(t.controller('c1').ip), 'Subordinate':str(t.controller('c2').ip)}
                 return (ip_address_list)
             else:
-                ip_address_list = {'Master':str(t.controller('c2').ip), 'Slave':str(t.controller('c1').ip)}
+                ip_address_list = {'Main':str(t.controller('c2').ip), 'Subordinate':str(t.controller('c1').ip)}
                 return (ip_address_list)
 
     def rest_show_ntp(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         # url='http://%s:%s/rest/v1/model/ntp-server/' % (c.ip,c.http_port)
         url = '/rest/v1/model/ntp-server/'
         helpers.log("URL is %s  " % url)
@@ -308,7 +308,7 @@ class BsnCommonShow(object):
 
     def rest_show_syslog(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         # url='http://%s:%s/rest/v1/model/syslog-server/' % (c.ip,c.http_port)
         url = '/rest/v1/model/syslog-server/'
         helpers.log("URL is %s  " % url)

@@ -50,7 +50,7 @@ class T5_longevity(object):
         '''
         helpers.test_log("Entering ==> cli_show_endpoint_filter: %s"  % pattern)           
         t = test.Test()
-        c = t.controller('master')         
+        c = t.controller('main')         
         cli= 'show endpoint | grep ' + pattern + ' | wc -l'
         content = c.cli(cli)['content']   
         temp = helpers.strip_cli_output(content)        
@@ -61,7 +61,7 @@ class T5_longevity(object):
         '''
         helpers.test_log("Entering ==> cli_get_links_nodes: %s  - %s"  %( node1, node2) )           
         t = test.Test()
-        c = t.controller('master')         
+        c = t.controller('main')         
         cli= 'show link | grep ' + node1 + ' | grep ' + node2  
         content = c.cli(cli)['content']   
         temp = helpers.strip_cli_output(content, to_list=True)  
@@ -104,7 +104,7 @@ class T5_longevity(object):
         helpers.log("***Entering==> spawn_log_in   \n" )
         
         t = test.Test()
-        ip = bsn.get_node_ip('master')
+        ip = bsn.get_node_ip('main')
   
         for loop in range (0, int(sessions)): 
             helpers.log('USR info:  this is loop:  %d' % loop )
@@ -127,12 +127,12 @@ class T5_longevity(object):
 
         return True
 
-    def cli_upgrade_launch_break(self, breakpoint=None,node='master',option=''):
+    def cli_upgrade_launch_break(self, breakpoint=None,node='main',option=''):
         '''
           upgrade launch break  -  break out of the upgrade at various point
           Author: Mingtao
           input:  node  - controller
-                          master, slave, c1 c2
+                          main, subordinate, c1 c2
                 option -  revert, suspend
                 breakpoint - None:   no break
                             proceed:  send no   when proceed is prompt
@@ -185,10 +185,10 @@ class T5_longevity(object):
                 helpers.log('INFO: upgrade launch  successfully')
                 return True
         else:
-            #  need to split for master or standby 
-            if node == 'master':
+            #  need to split for main or standby 
+            if node == 'main':
                 role = 'active'
-            elif node == 'slave':
+            elif node == 'subordinate':
                 role = 'stand-by'
             else:
                 role = bsn.rest_get_node_role(node)

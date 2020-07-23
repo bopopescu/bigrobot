@@ -16,18 +16,18 @@ class T5Platform_DJ(object):
     def rest_add_user(self, numUsers=1):
         numWarn = 0
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         url = "/api/v1/data/controller/core/aaa/local-user"
         usersString = []
         numErrors = 0
         for i in range (0, int(numUsers)):
             user = "user" + str(i+1)
             usersString.append(user)
-            master.rest.post(url, {"user-name": user})
+            main.rest.post(url, {"user-name": user})
             sleep(1)
             
-            if not master.rest.status_code_ok():
-                helpers.test_failure(master.rest.error())
+            if not main.rest.status_code_ok():
+                helpers.test_failure(main.rest.error())
                 numErrors += 1
             else:
                 helpers.log("Successfully added user: %s " % user)
@@ -36,7 +36,7 @@ class T5Platform_DJ(object):
             return False
         else:
             url = "/api/v1/data/controller/core/aaa/local-user"
-            result = master.rest.get(url)
+            result = main.rest.get(url)
             showUsers = []
             for i in range (0, len(result["content"])):
                 showUsers.append(result["content"][i]['user-name'])
@@ -53,7 +53,7 @@ class T5Platform_DJ(object):
     def rest_delete_user(self, numUsers=1):
         numWarn = 0
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         usersString = []
         numErrors = 0
         for i in range (0, int(numUsers)):
@@ -61,11 +61,11 @@ class T5Platform_DJ(object):
             user = "user" + str(i+1)
             usersString.append(user)
             url = url + user + "\"]"
-            master.rest.delete(url, {})
+            main.rest.delete(url, {})
             sleep(1)
             
-            if not master.rest.status_code_ok():
-                helpers.test_failure(master.rest.error())
+            if not main.rest.status_code_ok():
+                helpers.test_failure(main.rest.error())
                 numErrors += 1
             else:
                 helpers.log("Successfully deleted user: %s " % user)
@@ -74,7 +74,7 @@ class T5Platform_DJ(object):
             return False
         else:
             url = "/api/v1/data/controller/core/aaa/local-user"
-            result = master.rest.get(url)
+            result = main.rest.get(url)
             showUsers = []
             for i in range (0, len(result["content"])):
                 showUsers.append(result["content"][i]['user-name'])
@@ -92,12 +92,12 @@ class T5Platform_DJ(object):
     def rest_add_vip(self, vip):
         
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         url = "/api/v1/data/controller/os/config/global/virtual-ip-config"
-        master.rest.post(url, {"ipv4-address": vip})
+        main.rest.post(url, {"ipv4-address": vip})
         
         url = "/api/v1/data/controller/os/config/global/virtual-ip-config"
-        result = master.rest.get(url)['content']
+        result = main.rest.get(url)['content']
         if (result[0]['ipv4-address'] == vip):
             return True
         else:
@@ -105,26 +105,26 @@ class T5Platform_DJ(object):
     
     def cli_verify_cluster_vip(self, vip):
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         
-        content = master.bash("ip addr")['content']
+        content = main.bash("ip addr")['content']
         helpers.log("CLI Content is: %s " % content)
         splitContent = str(content).split(' ')
         helpers.log("splitContent is: %s" % splitContent)
         if vip not in splitContent:
-            helpers.log("VIP: %s not in the master" % vip)
+            helpers.log("VIP: %s not in the main" % vip)
             return False
         else:
-            helpers.log("VIP: %s is present in the master" % vip)
+            helpers.log("VIP: %s is present in the main" % vip)
             return True
         
         
     def rest_delete_vip(self):
         
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         url = "/api/v1/data/controller/os/config/global/virtual-ip-config"
-        content = master.rest.delete(url)['content']
+        content = main.rest.delete(url)['content']
         
         if (content):
             helpers.log("result is: %s" % content)
@@ -137,9 +137,9 @@ class T5Platform_DJ(object):
     
     def do_show_run_vns_verify(self, vnsName, numMembers):
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         url = "/api/v1/data/controller/applications/bvs/tenant?config=true"
-        result = master.rest.get(url)
+        result = main.rest.get(url)
         helpers.log("Show run output is: %s " % result["content"][0]['vns'][0]['port-group-membership-rules'])
         vnsList = result["content"][0]['vns'][0]['port-group-membership-rules']
         if (len(vnsList) != int(numMembers)):

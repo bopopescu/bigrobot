@@ -7,7 +7,7 @@ from pytz import timezone
 
 
 vmdk_name = "controller-bvs-2.0.7-SNAPSHOT.vmdk"
-vmdk_path = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/"
+vmdk_path = "/var/lib/jenkins/jobs/bvs\ main/lastSuccessful/archive/target/appliance/images/bvs/"
 kvm_host = "10.192.104.13"
 kvm_user = "bsn"
 kvm_pwd = "bsn"

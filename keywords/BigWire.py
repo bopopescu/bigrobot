@@ -43,7 +43,7 @@ class BigWire(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if bigwire_key == "datacenter":
                     bwKeyword = "datacenter-info"  # "show bigwire datacenter"
@@ -91,7 +91,7 @@ class BigWire(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]' % (str(datacenter_name))
                 c.rest.put(url, {"name": str(datacenter_name)})
@@ -124,7 +124,7 @@ class BigWire(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
             try:
@@ -163,7 +163,7 @@ class BigWire(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             switch_dpid_1 = AppCommon.rest_return_switch_dpid_from_ip(node_1)
             switch_dpid_2 = AppCommon.rest_return_switch_dpid_from_ip(node_2)
@@ -202,7 +202,7 @@ class BigWire(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigwire/tenant[name="%s"]' % (str(tenant_name))
                 c.rest.put(url, {"name": str(tenant_name)})
@@ -235,7 +235,7 @@ class BigWire(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
             try:
@@ -273,7 +273,7 @@ class BigWire(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
             switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
             try:
@@ -306,7 +306,7 @@ class BigWire(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigwire/tenant[name="%s"]' % (str(tenant_name))
                 c.rest.delete(url, {})
@@ -334,7 +334,7 @@ class BigWire(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigwire/pseudo-wire[name="%s"]' % (str(pseudowire_name))
                 c.rest.delete(url, {})
@@ -366,7 +366,7 @@ class BigWire(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]' % (str(datacenter_name))
                 c.rest.delete(url, {})

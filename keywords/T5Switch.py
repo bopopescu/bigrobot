@@ -22,7 +22,7 @@ class  T5Switch(object):
             t = test.Test()
             switch_alias = t.switch(switch)
             helpers.log("The switch alias is %s" % switch)
-            c = t.controller('master')
+            c = t.controller('main')
             helpers.log("The switch dpid is %s" % mac)
             url = ('/api/v1/data/controller/core/zerotouch/device[mac-address="%s"]/action/status/environment' % mac)
 
@@ -89,7 +89,7 @@ class  T5Switch(object):
         t = test.Test()
         switch_alias = t.switch(switch)
         helpers.log("The switch alias is %s" % switch)
-        c = t.controller('master')
+        c = t.controller('main')
         url = ('/api/v1/data/controller/core/proxy/version[name="%s"]' % switch)
         helpers.log("Getting the switch %s info from controller %s" % (switch, url))
         try:
@@ -128,7 +128,7 @@ class  T5Switch(object):
             t = test.Test()
             switch_alias = t.switch(switch)
             helpers.log("The switch alias is %s" % switch)
-            c = t.controller('master')
+            c = t.controller('main')
             helpers.log("The switch dpid is %s" % mac)
             url = ('/api/v1/data/controller/core/zerotouch/device[mac-address="%s"]/action/status/environment' % mac)
 
@@ -232,7 +232,7 @@ class  T5Switch(object):
          Output : remove shutdown command
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         try:
             url_to_get = '/api/v1/data/controller/core/switch-config?config=true'
             c.rest.get(url_to_get)
@@ -549,7 +549,7 @@ class  T5Switch(object):
             '''
             t = test.Test()
             fabric = T5.T5()
-            c = t.controller('master')
+            c = t.controller('main')
             dpid = fabric.rest_get_dpid(switch)
 
             helpers.log("The switch is %s,dpid is %s and interface is %s" % (switch, dpid, intf))
@@ -583,7 +583,7 @@ class  T5Switch(object):
             '''
             t = test.Test()
             fabric = T5.T5()
-            c = t.controller('master')
+            c = t.controller('main')
             if switch == None  or intfList == []:
                 helpers.log("Provide the switch name and interface List to check .\n")
                 return False
@@ -614,7 +614,7 @@ class  T5Switch(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             url1 = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
             c.rest.put(url1, {"name": str(intf)})
             url2 = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
@@ -634,7 +634,7 @@ class  T5Switch(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
             c.rest.delete(url, {"breakout": None})
             helpers.sleep(20)
@@ -652,7 +652,7 @@ class  T5Switch(object):
         '''
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
@@ -683,7 +683,7 @@ class  T5Switch(object):
            output - returns the component asked
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()

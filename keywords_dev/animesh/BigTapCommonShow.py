@@ -7,7 +7,7 @@ class BigTapCommonShow(object):
     def __init__(self):
         pass
     
-    def rest_is_c1_master_controller(self):
+    def rest_is_c1_main_controller(self):
         t = test.Test()
         try:
             t.controller('c2')
@@ -55,7 +55,7 @@ class BigTapCommonShow(object):
         '''
         try:
             t = test.Test()
-            c= t.controller('master')
+            c= t.controller('main')
             url ='/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (policy_name)
             c.rest.get(url)
             if not c.rest.status_code_ok():
@@ -121,7 +121,7 @@ class BigTapCommonShow(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url ='/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/%s' % (str(policy_name),str(method))
                 c.rest.get(url)
@@ -146,7 +146,7 @@ class BigTapCommonShow(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 helpers.log("IP address is %s" % (c.ip))
                 aliasExists=0
@@ -175,7 +175,7 @@ class BigTapCommonShow(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url ='/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (str(switch_dpid))
                 c.rest.get(url)

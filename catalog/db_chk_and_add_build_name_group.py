@@ -31,7 +31,7 @@ BUILD_NAME group.
                         help=("Print verbose output"))
     parser.add_argument('--build',
                         help=("Jenkins build string,"
-                              " e.g., 'bvs master #2007'"))
+                              " e.g., 'bvs main #2007'"))
     parser.add_argument('--createtime',
                         help=("Build creation time,"
                               " e.g., '2015-03-06T12:54:58.130'"))

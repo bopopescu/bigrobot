@@ -206,7 +206,7 @@ class Controller(object):
         Connected to domain vui-bvs
         Escape character is ^]
 
-        Big Virtual Switch Appliance 2.0.5-SNAPSHOT (bvs master #1223)
+        Big Virtual Switch Appliance 2.0.5-SNAPSHOT (bvs main #1223)
         Log in as 'admin' to configure
 
         controller login: admin                                            <===
@@ -315,14 +315,14 @@ class Controller(object):
 
         Press enter to continue > [enter]                                  <===
 
-        Big Virtual Switch Appliance 2.0.5-SNAPSHOT (bvs master #1223)
+        Big Virtual Switch Appliance 2.0.5-SNAPSHOT (bvs main #1223)
         Log in as 'admin' to configure
 
         blah login: admin                                                  <===
         Password: *****                                                    <===
 
         Last login: Mon Mar 17 19:01:17 UTC 2014 on ttyS0
-        Big Virtual Switch Appliance 2.0.5-SNAPSHOT (bvs master #1223)
+        Big Virtual Switch Appliance 2.0.5-SNAPSHOT (bvs main #1223)
         Logged in as admin, 2014-03-17 20:24:20.843000 UTC, auth from blah
         blah>
         """
@@ -452,7 +452,7 @@ class Controller(object):
 
         Example:
         | ${lossA} = | Cli Ping | h1          | 10.192.104.1 |
-        | ${lossB} = | Cli Ping | node=master | dest_node=s1 |
+        | ${lossB} = | Cli Ping | node=main | dest_node=s1 |
         =>
         - ${lossA} = 0
         - ${lossB} = 100
@@ -554,7 +554,7 @@ _ = ''' These methods are candidates for removal...
         # helpers.sleep(10)
 
         # Additional output and questions
-        #   Enter the IP address of master controller OR
+        #   Enter the IP address of main controller OR
         #   To start a new cluster, just enter <cr>.
         #   Existing controller IP:
         #   clustername = 6771f3f3-b18e-4bcd-b01b-5969706bd195.0
@@ -681,7 +681,7 @@ _ = ''' These methods are candidates for removal...
         helpers.sleep(10)
 
         # Additional output and questions
-        #   Enter the IP address of master controller OR
+        #   Enter the IP address of main controller OR
         #   To start a new cluster, just enter <cr>.
         #   Existing controller IP:
         #   clustername = 6771f3f3-b18e-4bcd-b01b-5969706bd195.0

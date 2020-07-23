@@ -141,7 +141,7 @@ Display test execution stats collected for a specific build.
                         help=("Product release, e.g., 'ironhorse', 'ironhorse-plus', 'jackfrost', etc."))
     parser.add_argument('--build',
                         help=("Jenkins build string,"
-                              " e.g., 'bvs master #2007'"))
+                              " e.g., 'bvs main #2007'"))
     parser.add_argument('--show-untested', action='store_true', default=False,
                         help=("Show the manual-untested test cases"))
     parser.add_argument('--show-manual', action='store_true', default=False,

@@ -15,9 +15,9 @@ echo "----"
 ./build_name_gen.py --testbed Common --version-str "Big Tap Controller 4.5.0  (2014.11.13.1922-b.bsc.corsair-4.1.1beta"
 
 # BCF
-./build_name_gen.py --testbed 10G     --version-str "Big Cloud Fabric Appliance 3.0.0-master01-SNAPSHOT (bcf_master #4201)"
-./build_name_gen.py --testbed virtual --version-str "Big Cloud Fabric Appliance 2.0.0-master01-SNAPSHOT (ihplus_bcf #515)"
-./build_name_gen.py --testbed common  --version-str "Big Cloud Fabric Appliance 2.5.0-master01-SNAPSHOT (ihplus_bcf #515)" --additional-version-descr "Testing"
+./build_name_gen.py --testbed 10G     --version-str "Big Cloud Fabric Appliance 3.0.0-main01-SNAPSHOT (bcf_main #4201)"
+./build_name_gen.py --testbed virtual --version-str "Big Cloud Fabric Appliance 2.0.0-main01-SNAPSHOT (ihplus_bcf #515)"
+./build_name_gen.py --testbed common  --version-str "Big Cloud Fabric Appliance 2.5.0-main01-SNAPSHOT (ihplus_bcf #515)" --additional-version-descr "Testing"
 
 
 
@@ -32,4 +32,4 @@ echo "----"
 ./build_name_gen.py --testbed Dell --version-str "Big Tap Controller 5.0.1  (2014.11.13.1922-b.bsc.corsair-4.1.1beta"
 
 # BCF
-./build_name_gen.py --testbed virtual --version-str "Big Cloud Fabric Appliance 2.0.0-master01-SNAPSHOT (ihwill_bcf #515)"
+./build_name_gen.py --testbed virtual --version-str "Big Cloud Fabric Appliance 2.0.0-main01-SNAPSHOT (ihwill_bcf #515)"

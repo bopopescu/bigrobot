@@ -18,7 +18,7 @@ class  T6Sflow(object):
         To configure sflow counter interval in seconds 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url1 = '/api/v1/data/controller/applications/bcf/sflow/collector[ip-address="%s"]' % (ip)
         
         try:
@@ -33,7 +33,7 @@ class  T6Sflow(object):
         To configure sflow counter interval in seconds 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url1 = '/api/v1/data/controller/applications/bcf/sflow/collector[ip-address="%s"]'  % (ip)
         
         try:
@@ -49,7 +49,7 @@ class  T6Sflow(object):
         To configure sflow counter interval in seconds 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/sflow'
         try:
             c.rest.patch(url, {"counter-interval": counterint})
@@ -63,7 +63,7 @@ class  T6Sflow(object):
         To configure sflow header size in Bytes 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/sflow'
         try:
             c.rest.patch(url, {"max-header-size": headersize})
@@ -78,7 +78,7 @@ class  T6Sflow(object):
         To configure sflow header size in Bytes 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/sflow'
         try:
             c.rest.patch(url, {"sample-rate": samplerate})
@@ -93,7 +93,7 @@ class  T6Sflow(object):
         To get the sflow collector info from controller for a given switch 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/sflow-collector-table' % (switch)
         try:
             c.rest.get(url)
@@ -109,7 +109,7 @@ class  T6Sflow(object):
         To get the sflow sampler info from controller for a given switch 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/sflow-sampler-table' % (switch)
         try:
             c.rest.get(url)

@@ -974,15 +974,15 @@ def is_esb():
 
 def is_controller(name):
     """
-    Controller is defined as c1, c2, master, slave, ...
+    Controller is defined as c1, c2, main, subordinate, ...
     """
-    match = re.match(r'^(c\d|controller\d?|master|slave)$', name)
+    match = re.match(r'^(c\d|controller\d?|main|subordinate)$', name)
     return True if match else False
 
 
 def is_controller_or_error(name):
     """
-    Controller is defined as c1, c2, master, slave, ...
+    Controller is defined as c1, c2, main, subordinate, ...
     """
     if not is_controller(name):
         environment_failure("Node must be a controller ('c1', 'c2').")

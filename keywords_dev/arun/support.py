@@ -22,7 +22,7 @@ class support(object):
     def __init__(self):
         pass
 
-    def check_partitions_for_diagnostics(self, node_name='master'):
+    def check_partitions_for_diagnostics(self, node_name='main'):
         t = test.Test()
         node = t.controller(node_name)
         mount_output = node.bash("mount | grep diagnostic")
@@ -47,7 +47,7 @@ class support(object):
         else:
             helpers.test_failure("Mount cmd from controller did not fine diagnostic mounts points")
             return False
-    def check_support_file_location(self, node_name='master'):
+    def check_support_file_location(self, node_name='main'):
         data = self.get_support_bundles(node_name)
         return_value = False
         if len(data) == 0:
@@ -62,14 +62,14 @@ class support(object):
                 else:
                     return_value = False
         return return_value
-    def get_support_bundles(self, node_name='master'):
+    def get_support_bundles(self, node_name='main'):
         t = test.Test()
         node = t.controller(node_name)
         url = '/api/v1/data/controller/support/bundle'
         node.get(url)
         data = node.rest.content()
         return data
-    def get_support_bundle_fs_path(self, node_name='master'):
+    def get_support_bundle_fs_path(self, node_name='main'):
         '''
         Get the absolute path of the first available support bundle from controller
         '''
@@ -84,7 +84,7 @@ class support(object):
                 helpers.log("fs-path: %s" % data[i]['fs-path'])
                 return data[i]['fs-path']
 
-    def get_support_bundle_name(self, node_name='master'):
+    def get_support_bundle_name(self, node_name='main'):
         '''
         Get The Name of the Support Bundle that is first available on the controller
         '''
@@ -99,7 +99,7 @@ class support(object):
                 helpers.log("Support Bundle Name: %s" % data[i]['name'])
                 return data[i]['name']
 
-    def delete_support_bundles(self, node_name="master"):
+    def delete_support_bundles(self, node_name="main"):
         t = test.Test()
         node = t.controller(node_name)
         data = self.get_support_bundles()
@@ -122,7 +122,7 @@ class support(object):
         else:
             helpers.test_failure("Unable to Delete all Support bundles..")
 
-    def get_node_mac_address(self, node_name="master"):
+    def get_node_mac_address(self, node_name="main"):
         '''
             Get the HW mac address of the give Node from ifconfig output
         '''
@@ -136,7 +136,7 @@ class support(object):
             if match:
                 return match.group(1)
 
-    def check_controller_folders(self, support_bundle_folder=None, node='master'):
+    def check_controller_folders(self, support_bundle_folder=None, node='main'):
         ''''
             Check for Controller Folders
         if support_bundle_folder is None:
@@ -152,7 +152,7 @@ class support(object):
                     return True
         return False
 
-    def check_switch_hardware_counters(self, support_bundle_folder=None, node_name='master'):
+    def check_switch_hardware_counters(self, support_bundle_folder=None, node_name='main'):
         '''
             Check for hardware counters are logded on support logs
         '''
@@ -185,7 +185,7 @@ class support(object):
                         return result
         return False
 
-    def check_switch_cmd(self, switch_cmd, support_bundle_folder=None, node_name='master'):
+    def check_switch_cmd(self, switch_cmd, support_bundle_folder=None, node_name='main'):
         '''
             Check whether the given switch cmd is logded on support logs
         '''
@@ -215,7 +215,7 @@ class support(object):
                                         result = True
         return result
 
-    def check_controller_cli_cmds(self, support_bundle_folder=None, node_name='master'):
+    def check_controller_cli_cmds(self, support_bundle_folder=None, node_name='main'):
         '''
             check for controller cli cmds are logged
         '''

@@ -265,7 +265,7 @@ class TestCatalog(object):
         week_num = helpers.week_num()
         year = helpers.year()
         if not aggregated_build_name:
-            aggregated_build_name = ("bvs master aggregated %s wk%s"
+            aggregated_build_name = ("bvs main aggregated %s wk%s"
                                      % (year, week_num))
             query = {"build_names": {"$all": [build_name]}}
         else:

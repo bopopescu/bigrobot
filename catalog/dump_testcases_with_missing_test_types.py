@@ -8,7 +8,7 @@
 #   https://bigswitch.atlassian.net/wiki/display/QA/Test+Case+Tagging+in+BigRobot
 #
 #   Usage:
-#     % RELEASE_NAME=ironhorse BUILD_NAME="bvs master #2761" ./data_validation_find_testcases_with_missing_test_types.py
+#     % RELEASE_NAME=ironhorse BUILD_NAME="bvs main #2761" ./data_validation_find_testcases_with_missing_test_types.py
 #
 
 import os

@@ -22,7 +22,7 @@ class T5_Scale(object):
 
     def copy_config_from_server(self, file_path, server, server_passwd, dest_file='cfg_file_from_server.cfg'):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.config('')
         # helpers.log("INFO: ****Getting config file from server")
         # string = "copy scp://root@%s:%s %s" % (server, file_path, dest_file)
@@ -54,7 +54,7 @@ class T5_Scale(object):
 
     def copy_config_from_server_to_snapshot(self, file_path, server, server_passwd, dest_file='cfg_file_from_server.cfg'):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.config('')
         # helpers.log("INFO: ****Getting config file from server")
         # string = "copy scp://root@%s:%s %s" % (server, file_path, dest_file)
@@ -101,7 +101,7 @@ class T5_Scale(object):
 
     def verify_file(self, file_name):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log("checking the file exist or not")
         c.config('')
         string = "show file | grep %s" % (file_name)
@@ -260,8 +260,8 @@ class T5_Scale(object):
          #   end_date += timedelta(1)  # +day
           #  assert end_date > start_date
            # return end_date - start_date
-    def cli_controller_failover(self, node='slave'):
-        ''' Function to trigger failover to slave controller via CLI.
+    def cli_controller_failover(self, node='subordinate'):
+        ''' Function to trigger failover to subordinate controller via CLI.
             Input: None
             Output: True if successful, False otherwise
         '''
@@ -287,22 +287,22 @@ class T5_Scale(object):
             return False
         else:
             return True
-    def cli_controller_reboot(self, masterNode=True):
+    def cli_controller_reboot(self, mainNode=True):
 
         t = test.Test()
-        master = t.controller("master")
-        slave = t.controller("slave")
+        main = t.controller("main")
+        subordinate = t.controller("subordinate")
 
         try:
-            if(masterNode):
-                master.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
-                master.enable("yes")
-                helpers.log("Master is rebooting")
+            if(mainNode):
+                main.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                main.enable("yes")
+                helpers.log("Main is rebooting")
                 # helpers.sleep(90)
             else:
-                slave.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
-                slave.enable("yes")
-                helpers.log("Slave is rebooting")
+                subordinate.enable("system reboot controller", prompt="Confirm \(\"y\" or \"yes\" to continue\)")
+                subordinate.enable("yes")
+                helpers.log("Subordinate is rebooting")
                 # helpers.sleep(90)
                 # helpers.sleep(190)
         except:
@@ -375,7 +375,7 @@ class T5_Scale(object):
         '''
         helpers.test_log("Running command:\ncopy <file> running-config ")
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         file_name = "snapshot://" + file_name
         if self.verify_file (file_name):
             c.config("config")
@@ -471,21 +471,21 @@ class T5_Scale(object):
         Output: True/False
         '''
         t = test.Test()
-        c_master = t.controller('master')
+        c_main = t.controller('main')
         url = '/api/v1/data/controller/core/state-sync-coordinator'
-        c_master.rest.get(url)
-        data_master = c_master.rest.content()
-        master_digest = data_master[0]["current-config-state"]["digest"]
+        c_main.rest.get(url)
+        data_main = c_main.rest.content()
+        main_digest = data_main[0]["current-config-state"]["digest"]
 
-        c_slave = t.controller('slave')
+        c_subordinate = t.controller('subordinate')
         url = '/api/v1/data/controller/core/state-sync-coordinator'
-        c_slave.rest.get(url)
-        data_slave = c_slave.rest.content()
-        slave_digest = data_slave[0]["current-config-state"]["digest"]
+        c_subordinate.rest.get(url)
+        data_subordinate = c_subordinate.rest.content()
+        subordinate_digest = data_subordinate[0]["current-config-state"]["digest"]
 
 
-        helpers.log("Printing digest from master and standby controllers %s and %s" % (master_digest, slave_digest))
-        if (master_digest == slave_digest):
+        helpers.log("Printing digest from main and standby controllers %s and %s" % (main_digest, subordinate_digest))
+        if (main_digest == subordinate_digest):
             helpers.log("Config is in sync between controlelrs and digest match")
             return True
         else:
@@ -498,7 +498,7 @@ class T5_Scale(object):
         '''
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         # /api/v1/data/controller/core/switch-config[name="leaf0a"]/interface[name="ethernet24"] {"shutdown": true}
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
         try:
@@ -518,7 +518,7 @@ class T5_Scale(object):
         '''
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         # /api/v1/data/controller/core/switch-config[name="leaf0a"]/interface[name="ethernet24"]/shutdown {}
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]/shutdown' % (switch, interface)
         try:
@@ -537,27 +537,27 @@ class T5_Scale(object):
         Output: True/False
         '''
         t = test.Test()
-        c_master = t.controller('master')
-        c_slave = t.controller('slave')
+        c_main = t.controller('main')
+        c_subordinate = t.controller('subordinate')
         helpers.log("INFO: connecting to bash mode in both controllers")
         helpers.log("INFO: Checking the df -h in both controllers")
 
-        master_df = c_master.sudo('df -h | awk \'{print $5}\'')
-        split = re.split('\n', master_df['content'])
-        master_df_list = split[1:-1]
-        slave_df = c_slave.sudo('df -h | awk \'{print $5}\'')
-        split = re.split('\n', slave_df['content'])
-        slave_df_list = split[1:-1]
+        main_df = c_main.sudo('df -h | awk \'{print $5}\'')
+        split = re.split('\n', main_df['content'])
+        main_df_list = split[1:-1]
+        subordinate_df = c_subordinate.sudo('df -h | awk \'{print $5}\'')
+        split = re.split('\n', subordinate_df['content'])
+        subordinate_df_list = split[1:-1]
 
-        for df in master_df_list:
-            helpers.log(" df value in master: %s" % (df))
+        for df in main_df_list:
+            helpers.log(" df value in main: %s" % (df))
             if df == "100%":
-                helpers.log("Partition exhausted in Master Controller")
+                helpers.log("Partition exhausted in Main Controller")
                 return False
-        for df in slave_df_list:
-            helpers.log(" df value in slave: %s" % (df))
+        for df in subordinate_df_list:
+            helpers.log(" df value in subordinate: %s" % (df))
             if df == "100%":
-                helpers.log("Partition exhausted in Slave Controller")
+                helpers.log("Partition exhausted in Subordinate Controller")
                 return False
         return True
 
@@ -567,18 +567,18 @@ class T5_Scale(object):
         Output: True/False
         '''
         t = test.Test()
-        c_master = t.controller('master')
+        c_main = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/global/sync-state-table'
-        c_master.rest.get(url)
-        data_master = c_master.rest.content()
-        helpers.log("Data returned for total number of switches %d" % (len(data_master)))
-        if (len(data_master) == 0):
+        c_main.rest.get(url)
+        data_main = c_main.rest.content()
+        helpers.log("Data returned for total number of switches %d" % (len(data_main)))
+        if (len(data_main) == 0):
             helpers.log("Sync state information is not available")
             return False
         else:
-            for i in range(0, len(data_master)):
-                helpers.log("Printing sync-state info for switch dp-id:%s and status:%s" % (str(data_master[i]["switch-id"]), str(data_master[i]["sync-state"])))
-                if (str(data_master[i]["sync-state"]) != "success"):
+            for i in range(0, len(data_main)):
+                helpers.log("Printing sync-state info for switch dp-id:%s and status:%s" % (str(data_main[i]["switch-id"]), str(data_main[i]["sync-state"])))
+                if (str(data_main[i]["sync-state"]) != "success"):
                     return False
         return True
 
@@ -588,11 +588,11 @@ class T5_Scale(object):
         Output: return end point count
         '''
         t = test.Test()
-        c_master = t.controller('master')
+        c_main = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/summary/fabric'
-        c_master.rest.get(url)
-        data_master = c_master.rest.content()
-        ep_count = data_master[0]["active-endpoint-count"]
+        c_main.rest.get(url)
+        data_main = c_main.rest.content()
+        ep_count = data_main[0]["active-endpoint-count"]
         helpers.log("Total number of end points are %s" % (ep_count))
         return ep_count
 
@@ -602,7 +602,7 @@ class T5_Scale(object):
         Output: return end point count
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/clear'
         try:
             c.rest.get(url)
@@ -692,7 +692,7 @@ class T5_Scale(object):
 
     def Dump_Show_Commands(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         cmdList = [
            'show running-config',
            'show debug counters',
@@ -718,143 +718,143 @@ class T5_Scale(object):
 
     def compare_configuration(self):
         '''
-        Compare Configuration syncs between master and standby
+        Compare Configuration syncs between main and standby
         '''
         t = test.Test()
-        c_master = t.controller('master')
-        c_slave = t.controller('slave')
+        c_main = t.controller('main')
+        c_subordinate = t.controller('subordinate')
         helpers.log("Verifying all tenants")
         url_get_tenant = '/api/v1/data/controller/applications/bvs/tenant?config=true'
         try:
-            c_master.rest.get(url_get_tenant)
-            master_content = c_master.rest.content()
-            c_slave.rest.get(url_get_tenant)
-            slave_content = c_slave.rest.content()
+            c_main.rest.get(url_get_tenant)
+            main_content = c_main.rest.content()
+            c_subordinate.rest.get(url_get_tenant)
+            subordinate_content = c_subordinate.rest.content()
 
         except:
             pass
         else:
-            if (master_content and slave_content):
-                for i in range (0, len(master_content) - 1):
-                    if (master_content[i]['name'] != slave_content[i]['name']):
+            if (main_content and subordinate_content):
+                for i in range (0, len(main_content) - 1):
+                    if (main_content[i]['name'] != subordinate_content[i]['name']):
                         helpers.log("Tenant config is not in sync")
                         return False
-                    if (master_content[i]['virtual-router']['active']):
-                         helpers.log("Route config present in master")
+                    if (main_content[i]['virtual-router']['active']):
+                         helpers.log("Route config present in main")
 
-                         for j in range (0, len(master_content[i]['virtual-router']['routes']) - 1):
+                         for j in range (0, len(main_content[i]['virtual-router']['routes']) - 1):
 
-                             if (master_content[i]['virtual-router']['routes'][j]['next-hop']['tenant-name'] != slave_content[i]['virtual-router']['routes'][j]['next-hop']['tenant-name']
-                                and master_content[i]['virtual-router']['routes'][j]['dest-ip-subnet'] != slave_content[i]['virtual-router']['routes'][j]['dest-ip-subnet']):
+                             if (main_content[i]['virtual-router']['routes'][j]['next-hop']['tenant-name'] != subordinate_content[i]['virtual-router']['routes'][j]['next-hop']['tenant-name']
+                                and main_content[i]['virtual-router']['routes'][j]['dest-ip-subnet'] != subordinate_content[i]['virtual-router']['routes'][j]['dest-ip-subnet']):
                                 helpers.log("Routes did not match")
                                 return False
-                         for j in range (0, len(master_content[i]['virtual-router']['vns-interfaces']) - 1):
+                         for j in range (0, len(main_content[i]['virtual-router']['vns-interfaces']) - 1):
 
-                             if (master_content[i]['virtual-router']['vns-interfaces'][j]['ip-cidr'] != slave_content[i]['virtual-router']['vns-interfaces'][j]['ip-cidr']
-                                 and master_content[i]['virtual-router']['vns-interfaces'][j]['vns-name'] != slave_content[i]['virtual-router']['vns-interfaces'][j]['vns-name']):
+                             if (main_content[i]['virtual-router']['vns-interfaces'][j]['ip-cidr'] != subordinate_content[i]['virtual-router']['vns-interfaces'][j]['ip-cidr']
+                                 and main_content[i]['virtual-router']['vns-interfaces'][j]['vns-name'] != subordinate_content[i]['virtual-router']['vns-interfaces'][j]['vns-name']):
                                  helpers.log("VNS interfaces did not match")
                                  return False
-                    for j in range (0, len(master_content[i]['vns']) - 1):
+                    for j in range (0, len(main_content[i]['vns']) - 1):
 
-                        if (master_content[i]['vns'][j]['name'] != slave_content[i]['vns'][j]['name']):
+                        if (main_content[i]['vns'][j]['name'] != subordinate_content[i]['vns'][j]['name']):
                             helpers.log("VNS names do not match")
                             return False
-                        for k in range (0, len(master_content[i]['vns'][j]['port-group-membership-rule']) - 1):
+                        for k in range (0, len(main_content[i]['vns'][j]['port-group-membership-rule']) - 1):
                             helpers.log(" Now in nested first k loop: %d" % k)
-                            if (master_content[i]['vns'][j]['port-group-membership-rule'][k]['port-group'] != slave_content[i]['vns'][j]['port-group-membership-rule'][k]['port-group']):
+                            if (main_content[i]['vns'][j]['port-group-membership-rule'][k]['port-group'] != subordinate_content[i]['vns'][j]['port-group-membership-rule'][k]['port-group']):
                                 helpers.log("Port-Group Membership rule do not match")
                                 return False
 
             else:
-                helpers.log("TENANT:::Configuration is not present in Master or Salve")
+                helpers.log("TENANT:::Configuration is not present in Main or Salve")
             helpers.log("Tenant Configuration is in sync")
 
         helpers.log("Verifying switch configurations")
         url_get_switches = '/api/v1/data/controller/core/switch-config?config=true'
         try:
-            c_master.rest.get(url_get_switches)
-            master_content = c_master.rest.content()
-            c_slave.rest.get(url_get_switches)
-            slave_content = c_slave.rest.content()
+            c_main.rest.get(url_get_switches)
+            main_content = c_main.rest.content()
+            c_subordinate.rest.get(url_get_switches)
+            subordinate_content = c_subordinate.rest.content()
         except:
             pass
         else:
-            if (master_content and slave_content):
-                for i in range (0, len(master_content) - 1):
-                    if (master_content[i]['name'] != slave_content[i]['name'] and master_content[i]['dpid'] != slave_content[i]['dpid']):
+            if (main_content and subordinate_content):
+                for i in range (0, len(main_content) - 1):
+                    if (main_content[i]['name'] != subordinate_content[i]['name'] and main_content[i]['dpid'] != subordinate_content[i]['dpid']):
                         helpers.log("Switches are not in Sync")
                         return False  # Need to Check content length as well
             else:
-                helpers.log("SWITCH:::Configuration is not present in Master or Salve")
+                helpers.log("SWITCH:::Configuration is not present in Main or Salve")
 
             helpers.log("Switch Configuration is in Sync")
 
         helpers.log("Verifying all port-groups")
         url_get_portgrp = '/api/v1/data/controller/applications/bvs/port-group?config=true'
         try:
-            c_master.rest.get(url_get_portgrp)
-            master_content = c_master.rest.content()
-            c_slave.rest.get(url_get_portgrp)
-            slave_content = c_slave.rest.content()
+            c_main.rest.get(url_get_portgrp)
+            main_content = c_main.rest.content()
+            c_subordinate.rest.get(url_get_portgrp)
+            subordinate_content = c_subordinate.rest.content()
         except:
             pass
         else:
-            if (master_content and slave_content):
-                for i in range (0, len(master_content) - 1):
-                    if (master_content[i]['name'] != slave_content[i]['name']):
+            if (main_content and subordinate_content):
+                for i in range (0, len(main_content) - 1):
+                    if (main_content[i]['name'] != subordinate_content[i]['name']):
                         helpers.log("Port-Group config is not in Sync")
                         return False
             else:
-                helpers.log("PORT-GROUP:::Configuration is not present in Master or Salve")
+                helpers.log("PORT-GROUP:::Configuration is not present in Main or Salve")
 
             helpers.log("Port-Group Configuration is in Sync")
 
         helpers.log("Verifying NTP configurations")
         url_get_ntpservers = '/api/v1/data/controller/os/config/global/time-config?config=true'
         try:
-            c._master.rest.get(url_get_ntpservers)
-            master_content = c_master.rest.content()
-            c._slave.rest.get(url_get_ntpservers)
-            slave_content = c_slave.rest.content()
+            c._main.rest.get(url_get_ntpservers)
+            main_content = c_main.rest.content()
+            c._subordinate.rest.get(url_get_ntpservers)
+            subordinate_content = c_subordinate.rest.content()
 
         except:
             pass
         else:
-            if (master_content and slave_content):
-                for i in range (0, len(master_content) - 1):
-                    if (master_content[i]['ntp-server'] != slave_content[i]['ntp-server']):
+            if (main_content and subordinate_content):
+                for i in range (0, len(main_content) - 1):
+                    if (main_content[i]['ntp-server'] != subordinate_content[i]['ntp-server']):
                         helpers.log("NTP config is not in sync")
                         return False
             else:
-                helpers.log("NTP:::Configuration is not present in Master or Salve")
+                helpers.log("NTP:::Configuration is not present in Main or Salve")
 
         helpers.log("NTP Configuration is in Sync")
 
         helpers.log("Verifing snmp configuration")
         url_get_snmp_location = '/api/v1/data/controller/os/config/global/snmp-config?config=true'
         try:
-            c._master.rest.get(url_get_snmp_location)
-            master_content = c_master.rest.content()
-            c._slave.rest.get(url_get_snmp_location)
-            slave_content = c_slave.rest.content()
+            c._main.rest.get(url_get_snmp_location)
+            main_content = c_main.rest.content()
+            c._subordinate.rest.get(url_get_snmp_location)
+            subordinate_content = c_subordinate.rest.content()
 
         except:
             pass
         else:
-            if (master_content and slave_content):
-                for i in range (0, len(master_content) - 1):
-                    if (master_content[i]['contact'] != slave_content[i]['contact']
-                        and master_content[i]['location'] != slave_content[i]['location']
-                        and master_content[i]['community'] != slave_content[i]['community']):
+            if (main_content and subordinate_content):
+                for i in range (0, len(main_content) - 1):
+                    if (main_content[i]['contact'] != subordinate_content[i]['contact']
+                        and main_content[i]['location'] != subordinate_content[i]['location']
+                        and main_content[i]['community'] != subordinate_content[i]['community']):
                         helpers.log("SNMP config is not in sync")
                         return False
-                    for j in range (0, len(master_content[i]['trap-host']) - 1):
-                        if (master_content[i]['trap-host'][j]['ipaddr'] != slave_content[i]['trap-host'][j]['ipaddr']
-                            and master_content[i]['trap-host'][j]['udp-port'] != slave_content[i]['trap-host'][j]['udp-port']):
+                    for j in range (0, len(main_content[i]['trap-host']) - 1):
+                        if (main_content[i]['trap-host'][j]['ipaddr'] != subordinate_content[i]['trap-host'][j]['ipaddr']
+                            and main_content[i]['trap-host'][j]['udp-port'] != subordinate_content[i]['trap-host'][j]['udp-port']):
                             helpers.log("SNMP::Trap config is not in sync")
                             return False
             else:
-                helpers.log("SNMP:::Configuration is not present in Master or Salve")
+                helpers.log("SNMP:::Configuration is not present in Main or Salve")
 
         helpers.log("SNMP Configuration is in Sync")
 

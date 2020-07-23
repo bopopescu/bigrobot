@@ -42,7 +42,7 @@ class T6(object):
         Input: no of vswitch auto portgroup count expected , each vswitch will be one portgroup
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/fabric/port-group' % ()
         c.rest.get(url)
         data = c.rest.content()
@@ -63,7 +63,7 @@ class T6(object):
         ''' Function to verify vswitch connection state for all the vswitches
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric/switch' % ()
         c.rest.get(url1)
         data = c.rest.content()
@@ -78,7 +78,7 @@ class T6(object):
         Input: vswitch name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/nat-pool/switch[name="%s"]' % nat_switch
         try:
             c.rest.put(url, {"name": nat_switch})
@@ -92,7 +92,7 @@ class T6(object):
         Input: vswitch name to be verified as nat switch
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/nat-pool'
         c.rest.get(url)
         data = c.rest.content()
@@ -113,7 +113,7 @@ class T6(object):
         Input: vswitch name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/nat-pool/switch[name="%s"]' % nat_switch
         try:
             c.rest.delete(url, {})
@@ -126,7 +126,7 @@ class T6(object):
         '''Function to delete all nat switch from pool
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/nat-pool'
         try:
             c.rest.delete(url, {})
@@ -140,7 +140,7 @@ class T6(object):
         Input: tenant name, nat profile name to be created
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]' % (tenant, nat_profile)
         try:
             c.rest.put(url, {"name": nat_profile})
@@ -154,7 +154,7 @@ class T6(object):
         Input: tenant name, nat profile name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]' % (tenant, nat_profile)
         try:
             c.rest.delete(url, {})
@@ -168,7 +168,7 @@ class T6(object):
         Input: tenant name, nat profile name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/pat' % (tenant, nat_profile)
         try:
             c.rest.put(url, {})
@@ -182,7 +182,7 @@ class T6(object):
         Input: tenant name , nat_profile name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/pat' % (tenant, nat_profile)
         try:
             c.rest.delete(url, {})
@@ -196,7 +196,7 @@ class T6(object):
         Input: tenant name, nat profile name, public IP to be configured in NAT
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/pat' % (tenant, nat_profile)
         try:
             c.rest.patch(url, {"ip-address": public_ip})
@@ -209,7 +209,7 @@ class T6(object):
         Input: tenant name, nat profile name, remote external tenant name, remote external segment name which to be created as public
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]' % (tenant, nat_profile)
         try:
             c.rest.patch(url, {"remote-segment": remote_segment, "remote-tenant": remote_tenant})
@@ -223,7 +223,7 @@ class T6(object):
         Input: tenant name, nat profile name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/nat-profile' % tenant
         c.rest.get(url)
         data = c.rest.content()
@@ -243,7 +243,7 @@ class T6(object):
         Input: tenant name, nat profile name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/pat-profile' % tenant
         c.rest.get(url)
         data = c.rest.content()
@@ -263,7 +263,7 @@ class T6(object):
         Input: tenant name, nat profile name, configured vswitch name for NAT
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/nat-profile' % tenant
         c.rest.get(url)
         data = c.rest.content()
@@ -286,7 +286,7 @@ class T6(object):
         Input: tenant name, nat profile
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/route' % tenant
         c.rest.get(url)
         data = c.rest.content()
@@ -312,7 +312,7 @@ class T6(object):
         Input: tenant name, nat profile
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]?select=state' % tenant
         c.rest.get(url)
         data = c.rest.content()
@@ -330,7 +330,7 @@ class T6(object):
         Input: tenant name, nat profile, external tenant name, external segment name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]?select=logical-router&config=true' % tenant
         c.rest.get(url)
         data = c.rest.content()
@@ -357,7 +357,7 @@ class T6(object):
         Input: tenant name, nat profile name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/nat-profile' % tenant
         c.rest.get(url)
         data = c.rest.content()
@@ -375,7 +375,7 @@ class T6(object):
         Output: list of port group members in dictionary format
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         portgroup_members = {}
         url1 = '/api/v1/data/controller/applications/bcf/info/fabric/port-group[name="%s"]' % (nat_switch)
         c.rest.get(url1)
@@ -391,7 +391,7 @@ class T6(object):
         Input: vswitch name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/fabric/port-group[name="%s"]' % nat_switch
         c.rest.get(url)
         data = c.rest.content()
@@ -409,7 +409,7 @@ class T6(object):
         Input: vswitch name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/fabric/port-group[name="%s"]' % nat_switch
         c.rest.get(url)
         data = c.rest.content()
@@ -425,7 +425,7 @@ class T6(object):
         Input: tenant name, nat profile name, public IP which needs to be part of floating IP 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/floating-ip[ip-address="%s"]' % (tenant, nat_profile, public_ip) 
         try:
             c.rest.put(url, {"ip-address": public_ip})
@@ -439,7 +439,7 @@ class T6(object):
         Input: tenant name, nat profile name , public ip confgured for floating IP , private IP of the VM which needs to be added for floating IP
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/floating-ip[ip-address="%s"]' % (tenant, nat_profile, public_ip)
         try:
             c.rest.patch(url, {"private-ip-address": private_ip})
@@ -453,7 +453,7 @@ class T6(object):
         Input: tenant name , nat profile name , public IP configured for floating IP , public MAC (you can give any unicast mac)
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/floating-ip[ip-address="%s"]' % (tenant, nat_profile, public_ip)
         try:
             c.rest.patch(url, {"public-mac": public_mac})
@@ -467,7 +467,7 @@ class T6(object):
         Input: tenant name , nat profile name , public ip cofigured under floating IP section , private IP of the VM
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/floating-ip' % tenant
         c.rest.get(url)
         data = c.rest.content()
@@ -491,7 +491,7 @@ class T6(object):
         Input: tenant name , nat profile name , public IP configured in floating IP section
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/nat-profile[name="%s"]/floating-ip[ip-address="%s"]' % (tenant, nat_profile, public_ip)
         try:
             c.rest.delete(url, {})
@@ -506,7 +506,7 @@ class T6(object):
         Input : tenant name , vswitch name , route to match
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/switch[switch-name="%s"]/l3-cidr-route-table' % ivs_switch
         c.rest.get(url)
         data = c.rest.content()
@@ -525,7 +525,7 @@ class T6(object):
         Input: tenant name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/forwarding/network/internal/tenant-to-vrf-mapping'
         c.rest.get(url)
         data = c.rest.content()
@@ -541,7 +541,7 @@ class T6(object):
         Input: tenant name, subnet for the external network (e.g , 40.0.0) , external tenant , externl segment , count , always starts with name = n 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         i = 2
         count = int(count)
         count = count + 1
@@ -561,7 +561,7 @@ class T6(object):
         Input: tenant name , how many nat profiles needs to be delete , nat-profile name starts with "n" and while loop integers
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         i = 2
         count = int(count)
         count = count + 1
@@ -576,7 +576,7 @@ class T6(object):
         Input: tenant , count for loop , name starts with "n"
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         i = 2
         count = int(count)
         count = count + 1
@@ -594,7 +594,7 @@ class T6(object):
         Input: tenant name
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/logical-router-manager/logical-router[name="%s"]/nat-profile' % (tenant)
         c.rest.get(url)
         data = c.rest_content()

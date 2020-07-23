@@ -529,7 +529,7 @@ class SwitchLight(object):
             else:
                 helpers.log("Switch is not connected to the controller \n")
 
-            if (c.is_master()):
+            if (c.is_main()):
                 helpers.log("This is the active controller")
                 if "MASTER" in show_output:
                     pass_count = pass_count + 1
@@ -808,7 +808,7 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             s1 = t.switch(node)
             mycount = 1
             while mycount <= int(iteration):

@@ -51,7 +51,7 @@ class  T5SwitchPlatform(object):
          Output : remove shutdown command 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         try:
             url_to_get= '/api/v1/data/controller/core/switch-config?config=true'
             c.rest.get(url_to_get)
@@ -81,7 +81,7 @@ class  T5SwitchPlatform(object):
         Output : true or false based on the counter value 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         try:
             url_to_get= "/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name='%s'][interface-name='%s']?select=rx-counter" % (str(switch_name), str(intf))
             helpers.log("URL is %s" % url_to_get)
@@ -110,7 +110,7 @@ class  T5SwitchPlatform(object):
         Output: Will return the counter stats
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
               
         try:
             url_to_get= '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=tx-counter' % (switch, intf)

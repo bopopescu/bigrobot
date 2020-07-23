@@ -25,8 +25,8 @@ from autobot.nose_support import log_to_console, wait_until_keyword_succeeds
 
 switchList_b4 = []
 switchList_after = []
-slave_switchList_b4 = []
-slave_switchList_after = []
+subordinate_switchList_b4 = []
+subordinate_switchList_after = []
 fabricLinks_b4 = []
 fabricLinks_after = []
 endpoints_b4 = []
@@ -98,7 +98,7 @@ class T5Torture(object):
         '''
         helpers.test_log("Entering ==> cli_get_links_nodes_list: %s  - %s" % (node1, node2))
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         cli = 'show link | grep ' + node1 + ' | grep ' + node2
         content = c.cli(cli)['content']
         temp = helpers.strip_cli_output(content, to_list=True)
@@ -117,12 +117,12 @@ class T5Torture(object):
         return a_list
 
     # T5
-    def rest_show_switch(self, node='master', soft_error=False):
+    def rest_show_switch(self, node='main', soft_error=False):
         """
         Return dictionary containing all switches connected to current controller.
 
         Inputs:
-        | node | name of the controller, default is 'master' |
+        | node | name of the controller, default is 'main' |
 
         Return value:
         | List | on success, returns list of switches (each entry is a dictionary) |
@@ -143,12 +143,12 @@ class T5Torture(object):
             return content
 
     # T5
-    def rest_get_switch_names(self, node='master', soft_error=False):
+    def rest_get_switch_names(self, node='main', soft_error=False):
         """
         Return list containing all switch names which are connected to current controller.
 
         Inputs:
-        | node | name of the controller, default is 'master' |
+        | node | name of the controller, default is 'main' |
 
         Return value:
         | List | on success, returns list of switch names |
@@ -162,13 +162,13 @@ class T5Torture(object):
             return None
 
     # T5
-    def rest_get_spine_switch_names(self, node='master', soft_error=False):
+    def rest_get_spine_switch_names(self, node='main', soft_error=False):
         """
         Return list containing all spine switch names which are connected to current controller.
         The convention is to include the word 'spine' in the name of the spine switch, e.g., 'dt-spine1'.
 
         Inputs:
-        | node | name of the controller, default is 'master' |
+        | node | name of the controller, default is 'main' |
 
         Return value:
         | List | on success, returns list of spine switch names |
@@ -182,13 +182,13 @@ class T5Torture(object):
             return None
 
     # T5
-    def rest_get_leaf_switch_names(self, node='master', soft_error=False):
+    def rest_get_leaf_switch_names(self, node='main', soft_error=False):
         """
         Return list containing all leaf switch names which are connected to current controller.
         The convention is to include the word 'leaf' in the name of the leaf switch, e.g., 'dt-leaf1a'.
 
         Inputs:
-        | node | name of the controller, default is 'master' |
+        | node | name of the controller, default is 'main' |
 
         Return value:
         | List | on success, returns list of leaf switch names |
@@ -233,8 +233,8 @@ class T5Torture(object):
         '''
         global switchList_b4
         global switchList_after
-        global slave_switchList_b4
-        global slave_switchList_after
+        global subordinate_switchList_b4
+        global subordinate_switchList_after
         global fabricLinks_b4
         global fabricLinks_after
         global endpoints_b4
@@ -269,7 +269,7 @@ class T5Torture(object):
         if (state == "before"):
             switchList_b4 = self._gather_switch_connectivity()
             if(cluster == "HA"):
-                slave_switchList_b4 = self._gather_switch_connectivity("slave")
+                subordinate_switchList_b4 = self._gather_switch_connectivity("subordinate")
             fabricLinks_b4 = self._gather_fabric_links()
             endpoints_b4 = self._gather_endpoints()
             fabricLags_b4 = self._gather_fabric_lags()
@@ -287,82 +287,82 @@ class T5Torture(object):
 
         else:
             if(consistencyChecker == "Yes"):
-                switchList_after = self._gather_switch_connectivity("slave", "Yes")
+                switchList_after = self._gather_switch_connectivity("subordinate", "Yes")
             else:
                 switchList_after = self._gather_switch_connectivity()
             warningCount = self._compare_fabric_elements(switchList_b4, switchList_after, "SwitchList")
             if(cluster == "HA"):
-                slave_switchList_after = self._gather_switch_connectivity("slave")
-                warningCount = self._compare_fabric_elements(slave_switchList_b4, slave_switchList_after, "SwitchList")
+                subordinate_switchList_after = self._gather_switch_connectivity("subordinate")
+                warningCount = self._compare_fabric_elements(subordinate_switchList_b4, subordinate_switchList_after, "SwitchList")
 
             if(consistencyChecker == "Yes"):
-                fabricLinks_after = self._gather_fabric_links("slave")
+                fabricLinks_after = self._gather_fabric_links("subordinate")
             else:
                 fabricLinks_after = self._gather_fabric_links()
             warningCount = self._compare_fabric_elements(fabricLinks_b4, fabricLinks_after, "FabricLinks")
 
             if(consistencyChecker == "Yes"):
-                endpoints_after = self._gather_endpoints("slave")
+                endpoints_after = self._gather_endpoints("subordinate")
             else:
                 endpoints_after = self._gather_endpoints()
             warningCount = self._compare_fabric_elements(endpoints_b4, endpoints_after, "FabricEndpoints")
 
             if(consistencyChecker == "Yes"):
-                fabricLags_after = self._gather_fabric_lags("slave")
+                fabricLags_after = self._gather_fabric_lags("subordinate")
             else:
                 fabricLags_after = self._gather_fabric_lags()
             warningCount = self._compare_fabric_elements(fabricLags_b4, fabricLags_after, "FabricLags")
 
             if(consistencyChecker == "Yes"):
-                portgroups_after = self._gather_port_groups("slave")
+                portgroups_after = self._gather_port_groups("subordinate")
             else:
                 portgroups_after = self._gather_port_groups()
             warningCount = self._compare_fabric_elements(portgroups_b4, portgroups_after, "PortGroups")
 
             if(consistencyChecker == "Yes"):
-                fwdARPTable_after = self._gather_forwarding('arp-table', "slave")
+                fwdARPTable_after = self._gather_forwarding('arp-table', "subordinate")
             else:
                 fwdARPTable_after = self._gather_forwarding('arp-table')
             warningCount = self._compare_fabric_elements(fwdARPTable_b4, fwdARPTable_after, "fwdARPTable")
 
             if(consistencyChecker == "Yes"):
-                fwdEPTable_after = self._gather_forwarding('ep-table', "slave")
+                fwdEPTable_after = self._gather_forwarding('ep-table', "subordinate")
             else:
                 fwdEPTable_after = self._gather_forwarding('ep-table')
             warningCount = self._compare_fabric_elements(fwdEPTable_b4, fwdEPTable_after, "fwdEPTable")
 
             if(consistencyChecker == "Yes"):
-                fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table', "slave")
+                fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table', "subordinate")
             else:
                 fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table')
             warningCount = self._compare_fabric_elements(fwdL3CIDRTable_b4, fwdL3CIDRTable_after, "fwdL3CIDRTable")
 
             if(consistencyChecker == "Yes"):
-                fwdL3HostTable_after = self._gather_forwarding('l3-host-table', "slave")
+                fwdL3HostTable_after = self._gather_forwarding('l3-host-table', "subordinate")
             else:
                 fwdL3HostTable_after = self._gather_forwarding('l3-host-table')
             warningCount = self._compare_fabric_elements(fwdL3HostTable_b4, fwdL3HostTable_after, "fwdL3HostTable")
 
             if(consistencyChecker == "Yes"):
-                fwdMyStationTable_after = self._gather_forwarding('my-station-table', "slave")
+                fwdMyStationTable_after = self._gather_forwarding('my-station-table', "subordinate")
             else:
                 fwdMyStationTable_after = self._gather_forwarding('my-station-table')
             warningCount = self._compare_fabric_elements(fwdMyStationTable_b4, fwdMyStationTable_after, "fwdMyStationTable")
 
             if(consistencyChecker == "Yes"):
-                fwdRouterIPTable_after = self._gather_forwarding('router-ip-table', "slave")
+                fwdRouterIPTable_after = self._gather_forwarding('router-ip-table', "subordinate")
             else:
                 fwdRouterIPTable_after = self._gather_forwarding('router-ip-table')
             warningCount = self._compare_fabric_elements(fwdRouterIPTable_b4, fwdRouterIPTable_after, "fwdRouterIPTable")
 
             if(consistencyChecker == "Yes"):
-                fwdEcmpTable_after = self._gather_forwarding('ecmp-table', "slave")
+                fwdEcmpTable_after = self._gather_forwarding('ecmp-table', "subordinate")
             else:
                 fwdEcmpTable_after = self._gather_forwarding('ecmp-table')
             warningCount = self._compare_fabric_elements(fwdEcmpTable_b4, fwdEcmpTable_after, "fwdEcmpTable")
 
             if(consistencyChecker == "Yes"):
-                fwdDhcpTable_after = self._gather_forwarding('dhcp-table', "slave")
+                fwdDhcpTable_after = self._gather_forwarding('dhcp-table', "subordinate")
             else:
                 fwdDhcpTable_after = self._gather_forwarding('dhcp-table')
             warningCount = self._compare_fabric_elements(fwdDhcpTable_b4, fwdDhcpTable_after, "fwdDhcpTable")
@@ -380,7 +380,7 @@ class T5Torture(object):
             return True
 
     # T5Utilities
-    def _gather_switch_connectivity(self, node="master", consistencyChecker="No"):
+    def _gather_switch_connectivity(self, node="main", consistencyChecker="No"):
         '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
 
@@ -389,10 +389,10 @@ class T5Torture(object):
 
         '''
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         url = "/api/v1/data/controller/applications/bcf/info/fabric/switch"
         result = c.rest.get(url)['content']
@@ -409,10 +409,10 @@ class T5Torture(object):
                 try:
                     handShakeState = result[i]['handshake-state']
                     if(consistencyChecker == "Yes"):
-                        if(handShakeState == "slave-state"):
-                            # If the function is consistency check between active & standby changing the slave handshake
-                            # state to "master-state" to get around with the key mismatching
-                            handShakeState = "master-state"
+                        if(handShakeState == "subordinate-state"):
+                            # If the function is consistency check between active & standby changing the subordinate handshake
+                            # state to "main-state" to get around with the key mismatching
+                            handShakeState = "main-state"
                             key = "%s-%s-%s-%s-%s-%s" % (dpid, connected, fabricConState, fabricRole, shutdown, handShakeState)
                     else:
                         key = "%s-%s-%s-%s-%s-%s" % (dpid, connected, fabricConState, fabricRole, shutdown, handShakeState)
@@ -428,7 +428,7 @@ class T5Torture(object):
         return switchList
 
     # T5Utilities
-    def _gather_fabric_links(self, node="master"):
+    def _gather_fabric_links(self, node="main"):
         '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
 
@@ -437,10 +437,10 @@ class T5Torture(object):
 
         '''
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         url = "/api/v1/data/controller/applications/bcf/info/fabric?select=link"
         result = c.rest.get(url)['content']
@@ -457,7 +457,7 @@ class T5Torture(object):
         return fabricLink
 
     # T5Utilities
-    def _gather_endpoints(self, node="master"):
+    def _gather_endpoints(self, node="main"):
         '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
 
@@ -466,10 +466,10 @@ class T5Torture(object):
 
         '''
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         url = "/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint"
         result = c.rest.get(url)['content']
@@ -494,7 +494,7 @@ class T5Torture(object):
         return endpoints
 
     # T5Utilities
-    def _gather_fabric_lags(self, node="master"):
+    def _gather_fabric_lags(self, node="main"):
         '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
 
@@ -503,10 +503,10 @@ class T5Torture(object):
 
         '''
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         url = "/api/v1/data/controller/core/switch?select=fabric-lag"
         result = c.rest.get(url)['content']
@@ -543,7 +543,7 @@ class T5Torture(object):
         return fabricLags
 
     # T5Utilities
-    def _gather_port_groups(self, node="master"):
+    def _gather_port_groups(self, node="main"):
         '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
 
@@ -553,10 +553,10 @@ class T5Torture(object):
         '''
 
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         url = "/api/v1/data/controller/applications/bcf/info/fabric/port-group"
         result = c.rest.get(url)['content']
@@ -583,13 +583,13 @@ class T5Torture(object):
         return portgroups
 
     # T5Utilities
-    def _gather_forwarding(self, fwdTableName, node="master"):
+    def _gather_forwarding(self, fwdTableName, node="main"):
 
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         # url = "/api/v1/data/controller/applications/bcf/info/forwarding/network?select=%s" % fwdTableName
         url = "/api/v1/data/controller/applications/bcf/info/forwarding/network/global/%s" % fwdTableName
@@ -835,8 +835,8 @@ class T5Torture(object):
         return warningCount
 
     # T5Platform
-    def cli_cluster_take_leader(self, node='slave'):
-        ''' Function to trigger failover to slave controller via CLI. This function will verify the
+    def cli_cluster_take_leader(self, node='subordinate'):
+        ''' Function to trigger failover to subordinate controller via CLI. This function will verify the
             fabric integrity between states
 
             Input: None
@@ -864,74 +864,74 @@ class T5Torture(object):
             return self.fabric_integrity_checker("after")
 
     # T5Platform
-    def getNodeID(self, slaveNode=True):
+    def getNodeID(self, subordinateNode=True):
 
         '''
         Description:
-        -    This function will handout the NodeID's for master & slave nodes
+        -    This function will handout the NodeID's for main & subordinate nodes
 
         Objective:
         -    This is designed to be resilient to node failures in HA environments. Eg: If the node is not
             reachable or it's powered down this function will handle the logic
 
         Inputs:
-        |    boolean: slaveNode  |  Whether secondary node is available in the system. Default is True
+        |    boolean: subordinateNode  |  Whether secondary node is available in the system. Default is True
 
         Outputs:
-        |    If slaveNode: return (masterID, slaveID)
-        |    else:    return (masterID)
+        |    If subordinateNode: return (mainID, subordinateID)
+        |    else:    return (mainID)
 
 
         '''
         numTries = 0
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
 
 
         while(True):
             try:
                 showUrl = '/api/v1/data/controller/cluster'
-                helpers.log("Master is : %s " % master.name)
-                result = master.rest.get(showUrl)['content']
-                masterID = result[0]['status']['local-node-id']
+                helpers.log("Main is : %s " % main.name)
+                result = main.rest.get(showUrl)['content']
+                mainID = result[0]['status']['local-node-id']
                 break
             except(KeyError):
                 if(numTries < 5):
-                    helpers.log("Warning: KeyError detected during master ID retrieval. Sleeping for 10 seconds")
+                    helpers.log("Warning: KeyError detected during main ID retrieval. Sleeping for 10 seconds")
                     helpers.sleep(10)
                     numTries += 1
                 else:
-                    helpers.log("Error: KeyError detected during master ID retrieval")
-                    if slaveNode:
+                    helpers.log("Error: KeyError detected during main ID retrieval")
+                    if subordinateNode:
                         return (-1, -1)
                     else:
                         return -1
 
-        if(slaveNode):
-            slave = t.controller("slave")
+        if(subordinateNode):
+            subordinate = t.controller("subordinate")
             while(True):
                 try:
                     showUrl = '/api/v1/data/controller/cluster'
-                    result = slave.rest.get(showUrl)['content']
-                    slaveID = result[0]['status']['local-node-id']
+                    result = subordinate.rest.get(showUrl)['content']
+                    subordinateID = result[0]['status']['local-node-id']
                     break
                 except(KeyError):
                     if(numTries < 5):
-                        helpers.log("Warning: KeyError detected during slave ID retrieval. Sleeping for 10 seconds")
+                        helpers.log("Warning: KeyError detected during subordinate ID retrieval. Sleeping for 10 seconds")
                         helpers.sleep(10)
                         numTries += 1
                     else:
-                        helpers.log("Error: KeyError detected during slave ID retrieval")
+                        helpers.log("Error: KeyError detected during subordinate ID retrieval")
                         return (-1, -1)
 
 
-        if(slaveNode):
-            return (masterID, slaveID)
+        if(subordinateNode):
+            return (mainID, subordinateID)
         else:
-            return masterID
+            return mainID
 
     # T5Platform  (Mingtao)
-    def cli_verify_cluster_master_reload(self):
+    def cli_verify_cluster_main_reload(self):
 
         self.fabric_integrity_checker("before")
         returnVal = self.cluster_node_reload()
@@ -940,13 +940,13 @@ class T5Torture(object):
         return self.fabric_integrity_checker("after")
 
     # T5Platform  (Mingtao)
-    def cluster_node_reload(self, masterNode=True):
+    def cluster_node_reload(self, mainNode=True):
 
         ''' Reload a node and verify the cluster leadership.
-            Reboot Master in dual node setup: masterNode == True
+            Reboot Main in dual node setup: mainNode == True
         '''
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
 
         if (self.cli_get_num_nodes() == 1):
             singleNode = True
@@ -955,33 +955,33 @@ class T5Torture(object):
 
 
         if(singleNode):
-            masterID = self.getNodeID(False)
+            mainID = self.getNodeID(False)
         else:
-            masterID, slaveID = self.getNodeID()
+            mainID, subordinateID = self.getNodeID()
 
         if(singleNode):
-            if (masterID == -1):
+            if (mainID == -1):
                 return False
         else:
-            if(masterID == -1 and slaveID == -1):
+            if(mainID == -1 and subordinateID == -1):
                 return False
 
         try:
-            if(masterNode):
-                actual_node_name = master.name()
-                ipAddr = master.ip()
-                master.enable("system reload controller", prompt=r"Confirm \(\"y\" or \"yes\" to continue\)")
-                master.enable("yes")
-                helpers.log("Master is reloading")
+            if(mainNode):
+                actual_node_name = main.name()
+                ipAddr = main.ip()
+                main.enable("system reload controller", prompt=r"Confirm \(\"y\" or \"yes\" to continue\)")
+                main.enable("yes")
+                helpers.log("Main is reloading")
                 # helpers.sleep(90)
                 helpers.sleep(160)
             else:
-                slave = t.controller("slave")
-                actual_node_name = slave.name()
-                ipAddr = slave.ip()
-                slave.enable("system reload controller", prompt=r"Confirm \(\"y\" or \"yes\" to continue\)")
-                slave.enable("yes")
-                helpers.log("Slave is reloading")
+                subordinate = t.controller("subordinate")
+                actual_node_name = subordinate.name()
+                ipAddr = subordinate.ip()
+                subordinate.enable("system reload controller", prompt=r"Confirm \(\"y\" or \"yes\" to continue\)")
+                subordinate.enable("yes")
+                helpers.log("Subordinate is reloading")
                 # helpers.sleep(90)
                 helpers.sleep(160)
         except:
@@ -1007,54 +1007,54 @@ class T5Torture(object):
         t.node_reconnect(actual_node_name)
 
         if(singleNode):
-            newMasterID = self.getNodeID(False)
+            newMainID = self.getNodeID(False)
         else:
-            newMasterID, newSlaveID = self.getNodeID()
+            newMainID, newSubordinateID = self.getNodeID()
 
         if(singleNode):
-            if (newMasterID == -1):
+            if (newMainID == -1):
                 return False
         else:
-            if(newMasterID == -1 and newSlaveID == -1):
+            if(newMainID == -1 and newSubordinateID == -1):
                 return False
 
 
         if(singleNode):
-            if(masterID == newMasterID):
-                # obj.restart_floodlight_monitor("master")
-                helpers.log("Pass: After the reboot cluster is stable - Master is still : %s " % (newMasterID))
+            if(mainID == newMainID):
+                # obj.restart_floodlight_monitor("main")
+                helpers.log("Pass: After the reboot cluster is stable - Main is still : %s " % (newMainID))
                 return True
             else:
-                helpers.log("Fail: Reboot Failed. Cluster is not stable.  Before the reboot Master is: %s  \n \
-                    After the reboot Master is: %s " % (masterID, newMasterID))
+                helpers.log("Fail: Reboot Failed. Cluster is not stable.  Before the reboot Main is: %s  \n \
+                    After the reboot Main is: %s " % (mainID, newMainID))
         else:
-            # if(masterNode):
-            #    obj.restart_floodlight_monitor("slave")
+            # if(mainNode):
+            #    obj.restart_floodlight_monitor("subordinate")
             # else:
-            #    obj.restart_floodlight_monitor("master")
+            #    obj.restart_floodlight_monitor("main")
 
-            if(masterNode):
-                if(masterID == newSlaveID and slaveID == newMasterID):
-                    helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+            if(mainNode):
+                if(mainID == newSubordinateID and subordinateID == newMainID):
+                    helpers.log("Pass: After the reboot cluster is stable - Main is : %s / Subordinate is: %s" % (newMainID, newSubordinateID))
                     return True
                 else:
-                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
-                            After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
+                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the main reboot Main is: %s / Subordinate is : %s \n \
+                            After the reboot Main is: %s / Subordinate is : %s " % (mainID, subordinateID, newMainID, newSubordinateID))
                     # obj.stop_floodlight_monitor()
                     return False
             else:
-                if(masterID == newMasterID and slaveID == newSlaveID):
-                    helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+                if(mainID == newMainID and subordinateID == newSubordinateID):
+                    helpers.log("Pass: After the reboot cluster is stable - Main is : %s / Subordinate is: %s" % (newMainID, newSubordinateID))
                     return True
                 else:
-                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
-                            After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
+                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the subordinate reboot Main is: %s / Subordinate is : %s \n \
+                            After the reboot Main is: %s / Subordinate is : %s " % (mainID, subordinateID, newMainID, newSubordinateID))
                     # obj.stop_floodlight_monitor()
                     return False
 
 
     # T5Platform
-    def rest_get_disconnect_switch(self, node='master'):
+    def rest_get_disconnect_switch(self, node='main'):
         """
         Get fabric connection state of the switch
 
@@ -1124,7 +1124,7 @@ class T5Torture(object):
     # T5
     def rest_disable_fabric_interface(self, switch, intf):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url0 = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.put(url0, {"name": str(intf)})
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
@@ -1150,7 +1150,7 @@ class T5Torture(object):
     # T5
     def rest_enable_fabric_interface(self, switch, intf, timeout=30):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
@@ -1189,7 +1189,7 @@ class T5Torture(object):
         '''
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Entering ==> rest_add_tenant_vns_scale ")
 
@@ -1231,7 +1231,7 @@ class T5Torture(object):
         output : will add specified interfaces into all vns in a tenant as tagged starting with 1
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/info/endpoint-manager/segment[tenant="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
@@ -1254,7 +1254,7 @@ class T5Torture(object):
         Author: Mingtao
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         cli = 'show tenant ' + tenant
         content = c.cli(cli)['content']
         temp = helpers.strip_cli_output(content)
@@ -1264,7 +1264,7 @@ class T5Torture(object):
     def rest_add_tenant(self, tenant):
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]' % (tenant)
         try:
             c.rest.put(url, {"name": tenant})
@@ -1281,7 +1281,7 @@ class T5Torture(object):
         Output: system will created specified no of vns
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         count = int(count)
         i = 1
         while (i <= count):
@@ -1307,7 +1307,7 @@ class T5Torture(object):
         '''
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s " % (tenant, vns))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]' % (tenant, vns)
@@ -1338,7 +1338,7 @@ class T5Torture(object):
         '''
 
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s private = %s " % (tenant, vns, ipaddr, netmask, private))
         url = '/api/v1/data/controller/applications/bcf/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/ip-subnet' % (tenant, vns)
@@ -1365,7 +1365,7 @@ class T5Torture(object):
                 2 : HA cluster
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         c.cli('show controller')
         content = c.cli_content()
@@ -1387,12 +1387,12 @@ class T5Torture(object):
     #
 
     def cli_show_commands_for_debug(self):
-        BsnCommon().cli('master', 'show ver', timeout=60)
-        BsnCommon().enable('master', 'show running-config switch', timeout=60)
-        BsnCommon().enable('master', 'show switch', timeout=60)
-        BsnCommon().enable('master', 'show link', timeout=60)
-        BsnCommon().cli('master', 'show ver', timeout=60)
-        BsnCommon().cli('slave', 'show ver', timeout=60)
+        BsnCommon().cli('main', 'show ver', timeout=60)
+        BsnCommon().enable('main', 'show running-config switch', timeout=60)
+        BsnCommon().enable('main', 'show switch', timeout=60)
+        BsnCommon().enable('main', 'show link', timeout=60)
+        BsnCommon().cli('main', 'show ver', timeout=60)
+        BsnCommon().cli('subordinate', 'show ver', timeout=60)
 
     def controller_node_event_ha_failover(self, during=30):
         log_to_console("=============HA failover ===============")
@@ -1404,12 +1404,12 @@ class T5Torture(object):
     def controller_node_event_reload_active(self, during=30):
         log_to_console("=============Reload active controller ===============")
         self.cli_show_commands_for_debug()
-        self.cli_verify_cluster_master_reload()
+        self.cli_verify_cluster_main_reload()
         helpers.sleep(during)
         self.cli_show_commands_for_debug()
 
     def verify_all_switches_connected_back(self):
-        switches = self.rest_get_disconnect_switch('master')
+        switches = self.rest_get_disconnect_switch('main')
         self.cli_show_commands_for_debug()
         helpers.log("the disconnected switches are %s" % switches)
         assert switches == []  # Should be empty
@@ -1418,7 +1418,7 @@ class T5Torture(object):
         helpers.log("reload switch")
         log_to_console("================ Rebooting %s ===============" % node)
         self.cli_show_commands_for_debug()
-        self.cli_reboot_switch('master', node)
+        self.cli_reboot_switch('main', node)
         self.cli_show_commands_for_debug()
         helpers.sleep(BsnCommon().params_global('long_sleep'))
         wait_until_keyword_succeeds(60 * 10, 30,
@@ -1444,21 +1444,21 @@ class T5Torture(object):
             helpers.sleep(60)
 
     def clear_stats_in_controller_switch(self):
-        BsnCommon().enable("master", "clear switch all interface all counters")
+        BsnCommon().enable("main", "clear switch all interface all counters")
         self.cli_show_commands_for_debug()
 
     def tenant_configuration_add_remove(self, tnumber, vnumber, sw_dut, sw_intf_dut, sleep_timer=1):
         log_to_console("================tenant configuration changes: %s==============="
                        % tnumber)
         self.clear_stats_in_controller_switch()
-        BsnCommon().enable("master", "copy running-config config://config_tenant_old")
-        BsnCommon().cli("master", "")  # press the return key in CLI (empty command)
+        BsnCommon().enable("main", "copy running-config config://config_tenant_old")
+        BsnCommon().cli("main", "")  # press the return key in CLI (empty command)
 
         helpers.log("Big scale configuration tenant add")
         self.rest_add_tenant_vns_scale(
                     tenantcount=tnumber, tname="FLAP", vnscount=vnumber,
                     vns_ip="yes", base="1.1.1.1", step="0.0.1.0")
-        BsnCommon().cli("master", "show running-config tenant FLAP0")
+        BsnCommon().cli("main", "show running-config tenant FLAP0")
         vlan = 1000
         for i in range(0, tnumber):
             self.rest_add_interface_to_all_vns(
@@ -1466,23 +1466,23 @@ class T5Torture(object):
                     switch=sw_dut,
                     intf=sw_intf_dut,
                     vlan=vlan)
-            BsnCommon().cli("master", "show running-config tenant FLAP%s" % i)
+            BsnCommon().cli("main", "show running-config tenant FLAP%s" % i)
             vlan = vlan + vnumber
             helpers.sleep(sleep_timer)
-        BsnCommon().cli("master",
+        BsnCommon().cli("main",
                         "show running-config tenant", timeout=120)
-        BsnCommon().enable("master",
+        BsnCommon().enable("main",
                            "copy running-config config://config_tenant_new")
 
         helpers.log("big scale configuration tenant delete")
         for i in range(0, tnumber):
-            BsnCommon().config("master", "no tenant FLAP%s" % i)
-        BsnCommon().cli("master", "show running-config tenant", timeout=120)
+            BsnCommon().config("main", "no tenant FLAP%s" % i)
+        BsnCommon().cli("main", "show running-config tenant", timeout=120)
 
     def vns_configuration_add_remove(self, vnumber, sw_dut, sw_intf_dut, sleep_timer=1):
         log_to_console("================vns configuration changes: %s==============="
                        % vnumber)
-        BsnCommon().enable("master",
+        BsnCommon().enable("main",
                            "copy running-config config://config_vns_old")
 
         vlan = 1000
@@ -1495,22 +1495,22 @@ class T5Torture(object):
                 intf=sw_intf_dut,
                 vlan=vlan)
         helpers.sleep(sleep_timer)
-        BsnCommon().cli("master",
+        BsnCommon().cli("main",
                         "show running-config tenant", timeout=120)
-        BsnCommon().enable("master",
+        BsnCommon().enable("main",
                            "copy running-config config://config_vns_new")
 
         helpers.log("Big scale configuration tenant delete")
-        BsnCommon().config("master", "tenant FLAP0")
+        BsnCommon().config("main", "tenant FLAP0")
 
         vns = 1 + vnumber
         for i in range(1, vns):
-            BsnCommon().config("master", "no segment V%s" % i)
-        BsnCommon().config("master", "logical-router")
+            BsnCommon().config("main", "no segment V%s" % i)
+        BsnCommon().config("main", "logical-router")
         for i in range(1, vns):
-            BsnCommon().config("master", "no interface segment V%s" % i)
-        BsnCommon().config("master", "no tenant FLAP0")
-        BsnCommon().cli("master", "show running-config tenant", timeout=120)
+            BsnCommon().config("main", "no interface segment V%s" % i)
+        BsnCommon().config("main", "no tenant FLAP0")
+        BsnCommon().cli("main", "show running-config tenant", timeout=120)
 
     def randomize_spines(self):
         if BsnCommon().params_global('randomize_spine_list'):

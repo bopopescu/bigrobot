@@ -104,7 +104,7 @@ class T5Utilities(object):
 
         '''
         t = test.Test()
-        c = t.controller("master")
+        c = t.controller("main")
         url = "/api/v1/data/controller/core/switch"
         result =  c.rest.get(url)['content']
         switchDict = {}
@@ -157,7 +157,7 @@ class T5Utilities(object):
         
         '''
         t = test.Test()
-        c = t.controller("master")
+        c = t.controller("main")
         url = "/api/v1/data/controller/applications/bvs/info/fabric?select=link"
         result = c.rest.get(url)['content']
         fabricLink = []
@@ -182,7 +182,7 @@ class T5Utilities(object):
     
         '''
         t = test.Test()
-        c = t.controller("master")
+        c = t.controller("main")
         url = "/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints"
         result = c.rest.get(url)['content']
         endpoints = []
@@ -215,7 +215,7 @@ class T5Utilities(object):
         
         '''
         t = test.Test()
-        c = t.controller("master")
+        c = t.controller("main")
         url = "/api/v1/data/controller/core/switch?select=fabric-lag"
         result = c.rest.get(url)['content']
         fabricLags = []

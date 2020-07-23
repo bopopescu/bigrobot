@@ -38,7 +38,7 @@ class AppController(object):
     def cli_upgrade_image(self, node=None, package=None, timeout=600, sleep_time=600):
         '''
             Objective:
-            - Execute CLI commands to download given upgrade package to Master (and Slave if exists) Controllers and upgrade them
+            - Execute CLI commands to download given upgrade package to Main (and Subordinate if exists) Controllers and upgrade them
 
             Input:
             | `package` |  URL to the upgrade package |
@@ -73,7 +73,7 @@ class AppController(object):
         for i in range(0, controller_qty):
             try:
                 if controller_qty > 1:
-                    n = t.controller('slave')
+                    n = t.controller('subordinate')
                 else:
                     n = node_handles[0]
 
@@ -121,7 +121,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/core/switch?select=alias'
                 c.rest.get(url)
@@ -151,7 +151,7 @@ class AppController(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             url_to_get = '/api/v1/data/controller/core/switch'
             c.rest.get(url_to_get)
             switch = t.switch(node)
@@ -180,7 +180,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/core/switch'
                 c.rest.get(url)
@@ -215,7 +215,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 switch_dpid = self.rest_return_switch_dpid_from_ip(node)
             except:
@@ -261,7 +261,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 switch_dpid = self.rest_return_switch_dpid_from_ip(node)
             except:
@@ -298,7 +298,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 switch_dpid = self.rest_return_switch_dpid_from_ip(node)
             except:
@@ -321,7 +321,7 @@ class AppController(object):
         ''' Flap eth0 on Controller
 
             Input:
-               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
+               controller_role        Where to execute the command. Accepted values are `Main` and `Subordinate`
 
            Return Value:  True if the configuration is successful, false otherwise
         '''
@@ -331,10 +331,10 @@ class AppController(object):
             return False
         else:
             try:
-                if (controller_role == 'Master'):
-                    c = t.controller('master')
+                if (controller_role == 'Main'):
+                    c = t.controller('main')
                 else:
-                    c = t.controller('slave')
+                    c = t.controller('subordinate')
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -357,14 +357,14 @@ class AppController(object):
                     return True
 
     def rest_execute_ha_failover(self):
-        '''Execute HA failover from master controller
+        '''Execute HA failover from main controller
         '''
         try:
             t = test.Test()
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url1 = '/rest/v1/system/ha/failback'
                 c.rest.put(url1, {})
@@ -380,16 +380,16 @@ class AppController(object):
 
             Input:
                processName        Name of process to be restarted
-               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
+               controller_role        Where to execute the command. Accepted values are `Main` and `Subordinate`
 
            Return Value:  True if the configuration is successful, false otherwise
         '''
         try:
             t = test.Test()
-            if (controller_role == 'Master'):
-                c = t.controller('master')
+            if (controller_role == 'Main'):
+                c = t.controller('main')
             else:
-                c = t.controller('slave')
+                c = t.controller('subordinate')
 
             c.bash("echo '#!/bin/bash' > test_reboot.sh")
             c.bash("echo 'sleep 15' >> test_reboot.sh")
@@ -419,7 +419,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 switch_dpid = self.rest_return_switch_dpid_from_ip(node)
                 url = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (interface_name, switch_dpid, interface_name)
@@ -449,7 +449,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/syslog-server/'
                 helpers.log("URL is %s  " % url)
@@ -471,7 +471,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 c.enable("show syslog")
             except:
@@ -498,7 +498,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/syslog-server/'
                 c.rest.put(url, {"logging-enabled": True, "logging-server": str(syslog_server), "logging-level":int(log_level)})
@@ -523,7 +523,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/syslog-server/?logging-enabled=True&logging-server=%s&logging-level=%d' % (str(syslog_server), int(log_level))
                 c.rest.delete(url, {})
@@ -546,7 +546,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/ntp-server/'
                 c.rest.get(url)
@@ -566,7 +566,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 c.bash("ntpq -p")
             except:
@@ -585,7 +585,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 c.enable("show ntp")
             except:
@@ -611,7 +611,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/ntp-server/'
                 c.rest.put(url, {"enabled": True, "server": str(ntp_server)})
@@ -634,7 +634,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/ntp-server/?enabled=True&server=%s' % (str(ntp_server))
                 c.rest.delete(url, {})
@@ -658,7 +658,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/banner/'
                 c.rest.put(url, {"message": str(banner_message), "id": "banner"})
@@ -681,7 +681,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/banner/?id=banner'
                 c.rest.get(url)
@@ -701,7 +701,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if user == "admin":
                     c.enable("show banner")
@@ -711,7 +711,7 @@ class AppController(object):
                     c_user.enable("show banner")
                     content = c_user.cli_content()
                     c_user.close()
-                    t.node_reconnect(node='master')
+                    t.node_reconnect(node='main')
             except:
                 return False
             else:
@@ -733,7 +733,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/banner/?id=banner'
                 c.rest.delete(url, {})
@@ -758,7 +758,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             # Configure AAA/Authentication
             try:
                 url = '/api/v1/data/controller/core/aaa/authenticator'
@@ -777,7 +777,7 @@ class AppController(object):
                     c_user = t.node_spawn(ip=c.ip(), user=str(username), password=password)
                     c_user.put(url, data)
                     c_user.close()
-                    t.node_reconnect(node='master')
+                    t.node_reconnect(node='main')
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -800,7 +800,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             # Configure AAA/Authentication
             try:
                 url = '/api/v1/data/controller/core/aaa/authenticator'
@@ -828,7 +828,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             # Configure AAA/authorization
             try:
                 url = '/api/v1/data/controller/core/aaa/authorizer'
@@ -855,7 +855,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             # Configure AAA/authorization
             try:
                 url = '/api/v1/data/controller/core/aaa/authorizer'
@@ -872,7 +872,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             # Get encoded password from key
             try:
                 url = '/api/v1/data/controller/core/aaa/tacacs/encode-password[password="%s"]' % str(key)
@@ -899,7 +899,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             # Get encoded password from key
             try:
                 url = '/api/v1/data/controller/core/aaa/tacacs/server[server-address="%s"]/secret' % str(tacacs_server)
@@ -930,7 +930,7 @@ class AppController(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             # Get encoded password from key
             try:
                 if "admin" not in user:
@@ -1085,7 +1085,7 @@ class AppController(object):
         '''
         t = test.Test()
         try:
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
         show_url = '/api/v1/data/controller/applications/bigtap/interface-config?config=true'
@@ -1146,7 +1146,7 @@ class AppController(object):
         '''
         t = test.Test()
         try:
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
 
@@ -1192,7 +1192,7 @@ class AppController(object):
         '''
         t = test.Test()
         try:
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
 
@@ -1227,7 +1227,7 @@ class AppController(object):
         '''
         t = test.Test()
         try:
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
 
@@ -1272,7 +1272,7 @@ class AppController(object):
         '''
         t = test.Test()
         try:
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
         show_version_url = "/rest/v1/system/version"
@@ -1294,15 +1294,15 @@ class AppController(object):
             return False
 
 # ## Animesh
-    def return_version_number(self, node="master", user="admin", password="adminadmin", local=True):
+    def return_version_number(self, node="main", user="admin", password="adminadmin", local=True):
         t = test.Test()
         n = t.node(node)
         if helpers.is_bigtap(n.platform()):
-            c = t.controller('master')
+            c = t.controller('main')
             url = '/rest/v1/system/version'
             if user == "admin":
                 try:
-                    t.node_reconnect(node='master', user=str(user), password=password)
+                    t.node_reconnect(node='main', user=str(user), password=password)
                     c.rest.get(url)
                     content = c.rest.content()
                     output_value = content[0]['controller']
@@ -1312,16 +1312,16 @@ class AppController(object):
                     return output_value
             else:
                 try:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_reconnect(node='main', user=str(user), password=password)
                     c_user.rest.get(url)
                     content = c_user.rest.content()
                     output_value = content[0]['controller']
                     output_string = output_value.split(' ')
 
                 except:
-                    t.node_reconnect(node='master')
+                    t.node_reconnect(node='main')
                     return False
                 else:
                     if local is True:
-                        t.node_reconnect(node='master', user=str(user), password=password)
+                        t.node_reconnect(node='main', user=str(user), password=password)
                     return output_string[3]

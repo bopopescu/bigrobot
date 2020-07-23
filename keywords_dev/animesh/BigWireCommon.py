@@ -29,7 +29,7 @@ class BigWireCommon(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 if bigwire_key == "datacenter":
                     bwKeyword = "datacenter-info" # "show bigwire datacenter"
@@ -72,7 +72,7 @@ class BigWireCommon(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]' % (str(datacenter_name))
                 c.rest.put(url, {"name": str(datacenter_name)})
@@ -103,7 +103,7 @@ class BigWireCommon(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]/member-switch[dpid="%s"]' % (str(datacenter_name),str(switch_dpid))
                 c.rest.put(url, {"zone": str(zone_name), "dpid": str(switch_dpid)})
@@ -136,7 +136,7 @@ class BigWireCommon(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigwire/pseudo-wire[name="%s"]' % (str(pseudowire_name))
                 if vlan == 0:
@@ -167,7 +167,7 @@ class BigWireCommon(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigwire/tenant[name="%s"]' % (str(tenant_name))
                 c.rest.put(url, {"name": str(tenant_name)})
@@ -197,7 +197,7 @@ class BigWireCommon(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:  
                 url='/api/v1/data/controller/applications/bigwire/tenant[name="%s"]/tenant-interface[interface="%s"][switch="%s"]' %(str(tenant_name),str(intf_name),str(switch_dpid))
                 if vlan == 0:
@@ -224,7 +224,7 @@ class BigWireCommon(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:  
                 url='/api/v1/data/controller/applications/bigwire/tenant[name="%s"]'  % (str(tenant_name))    
                 c.rest.delete(url, {})
@@ -248,7 +248,7 @@ class BigWireCommon(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigwire/pseudo-wire[name="%s"]'  % (str(pseudowire_name))    
                 c.rest.delete(url, {})
@@ -276,7 +276,7 @@ class BigWireCommon(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]'  % (str(datacenter_name))    
                 c.rest.delete(url, {})

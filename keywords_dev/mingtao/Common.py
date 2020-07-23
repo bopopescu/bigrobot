@@ -13,7 +13,7 @@ class Common(object):
 
     def cli_show_l3_l4(self):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         string = 'show running-config bigtap |  grep l3-l4 | wc -l '
         c.cli(string)
         content = c.cli_content()
@@ -31,7 +31,7 @@ class Common(object):
 
     def cli_show_trackhost(self):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         string = 'show running-config bigtap |  grep trackhost | wc -l '
         c.cli(string)
         content = c.cli_content()
@@ -50,7 +50,7 @@ class Common(object):
 
     def cli_show_bigtap_policy(self):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         string = 'show running-config bigtap policy'
         c.cli(string)
         content = c.cli_content()
@@ -64,7 +64,7 @@ class Common(object):
             -- Mingtao
         """
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         
         url = '/api/v1/data/controller/applications/bigtap/info'  
         c.rest.get(url)
@@ -136,7 +136,7 @@ class Common(object):
             -- Mingtao
         """   
         t = test.Test()
-        c = t.controller('master') 
+        c = t.controller('main') 
         bigtap = BigTap.BigTap()    
         i = 0
         sequence = 0

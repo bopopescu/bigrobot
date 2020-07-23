@@ -142,7 +142,7 @@ class switchimageinstall(object):
                 helpers.log("no package provided")
                 swpackage= "latest.switchlight-powerpc-internal-t5.swi"
         
-            imagepath= "http://switch-nfs/export/switchlight/autobuilds/master/"
+            imagepath= "http://switch-nfs/export/switchlight/autobuilds/main/"
             full_path= str(imagepath) + str(swpackage)
             bash_cmd1= 'cd /mnt/flash2'
             switch.bash(bash_cmd1)

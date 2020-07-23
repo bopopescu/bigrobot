@@ -120,7 +120,7 @@ Test Catalog (MongoDB) database.
                                      description=descr)
     parser.add_argument('--build',
                         help=("Jenkins build string,"
-                              " e.g., 'bvs master #2007'"))
+                              " e.g., 'bvs main #2007'"))
     parser.add_argument('--input', required=True,
                         help=("Input file which contains a list of Robot"
                               " output.xml files  with complete pathnames"))

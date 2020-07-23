@@ -58,28 +58,28 @@ class MyTest(object):
 
     def enable_help(self):
         t = test.Test()
-        master = t.controller('master')
-        helpers.log("master: %s" % master)
+        main = t.controller('main')
+        helpers.log("main: %s" % main)
 
-        slave = t.controller('slave')
-        helpers.log("slave: %s" % slave)
+        subordinate = t.controller('subordinate')
+        helpers.log("subordinate: %s" % subordinate)
 
-        result = master.cli('show user')
+        result = main.cli('show user')
         helpers.log("CLI output: %s" % result['content'])
 
-        # master.rest().get('/api/v1/data/controller/applications/bvs/tenant')
-        master.rest.get('/api/v1/data/controller/core/aaa/local-user')
-        content = master.rest.content()
+        # main.rest().get('/api/v1/data/controller/applications/bvs/tenant')
+        main.rest.get('/api/v1/data/controller/core/aaa/local-user')
+        content = main.rest.content()
         helpers.log("content: %s" % content)
 
-        content_json = master.rest.content_json()
+        content_json = main.rest.content_json()
         helpers.log("content_json: %s" % content_json)
 
-        slave.cli("whoami")
-        result_json = slave.rest.result_json()
+        subordinate.cli("whoami")
+        result_json = subordinate.rest.result_json()
         helpers.log("result_json: %s" % result_json)
 
-        master.sudo('cat /etc/shadow')
+        main.sudo('cat /etc/shadow')
 
     def host_commands(self):
         t = test.Test()
@@ -176,7 +176,7 @@ root@nova-controller:~#
 
     def bounce_session_cookie(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.rest.get("/api/v1/data/controller/core/aaa/local-user")
 
     def get_a_dictionary(self):
@@ -254,11 +254,11 @@ admin_user = glance
         lines = helpers.str_to_list(output)
         helpers.log("lines:\n%s" % helpers.prettify(lines))
 
-    def check_mastership(self, node):
+    def check_mainship(self, node):
         t = test.Test()
         n = t.node(node)
 
-        if (n.is_master()):
+        if (n.is_main()):
             controller_role = "MASTER"
         else:
             controller_role = "SLAVE"
@@ -361,7 +361,7 @@ admin_user = glance
 
     def devconf_reconnect(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.bash('uname -a')
         c.rest.get('/api/v1/data/controller/core/aaa/local-user')
         # c_vui = c.connect('vui', 'vuile123', protocol='ssh', name='c1_vui')
@@ -369,8 +369,8 @@ admin_user = glance
         # c_vui.cli('show version')
         # c.bash('uptime')
         # c_vui.enable('show user')
-        # c_new = t.node_reconnect(node='master', user='userChkPassword', password='bsnbsn')
-        c_new = t.node_reconnect(node='master', user='vui', password='vuile123')
+        # c_new = t.node_reconnect(node='main', user='userChkPassword', password='bsnbsn')
+        c_new = t.node_reconnect(node='main', user='vui', password='vuile123')
         c_new.enable("show running-config")
         helpers.log("*** user:%s, password:%s" % (c_new.user(), c_new.password()))
         c_new.rest.get('/api/v1/data/controller/core/aaa/local-user')
@@ -1221,7 +1221,7 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
     def spawn_login_sessions(self, max_sessions):
         helpers.log("***Entering==> spawn_login_sessions")
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         ip = c.ip()
 
         n = []
@@ -1362,7 +1362,7 @@ rtt min/avg/max/mdev = 0.363/0.442/0.529/0.044 ms
         helpers.log("**** params:\n%s" % helpers.prettify(t.params()))
 
     def test_check_version(self):
-        status = BsnCommon().check_version('master', '2.1.0')
+        status = BsnCommon().check_version('main', '2.1.0')
         helpers.log("version check against 2.1.0: %s" % status)
 
     def rest_bigtap_delivery_group(self, node):

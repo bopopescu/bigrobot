@@ -24,7 +24,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
@@ -65,7 +65,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
@@ -103,7 +103,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
@@ -133,7 +133,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(view_name), str(policy_name))
                 c.rest.put(url,{'name':str(policy_name)})
@@ -162,7 +162,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(view_name), str(policy_name))
                 c.rest.delete(url,{})
@@ -183,7 +183,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 if "filter" in str(type_intf) :
                     intf_type = "filter-group"
@@ -204,7 +204,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 if "filter" in str(type_intf) :
                     intf_type = "filter-group"
@@ -226,7 +226,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]'  % (str(view_name),str(policy_name),str(match_number))
                 data_dict = helpers.from_json(data)
@@ -248,7 +248,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence="%s"]'  % (str(view_name),str(policy_name),str(match_number))
                 c.rest.delete(url,{})
@@ -272,7 +272,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (str(service_name))
                 c.rest.put(url,{"name":str(service_name)})
@@ -305,7 +305,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url='/api/v1/data/controller/applications/bigtap/service[name="%s"]'  % (str(service_name))
                 c.rest.delete(url,{})
@@ -322,7 +322,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 if "pre" in str(intf_type) :
                     url_add_intf ='/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]'  % (str(service_name),str(intf_nick))
@@ -343,7 +343,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 if "pre" in str(intf_type) :
                     url_add_intf ='/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]'  % (str(service_name),str(intf_nick))
@@ -364,7 +364,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url_to_add ='/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence=%s]' % (str(view_name),str(policy_name),str(seq_no))
                 c.rest.put(url_to_add, {"name":str(service_name), "sequence" : int(seq_no)})
@@ -382,7 +382,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url ='/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[name="%s"]' % (str(view_name),str(policy_name),str(service_name))
                 c.rest.delete(url, {})
@@ -400,7 +400,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url ='/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(view_name),str(policy_name))
                 c.rest.patch(url,{"action":str(policy_action)})
@@ -418,7 +418,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url ='/api/v1/data/controller/applications/bigtap/feature'
                 c.rest.patch(url,{str(feature_name): False})
@@ -436,7 +436,7 @@ class BigTapCommonConfig(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             try:
                 url ='/api/v1/data/controller/applications/bigtap/feature'
                 c.rest.patch(url,{str(feature_name): True})

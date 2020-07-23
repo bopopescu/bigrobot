@@ -19,8 +19,8 @@ from random import shuffle
 '''
 switchList_b4 = []
 switchList_after = []
-slave_switchList_b4 = []
-slave_switchList_after = []
+subordinate_switchList_b4 = []
+subordinate_switchList_after = []
 fabricLinks_b4 = []
 fabricLinks_after = []
 endpoints_b4 = []
@@ -90,8 +90,8 @@ class T5Utilities(object):
         '''
         global switchList_b4
         global switchList_after
-        global slave_switchList_b4
-        global slave_switchList_after
+        global subordinate_switchList_b4
+        global subordinate_switchList_after
         global fabricLinks_b4
         global fabricLinks_after
         global endpoints_b4
@@ -126,7 +126,7 @@ class T5Utilities(object):
         if (state == "before"):
             switchList_b4 = self._gather_switch_connectivity()
             if(cluster == "HA"):
-                slave_switchList_b4 = self._gather_switch_connectivity("slave")
+                subordinate_switchList_b4 = self._gather_switch_connectivity("subordinate")
             fabricLinks_b4 = self._gather_fabric_links()
             endpoints_b4 = self._gather_endpoints()
             fabricLags_b4 = self._gather_fabric_lags()
@@ -144,82 +144,82 @@ class T5Utilities(object):
 
         else:
             if(consistencyChecker == "Yes"):
-                switchList_after = self._gather_switch_connectivity("slave", "Yes")
+                switchList_after = self._gather_switch_connectivity("subordinate", "Yes")
             else:
                 switchList_after = self._gather_switch_connectivity()
             warningCount = self._compare_fabric_elements(switchList_b4, switchList_after, "SwitchList")
             if(cluster == "HA"):
-                slave_switchList_after = self._gather_switch_connectivity("slave")
-                warningCount = self._compare_fabric_elements(slave_switchList_b4, slave_switchList_after, "SwitchList")
+                subordinate_switchList_after = self._gather_switch_connectivity("subordinate")
+                warningCount = self._compare_fabric_elements(subordinate_switchList_b4, subordinate_switchList_after, "SwitchList")
 
             if(consistencyChecker == "Yes"):
-                fabricLinks_after = self._gather_fabric_links("slave")
+                fabricLinks_after = self._gather_fabric_links("subordinate")
             else:
                 fabricLinks_after = self._gather_fabric_links()
             warningCount = self._compare_fabric_elements(fabricLinks_b4, fabricLinks_after, "FabricLinks")
 
             if(consistencyChecker == "Yes"):
-                endpoints_after = self._gather_endpoints("slave")
+                endpoints_after = self._gather_endpoints("subordinate")
             else:
                 endpoints_after = self._gather_endpoints()
             warningCount = self._compare_fabric_elements(endpoints_b4, endpoints_after, "FabricEndpoints")
 
             if(consistencyChecker == "Yes"):
-                fabricLags_after = self._gather_fabric_lags("slave")
+                fabricLags_after = self._gather_fabric_lags("subordinate")
             else:
                 fabricLags_after = self._gather_fabric_lags()
             warningCount = self._compare_fabric_elements(fabricLags_b4, fabricLags_after, "FabricLags")
 
             if(consistencyChecker == "Yes"):
-                portgroups_after = self._gather_port_groups("slave")
+                portgroups_after = self._gather_port_groups("subordinate")
             else:
                 portgroups_after = self._gather_port_groups()
             warningCount = self._compare_fabric_elements(portgroups_b4, portgroups_after, "PortGroups")
 
             if(consistencyChecker == "Yes"):
-                fwdARPTable_after = self._gather_forwarding('arp-table', "slave")
+                fwdARPTable_after = self._gather_forwarding('arp-table', "subordinate")
             else:
                 fwdARPTable_after = self._gather_forwarding('arp-table')
             warningCount = self._compare_fabric_elements(fwdARPTable_b4, fwdARPTable_after, "fwdARPTable")
 
             if(consistencyChecker == "Yes"):
-                fwdEPTable_after = self._gather_forwarding('ep-table', "slave")
+                fwdEPTable_after = self._gather_forwarding('ep-table', "subordinate")
             else:
                 fwdEPTable_after = self._gather_forwarding('ep-table')
             warningCount = self._compare_fabric_elements(fwdEPTable_b4, fwdEPTable_after, "fwdEPTable")
 
             if(consistencyChecker == "Yes"):
-                fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table', "slave")
+                fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table', "subordinate")
             else:
                 fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table')
             warningCount = self._compare_fabric_elements(fwdL3CIDRTable_b4, fwdL3CIDRTable_after, "fwdL3CIDRTable")
 
             if(consistencyChecker == "Yes"):
-                fwdL3HostTable_after = self._gather_forwarding('l3-host-table', "slave")
+                fwdL3HostTable_after = self._gather_forwarding('l3-host-table', "subordinate")
             else:
                 fwdL3HostTable_after = self._gather_forwarding('l3-host-table')
             warningCount = self._compare_fabric_elements(fwdL3HostTable_b4, fwdL3HostTable_after, "fwdL3HostTable")
 
             if(consistencyChecker == "Yes"):
-                fwdMyStationTable_after = self._gather_forwarding('my-station-table', "slave")
+                fwdMyStationTable_after = self._gather_forwarding('my-station-table', "subordinate")
             else:
                 fwdMyStationTable_after = self._gather_forwarding('my-station-table')
             warningCount = self._compare_fabric_elements(fwdMyStationTable_b4, fwdMyStationTable_after, "fwdMyStationTable")
 
             if(consistencyChecker == "Yes"):
-                fwdRouterIPTable_after = self._gather_forwarding('router-ip-table', "slave")
+                fwdRouterIPTable_after = self._gather_forwarding('router-ip-table', "subordinate")
             else:
                 fwdRouterIPTable_after = self._gather_forwarding('router-ip-table')
             warningCount = self._compare_fabric_elements(fwdRouterIPTable_b4, fwdRouterIPTable_after, "fwdRouterIPTable")
 
             if(consistencyChecker == "Yes"):
-                fwdEcmpTable_after = self._gather_forwarding('ecmp-table', "slave")
+                fwdEcmpTable_after = self._gather_forwarding('ecmp-table', "subordinate")
             else:
                 fwdEcmpTable_after = self._gather_forwarding('ecmp-table')
             warningCount = self._compare_fabric_elements(fwdEcmpTable_b4, fwdEcmpTable_after, "fwdEcmpTable")
 
             if(consistencyChecker == "Yes"):
-                fwdDhcpTable_after = self._gather_forwarding('dhcp-table', "slave")
+                fwdDhcpTable_after = self._gather_forwarding('dhcp-table', "subordinate")
             else:
                 fwdDhcpTable_after = self._gather_forwarding('dhcp-table')
             warningCount = self._compare_fabric_elements(fwdDhcpTable_b4, fwdDhcpTable_after, "fwdDhcpTable")
@@ -239,7 +239,7 @@ class T5Utilities(object):
 
 
 
-    def _gather_switch_connectivity(self, node="master", consistencyChecker="No"):
+    def _gather_switch_connectivity(self, node="main", consistencyChecker="No"):
         '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
 
@@ -248,10 +248,10 @@ class T5Utilities(object):
 
         '''
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         url = "/api/v1/data/controller/applications/bcf/info/fabric/switch"
         result = c.rest.get(url)['content']
@@ -268,10 +268,10 @@ class T5Utilities(object):
                 try:
                     handShakeState = result[i]['handshake-state']
                     if(consistencyChecker == "Yes"):
-                        if(handShakeState == "slave-state"):
-                            # If the function is consistency check between active & standby changing the slave handshake
-                            # state to "master-state" to get around with the key mismatching
-                            handShakeState = "master-state"
+                        if(handShakeState == "subordinate-state"):
+                            # If the function is consistency check between active & standby changing the subordinate handshake
+                            # state to "main-state" to get around with the key mismatching
+                            handShakeState = "main-state"
                             key = "%s-%s-%s-%s-%s-%s" % (dpid, connected, fabricConState, fabricRole, shutdown, handShakeState)
                     else:
                         key = "%s-%s-%s-%s-%s-%s" % (dpid, connected, fabricConState, fabricRole, shutdown, handShakeState)
@@ -287,7 +287,7 @@ class T5Utilities(object):
         return switchList
 
 
-    def _gather_fabric_links(self, node="master"):
+    def _gather_fabric_links(self, node="main"):
         '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
 
@@ -296,10 +296,10 @@ class T5Utilities(object):
 
         '''
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         url = "/api/v1/data/controller/applications/bcf/info/fabric?select=link"
         result = c.rest.get(url)['content']
@@ -316,7 +316,7 @@ class T5Utilities(object):
         return fabricLink
 
 
-    def _gather_endpoints(self, node="master"):
+    def _gather_endpoints(self, node="main"):
         '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
 
@@ -325,10 +325,10 @@ class T5Utilities(object):
 
         '''
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         url = "/api/v1/data/controller/applications/bcf/info/endpoint-manager/endpoint"
         result = c.rest.get(url)['content']
@@ -353,7 +353,7 @@ class T5Utilities(object):
         return endpoints
 
 
-    def _gather_fabric_lags(self, node="master"):
+    def _gather_fabric_lags(self, node="main"):
         '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
 
@@ -362,10 +362,10 @@ class T5Utilities(object):
 
         '''
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         url = "/api/v1/data/controller/core/switch?select=fabric-lag"
         result = c.rest.get(url)['content']
@@ -401,7 +401,7 @@ class T5Utilities(object):
 
         return fabricLags
 
-    def _gather_port_groups(self, node="master"):
+    def _gather_port_groups(self, node="main"):
         '''
         -    This is a helper function. This function is used by "fabric_integrity_checker"
 
@@ -411,10 +411,10 @@ class T5Utilities(object):
         '''
 
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         url = "/api/v1/data/controller/applications/bcf/info/fabric/port-group"
         result = c.rest.get(url)['content']
@@ -440,13 +440,13 @@ class T5Utilities(object):
         helpers.log("portgroup list is: %s " % portgroups)
         return portgroups
 
-    def _gather_forwarding(self, fwdTableName, node="master"):
+    def _gather_forwarding(self, fwdTableName, node="main"):
 
         t = test.Test()
-        if(node == "master"):
-            c = t.controller("master")
+        if(node == "main"):
+            c = t.controller("main")
         else:
-            c = t.controller("slave")
+            c = t.controller("subordinate")
 
         # url = "/api/v1/data/controller/applications/bcf/info/forwarding/network?select=%s" % fwdTableName
         url = "/api/v1/data/controller/applications/bcf/info/forwarding/network/global/%s" % fwdTableName
@@ -701,7 +701,7 @@ class T5Utilities(object):
                 2 : HA cluster
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         c.cli('show controller')
         content = c.cli_content()
@@ -837,7 +837,7 @@ class T5Utilities(object):
 
         helpers.test_log("Running command: %s on node %s" % (command, node))
         helpers.test_log("Console flag value is: %s" % (console))
-        if (node == 'master') or (node == 'slave'):
+        if (node == 'main') or (node == 'subordinate'):
             helpers.test_log("Going to get node alias")
             bsn_common = bsnCommon()
             node = bsn_common.get_node_name(node)
@@ -1108,7 +1108,7 @@ class T5Utilities(object):
 	''' Function that returns hash value of session id'''
         helpers.test_log("Getting hash of sesison id")
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         content = c.config("show session")['content']
         output = helpers.strip_cli_output(content)
         lines = helpers.str_to_list(output)
@@ -1125,7 +1125,7 @@ class T5Utilities(object):
         ''' This function will shut down the switch interface
         '''
         t = test.Test()
-        c = t.controller("master")
+        c = t.controller("main")
         # url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
         # result = c.rest.patch(url,{"shutdown": True})
 
@@ -1150,7 +1150,7 @@ class T5Utilities(object):
         ''' This function will no-shut the switch interface
         '''
         t = test.Test()
-        c = t.controller("master")
+        c = t.controller("main")
         # url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]/shutdown' % (switch, interface)
         # result = c.rest.delete(url,{})
 
@@ -1261,9 +1261,9 @@ class T5PlatformThreads(Thread):
         if(self.name == "failover"):
             self.controller_failover()
         if(self.name == "activeReboot"):
-            self.controller_reboot('master')
+            self.controller_reboot('main')
         if(self.name == "standbyReboot"):
-            self.controller_reboot('slave')
+            self.controller_reboot('subordinate')
         if(self.name == "hostPing"):
             self.host_ping(self.kwargs.get("host"), self.kwargs.get("IP"))
 
@@ -1316,7 +1316,7 @@ class T5PlatformThreads(Thread):
         from T5Platform import T5Platform
         platform = T5Platform()
         print ("Starting Thread %s For Controller Reboot for Node: " % (self.threadID), node)
-        if (node == "master"):
+        if (node == "main"):
             returnVal = platform.cluster_node_reboot()
         else:
             returnVal = platform.cluster_node_reboot(False)

@@ -32,7 +32,7 @@ BUILD_NAME.
                         help=("Print verbose output"))
     parser.add_argument('--build',
                         help=("Jenkins build string,"
-                              " e.g., 'bvs master #2007'"))
+                              " e.g., 'bvs main #2007'"))
     parser.add_argument('--regression-tags',
                         help=("Supported regression tags are 'daily' or 'full'."))
     _args = parser.parse_args()

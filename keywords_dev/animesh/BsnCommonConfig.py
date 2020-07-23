@@ -13,7 +13,7 @@ class BsnCommonConfig(object):
 #   Return Value:  True/False
     def rest_set_switch_alias(self,switchDpid,switchAlias):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.ip,c.http_port,str(switchDpid))
         url = '/api/v1/data/controller/core/switch[dpid="%s"]' % str(switchDpid)
         c.rest.patch(url, {"alias": str(switchAlias)})
@@ -28,7 +28,7 @@ class BsnCommonConfig(object):
      
     def rest_set_snmp_server_community(self,snmpCommunity):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/snmp-server-config/' % (c.ip,c.http_port)
         url = '/rest/v1/model/snmp-server-config/'
         c.rest.put(url,  {"id": "snmp", "community": str(snmpCommunity)})
@@ -45,7 +45,7 @@ class BsnCommonConfig(object):
 #   Return Value:  True/False          
     def rest_set_snmp_server_contact(self,snmpContact):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
         url='/rest/v1/model/snmp-server-config/?id=snmp'
         c.rest.put(url, {"contact": str(snmpContact)})
@@ -62,7 +62,7 @@ class BsnCommonConfig(object):
 #   Return Value:  True/False
     def rest_set_snmp_server_location(self,snmpLocation):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
         url='/rest/v1/model/snmp-server-config/?id=snmp'        
         c.rest.put(url, {"location": str(snmpLocation)})
@@ -79,7 +79,7 @@ class BsnCommonConfig(object):
 #   Return Value:  True/False
     def rest_set_snmp_server_enable(self):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
         url='/rest/v1/model/snmp-server-config/?id=snmp'  
         c.rest.put(url, {"server-enable": True})
@@ -96,7 +96,7 @@ class BsnCommonConfig(object):
 #   Return Value:  True/False   
     def rest_set_snmp_trapserver(self,trapIP,trapPort):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
         url='/rest/v1/model/snmp-server-config/?id=snmp' 
         c.rest.put(url, {"trap-enable": True, "trap-server": str(trapIP), "trap-port": str(trapPort)})
@@ -113,7 +113,7 @@ class BsnCommonConfig(object):
 #   Return Value:  True/False        
     def rest_enable_snmp_trapserver(self):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
         url='/rest/v1/model/snmp-server-config/?id=snmp' 
         c.rest.put(url, {"trap-enable": True, "id": "snmp"})
@@ -130,7 +130,7 @@ class BsnCommonConfig(object):
 #   Return Value:  True/False     
     def rest_modify_snmp_key(self,snmpKey,snmpValue):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
         url='/rest/v1/model/snmp-server-config/?id=snmp' 
         if snmpValue == "null":
@@ -153,7 +153,7 @@ class BsnCommonConfig(object):
 #   Return Value:  True/False         
     def rest_firewall_allow_snmp(self,controllerID):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/firewall-rule/' % (c.ip,c.http_port)
         url='/rest/v1/model/firewall-rule/'
         cInterface = "%s|Ethernet|0" %(str(controllerID))
@@ -170,7 +170,7 @@ class BsnCommonConfig(object):
 #   Return Value:  True/False    
     def rest_delete_snmp(self):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url1='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
         url1='/rest/v1/model/snmp-server-config/?id=snmp'
         helpers.test_log(url1)
@@ -188,7 +188,7 @@ class BsnCommonConfig(object):
            Return Value:  True if the configuration is successful, false otherwise 
         '''
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url1='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
         url1='/rest/v1/model/snmp-server-config/?id=snmp'
         helpers.test_log(url1)
@@ -197,7 +197,7 @@ class BsnCommonConfig(object):
 
     def rest_execute_ha_failover(self):
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url1='http://%s:%s/rest/v1/system/ha/failback' % (c.ip,c.http_port)
         url1='/rest/v1/system/ha/failback'
         helpers.test_log(url1)
@@ -218,7 +218,7 @@ class BsnCommonConfig(object):
             Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/ntp-server/' % (c.ip,c.http_port)
         url='/rest/v1/model/ntp-server/'
         c.rest.put(url,  {"enabled": True, "server": str(ntp_server)})
@@ -239,7 +239,7 @@ class BsnCommonConfig(object):
             Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/ntp-server/?enabled=True&server=%s' % (c.ip,c.http_port,str(ntp_server))
         url='/rest/v1/model/ntp-server/?enabled=True&server=%s' % str(ntp_server)
         c.rest.delete(url,  {})
@@ -262,7 +262,7 @@ class BsnCommonConfig(object):
             Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/syslog-server/' % (c.ip,c.http_port)
         url='/rest/v1/model/syslog-server/'
         c.rest.put(url,  {"logging-enabled": True, "logging-server": str(syslog_server),"logging-level":int(log_level)})
@@ -284,7 +284,7 @@ class BsnCommonConfig(object):
             Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c= t.controller('master')
+        c= t.controller('main')
         #url='http://%s:%s/rest/v1/model/syslog-server/?logging-enabled=True&logging-server=%s&logging-level=%d' % (c.ip,c.http_port,str(syslog_server),int(log_level))
         url='/rest/v1/model/syslog-server/?logging-enabled=True&logging-server=%s&logging-level=%d' % (str(syslog_server),int(log_level))
         c.rest.delete(url,  {})
@@ -300,16 +300,16 @@ class BsnCommonConfig(object):
         ''' Flap eth0 on Controller
         
             Input:
-               controllerRole        Where to execute the command. Accepted values are `Master` and `Slave`
+               controllerRole        Where to execute the command. Accepted values are `Main` and `Subordinate`
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
         t=test.Test()
 
-        if (controllerRole=='Master'):
-            c= t.controller('master')           
+        if (controllerRole=='Main'):
+            c= t.controller('main')           
         else:
-            c= t.controller('slave')            
+            c= t.controller('subordinate')            
         conn = SSH2()
         conn.connect(c.ip)
         conn.login(Account("admin","adminadmin"))

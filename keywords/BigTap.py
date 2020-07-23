@@ -50,7 +50,7 @@ class BigTap(object):
         '''
         t = test.Test()
         try:
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
         except:
             return False
@@ -90,7 +90,7 @@ class BigTap(object):
         '''
         t = test.Test()
         try:
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
         except:
             return False
@@ -129,7 +129,7 @@ class BigTap(object):
             - Returns False on failure.
         """
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(group))
         c.rest.get(url)
         if not c.rest.status_code_ok():
@@ -156,7 +156,7 @@ class BigTap(object):
             - Returns False on failure.
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: policy = %s " % (policy))
         url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/debug' % policy
@@ -181,7 +181,7 @@ class BigTap(object):
             Usage:                     
         """
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url = '/api/v1/data/controller/applications/bigtap/view[policy/name="%s"]?config=true&select=policy[name="%s"]' % (policy, policy)
         c.rest.get(url)
 
@@ -221,7 +221,7 @@ class BigTap(object):
 # Mingtao
     def cli_show_bigtap_policy(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         string = 'show running-config bigtap policy'
         c.cli(string)
         content = c.cli_content()
@@ -238,7 +238,7 @@ class BigTap(object):
             |Feature | Name of Feature being verified|
         """
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.rest.get('/rest/v1/system/version')
         content = c.rest.content()
         version_string = content[0]['controller']
@@ -279,7 +279,7 @@ class BigTap(object):
 #  Mingtao
     def cli_show_feature(self, feature_name="l3-l4"):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         string = "show running-config bigtap |  grep " + str(feature_name) + " | wc -l "
         c.cli(string)
         content = c.cli_content()
@@ -299,7 +299,7 @@ class BigTap(object):
 
     def cli_show_l3_l4(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         string = "show running-config bigtap |  grep l3-l4 | wc -l "
         c.cli(string)
         content = c.cli_content()
@@ -317,7 +317,7 @@ class BigTap(object):
 
     def cli_show_trackhost(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         string = 'show running-config bigtap |  grep trackhost | wc -l '
         c.cli(string)
         content = c.cli_content()
@@ -353,7 +353,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
 
             try:
                 string = "user %s" % str(username)
@@ -401,7 +401,7 @@ class BigTap(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             helpers.test_log("Could not execute command")
             return False
@@ -490,7 +490,7 @@ class BigTap(object):
     def rest_verify_service_interface_state_in_policy(self, node, policy_name, service_name, service_pre_interface=None, service_post_interface=None):
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
 
         except:
@@ -588,7 +588,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/%s' % (str(policy_name), str(method))
                 c.rest.get(url)
@@ -685,7 +685,7 @@ class BigTap(object):
             -- Mingtao
         """
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         i = 0
         sequence = 0
         expect_flow = 0
@@ -818,7 +818,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             switch = t.switch(node)
             AppCommon = AppController.AppController()
 
@@ -882,7 +882,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             switch = t.switch(node)
             AppCommon = AppController.AppController()
             try:
@@ -932,7 +932,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             switch = t.switch(node)
             AppCommon = AppController.AppController()
             try:
@@ -972,7 +972,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
                     if "Augusta" in str(version):
@@ -1018,7 +1018,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
                     if "Augusta" in str(version):
@@ -1065,7 +1065,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
                     if "Augusta" in str(version):
@@ -1112,7 +1112,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
                     if "Augusta" in str(version):
@@ -1159,7 +1159,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
 
                 #
@@ -1213,7 +1213,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
 
                 if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
@@ -1253,7 +1253,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
@@ -1297,7 +1297,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
@@ -1331,7 +1331,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 c.rest.patch(url, {"priority": int(policy_priority)})
@@ -1351,7 +1351,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if "+" in starttime:
                     url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
@@ -1403,7 +1403,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 c.rest.patch(url, {"rewrite-vlan": int(rewrite_vlan)})
@@ -1432,7 +1432,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"][rewrite-vlan=None]/rewrite-vlan' % (str(rbac_view_name), str(policy_name))
                 c.rest.delete(url, {})
@@ -1462,7 +1462,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if "filter" in str(intf_type):
                     intf_type = "filter-group"
@@ -1502,7 +1502,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if "filter" in str(intf_type):
                     intf_type = "filter-group"
@@ -1541,7 +1541,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 helpers.log("Input data is %s" % data)
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
@@ -1580,7 +1580,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 if "admin" not in user:
@@ -1615,7 +1615,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]' % (str(filter_set_name))
                 if "admin" not in user:
@@ -1650,7 +1650,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]' % (str(filter_set_name))
                 if "admin" not in user:
@@ -1686,7 +1686,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 helpers.log("Input data is %s" % data)
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]/rule[sequence=%s]' % (str(filter_set_name), str(match_number))
@@ -1723,7 +1723,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]/rule[sequence=%s]' % (str(filter_set_name), str(match_number))
                 if "admin" not in user:
@@ -1758,7 +1758,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 if "admin" not in user:
@@ -1793,7 +1793,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 if "admin" not in user:
@@ -1829,7 +1829,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
@@ -1864,7 +1864,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"][strip-vlan="None"]/strip-vlan' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
@@ -1906,7 +1906,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (str(service_name))
                 c.rest.put(url, {"name":str(service_name)})
@@ -1962,7 +1962,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (str(service_name))
                 if "admin" not in user:
@@ -2003,7 +2003,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if "pre" in str(intf_type):
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]' % (str(service_name), str(intf_nickname))
@@ -2045,7 +2045,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if "pre" in str(intf_type):
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]' % (str(service_name), str(intf_nickname))
@@ -2092,7 +2092,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url_to_add = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(sequence_number))
                 if "admin" not in user:
@@ -2127,7 +2127,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[name="%s"]' % (str(rbac_view_name), str(policy_name), str(service_name))
                 if "admin" not in user:
@@ -2180,7 +2180,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
@@ -2221,7 +2221,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 c.rest.get('/rest/v1/system/version')
                 content = c.rest.content()
@@ -2271,7 +2271,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 c.rest.get('/rest/v1/system/version')
                 content = c.rest.content()
@@ -2351,7 +2351,7 @@ class BigTap(object):
             | False | if configuration delete is unsuccessful.|
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         if policy:
             helpers.log("Policy to be deleted: %s" % (policy))
@@ -2394,7 +2394,7 @@ class BigTap(object):
             | False | configuration delete is unsuccessful.|
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         if addr_group:
             helpers.log("Address Group to be deleted is: %s" % (addr_group))
@@ -2435,7 +2435,7 @@ class BigTap(object):
             | False | configuration delete is unsuccessful.|
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         if service:
             helpers.log("this is the Service to be deleted: %s" % (service))
@@ -2478,7 +2478,7 @@ class BigTap(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(name))
             c.rest.put(url, {"name": str(name)})
             helpers.sleep(1)
@@ -2510,7 +2510,7 @@ class BigTap(object):
         # create the address group and associate the type
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
 
             url = ('/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]'
                    % (str(name), str(addr), str(mask)))
@@ -2689,7 +2689,7 @@ class BigTap(object):
     def rest_add_tunnel_interface(self, node, tunnel_name, switch_alias=None, sw_dpid=None, loopback=None, pinterface=None, tdirection=None, sip=None, mask=None, dip=None, gip=None, vpnkey=1234, user="admin", password="adminadmin", soft_error=False):
         t = test.Test()
         try:
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
         except:
             return False
@@ -2778,7 +2778,7 @@ class BigTap(object):
     def rest_verify_tunnel_status(self, node, tunnel_name, switch_alias=None, sw_dpid=None, tunnel_number=None, runtime_state=None, parent_interface=None, tunnel_direction=None, sip=None, mask=None, dip=None, gip=None, user="admin", password="adminadmin", soft_error=False):
         t = test.Test()
         try:
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
         except:
             return False
@@ -2909,7 +2909,7 @@ class BigTap(object):
     def rest_delete_tunnel_interface(self, node, tunnel_name, switch_alias=None, sw_dpid=None, user="admin", password="adminadmin", soft_error=False):
         t = test.Test()
         try:
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
         except:
             return False
@@ -2941,7 +2941,7 @@ class BigTap(object):
     def rest_delete_tunnel_items(self, node, tunnel_name, switch_alias=None, sw_dpid=None, item=None, user="admin", password="adminadmin", soft_error=False):
         t = test.Test()
         try:
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
         except:
             return False
@@ -3046,7 +3046,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/core/aaa/local-user[user-name="%s"] ' % (str(username))
                 c.rest.put(url, {"user-name": str(username)})
@@ -3074,7 +3074,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/core/aaa/local-user[user-name="%s"] ' % (str(username))
                 c.rest.delete(url, {})
@@ -3105,10 +3105,10 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 # Get the hashed value of password
-                t.node_reconnect(node='master')
+                t.node_reconnect(node='main')
                 helpers.log("Password is %s" % json.dumps(password))
                 url1 = '/api/v1/data/controller/core/aaa/hash-password[password=%s]' % json.dumps(password)
                 c.rest.get(url1)
@@ -3142,7 +3142,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 # Create a group first
                 url1 = '/api/v1/data/controller/core/aaa/group[name="%s"]' % str(group_name)
@@ -3175,7 +3175,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 # Create a group first
                 url1 = '/api/v1/data/controller/core/aaa/group[name="%s"]' % str(group_name)
@@ -3202,11 +3202,11 @@ class BigTap(object):
         '''
         try:
             t = test.Test()
-            # t.node_reconnect(node='master')
+            # t.node_reconnect(node='main')
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 #
                 url = '/api/v1/data/controller/core/aaa/group[name="%s"]' % str(group_name)
@@ -3234,9 +3234,9 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
-                t.node_reconnect(node='master')
+                t.node_reconnect(node='main')
                 cli_input_1 = str("group ") + str(group_name)
                 c.config(cli_input_1)
                 cli_input_2 = "no associate user " + str(username)
@@ -3265,7 +3265,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 # Add user to Group
                 url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]' % str(rbac_view)
@@ -3294,7 +3294,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 # Add user to Group
                 url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]' % str(rbac_view)
@@ -3324,7 +3324,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if 'allow-all' in filter_name:
                     url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
@@ -3357,7 +3357,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if 'allow-all' in delivery_name:
                     url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
@@ -3391,7 +3391,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if 'allow-all' in service_name:
                     url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
@@ -3426,7 +3426,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if 'allow-all' in match_name:
                     url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
@@ -3559,7 +3559,7 @@ class BigTap(object):
 
     def rest_execute_generic_get(self, url, user="admin", password="adminadmin"):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         if "admin" not in user:
             c_user = t.node_spawn(ip=c.ip(), user=str(user), password=password)
             c_user.rest.get(url)
@@ -3576,7 +3576,7 @@ class BigTap(object):
            output:   file cli_exec_walk
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.cli('')
         helpers.log("********* Entering cli_exec_walk ----> string: %s, file name: %s" % (string, file_name))
         if string == '':
@@ -3768,7 +3768,7 @@ class BigTap(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
         else:
@@ -3824,7 +3824,7 @@ class BigTap(object):
     def cli_verify_command(self, command, cmd_argument_count, cmd_argument=None, soft_error=False):
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
         else:
@@ -3861,7 +3861,7 @@ class BigTap(object):
     def rest_add_bigtap_udf(self, udf_number, udf_anchor, udf_offset, soft_error=False):
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
         else:
@@ -3883,7 +3883,7 @@ class BigTap(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
         else:
@@ -3927,7 +3927,7 @@ class BigTap(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
         else:
@@ -3945,7 +3945,7 @@ class BigTap(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
         else:
@@ -3967,7 +3967,7 @@ class BigTap(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
         else:
@@ -3982,7 +3982,7 @@ class BigTap(object):
     def rest_verify_interswitch_link(self, node1, node2, interface1="ethernet13", interface2="ethernet14"):
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             AppCommon = AppController.AppController()
         except:
             return False
@@ -4005,7 +4005,7 @@ class BigTap(object):
     def rest_clear_bigtap_statistics(self):
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
         else:

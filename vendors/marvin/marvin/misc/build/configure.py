@@ -119,7 +119,7 @@ def configureManagementServer(mgmt_host):
                                                  cobblerHomeResolve(mgmt_ip)));
     bash("cobbler sync")
 
-    #Revoke all certs from puppetmaster
+    #Revoke all certs from puppetmain
     bash("puppet cert clean %s.%s"%(mgmt_host, DOMAIN))
 
     #Start VM on xenserver

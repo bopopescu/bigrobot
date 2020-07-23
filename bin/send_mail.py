@@ -77,7 +77,7 @@ Send an email. Example:
 % ./send_mail.py \\
         --sender vui.le@bigswitch.com \\
         --receiver bigrobot_stats_collection@bigswitch.com \\
-        --subject "Dashboard stats for 'bvs master #2806' - suite 123" \\
+        --subject "Dashboard stats for 'bvs main #2806' - suite 123" \\
         --message "test suites: xyz executed"
 """
     parser = argparse.ArgumentParser(

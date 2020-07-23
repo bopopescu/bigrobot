@@ -30,7 +30,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
             
             try:
                 string = "user %s" % str(username)
@@ -65,7 +65,7 @@ class BigTap(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c= t.controller('main')
 
             try:
                 url = '/rest/v1/model/controller-alias/'
@@ -122,7 +122,7 @@ class BigTap(object):
     def cli_download_image_and_upgrade(self, package):
         '''
             Objective:
-            - Execute CLI commands to download given upgrade package to Master (and Slave if exists) Controllers
+            - Execute CLI commands to download given upgrade package to Main (and Subordinate if exists) Controllers
         
             Input:
             | `image` |  URL to the upgrade package | 
@@ -139,9 +139,9 @@ class BigTap(object):
             c= t.controllers()
             
             if len(c) == 2:
-                node = t.controller('slave')
+                node = t.controller('subordinate')
             elif len(c) == 1:
-                node = t.controller('master')
+                node = t.controller('main')
             else:
                 helpers.test_failure("More than two controllers or no controller configured") 
                 return False
@@ -161,7 +161,7 @@ class BigTap(object):
                     return False
                 
                 if len(c) == 2:
-                    node = t.controller('slave')
+                    node = t.controller('subordinate')
             
             return True
             
@@ -199,7 +199,7 @@ class BigTap(object):
     def upgrade_to(self, package):
         '''
             Objective:
-            - Execute CLI commands to download given upgrade package to Master (and Slave if exists) Controllers and upgrade them
+            - Execute CLI commands to download given upgrade package to Main (and Subordinate if exists) Controllers and upgrade them
         
             Input:
             | `package` |  URL to the upgrade package | 
@@ -218,9 +218,9 @@ class BigTap(object):
             controller_qty = len(c)
             
             if controller_qty == 2:
-                node = t.controller('slave')
+                node = t.controller('subordinate')
             elif controller_qty == 1:
-                node = t.controller('master')
+                node = t.controller('main')
             else:
                 helpers.test_failure("More than two controllers or no controller configured") 
                 return False
@@ -249,7 +249,7 @@ class BigTap(object):
                     return False
                 
                 if controller_qty == 2:
-                    node = t.controller('slave')
+                    node = t.controller('subordinate')
             
             return True
                 
@@ -257,7 +257,7 @@ class BigTap(object):
     def PUSHED_cli_upgrade_image(self, node=None, package=None,  timeout=200, sleep=200):
         '''
             Objective:
-            - Execute CLI commands to download given upgrade package to Master (and Slave if exists) Controllers and upgrade them
+            - Execute CLI commands to download given upgrade package to Main (and Subordinate if exists) Controllers and upgrade them
         
             Input:
             | `package` |  URL to the upgrade package | 
@@ -294,7 +294,7 @@ class BigTap(object):
         for i in range(0, controller_qty):
             try:
                 if controller_qty > 1: 
-                    n = t.controller('slave')
+                    n = t.controller('subordinate')
                 else:
                     n = node_handles[0]
                     
@@ -330,7 +330,7 @@ class BigTap(object):
             - Execute CLI commands to upgrade given controller
         
             Input:
-            | `node` |  Master, Master-Blocked or Slave | 
+            | `node` |  Main, Main-Blocked or Subordinate | 
             
             Return Value: 
             - True if configuration is successful
@@ -344,21 +344,21 @@ class BigTap(object):
             c= t.controllers()
             
             if len(c) == 2:
-                master = t.controller('master')
-                slave = t.controller('slave')
+                main = t.controller('main')
+                subordinate = t.controller('subordinate')
                 
             elif len(c) == 1:
-                master = t.controller('master')
+                main = t.controller('main')
             else:
                 helpers.test_failure("More than two controllers or no controller configured") 
                 return False
 
-            if node == 'Slave':
-                node = slave
-            elif node == 'Master':
-                node = master
+            if node == 'Subordinate':
+                node = subordinate
+            elif node == 'Main':
+                node = main
             else:
-                helpers.test_failure("Trying to upgrade node other than Master or Slave") 
+                helpers.test_failure("Trying to upgrade node other than Main or Subordinate") 
                 return False
             
             result = "Empty"

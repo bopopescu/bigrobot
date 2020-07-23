@@ -522,7 +522,7 @@ class T5Fabric(object):
      
     def Dump_Show_Commands(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         cmdList = [
            'show running-config',
            'show debug counters',

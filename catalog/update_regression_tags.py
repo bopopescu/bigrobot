@@ -32,7 +32,7 @@ Example:
                         help=("Print verbose output"))
     parser.add_argument('--build',
                         help=("Jenkins build string,"
-                              " e.g., 'bvs master #2007'"))
+                              " e.g., 'bvs main #2007'"))
     parser.add_argument('--tags', metavar=('tag1', 'tag2'), nargs='*',
                         help=("Regression tags,"
                               " e.g., 'full', 'daily'"))

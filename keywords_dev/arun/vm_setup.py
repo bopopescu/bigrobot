@@ -14,7 +14,7 @@ from pytz import timezone
 
 
 vmdk_name = "controller-bvs-2.0.7-SNAPSHOT.vmdk"
-vmdk_path = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/"
+vmdk_path = "/var/lib/jenkins/jobs/bvs\ main/lastSuccessful/archive/target/appliance/images/bvs/"
 kvm_host = "10.192.104.13"
 kvm_user = "bsn"
 kvm_pwd = "bsn"
@@ -73,7 +73,7 @@ def scp_vmdk_to_kvm(**kwargs):
     
     # For below SCP to work we need to have Kvm Pub Key in jenkins build server..
     helpers.log("Executing Scp cmd to copy latest bvs vmdk to KVM Server")
-    kvm_handle.bash('scp "bsn@jenkins:/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.7-SNAPSHOT.vmdk" .', timeout=100)['content']
+    kvm_handle.bash('scp "bsn@jenkins:/var/lib/jenkins/jobs/bvs\ main/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.7-SNAPSHOT.vmdk" .', timeout=100)['content']
     kvm_handle.bash('sudo cp controller-bvs-2.0.7-SNAPSHOT.vmdk ../images/%s.vmdk' % vm_name)
     kvm_vmdk_path = "/var/lib/libvirt/images/%s.vmdk" % vm_name
     #vm_name = "%s_BVS" % current_user

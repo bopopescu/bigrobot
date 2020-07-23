@@ -67,37 +67,37 @@ class T5Platform(object):
             Else: execute the election rerun
         '''
         t = test.Test()
-        slave = t.controller("slave")
-        master = t.controller("master")
+        subordinate = t.controller("subordinate")
+        main = t.controller("main")
 
-        masterID,slaveID = self.getNodeID()
-        if(masterID == -1 and slaveID == -1):
+        mainID,subordinateID = self.getNodeID()
+        if(mainID == -1 and subordinateID == -1):
             return False
 
-        helpers.log("Current slave ID is : %s / Current master ID is: %s" % (slaveID, masterID))
+        helpers.log("Current subordinate ID is : %s / Current main ID is: %s" % (subordinateID, mainID))
 
         url = '/api/v1/data/controller/cluster/config/new-election'
 
         if(rigged):
-            slave.rest.post(url, {"rigged": True})
+            subordinate.rest.post(url, {"rigged": True})
         else:
-            slave.rest.post(url, {"rigged": False})
+            subordinate.rest.post(url, {"rigged": False})
         
         sleep(30)
 
-        newMasterID = self.getNodeID(False)
-        if(newMasterID == -1):
+        newMainID = self.getNodeID(False)
+        if(newMainID == -1):
             return False
 
-        if(masterID == newMasterID):
+        if(mainID == newMainID):
             if(rigged):
-                helpers.test_failure("Fail: Master didn't change after executing take-leader")
+                helpers.test_failure("Fail: Main didn't change after executing take-leader")
                 return False
             else:
-                helpers.log("Pass: Leader election re-run successful - Leader %s  is intact " % (masterID))
+                helpers.log("Pass: Leader election re-run successful - Leader %s  is intact " % (mainID))
                 return True
         else:
-            helpers.log("Pass: Take-Leader successful - Leader changed from %s to %s" % (masterID, newMasterID))
+            helpers.log("Pass: Take-Leader successful - Leader changed from %s to %s" % (mainID, newMainID))
             return True
 
 
@@ -116,14 +116,14 @@ class T5Platform(object):
     
     
     def cli_cluster_take_leader(self):
-        ''' Function to trigger failover to slave controller via CLI. This function will verify the 
+        ''' Function to trigger failover to subordinate controller via CLI. This function will verify the 
             fabric integrity between states
             
             Input: None
             Output: True if successful, False otherwise
         '''
         t = test.Test()
-        c = t.controller('slave')
+        c = t.controller('subordinate')
         obj = utilities()
         utilities.fabric_integrity_checker(obj,"before")
 
@@ -156,13 +156,13 @@ class T5Platform(object):
         return utilities.fabric_integrity_checker(obj, "before")
         
 
-    def cluster_node_reboot(self, masterNode=True):
+    def cluster_node_reboot(self, mainNode=True):
 
         ''' Reboot a node and verify the cluster leadership.
-            Reboot Master in dual node setup: masterNode == True
+            Reboot Main in dual node setup: mainNode == True
         '''
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         obj = utilities()
         
         if (utilities.cli_get_num_nodes(obj) == 1):
@@ -172,30 +172,30 @@ class T5Platform(object):
             
 
         if(singleNode):
-            masterID = self.getNodeID(False)
+            mainID = self.getNodeID(False)
         else:
-            masterID,slaveID = self.getNodeID()
+            mainID,subordinateID = self.getNodeID()
         
         if(singleNode):
-            if (masterID == -1):
+            if (mainID == -1):
                 return False
         else:
-            if(masterID == -1 and slaveID == -1):
+            if(mainID == -1 and subordinateID == -1):
                 return False
         
         try:
-            if(masterNode):
-                ipAddr = master.ip()
-                master.enable("system reboot", prompt="Confirm \(yes to continue\)")
-                master.enable("yes")
-                helpers.log("Master is rebooting")
+            if(mainNode):
+                ipAddr = main.ip()
+                main.enable("system reboot", prompt="Confirm \(yes to continue\)")
+                main.enable("yes")
+                helpers.log("Main is rebooting")
                 sleep(90)
             else:
-                slave = t.controller("slave")
-                ipAddr = slave.ip()
-                slave.enable("system reboot", prompt="Confirm \(yes to continue\)")
-                slave.enable("yes")
-                helpers.log("Slave is rebooting")
+                subordinate = t.controller("subordinate")
+                ipAddr = subordinate.ip()
+                subordinate.enable("system reboot", prompt="Confirm \(yes to continue\)")
+                subordinate.enable("yes")
+                helpers.log("Subordinate is rebooting")
                 sleep(90)
         except:
             helpers.log("Node is rebooting")
@@ -215,98 +215,98 @@ class T5Platform(object):
                     break
        
         if(singleNode):
-            newMasterID = self.getNodeID(False)
+            newMainID = self.getNodeID(False)
         else:
-            newMasterID, newSlaveID = self.getNodeID()
+            newMainID, newSubordinateID = self.getNodeID()
             
         if(singleNode):
-            if (newMasterID == -1):
+            if (newMainID == -1):
                 return False
         else:
-            if(newMasterID == -1 and newSlaveID == -1):
+            if(newMainID == -1 and newSubordinateID == -1):
                 return False
 
 
         if(singleNode):
-            if(masterID == newMasterID):
-                obj.restart_floodlight_monitor("master")
-                helpers.log("Pass: After the reboot cluster is stable - Master is still : %s " % (newMasterID))
+            if(mainID == newMainID):
+                obj.restart_floodlight_monitor("main")
+                helpers.log("Pass: After the reboot cluster is stable - Main is still : %s " % (newMainID))
                 return True
             else:
-                helpers.log("Fail: Reboot Failed. Cluster is not stable.  Before the reboot Master is: %s  \n \
-                    After the reboot Master is: %s " %(masterID, newMasterID))
+                helpers.log("Fail: Reboot Failed. Cluster is not stable.  Before the reboot Main is: %s  \n \
+                    After the reboot Main is: %s " %(mainID, newMainID))
         else:
-            if(masterNode):
-                obj.restart_floodlight_monitor("slave")
+            if(mainNode):
+                obj.restart_floodlight_monitor("subordinate")
             else:
-                obj.restart_floodlight_monitor("master")
+                obj.restart_floodlight_monitor("main")
             
-            if(masterNode):      
-                if(masterID == newSlaveID and slaveID == newMasterID):
-                    helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+            if(mainNode):      
+                if(mainID == newSubordinateID and subordinateID == newMainID):
+                    helpers.log("Pass: After the reboot cluster is stable - Main is : %s / Subordinate is: %s" % (newMainID, newSubordinateID))
                     return True
                 else:
-                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
-                            After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the main reboot Main is: %s / Subordinate is : %s \n \
+                            After the reboot Main is: %s / Subordinate is : %s " %(mainID, subordinateID, newMainID, newSubordinateID))
                     obj.stop_floodlight_monitor()
                     return False
             else:
-                if(masterID == newMasterID and slaveID == newSlaveID):
-                    helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+                if(mainID == newMainID and subordinateID == newSubordinateID):
+                    helpers.log("Pass: After the reboot cluster is stable - Main is : %s / Subordinate is: %s" % (newMainID, newSubordinateID))
                     return True
                 else:
-                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
-                            After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the subordinate reboot Main is: %s / Subordinate is : %s \n \
+                            After the reboot Main is: %s / Subordinate is : %s " %(mainID, subordinateID, newMainID, newSubordinateID))
                     obj.stop_floodlight_monitor()
                     return False
 
 
-    def _cluster_node_shutdown(self, masterNode=True):
+    def _cluster_node_shutdown(self, mainNode=True):
         ''' Shutdown the node
         '''
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         obj = utilities()
 
-        masterID,slaveID = self.getNodeID()
-        if(masterID == -1 and slaveID == -1):
+        mainID,subordinateID = self.getNodeID()
+        if(mainID == -1 and subordinateID == -1):
             return False
 
-        if(masterNode):
-            master.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
-            master.enable("yes")
-            helpers.log("Master is shutting down")
+        if(mainNode):
+            main.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
+            main.enable("yes")
+            helpers.log("Main is shutting down")
             sleep(10)
         else:
-            slave = t.controller("slave")
-            slave.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
-            slave.enable("yes")
-            helpers.log("Slave is shutting down")
+            subordinate = t.controller("subordinate")
+            subordinate.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
+            subordinate.enable("yes")
+            helpers.log("Subordinate is shutting down")
             sleep(10)
 
-        newMasterID = self.getNodeID(False)
-        if(newMasterID == -1):
+        newMainID = self.getNodeID(False)
+        if(newMainID == -1):
             return False
 
-        if(masterNode):
-            if(slaveID == newMasterID):
-                helpers.log("Pass: After the shutdown cluster is stable - New master is : %s " % (newMasterID))
+        if(mainNode):
+            if(subordinateID == newMainID):
+                helpers.log("Pass: After the shutdown cluster is stable - New main is : %s " % (newMainID))
                 return True
             else:
-                helpers.log("Fail: Shutdown Failed. Cluster is not stable. Before the master node shutdown Master is: %s / Slave is : %s \n \
-                        After the shutdown Master is: %s " %(masterID, slaveID, newMasterID))
+                helpers.log("Fail: Shutdown Failed. Cluster is not stable. Before the main node shutdown Main is: %s / Subordinate is : %s \n \
+                        After the shutdown Main is: %s " %(mainID, subordinateID, newMainID))
                 return False
         else:
-            if(masterID == newMasterID):
-                helpers.log("Pass: After the slave shutdown cluster is stable - Master is still: %s " % (newMasterID))
+            if(mainID == newMainID):
+                helpers.log("Pass: After the subordinate shutdown cluster is stable - Main is still: %s " % (newMainID))
                 return True
             else:
-                helpers.log("Fail: Shutdown failed. Cluster is not stable. Before the slave shutdown Master is: %s / Slave is : %s \n \
-                        After the shutdown Master is: %s " %(masterID, slaveID, newMasterID))
+                helpers.log("Fail: Shutdown failed. Cluster is not stable. Before the subordinate shutdown Main is: %s / Subordinate is : %s \n \
+                        After the shutdown Main is: %s " %(mainID, subordinateID, newMainID))
                 return False
 
 
-    def cli_verify_cluster_master_reboot(self):
+    def cli_verify_cluster_main_reboot(self):
         obj = utilities()
         utilities.fabric_integrity_checker(obj,"before")
         returnVal = self.cluster_node_reboot()
@@ -314,7 +314,7 @@ class T5Platform(object):
             return False
         return utilities.fabric_integrity_checker(obj,"after")
 
-    def cli_verify_cluster_slave_reboot(self):
+    def cli_verify_cluster_subordinate_reboot(self):
         obj = utilities()
         utilities.fabric_integrity_checker(obj,"before")
         returnVal = self.cluster_node_reboot(False)
@@ -322,7 +322,7 @@ class T5Platform(object):
             return False
         return utilities.fabric_integrity_checker(obj,"after")
 
-    def cli_verify_cluster_master_shutdown(self):
+    def cli_verify_cluster_main_shutdown(self):
         obj = utilities()
         utilities.fabric_integrity_checker(obj,"before")
         returnVal = self._cluster_node_shutdown()
@@ -330,7 +330,7 @@ class T5Platform(object):
             return False
         return utilities.fabric_integrity_checker(obj,"after")
 
-    def cli_verify_cluster_slave_shutdown(self):
+    def cli_verify_cluster_subordinate_shutdown(self):
         obj = utilities()
         utilities.fabric_integrity_checker(obj,"before")
         returnVal = self._cluster_node_shutdown(False)
@@ -352,7 +352,7 @@ class T5Platform(object):
                 disruptTime : Disruptions happens 'during' or 'before" the HA event
                 
                 failoverMode : "failover"     - Failover by issuing failover command (default)
-                               "masterReboot" - Failover by rebooting active controller  
+                               "mainReboot" - Failover by rebooting active controller  
                                
                 kwargs: "switch=spien0 leaf0-a"                
                                 
@@ -419,18 +419,18 @@ class T5Platform(object):
     def rest_add_user(self, numUsers=1):
         numWarn = 0
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         url = "/api/v1/data/controller/core/aaa/local-user"
         usersString = []
         numErrors = 0
         for i in range (0, int(numUsers)):
             user = "user" + str(i+1)
             usersString.append(user)
-            master.rest.post(url, {"user-name": user})
+            main.rest.post(url, {"user-name": user})
             sleep(1)
             
-            if not master.rest.status_code_ok():
-                helpers.test_failure(master.rest.error())
+            if not main.rest.status_code_ok():
+                helpers.test_failure(main.rest.error())
                 numErrors += 1
             else:
                 helpers.log("Successfully added user: %s " % user)
@@ -439,7 +439,7 @@ class T5Platform(object):
             return False
         else:
             url = "/api/v1/data/controller/core/aaa/local-user"
-            result = master.rest.get(url)
+            result = main.rest.get(url)
             showUsers = []
             for i in range (0, len(result["content"])):
                 showUsers.append(result["content"][i]['user-name'])
@@ -456,7 +456,7 @@ class T5Platform(object):
     def rest_delete_user(self, numUsers=1):
         numWarn = 0
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         usersString = []
         numErrors = 0
         for i in range (0, int(numUsers)):
@@ -464,11 +464,11 @@ class T5Platform(object):
             user = "user" + str(i+1)
             usersString.append(user)
             url = url + user + "\"]"
-            master.rest.delete(url, {})
+            main.rest.delete(url, {})
             sleep(1)
             
-            if not master.rest.status_code_ok():
-                helpers.test_failure(master.rest.error())
+            if not main.rest.status_code_ok():
+                helpers.test_failure(main.rest.error())
                 numErrors += 1
             else:
                 helpers.log("Successfully deleted user: %s " % user)
@@ -477,7 +477,7 @@ class T5Platform(object):
             return False
         else:
             url = "/api/v1/data/controller/core/aaa/local-user"
-            result = master.rest.get(url)
+            result = main.rest.get(url)
             showUsers = []
             for i in range (0, len(result["content"])):
                 showUsers.append(result["content"][i]['user-name'])
@@ -760,13 +760,13 @@ class T5Platform(object):
         
         url = "/api/v1/data/controller/applications/bvs/port-group?config=true"
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         
-        result = master.rest.get(url)['content']
+        result = main.rest.get(url)['content']
 
         for pg in result:
             url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' %  pg['name']
-            master.rest.delete(url, {})
+            main.rest.delete(url, {})
 
              
                              
@@ -826,9 +826,9 @@ class T5Platform(object):
     
     def do_show_run_vns_verify(self, vnsName, numMembers):
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         url = "/api/v1/data/controller/applications/bvs/tenant?config=true"
-        result = master.rest.get(url)
+        result = main.rest.get(url)
         helpers.log("Show run output is: %s " % result["content"][0]['vns'][0]['port-group-membership-rules'])
         vnsList = result["content"][0]['vns'][0]['port-group-membership-rules']
         if (len(vnsList) != int(numMembers)):
@@ -845,71 +845,71 @@ class T5Platform(object):
 
 
 
-    def getNodeID(self, slaveNode=True):
+    def getNodeID(self, subordinateNode=True):
         
         '''         
         Description:
-        -    This function will handout the NodeID's for master & slave nodes 
+        -    This function will handout the NodeID's for main & subordinate nodes 
         
         Objective:
         -    This is designed to be resilient to node failures in HA environments. Eg: If the node is not
             reachable or it's powered down this function will handle the logic
             
         Inputs:
-        |    boolean: slaveNode  |  Whether secondary node is available in the system. Default is True
+        |    boolean: subordinateNode  |  Whether secondary node is available in the system. Default is True
         
         Outputs:
-        |    If slaveNode: return (masterID, slaveID)
-        |    else:    return (masterID)
+        |    If subordinateNode: return (mainID, subordinateID)
+        |    else:    return (mainID)
 
         
         ''' 
         numTries = 0
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
     
          
         while(True):
             try:
                 showUrl = '/api/v1/data/controller/cluster'
-                helpers.log("Master is : %s " % master.name)
-                result = master.rest.get(showUrl)['content']
-                masterID = result[0]['status']['local-node-id']
+                helpers.log("Main is : %s " % main.name)
+                result = main.rest.get(showUrl)['content']
+                mainID = result[0]['status']['local-node-id']
                 break 
             except(KeyError):
                 if(numTries < 5):
-                    helpers.log("Warning: KeyError detected during master ID retrieval. Sleeping for 10 seconds")
+                    helpers.log("Warning: KeyError detected during main ID retrieval. Sleeping for 10 seconds")
                     sleep(10)
                     numTries += 1
                 else:
-                    helpers.log("Error: KeyError detected during master ID retrieval")
-                    if slaveNode:
+                    helpers.log("Error: KeyError detected during main ID retrieval")
+                    if subordinateNode:
                         return (-1, -1)
                     else:
                         return -1
 
-        if(slaveNode):
-            slave = t.controller("slave")
+        if(subordinateNode):
+            subordinate = t.controller("subordinate")
             while(True):
                 try:
                     showUrl = '/api/v1/data/controller/cluster'
-                    result = slave.rest.get(showUrl)['content']
-                    slaveID = result[0]['status']['local-node-id']
+                    result = subordinate.rest.get(showUrl)['content']
+                    subordinateID = result[0]['status']['local-node-id']
                     break 
                 except(KeyError):
                     if(numTries < 5):
-                        helpers.log("Warning: KeyError detected during slave ID retrieval. Sleeping for 10 seconds")
+                        helpers.log("Warning: KeyError detected during subordinate ID retrieval. Sleeping for 10 seconds")
                         sleep(10)
                         numTries += 1
                     else:
-                        helpers.log("Error: KeyError detected during slave ID retrieval")
+                        helpers.log("Error: KeyError detected during subordinate ID retrieval")
                         return (-1,-1)
 
 
-        if(slaveNode):
-            return (masterID, slaveID)
+        if(subordinateNode):
+            return (mainID, subordinateID)
         else:
-            return masterID
+            return mainID
         
         
         
@@ -919,7 +919,7 @@ class T5Platform(object):
         Output: True if successful, False otherwise
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.log("Input arguments: virtual IP = %s" % vip)
         try:
@@ -937,7 +937,7 @@ class T5Platform(object):
         Output: True if successful, False otherwise
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.log("Deleting virtual IP address")
         try:
@@ -956,7 +956,7 @@ class T5Platform(object):
         Output: VIP address if configured, None otherwise
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Input arguments: virtual IP = %s" % vip)
         try:
@@ -979,8 +979,8 @@ class T5Platform(object):
         t = test.Test()
         c = None
         try:
-            if 'master' in vip:
-                c = t.controller('master')
+            if 'main' in vip:
+                c = t.controller('main')
             else:
                 helpers.log("Spawning VIP %s" % vip)
                 c = t.node_spawn(ip=vip)
@@ -1006,7 +1006,7 @@ class T5Platform(object):
         Output: VIP address if configured, None otherwise
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         try:
             content = c.cli('show controller virtual-ip')['content']
             output = helpers.strip_cli_output(content)
@@ -1020,7 +1020,7 @@ class T5Platform(object):
             return lines[2].strip()
 
 
-    def bash_verify_virtual_ip(self, vip, node='master'):
+    def bash_verify_virtual_ip(self, vip, node='main'):
         ''' Function to show Virtual IP of a controller via CLI/Bash
         Input: None
         Output: VIP address if configured, None otherwise
@@ -1047,7 +1047,7 @@ class T5Platform(object):
         Output: True if successful, False otherwise
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.test_log("Deleting virtual IP address")
         try:
@@ -1069,8 +1069,8 @@ class T5Platform(object):
         t = test.Test()
         c = None
         try:
-            if 'master' in vip:
-                c = t.controller('master')
+            if 'main' in vip:
+                c = t.controller('main')
             else:
                 helpers.log("Spawning VIP %s" % vip)
                 c = t.node_spawn(ip=vip)
@@ -1095,7 +1095,7 @@ class T5Platform(object):
         Output: VIP address if configured, None otherwise
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
 
         helpers.log("Getting virtual IP address")
         try:
@@ -1124,11 +1124,11 @@ class T5Platform(object):
         '''
 
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
         
-        master.rest.put(url, {"id": sessionID})
+        main.rest.put(url, {"id": sessionID})
         
         matchSpec = {}
         if ("src-mac" in kwargs):
@@ -1157,16 +1157,16 @@ class T5Platform(object):
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/source[switch-name="%s"][interface-name="%s"]' % (sessionID, srcSwitch, srcInt)
 
         if (matchSpec):
-            result = master.rest.put(url, {"match-specification": matchSpec, "direction": "ingress", "switch-name": "leaf0-a", "interface-name": "ethernet15"})
+            result = main.rest.put(url, {"match-specification": matchSpec, "direction": "ingress", "switch-name": "leaf0-a", "interface-name": "ethernet15"})
         else:
-            result = master.rest.put(url, {"direction": kwargs.get("direction"), "switch-name": srcSwitch , "interface-name": srcInt})
+            result = main.rest.put(url, {"direction": kwargs.get("direction"), "switch-name": srcSwitch , "interface-name": srcInt})
             
         
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/destination[switch-name="%s"][interface-name="%s"]' % (sessionID, dstSwitch, dstInt)
-        result = master.rest.put(url, {"switch-name": srcSwitch , "interface-name": dstInt})
+        result = main.rest.put(url, {"switch-name": srcSwitch , "interface-name": dstInt})
 
         
-        if master.rest.status_code_ok():
+        if main.rest.status_code_ok():
             return True
         else:
             return False
@@ -1175,12 +1175,12 @@ class T5Platform(object):
     def rest_activate_monitor_session(self, sessionID):
         
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
         
-        master.rest.patch(url, {"active": 'true'})
+        main.rest.patch(url, {"active": 'true'})
         
-        if master.rest.status_code_ok():
+        if main.rest.status_code_ok():
                 return True
         else:
                 return False
@@ -1188,13 +1188,13 @@ class T5Platform(object):
     
     def rest_deactivate_monitor_session(self, sessionID):
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/active' % (sessionID)
         
-        master.rest.delete(url)
+        main.rest.delete(url)
         
-        if master.rest.status_code_ok():
+        if main.rest.status_code_ok():
                 return True
         else:
                 return False
@@ -1203,12 +1203,12 @@ class T5Platform(object):
     def rest_delete_monitor_session(self, sessionID):
         
         t = test.Test()
-        master = t.controller("master") 
+        main = t.controller("main") 
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
         
-        master.rest.delete(url, {"id": sessionID})
+        main.rest.delete(url, {"id": sessionID})
         
-        if master.rest.status_code_ok():
+        if main.rest.status_code_ok():
             return True
         else:
             return False
@@ -1227,11 +1227,11 @@ class T5Platform(object):
         '''
         
         t = test.Test()
-        master = t.controller("master")
+        main = t.controller("main")
         
         foundSession = False
         url = "/api/v1/data/controller/applications/bvs/monitor-session?config=true"
-        result = master.rest.get(url)['content']
+        result = main.rest.get(url)['content']
         
         try:
             for session in result:
@@ -1398,9 +1398,9 @@ class T5Platform(object):
         | soft_error | Soft Error flag |
 
         Examples:
-        | Cli Compare | slave | test-file | scp://bsn@regress:path-to-file/file
-        | Cli Compare | master | test-file | config://test-config
-        | Cli Compare | master | running-config |  test-file
+        | Cli Compare | subordinate | test-file | scp://bsn@regress:path-to-file/file
+        | Cli Compare | main | test-file | config://test-config
+        | Cli Compare | main | running-config |  test-file
 
         Return Value:
         - List of lines, in which <left> and <right> are different
@@ -1455,7 +1455,7 @@ class T5Platform(object):
             if re.match(r'[0-9].*|< \!|---|> \!|< \Z|> \Z|\Z', line):
                 helpers.log("OK: %s" % line)
             elif (re.match(r'[<>]   hostname|[<>]     ip', line)
-                  and node=='slave'):
+                  and node=='subordinate'):
                 helpers.log("OK: %s" % line)
             else:
                 helpers.log("files different at line:\n%s" % line)
@@ -1467,12 +1467,12 @@ class T5Platform(object):
         return differences
 
 
-    def cli_copy(self, src, dst, node='master', scp_passwd='bsn'):
+    def cli_copy(self, src, dst, node='main', scp_passwd='bsn'):
         ''' Generic function to copy via CLI, using SCP
         Input:
         Src, Dst - source and destination of copy command
         Scp_Password - password for scp connection
-        Node - pointing to Master or Slave controller
+        Node - pointing to Main or Subordinate controller
         Output: True if successful, False otherwise
         '''
         helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
@@ -1526,7 +1526,7 @@ class T5Platform(object):
         '''
         helpers.test_log("Comparing output of 'show running-config' with 'show file %s'" % filename)
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         try:
             rc = c.config("show running-config")['content']
             if "Error" in c.cli_content():
@@ -1567,7 +1567,7 @@ class T5Platform(object):
         '''
         helpers.test_log("Comparing output of 'show running-config' with 'show config %s'" % filename)
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         try:
             rc = c.config("show running-config")['content']
             if "Error" in c.cli_content():
@@ -1620,7 +1620,7 @@ class T5Platform(object):
 
         helpers.test_log("Running command:\n%s" % cmd)
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         if re.match(r'config://.*', filename) or re.match(r'image://.*', filename) :
             helpers.test_log("Deleting config:// or image://, expecting confirmation prompt")
             c.config("config")
@@ -1646,7 +1646,7 @@ class T5Platform(object):
         '''
         helpers.test_log("Running command:\ndebug bash; > .ssh/known_hosts")
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         try:
             c.config("config")
             c.bash("> .ssh/known_hosts")
@@ -1659,12 +1659,12 @@ class T5Platform(object):
         else:
             return True
 
-    def copy_pkg_from_jenkins(self,node='master', check=True):
+    def copy_pkg_from_jenkins(self,node='main', check=True):
         ''' 
           copy the latest upgrade package from Jenkin
           Author: Mingtao
           input:  node  - controller to copy the image, 
-                          master, slave, c1 c2
+                          main, subordinate, c1 c2
           usage:  
               check: True, if there is a image, will not copy
           output: image build
@@ -1681,8 +1681,8 @@ class T5Platform(object):
         if str(num) == '-1':
             helpers.log("INFO: system NOT have image, or ignore check,   will copy image")
             c.config('')
-#            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
-            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
+#            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs main/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
+            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs main/lastSuccessful/archive/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
 
             c.send(string + ' image://')
 #            c.expect(r'[\r\n].+password: ') 
@@ -1715,12 +1715,12 @@ class T5Platform(object):
 
         return image
     
-    def copy_pkg_from_server(self,src,node='master',passwd='bsn',soft_error=False):
+    def copy_pkg_from_server(self,src,node='main',passwd='bsn',soft_error=False):
         ''' 
           copy the a upgrade package from server
           Author: Mingtao
           input:  node  - controller to copy the image, 
-                          master, slave, c1 c2
+                          main, subordinate, c1 c2
           usage: 
               copy_pkg_from_server  bsn@qa-kvm-32:/home/mingtao/bigtap-3.0.0-upgrade-2014.02.27.1852.pkg 
               soft_error:  True, handle negative case
@@ -1770,12 +1770,12 @@ class T5Platform(object):
         return image
  
 
-    def cli_check_image(self,node='master',soft_error=False):
+    def cli_check_image(self,node='main',soft_error=False):
         ''' 
           check image available in the system "show image"
           Author: Mingtao
           input:  node  - controller  
-                          master, slave, c1 c2
+                          main, subordinate, c1 c2
           usage:  ${num}  ${image}=      cli_check_image
           output: ${num - the number of images
                 ${image}   - the image build in a list
@@ -1819,12 +1819,12 @@ class T5Platform(object):
         return num, images
 
 
-    def cli_delete_image(self,node='master',image=None):
+    def cli_delete_image(self,node='main',image=None):
         ''' 
           delete image  in system             
           Author: Mingtao
           input:  node  - controller  
-                          master, slave, c1 c2
+                          main, subordinate, c1 c2
                   image - build number to be deleted
                           None - delete all the images
           usage:   
@@ -1864,12 +1864,12 @@ class T5Platform(object):
         return True
 
 
-    def cli_upgrade_stage(self, node='master', image=None):
+    def cli_upgrade_stage(self, node='main', image=None):
         ''' 
           upgrade stage  -  1 step of upgrade         
           Author: Mingtao
           input:  node  - controller 
-                          master, slave, c1 c2
+                          main, subordinate, c1 c2
                   image - build number to be staged
                           None - pick the biggest build number  
           usage:   
@@ -1911,12 +1911,12 @@ class T5Platform(object):
 
 
 
-    def cli_upgrade_launch(self,node='master'):
+    def cli_upgrade_launch(self,node='main'):
         ''' 
           upgrade launch  -  2 step of upgrade         
           Author: Mingtao
           input:  node  - controller  
-                          master, slave, c1 c2
+                          main, subordinate, c1 c2
                   
           usage:   
           output: True  - upgrade launched successfully
@@ -1945,12 +1945,12 @@ class T5Platform(object):
     
     
     
-    def cli_take_snapshot(self,node='master', run_config=None, local_node=None, fabric_switch=None,filepath=None):
+    def cli_take_snapshot(self,node='main', run_config=None, local_node=None, fabric_switch=None,filepath=None):
         ''' 
           take snapshot of the system, can only take snapshot one by one  
           Author: Mingtao
           input:  node  - controller  
-                          master, slave, c1 c2
+                          main, subordinate, c1 c2
                   run_config   - runnning config
                   fabric_switch  -  show fabric switch
                   filepath -  file infos in the filepath
@@ -2093,7 +2093,7 @@ class T5Platform(object):
           output:   1  or 2 
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log('INFO: Entering ==> rest_get_node_role ')
    
         
@@ -2124,7 +2124,7 @@ class T5Platform(object):
           output:   username and group        
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log('INFO: Entering ==> cli_whoami ')
                 
         c.cli('whoami' )
@@ -2158,7 +2158,7 @@ class T5Platform(object):
                        
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log('INFO: Entering ==> cli_reauth ')
         
         c.enable('end')
@@ -2315,7 +2315,7 @@ class T5Platform(object):
  
     def cli_add_user(self,user='user1',passwd='adminadmin'):
         '''
-          cli add user to the system, can only run at master
+          cli add user to the system, can only run at main
           Author: Mingtao
           input:   user = username,  passwd  = password                                       
           usage:   
@@ -2323,7 +2323,7 @@ class T5Platform(object):
         '''
   
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log('INFO: Entering ==> cli_add_user ')
         t = test.Test()   
         c.config('user '+user) 
@@ -2339,7 +2339,7 @@ class T5Platform(object):
 
     def cli_group_add_users(self,group=None,user=None):
         '''  
-          cli add user to group, can only run at master
+          cli add user to group, can only run at main
           Author: Mingtao
           input:   group  - if group not give, will user admin
                   user    - if user not given, will add all uers                             
@@ -2347,7 +2347,7 @@ class T5Platform(object):
           output:   True                            
         '''  
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log('INFO: Entering ==> cli_add_user ')    
         if group is None:
             group = 'admin'         
@@ -2376,7 +2376,7 @@ class T5Platform(object):
 
     def rest_get_user_group(self,user):
         '''  
-          get the group for a user, can only run at master
+          get the group for a user, can only run at main
           Author: Mingtao
           input:   
                   user    - if user not given, will add all uers                             
@@ -2384,7 +2384,7 @@ class T5Platform(object):
           output:   group                          
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log('INFO: Entering ==> rest_get_user_group ')
    
         
@@ -2405,7 +2405,7 @@ class T5Platform(object):
 
     def cli_delete_user(self,user):
         '''  
-          delete users can only run at master
+          delete users can only run at main
           Author: Mingtao
           input:  user                        
           usage:   
@@ -2414,7 +2414,7 @@ class T5Platform(object):
         '''
   
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log('INFO: Entering ==> cli_delete_user ')
         c.config('no user '+ user)    
         return True
@@ -2430,7 +2430,7 @@ class T5Platform(object):
         '''
   
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         helpers.log('INFO: Entering ==> cli_delete_user ')
       
         if user: 
@@ -3511,7 +3511,7 @@ class T5Platform(object):
                 ip-protocol=icmp
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         url =  '/api/v1/data/controller/applications/bvs/test/path/controller-view'
         
         if(kwargs.get('dst-segment')):
@@ -3568,7 +3568,7 @@ class T5Platform(object):
                 dst-l4-port=8500
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
             
         url = '/api/v1/data/controller/applications/bvs/test/path/setup-result'
 
@@ -3632,7 +3632,7 @@ class T5Platform(object):
                 ip:pingIP (The IP address to ping)
         '''
         t = test.Test()
-        c = t.controller("master")
+        c = t.controller("main")
         
         if(trafficMode=='Ixia'):
             if 'stream' in kwargs:
@@ -3724,7 +3724,7 @@ class T5Platform(object):
     def rest_verify_testpath(self, pathName):
         
         t = test.Test()
-        c = t.controller("master")
+        c = t.controller("main")
         
         url = '/api/v1/data/controller/applications/bvs/test/path/all-test'
         
@@ -3744,7 +3744,7 @@ class T5Platform(object):
     def rest_verify_testpath_timeout(self,pathName):
         
         t = test.Test()
-        c = t.controller("master")
+        c = t.controller("main")
         
         url = '/api/v1/data/controller/applications/bvs/test/path/all-test'
         
@@ -3773,7 +3773,7 @@ class T5Platform(object):
            output:   file cli_exec_walk
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.cli('')
         helpers.log("********* Entering cli_exec_walk ----> string: %s, file name: %s" % (string, file_name))
         if string == '':
@@ -3927,7 +3927,7 @@ class T5Platform(object):
         
     def cli_walk_enable(self, string='', file_name=None, padding=''):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.enable('')
         helpers.log("********* Entering CLI show  walk with ----> string: %s, file name: %s" % (string, file_name))
         if string == '':
@@ -4108,7 +4108,7 @@ class T5Platform(object):
                 
     def cli_walk_config(self, string='', file_name=None, padding='', config_submode = False, exec_mode_done = False):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.config('')
         helpers.log("********* Entering CLI show  walk with ----> string: %s, file name: %s" % (string, file_name))
         if string == '':

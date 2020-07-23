@@ -285,7 +285,7 @@ class SwitchLight(object):
             helpers.log("Show Controllers O/P: \n %s" % (cli_input_2))
 
             pass_count = 0
-            if (c.is_master()):
+            if (c.is_main()):
                 controller_role = "MASTER"
             else:
                 controller_role = "SLAVE"
@@ -534,7 +534,7 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
             s1 = t.switch(node)
             mycount = 1
             while mycount <= int(iteration):

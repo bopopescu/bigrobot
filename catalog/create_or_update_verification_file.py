@@ -12,7 +12,7 @@
 #   - name: 'Verify L3 traffic honor more specific routes with ecmp group'
 #     product_suite: 'T5/L3/T5_L3_physical_inter/t5_layer3_physical_inter'
 #     status: PASS
-#     build_name_verified: 'bvs master #2794'
+#     build_name_verified: 'bvs main #2794'
 #     jira:
 #     notes: 'I manually verified this and it works.'
 #   ... and so on ...
@@ -98,7 +98,7 @@ class VerificationFileBuilder(object):
         if 'build_name_verified' in entry:
             build_name_verified = entry['build_name_verified']
         else:
-            build_name_verified = "bvs master #nnn"
+            build_name_verified = "bvs main #nnn"
         doc_str += "  build_name_verified: '%s'\n" % build_name_verified
 
         if 'jira' in entry and entry['jira']:
@@ -265,10 +265,10 @@ The specified build (BUILD_NAME) must be the name of an aggregated build.
 
 Examples:
     -- Generate the verification file for 'mingtao'
-    % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./create_or_update_verification_file.py --user mingtao
+    % BUILD_NAME="bvs main bcf-2.0.0 fcs" ./create_or_update_verification_file.py --user mingtao
 
     -- Generate the verification files for all QA engineers
-    % BUILD_NAME="bvs master bcf-2.0.0 fcs" ./create_or_update_verification_file.py --user all
+    % BUILD_NAME="bvs main bcf-2.0.0 fcs" ./create_or_update_verification_file.py --user all
 """
     parser = argparse.ArgumentParser(
                 prog='create_or_update_verification_file',
@@ -277,7 +277,7 @@ Examples:
     parser.add_argument(
                 '--build',
                 help=("Build name,"
-                      " e.g., 'bvs master ironhorse beta2 aggregated'"))
+                      " e.g., 'bvs main ironhorse beta2 aggregated'"))
     parser.add_argument(
                 '--user',
                 required=True,

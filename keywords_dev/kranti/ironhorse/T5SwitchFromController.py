@@ -21,7 +21,7 @@ class  T5SwitchFromController(object):
             t = test.Test()
             switch_alias = t.switch(switch)
             helpers.log("The switch alias is %s" % switch)
-            c = t.controller('master')
+            c = t.controller('main')
             helpers.log("The switch dpid is %s"  % dpid)
             url = ('/api/v1/data/controller/core/proxy/environment[dpid="%s"]' % dpid )
             
@@ -93,7 +93,7 @@ class  T5SwitchFromController(object):
         #switch = t.switch(switch)
         switch_alias = t.switch(switch)
         helpers.log("The switch alias is %s"  % switch)
-        c = t.controller('master')
+        c = t.controller('main')
         url = ('/api/v1/data/controller/core/proxy/version[name="%s"]' % switch )
         helpers.log("Getting the switch %s info from controller %s" % (switch, url) )
         try:
@@ -137,7 +137,7 @@ class  T5SwitchFromController(object):
             t = test.Test()
             switch_alias = t.switch(switch)
             helpers.log("The switch alias is %s" % switch)
-            c = t.controller('master')
+            c = t.controller('main')
             helpers.log("The switch dpid is %s"  % dpid)
             url = ('/api/v1/data/controller/core/proxy/environment[dpid="%s"]' % dpid )
             

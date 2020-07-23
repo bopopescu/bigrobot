@@ -22,7 +22,7 @@ class T5L3(object):
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vns, ipaddr, netmask ))
         
@@ -54,7 +54,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vnsname, ipaddr, netmask ))
         
@@ -85,7 +85,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
         
@@ -110,7 +110,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
        '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
         
@@ -135,7 +135,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
         
@@ -160,7 +160,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
         
@@ -185,7 +185,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         nexthop_dict = helpers.from_json(nexthop)
         
@@ -212,7 +212,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s dstroute = %s " % (tenant, dstroute))
         
@@ -228,7 +228,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
     def rest_show_endpoints(self):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints'
         c.rest.get(url)
@@ -238,7 +238,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
     
     def rest_show_endpoints_name(self, endpointname):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         endptname = "%5Bname%3D%22" + endpointname + "%22%5D" 
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints%s' % (endptname)
@@ -252,7 +252,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         %5Bmac%3D%2200%3A00%3A00%3A00%3A00%3A01%22%5D
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         str1 = mac.replace(":", "%3A")
         mac_addr = "%5Bmac%3D%22" + str1 + "%22%5D" 
@@ -277,7 +277,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s ecmpgroup = %s" % (tenant, ecmpgroup))
         
@@ -302,7 +302,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s ecmpgroup = %s nexthop = %s" % (tenant, ecmpgroup, nexthop))
         
@@ -331,7 +331,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s ipaddress = %s" % (tenant, vnsname, endpointname, ipaddr))
         
@@ -362,7 +362,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s mac address = %s" % (tenant, vnsname, endpointname, mac))
         
@@ -391,7 +391,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s mac address = %s" % (tenant, vnsname, endpointname, mac))
         
@@ -418,7 +418,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s portgroup = %s vlan = %s" % (tenant, vnsname, endpointname, portgroupname, vlan))
         
@@ -447,7 +447,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             curl -gX PATCH -H 'Cookie: session_cookie=RKIUFOl07Dqiz10nXJcbquvUcWVJ3xYM' -d '{"switch-name": "leaf1", "interface-name": "leaf1-eth2", "vlan": -1}' 'localhost:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/vns[name="B1"]/endpoints[name="B1-H1"]/attachment-point'
         '''        
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s switchname = %s switch interface = %s vlan = %s" % (tenant, vnsname, endpointname, switchname, switchinterface, vlan))
         
@@ -472,7 +472,7 @@ REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/t
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply:             
         '''        
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s relay-ip = %s" % (tenant, vnsname, dhcpserverip))
         
@@ -496,7 +496,7 @@ REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/t
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply: ""           
         '''        
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s " % (tenant, vnsname))
         
@@ -521,7 +521,7 @@ REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/t
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply: ""           
         '''        
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s " % (tenant, vnsname))
         
@@ -546,7 +546,7 @@ REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/t
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply: ""          
         '''        
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s circuit id = %s" % (tenant, vnsname, circuitid))
         
@@ -573,7 +573,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
      
         '''        
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s dhcp server ip = %s" % (tenant, vnsname, dhcpserverip))
         
@@ -591,7 +591,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
     GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/switch%5Bswitch-name%3D%22leaf0a%22%5D/l3-host-route-table
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: switch = %s " % (switch))
         
@@ -608,7 +608,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
     GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/switch%5Bswitch-name%3D%22leaf0a%22%5D/l3-cidr-route-table
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         helpers.test_log("Input arguments: switch = %s " % (switch))
         
@@ -626,7 +626,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-cidr-table
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-cidr-table' 
         try:
@@ -641,7 +641,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-host-table
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         
         url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-host-table' 
         try:

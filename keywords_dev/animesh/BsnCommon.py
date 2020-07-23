@@ -22,7 +22,7 @@ class BsnCommon(object):
         '''
         try:
             t = test.Test()
-            c = t.controller('master')
+            c = t.controller('main')
         except:
             return False
         else:
@@ -62,8 +62,8 @@ class BsnCommon(object):
                         return False
             return True
 
-    def rest_is_c1_master_controller(self):
-        '''Returns True if c1 (defined in .topo file) is Master, False otherwise
+    def rest_is_c1_main_controller(self):
+        '''Returns True if c1 (defined in .topo file) is Main, False otherwise
         '''
         t = test.Test()
         try:
@@ -97,7 +97,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/system/version'
                 c.rest.get(url)
@@ -110,18 +110,18 @@ class BsnCommon(object):
                 return content[0]['controller']
 
     def rest_ha_role(self):
-        '''Return Current Controller Role viz. Master/Slave
+        '''Return Current Controller Role viz. Main/Subordinate
         
             Input: N/A
             
-            Returns: Current Controller Role viz. Master/Slave
+            Returns: Current Controller Role viz. Main/Subordinate
         '''
         try:
             t = test.Test()
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/system/ha/role'
                 c.rest.get(url)
@@ -146,7 +146,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/system/controller'
                 c.rest.get(url)
@@ -178,7 +178,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/core/switch'
                 c.rest.get(url)
@@ -216,7 +216,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/core/switch?select=alias'
                 c.rest.get(url)
@@ -245,7 +245,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
@@ -272,16 +272,16 @@ class BsnCommon(object):
         
             Input:
                processName        Name of process to be restarted
-               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
+               controller_role        Where to execute the command. Accepted values are `Main` and `Subordinate`
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
         try:
             t = test.Test()
-            if (controller_role == 'Master'):
-                c = t.controller('master')
+            if (controller_role == 'Main'):
+                c = t.controller('main')
             else:
-                c = t.controller('slave')
+                c = t.controller('subordinate')
             conn = SSH2()
             conn.connect(c.ip)
             conn.login(Account("admin", "adminadmin"))
@@ -302,17 +302,17 @@ class BsnCommon(object):
         '''Execute a generic command on the controller and return output.
         
             Input:
-                controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
+                controller_role        Where to execute the command. Accepted values are `Main` and `Subordinate`
                 input            Command to be executed on switch
                 
             Return Value: Output from command execution
         '''
         try:
             t = test.Test()
-            if (controller_role == 'Master'):
-                c = t.controller('master')
+            if (controller_role == 'Main'):
+                c = t.controller('main')
             else:
-                c = t.controller('slave')
+                c = t.controller('subordinate')
             conn = SSH2()
             conn.connect(c.ip)
             conn.login(Account("admin", "adminadmin"))
@@ -328,17 +328,17 @@ class BsnCommon(object):
         else:
             return output
 
-    def return_master_slave_ip_address(self):
-        '''Returns master and slave IP addresses as a dictionary
+    def return_main_subordinate_ip_address(self):
+        '''Returns main and subordinate IP addresses as a dictionary
         '''
         t = test.Test()
         ip_address_list = {}
         try:
-            t.controller('slave')
+            t.controller('subordinate')
         except:
-            return {'Master':str(t.controller('master').ip)}
+            return {'Main':str(t.controller('main').ip)}
         else:
-            ip_address_list = {'Master':str(t.controller('master').ip), 'Slave':str(t.controller('slave').ip)}
+            ip_address_list = {'Main':str(t.controller('main').ip), 'Subordinate':str(t.controller('subordinate').ip)}
             return (ip_address_list)
 
 ########################################################
@@ -359,7 +359,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
@@ -404,7 +404,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/api/v1/data/controller/core/switch[dpid="%s"]' % (str(switch_dpid))
                 c.rest.patch(url, {"alias": str(switch_alias)})
@@ -416,14 +416,14 @@ class BsnCommon(object):
                 return True
 
     def rest_execute_ha_failover(self):
-        '''Execute HA failover from master controller
+        '''Execute HA failover from main controller
         '''
         try:
             t = test.Test()
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url1 = '/rest/v1/system/ha/failback'
                 c.rest.put(url1, {})
@@ -438,7 +438,7 @@ class BsnCommon(object):
         ''' Flap eth0 on Controller
         
             Input:
-               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
+               controller_role        Where to execute the command. Accepted values are `Main` and `Subordinate`
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
@@ -448,10 +448,10 @@ class BsnCommon(object):
             return False
         else:
             try:
-                if (controller_role == 'Master'):
-                    c = t.controller('master')
+                if (controller_role == 'Main'):
+                    c = t.controller('main')
                 else:
-                    c = t.controller('slave')
+                    c = t.controller('subordinate')
             except:
                 helpers.test_failure(c.rest.error())
                 return False
@@ -493,7 +493,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/syslog-server/'
                 helpers.log("URL is %s  " % url)
@@ -520,7 +520,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/syslog-server/'
                 c.rest.put(url, {"logging-enabled": True, "logging-server": str(syslog_server), "logging-level":int(log_level)})
@@ -545,7 +545,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/syslog-server/?logging-enabled=True&logging-server=%s&logging-level=%d' % (str(syslog_server), int(log_level))
                 c.rest.delete(url, {})
@@ -569,7 +569,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/ntp-server/'
                 c.rest.get(url)
@@ -594,7 +594,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/ntp-server/'
                 c.rest.put(url, {"enabled": True, "server": str(ntp_server)})
@@ -618,7 +618,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/ntp-server/?enabled=True&server=%s' % (str(ntp_server))
                 c.rest.delete(url, {})
@@ -645,7 +645,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/snmp-server-config/'
                 c.rest.get(url)
@@ -668,7 +668,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = "/usr/bin/snmpwalk -v2c -c %s %s %s" % (str(snmp_community), c.ip, str(snmp_oid))
                 returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
@@ -732,7 +732,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/snmp-server-config/'
                 c.rest.put(url, {"id": "snmp", "community": str(snmp_community)})
@@ -755,7 +755,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/snmp-server-config/?id=snmp'
                 c.rest.put(url, {"contact": str(snmp_contact)})
@@ -778,7 +778,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/snmp-server-config/?id=snmp'
                 c.rest.put(url, {"location": str(snmp_location)})
@@ -801,7 +801,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/snmp-server-config/?id=snmp'
                 c.rest.put(url, {"server-enable": True})
@@ -827,7 +827,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/snmp-server-config/?id=snmp'
                 c.rest.put(url, {"trap-enable": True, "trap-server": str(trap_ip), "trap-port": str(trap_port)})
@@ -853,7 +853,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/snmp-server-config/?id=snmp'
                 c.rest.put(url, {"trap-enable": True, "id": "snmp"})
@@ -881,7 +881,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/snmp-server-config/?id=snmp'
                 if snmpValue == "null":
@@ -913,7 +913,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url = '/rest/v1/model/firewall-rule/'
                 controller_interface = "%s|Ethernet|0" % (str(controller_id))
@@ -940,7 +940,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url1 = '/rest/v1/model/snmp-server-config/?id=snmp'
                 helpers.test_log(url1)
@@ -966,7 +966,7 @@ class BsnCommon(object):
         except:
             return False
         else:
-            c = t.controller('master')
+            c = t.controller('main')
             try:
                 url1 = '/rest/v1/model/snmp-server-config/?id=snmp'
                 helpers.test_log(url1)

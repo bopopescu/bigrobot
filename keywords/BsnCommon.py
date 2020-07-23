@@ -410,7 +410,7 @@ class BsnCommon(object):
 
     def rest_return_dictionary_from_get(self, url):
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller('main')
         c.rest.get(url)
         content = c.rest.content()
         return content
@@ -558,7 +558,7 @@ class BsnCommon(object):
         - node_version_str <= version_str
 
         Inputs:
-        | node | logical device name (e.g., 'c1', 'c2', 'master', 'slave', 's1', etc.) |
+        | node | logical device name (e.g., 'c1', 'c2', 'main', 'subordinate', 's1', etc.) |
         | version_str | the version string to match against (e.g., '2.1.0') |
         | op | version comparison operator. Default is '>='. Also accepts '==', '!=', '>', '<', '<='. |
 
@@ -609,7 +609,7 @@ class BsnCommon(object):
             helpers.log(s, level=3)
         return status
 
-    def rest_show_version(self, node="master", string="version", user="admin", password="adminadmin", local=True, reconnect=True):
+    def rest_show_version(self, node="main", string="version", user="admin", password="adminadmin", local=True, reconnect=True):
         """
         The scope of this function is a bit more than simply 'show version'. It's also used
         to test accounting/authorization (hence the inclusion of node_reconnect). At some
@@ -640,12 +640,12 @@ class BsnCommon(object):
                 '''
                     BigTap Controller
                 '''
-                c = t.controller('master')
+                c = t.controller('main')
                 url = '/rest/v1/system/version'
                 if user == "admin":
                     try:
                         if reconnect:
-                            t.node_reconnect(node='master', user=str(user), password=password)
+                            t.node_reconnect(node='main', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0]['controller']
@@ -655,44 +655,44 @@ class BsnCommon(object):
                         return output_value
                 else:
                     try:
-                        c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                        c_user = t.node_reconnect(node='main', user=str(user), password=password)
                         c_user.rest.get(url)
                         content = c_user.rest.content()
                         output_value = content[0]['controller']
                     except:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='main')
                         return False
                     else:
                         if local is True:
-                            t.node_reconnect(node='master', user=str(user), password=password)
+                            t.node_reconnect(node='main', user=str(user), password=password)
                         return output_value
 
             elif helpers.is_bigwire(n.platform()):
                 '''
                     BigWire Controller
                 '''
-                c = t.controller('master')
+                c = t.controller('main')
                 url = '/rest/v1/system/version'
                 if user == "admin":
                     c.rest.get(url)
                     content = c.rest.content()
                 else:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user = t.node_reconnect(node='main', user=str(user), password=password)
                     c_user.rest.get(url)
                     content = c_user.rest.content()
-                    t.node_reconnect(node='master')
+                    t.node_reconnect(node='main')
                 return content[0]['controller']
             elif helpers.is_t5(n.platform()):
                 '''
                     T5 Controller
                 '''
                 helpers.log("The node is a T5 Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 url = '/api/v1/data/controller/core/version/appliance'
                 if user == "admin":
                     try:
                         if reconnect:
-                            t.node_reconnect(node='master', user=str(user), password=password)
+                            t.node_reconnect(node='main', user=str(user), password=password)
                         c.rest.get(url)
                         content = c.rest.content()
                         output_value = content[0][string]
@@ -709,18 +709,18 @@ class BsnCommon(object):
                         output_value = content[0][string]
                         c_user.close()
                     except:
-                        t.node_reconnect(node='master')
+                        t.node_reconnect(node='main')
                         return False
                     else:
                         if local is True:
-                            t.node_reconnect(node='master')
+                            t.node_reconnect(node='main')
                         return output_value
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
 
-    def add_ntp_server(self, node='master', ntp_server='0.bigswitch.pool.ntp.org'):
+    def add_ntp_server(self, node='main', ntp_server='0.bigswitch.pool.ntp.org'):
         '''
             Objective: Add an NTP server.
 
@@ -1200,7 +1200,7 @@ class BsnCommon(object):
 ##########   PLATFORM SNMP
 ######################################################################
 
-    def rest_show_snmp(self, node="master"):
+    def rest_show_snmp(self, node="main"):
         '''Execute CLI Command "show snmp"
 
             Input: N/A
@@ -1216,7 +1216,7 @@ class BsnCommon(object):
                 BigTap SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url = '/rest/v1/model/snmp-server-config/'
                     c.rest.get(url)
@@ -1231,7 +1231,7 @@ class BsnCommon(object):
                 BigWire SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url = '/rest/v1/model/snmp-server-config/'
                     c.rest.get(url)
@@ -1246,7 +1246,7 @@ class BsnCommon(object):
                     T5 Controller
                 '''
                 helpers.log("The node is a T5 Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url = '/api/v1/data/controller/os/config/global/snmp'
                     c.rest.get(url)
@@ -1261,7 +1261,7 @@ class BsnCommon(object):
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
 
-    def rest_show_snmp_host(self, node="master"):
+    def rest_show_snmp_host(self, node="main"):
         '''Execute CLI Command "show snmp"
 
             Input: N/A
@@ -1277,7 +1277,7 @@ class BsnCommon(object):
                 BigTap SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url = '/rest/v1/model/snmp-host-config/'
                     c.rest.get(url)
@@ -1292,7 +1292,7 @@ class BsnCommon(object):
                 BigWire SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url = '/rest/v1/model/snmp-host-config/'
                     c.rest.get(url)
@@ -1307,7 +1307,7 @@ class BsnCommon(object):
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
 
-    def rest_add_snmp_keyword(self, keyword, value, node="master"):
+    def rest_add_snmp_keyword(self, keyword, value, node="main"):
         '''
             Objective:
             - Add snmp-server community, contact, location etc
@@ -1326,7 +1326,7 @@ class BsnCommon(object):
                 BigTap SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                         url = '/rest/v1/model/snmp-server-config/?id=snmp'
                         if "trap-enable" in keyword:
@@ -1348,7 +1348,7 @@ class BsnCommon(object):
                 BigWire SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                         url = '/rest/v1/model/snmp-server-config/?id=snmp'
                         if "trap-enable" in keyword:
@@ -1371,7 +1371,7 @@ class BsnCommon(object):
                 '''
                 helpers.log("The node is a T5 Controller")
                 try:
-                    c = t.controller("master")
+                    c = t.controller("main")
                     url = '/api/v1/data/controller/os/config/global/snmp'
                     if "trap-enabled" in keyword:
                         if "True" in value:
@@ -1394,7 +1394,7 @@ class BsnCommon(object):
             helpers.test_error("Unsupported Platform %s" % (node))
 
 
-    def rest_add_snmp_host (self, host, udp_port, node="master"):
+    def rest_add_snmp_host (self, host, udp_port, node="main"):
         '''
             Objective:
             - Add snmp-server host
@@ -1414,7 +1414,7 @@ class BsnCommon(object):
                 BigTap SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url = '/rest/v1/model/snmp-host-config/'
                     c.rest.put(url, {"host": str(host), "udp-port": int(udp_port)})
@@ -1428,7 +1428,7 @@ class BsnCommon(object):
                 BigWire SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url = '/rest/v1/model/snmp-host-config/'
                     c.rest.put(url, {"host": str(host), "udp-port": int(udp_port)})
@@ -1442,7 +1442,7 @@ class BsnCommon(object):
                     T5 Controller
                 '''
                 helpers.log("The node is a T5 Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url = '/api/v1/data/controller/os/config/global/snmp/trap-host[server="%s"]' % str(host)
                     c.rest.put(url, {"server": str(host), "udp-port": int(udp_port)})
@@ -1457,7 +1457,7 @@ class BsnCommon(object):
             helpers.test_error("Unsupported Platform %s" % (node))
 
 
-    def rest_delete_snmp_host(self, host, udp_port, node="master"):
+    def rest_delete_snmp_host(self, host, udp_port, node="main"):
         '''
             Objective:
             - Delete snmp-server host
@@ -1477,7 +1477,7 @@ class BsnCommon(object):
                 BigTap SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url = '/rest/v1/model/snmp-host-config/?host=%s&udp-port=%s' % (host, udp_port)
                     c.rest.delete(url, {})
@@ -1491,7 +1491,7 @@ class BsnCommon(object):
                 BigWire SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url = '/rest/v1/model/snmp-host-config/?host=%s&udp-port=%s' % (host, udp_port)
                     c.rest.delete(url, {})
@@ -1505,7 +1505,7 @@ class BsnCommon(object):
                     T5 Controller
                 '''
                 helpers.log("The node is a T5 Controller")
-                c = t.controller('master')
+                c = t.controller('main')
                 try:
                     url = '/api/v1/data/controller/os/config/global/snmp/trap-host[server="%s"]' % str(host)
                     c.rest.delete(url, {"udp-port": int(udp_port)})
@@ -1559,7 +1559,7 @@ class BsnCommon(object):
 
 # ## Author: Sahaja
 
-    def rest_add_firewall_rule(self, service="snmp", protocol="udp", proto_port="162", node="master"):
+    def rest_add_firewall_rule(self, service="snmp", protocol="udp", proto_port="162", node="main"):
         '''
             Objective:
             - Open firewall port to allow UDP port
@@ -1578,23 +1578,23 @@ class BsnCommon(object):
                 BigTap SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c1 = t.controller('master')
-                c2 = t.controller('slave')
+                c1 = t.controller('main')
+                c2 = t.controller('subordinate')
                 try:
                     # Get Cluster Names:
                     url1 = "/rest/v1/system/controller"
                     c1.rest.get(url1)
-                    master_output = c1.rest.content()
+                    main_output = c1.rest.content()
                     c2.rest.get(url1)
-                    slave_output = c2.rest.content()
-                    master_clustername = master_output['id']
-                    slave_clustername = slave_output['id']
+                    subordinate_output = c2.rest.content()
+                    main_clustername = main_output['id']
+                    subordinate_clustername = subordinate_output['id']
                     # Open Firewall
                     url2 = '/rest/v1/model/firewall-rule/'
-                    interface_master = master_clustername + "|Ethernet|0"
-                    interface_slave = slave_clustername + "|Ethernet|0"
-                    c1.rest.put(url2, {"interface": str(interface_master), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
-                    c2.rest.put(url2, {"interface": str(interface_slave), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
+                    interface_main = main_clustername + "|Ethernet|0"
+                    interface_subordinate = subordinate_clustername + "|Ethernet|0"
+                    c1.rest.put(url2, {"interface": str(interface_main), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
+                    c2.rest.put(url2, {"interface": str(interface_subordinate), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
                 except:
                     helpers.log(c1.rest.error())
                     helpers.log(c2.rest.error())
@@ -1606,23 +1606,23 @@ class BsnCommon(object):
                 BigWire SNMP Configuration goes here
                 '''
                 helpers.log("The node is a BigTap Controller")
-                c1 = t.controller('master')
-                c2 = t.controller('slave')
+                c1 = t.controller('main')
+                c2 = t.controller('subordinate')
                 try:
                     # Get Cluster Names:
                     url1 = "/rest/v1/system/controller"
                     c1.rest.get(url1)
-                    master_output = c1.rest.content()
+                    main_output = c1.rest.content()
                     c2.rest.get(url1)
-                    slave_output = c2.rest.content()
-                    master_clustername = master_output['id']
-                    slave_clustername = slave_output['id']
+                    subordinate_output = c2.rest.content()
+                    main_clustername = main_output['id']
+                    subordinate_clustername = subordinate_output['id']
                     # Open Firewall
                     url2 = '/rest/v1/model/firewall-rule/'
-                    interface_master = master_clustername + "|Ethernet|0"
-                    interface_slave = slave_clustername + "|Ethernet|0"
-                    c1.rest.put(url2, {"interface": str(interface_master), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
-                    c2.rest.put(url2, {"interface": str(interface_slave), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
+                    interface_main = main_clustername + "|Ethernet|0"
+                    interface_subordinate = subordinate_clustername + "|Ethernet|0"
+                    c1.rest.put(url2, {"interface": str(interface_main), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
+                    c2.rest.put(url2, {"interface": str(interface_subordinate), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
                 except:
                     helpers.log(c1.rest.error())
                     helpers.log(c2.rest.error())
@@ -1634,8 +1634,8 @@ class BsnCommon(object):
                     T5 Controller
                 '''
                 helpers.log("The node is a T5 Controller")
-                c1 = t.controller('master')
-                c2 = t.controller('slave')
+                c1 = t.controller('main')
+                c2 = t.controller('subordinate')
                 try:
                     url = '/api/v1/data/controller/os/config/local/network/interface[type="ethernet"][number=0]/service[name="%s"]' % str(service)
                     c1.rest.put(url, {"name": str(service)})
@@ -1649,7 +1649,7 @@ class BsnCommon(object):
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
 
-    def rest_delete_firewall_rule(self, service="snmp", protocol="udp", proto_port="162", node="master"):
+    def rest_delete_firewall_rule(self, service="snmp", protocol="udp", proto_port="162", node="main"):
         '''
             Objective:
             - Open firewall port to allow UDP port
@@ -1665,29 +1665,29 @@ class BsnCommon(object):
             helpers.log("The node is a controller")
             if helpers.is_bigtap(n.platform()):
                 helpers.log("The node is a BigTap Controller")
-                controller1 = t.controller('master')
-                controller2 = t.controller('slave')
+                controller1 = t.controller('main')
+                controller2 = t.controller('subordinate')
                 try:
                     # Get Cluster Names:
                     url1 = "/rest/v1/system/ha/role reply"
 
                     controller1.rest.get(url1)
-                    master_output = controller1.rest.content()
-                    master_clustername = master_output['clustername']
-                    interface_master = master_clustername + "|Ethernet|0"
-                    urlmaster_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_master + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
-                    # controller1.rest.put(interface_slave, {})
-                    controller1.rest.put(urlmaster_delete, {})
+                    main_output = controller1.rest.content()
+                    main_clustername = main_output['clustername']
+                    interface_main = main_clustername + "|Ethernet|0"
+                    urlmain_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_main + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                    # controller1.rest.put(interface_subordinate, {})
+                    controller1.rest.put(urlmain_delete, {})
                 except:
                     helpers.log(controller1.rest.error())
                 else:
                     try:
                         controller2.rest.get(url1)
-                        slave_output = controller2.rest.content()
-                        slave_clustername = slave_output['clustername']
-                        interface_slave = slave_clustername + "|Ethernet|0"
-                        urlslave_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_slave + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
-                        controller2.rest.put(urlslave_delete, {})
+                        subordinate_output = controller2.rest.content()
+                        subordinate_clustername = subordinate_output['clustername']
+                        interface_subordinate = subordinate_clustername + "|Ethernet|0"
+                        urlsubordinate_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_subordinate + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                        controller2.rest.put(urlsubordinate_delete, {})
                     except:
                         helpers.log(controller2.rest.error())
                         return False
@@ -1696,25 +1696,25 @@ class BsnCommon(object):
 
             elif helpers.is_bigwire(n.platform()):
                 helpers.log("The node is a BigWire Controller")
-                c1 = t.controller('master')
-                c2 = t.controller('slave')
+                c1 = t.controller('main')
+                c2 = t.controller('subordinate')
                 try:
                     # Get Cluster Names:
                     url1 = "/rest/v1/system/ha/role reply"
                     c1.rest.get(url1)
-                    master_output = c1.rest.content()
+                    main_output = c1.rest.content()
                     c2.rest.get(url1)
-                    slave_output = c2.rest.content()
-                    master_clustername = master_output['clustername']
-                    slave_clustername = slave_output['clustername']
+                    subordinate_output = c2.rest.content()
+                    main_clustername = main_output['clustername']
+                    subordinate_clustername = subordinate_output['clustername']
                     # Open Firewall
-                    interface_master = master_clustername + "|Ethernet|0"
-                    interface_slave = slave_clustername + "|Ethernet|0"
-                    urlmaster_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_master + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
-                    urlslave_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_slave + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
-                    # c1.rest.put(interface_slave, {})
-                    c1.rest.put(urlmaster_delete, {})
-                    c2.rest.put(urlslave_delete, {})
+                    interface_main = main_clustername + "|Ethernet|0"
+                    interface_subordinate = subordinate_clustername + "|Ethernet|0"
+                    urlmain_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_main + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                    urlsubordinate_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_subordinate + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                    # c1.rest.put(interface_subordinate, {})
+                    c1.rest.put(urlmain_delete, {})
+                    c2.rest.put(urlsubordinate_delete, {})
                 except:
                     helpers.log(c1.rest.error())
                     helpers.log(c2.rest.error())
@@ -1723,8 +1723,8 @@ class BsnCommon(object):
                     return True
             elif helpers.is_t5(n.platform()):
                 helpers.log("The node is a T5 Controller")
-                c1 = t.controller('master')
-                c2 = t.controller('slave')
+                c1 = t.controller('main')
+                c2 = t.controller('subordinate')
                 try:
                     url = '/api/v1/data/controller/os/config/local/network/interface[type="ethernet"][number=0]/service[name="%s"]' % str(service)
                     c1.rest.delete(url, {})
@@ -1757,10 +1757,10 @@ class BsnCommon(object):
         '''
         try:
             t = test.Test()
-            if "master" in node:
-                node = t.controller("master")
-            elif "slave" in node:
-                node = t.controller("slave")
+            if "main" in node:
+                node = t.controller("main")
+            elif "subordinate" in node:
+                node = t.controller("subordinate")
             else:
                 node = t.switch(node)
             if snmpOID is not None :
@@ -1791,10 +1791,10 @@ class BsnCommon(object):
         '''
         try:
             t = test.Test()
-            if "master" in node:
-                node = t.controller("master")
-            elif "slave" in node:
-                node = t.controller("slave")
+            if "main" in node:
+                node = t.controller("main")
+            elif "subordinate" in node:
+                node = t.controller("subordinate")
             else:
                 node = t.switch(node)
             url = "/usr/bin/%s  -v2c %s -c %s %s %s" % (str(snmp_cmd), str(snmpOpt), str(snmpCommunity), node.ip(), str(snmpOID))
@@ -1818,10 +1818,10 @@ class BsnCommon(object):
         except:
             return False
         else:
-            if "master" in node:
-                node = t.controller("master")
-            elif "slave" in node:
-                node = t.controller("slave")
+            if "main" in node:
+                node = t.controller("main")
+            elif "subordinate" in node:
+                node = t.controller("subordinate")
             else:
                 node = t.switch(node)
             try:
@@ -1842,10 +1842,10 @@ class BsnCommon(object):
             Return Value:  return the SNMP Walk O/P
         '''
         t = test.Test()
-        if "master" in node:
-            node = t.controller("master")
-        elif "slave" in node:
-            node = t.controller("slave")
+        if "main" in node:
+            node = t.controller("main")
+        elif "subordinate" in node:
+            node = t.controller("subordinate")
         else:
             node = t.switch(node)
         url = "/usr/bin/snmpgetnext -v2c -c %s %s %s" % (str(snmp_community), node.ip(), str(snmp_oid))
@@ -1884,7 +1884,7 @@ class BsnCommon(object):
 
             Input:
                processName        Name of process to be restarted
-               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
+               controller_role        Where to execute the command. Accepted values are `Main` and `Subordinate`
 
            Return Value:  True if the configuration is successful, false otherwise
         '''
@@ -2029,7 +2029,7 @@ class BsnCommon(object):
         Get the name of a node
 
         Input:
-        | node | logical node name, e.g., 'c1', 'master', 'slave', etc. |
+        | node | logical node name, e.g., 'c1', 'main', 'subordinate', etc. |
 
         Return Value:  actual node name, e.g., 'c1', 'c2', 's1'
         """
@@ -2042,7 +2042,7 @@ class BsnCommon(object):
         Get the hostname of a node
 
         Input:
-        | node | logical node name, e.g., 'c1', 'master', 'slave', etc. |
+        | node | logical node name, e.g., 'c1', 'main', 'subordinate', etc. |
         | soft_error | Default is ${false} which will generate an exception if hostname does not exist. If ${true} then return ${none} if hostname does not exist. |
 
         Return Value:  actual hostname of the node
@@ -2060,7 +2060,7 @@ class BsnCommon(object):
         """
         Get the node-id of a node.
 
-        Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
+        Input: logical node name, e.g., 'c1', 'main', 'subordinate', etc.
 
         Return Value:  actual node-id for BVS platform, else None
         """
@@ -2072,7 +2072,7 @@ class BsnCommon(object):
         """
         Get the IP address of a node
 
-        Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
+        Input: logical node name, e.g., 'c1', 'main', 'subordinate', etc.
 
         Return Value:  actual IP address
         """
@@ -2225,7 +2225,7 @@ class BsnCommon(object):
         exceptions will result in failure.
 
         Inputs:
-          - node: 'c1', 's1', 'h1', 'master', etc.
+          - node: 'c1', 's1', 'h1', 'main', etc.
           - sleep: number of seconds to sleep before retry (on failure). Default is 10.
           - iterations: number of retries (on failure). Default is 5.
           - user: user name. Default is 'dummy' which will result in authen failure, but that's okay.

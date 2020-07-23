@@ -25,13 +25,13 @@ a file (see --version-file) or a string (see --version-str). The version string
 needs to have the following format:
 
     Big Tap Controller 4.1.1  (2014.11.13.1922-b.bsc.corsair-4.1.1beta
-    Big Cloud Fabric Appliance 3.0.0-master01-SNAPSHOT (bcf_master #4201)
-    Big Cloud Fabric Appliance 2.0.0-master01-SNAPSHOT (ihplus_bcf #515)
+    Big Cloud Fabric Appliance 3.0.0-main01-SNAPSHOT (bcf_main #4201)
+    Big Cloud Fabric Appliance 2.0.0-main01-SNAPSHOT (ihplus_bcf #515)
 
 Returns the BUILD_NAME as followed:
 
     corsair411_bigtap_10G-1922
-    master_bcf_10G-4201
+    main_bcf_10G-4201
 """
     parser = argparse.ArgumentParser(
                         prog='build_name_gen',
@@ -110,7 +110,7 @@ def get_version_string(args):
 
         build_id = match.group(3)
 
-        if not release in ['ih', 'ihplus', 'jf', 'master']:
+        if not release in ['ih', 'ihplus', 'jf', 'main']:
             helpers.error_exit("Invalid BCF version '%s' in version string '%s'."
                                % (version, version_str))
 

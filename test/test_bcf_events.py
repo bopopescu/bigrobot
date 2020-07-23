@@ -106,9 +106,9 @@ class TestBcfEvents:
                 sleep(self.in_event_sleep)
         return run(func, setup=self.tc_setup, teardown=self.tc_teardown)
 
-    def test_02_controller_node_event_master_reload(self):  # new test case
+    def test_02_controller_node_event_main_reload(self):  # new test case
         """
-        Test case:      test_02_controller_node_event_master_reload
+        Test case:      test_02_controller_node_event_main_reload
         Description:    Failover for controllers nodes is performed by issuing 'system reload controller' in active controller.
                         The event is repeated self.LOOP times. The event runs at the gap of self.INEVENT seconds
         Output:         Active controller vm get rebooted, previous active controller becomes standby controller, standby
@@ -277,7 +277,7 @@ class TestBcfEvents:
                 tc_index = random.randint(1, 6)
                 log_to_console("--------random number is %s --------" % tc_index)
                 if tc_index == 1:
-                    self.test_02_controller_node_event_master_reload()
+                    self.test_02_controller_node_event_main_reload()
                 elif tc_index == 2:
                     self.test_03_spine_switch_node_down_up_event()
                 # elif tc_index = 3:

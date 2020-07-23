@@ -36,7 +36,7 @@ class Host(object):
 
         Example:
         | ${lossA} = | Bash Ping | h1          | 10.192.104.1 | source_if=eth1 |
-        | ${lossB} = | Bash Ping | node=master | dest_node=s1 |                |
+        | ${lossB} = | Bash Ping | node=main | dest_node=s1 |                |
         =>
         - ${lossA} = 0
         - ${lossB} = 100
@@ -287,7 +287,7 @@ class Host(object):
         | path | directory to get listing for |
 
         Example:
-        - bash ls    master    /home/admin
+        - bash ls    main    /home/admin
         - bash ls    h1        /etc/passwd
 
         Return Value:

@@ -25,7 +25,7 @@ def prog_args():
     descr = """
 Display test data for a specific build. Example:
 
-% RELEASE_NAME="<release>" BUILD_NAME="bvs master #3271" \\
+% RELEASE_NAME="<release>" BUILD_NAME="bvs main #3271" \\
         ./db_get_test_data.py --tags manual-untested \\
                               --no-show-header
 """
@@ -35,7 +35,7 @@ Display test data for a specific build. Example:
                         description=descr)
     parser.add_argument('--build',
                         help=("Jenkins build string,"
-                              " e.g., 'bvs master #2007'"))
+                              " e.g., 'bvs main #2007'"))
     parser.add_argument('--release',
                         help=("Product release, e.g., 'ironhorse', 'ironhorse-plus', 'jackfrost', etc."))
     parser.add_argument('--tags', metavar=('tag1', 'tag2'), nargs='*',
